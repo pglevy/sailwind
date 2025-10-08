@@ -65,7 +65,7 @@ function App() {
                 tags={[
                   { text: "HIGH PRIORITY", backgroundColor: "NEGATIVE" },
                   { text: "REVIEWED", backgroundColor: "POSITIVE" },
-                  { text: "NEW", backgroundColor: "ACCENT", textColor: "#FFFFFF" }
+                  { text: "NEW", backgroundColor: "ACCENT" }
                 ]}
               />
             </div>
