@@ -1,46 +1,88 @@
 import * as React from 'react'
 import type { TagItemProps } from './TagItem'
+import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize, SAILSemanticColor } from '../../types/sail'
+import { FieldLabel } from '../shared/FieldLabel'
 
-type TagSize = "SMALL" | "STANDARD" | "MEDIUM" | "LARGE"
-type Alignment = "START" | "CENTER" | "END"
-type LabelPosition = "ABOVE" | "COLLAPSED" | "JUSTIFIED" | "ADJACENT"
-type MarginSize = "NONE" | "EVEN_LESS" | "LESS" | "STANDARD" | "MORE" | "EVEN_MORE"
+/**
+ * Tag size - only SMALL and STANDARD are supported per SAIL docs
+ */
+type TagSize = Extract<SAILSize, "SMALL" | "STANDARD">
 
-interface TagFieldProps {
-  tags: TagItemProps[]  // Array of tag items
-  size?: TagSize
-  align?: Alignment
+/**
+ * Props for the TagField component
+ * Maps to SAIL's a!tagField() function
+ */
+export interface TagFieldProps {
+  /** Array of tag items to display */
+  tags: TagItemProps[]
+  /** Text to display as the field label */
   label?: string
-  labelPosition?: LabelPosition
-  marginAbove?: MarginSize
-  marginBelow?: MarginSize
+  /** Position of the label relative to the tags */
+  labelPosition?: SAILLabelPosition
+  /** Supplemental text about this field */
+  instructions?: string
+  /** Help icon tooltip text */
+  helpTooltip?: string
+  /** Determines alignment of tags */
+  align?: SAILAlign
+  /** Additional text for screen readers */
+  accessibilityText?: string
+  /** Size of the tags */
+  size?: TagSize
+  /** Controls field visibility */
+  showWhen?: boolean
+  /** Space added above the layout */
+  marginAbove?: SAILMarginSize
+  /** Space added below the layout */
+  marginBelow?: SAILMarginSize
 }
 
+/**
+ * TagField Component
+ * Displays a list of short text labels with colored backgrounds
+ *
+ * @example
+ * <TagField
+ *   size="STANDARD"
+ *   tags={[
+ *     { text: "URGENT", backgroundColor: "#FED7DE", textColor: "#9F0019" }
+ *   ]}
+ * />
+ */
 export const TagField: React.FC<TagFieldProps> = ({
   tags,
-  size = "STANDARD",
-  align = "START",
   label,
   labelPosition = "ABOVE",
+  instructions,
+  helpTooltip,
+  align = "START",
+  accessibilityText,
+  size = "STANDARD",
+  showWhen = true,
   marginAbove = "NONE",
   marginBelow = "STANDARD"
 }) => {
-  // Based on Appian source: STANDARD uses 1rem font-size with specific padding
-  // SMALL uses 0.7857rem (11px) with tighter padding
+  // Visibility control
+  if (!showWhen) return null
+
+  // Filter out hidden tags
+  const visibleTags = tags.filter(tag => tag.showWhen !== false && tag.text)
+
+  // Size mappings - using SAIL design tokens
   const sizeMap = {
-    SMALL: 'text-[0.7857rem] px-[0.4286rem] pb-[0.0714rem] pt-0',
-    STANDARD: 'text-[1rem] px-[0.5714rem] py-[0.1429rem]',
-    MEDIUM: 'text-sail-medium px-sail-standard py-sail-less',
-    LARGE: 'text-sail-large px-sail-more py-sail-less'
+    SMALL: 'text-sail-small px-sail-less py-sail-even-less',
+    STANDARD: 'text-sail-standard px-sail-standard py-sail-even-less'
   }
 
+  // Alignment mappings
   const alignMap = {
     START: 'justify-start',
     CENTER: 'justify-center',
     END: 'justify-end'
   }
 
-  const marginAboveMap = {
+  // Margin mappings
+  const marginAboveMap: Record<SAILMarginSize, string> = {
     NONE: 'mt-sail-none',
     EVEN_LESS: 'mt-sail-even-less',
     LESS: 'mt-sail-less',
@@ -49,7 +91,7 @@ export const TagField: React.FC<TagFieldProps> = ({
     EVEN_MORE: 'mt-sail-even-more'
   }
 
-  const marginBelowMap = {
+  const marginBelowMap: Record<SAILMarginSize, string> = {
     NONE: 'mb-sail-none',
     EVEN_LESS: 'mb-sail-even-less',
     LESS: 'mb-sail-less',
@@ -58,15 +100,16 @@ export const TagField: React.FC<TagFieldProps> = ({
     EVEN_MORE: 'mb-sail-even-more'
   }
 
-  const bgColorMap: Record<string, string> = {
-    ACCENT: 'bg-blue-3',
+  // Semantic color mappings
+  const bgColorMap: Record<SAILSemanticColor, string> = {
+    ACCENT: 'bg-blue-1',
     POSITIVE: 'bg-green-1',
     NEGATIVE: 'bg-red-1',
     SECONDARY: 'bg-gray-2',
     STANDARD: 'bg-gray-1'
   }
 
-  const textColorMap: Record<string, string> = {
+  const textColorMap: Record<SAILSemanticColor | "STANDARD", string> = {
     ACCENT: 'text-blue-4',
     POSITIVE: 'text-green-4',
     NEGATIVE: 'text-red-4',
@@ -74,53 +117,73 @@ export const TagField: React.FC<TagFieldProps> = ({
     STANDARD: 'text-gray-5'
   }
 
+  // Render individual tag
   const renderTag = (tag: TagItemProps, index: number) => {
+    // Determine background color classes or inline styles
     const bgClass = tag.backgroundColor?.startsWith('#')
       ? ''
-      : bgColorMap[tag.backgroundColor as keyof typeof bgColorMap] || bgColorMap.ACCENT
+      : bgColorMap[(tag.backgroundColor as SAILSemanticColor) || 'ACCENT']
 
     const textClass = tag.textColor?.startsWith('#')
       ? ''
-      : textColorMap[tag.textColor as keyof typeof textColorMap] || textColorMap.STANDARD
+      : textColorMap[(tag.textColor as SAILSemanticColor) || 'STANDARD']
 
-    const style = {
+    const inlineStyle: React.CSSProperties = {
       ...(tag.backgroundColor?.startsWith('#') && { backgroundColor: tag.backgroundColor }),
       ...(tag.textColor?.startsWith('#') && { color: tag.textColor })
     }
 
+    // Use anchor tag if link is provided, otherwise span
     const Component = tag.link ? 'a' : 'span'
+    const componentProps = tag.link ? { href: tag.link } : {}
 
     return (
       <Component
         key={index}
-        href={tag.link}
+        {...componentProps}
         className={`
-          inline-block font-semibold max-w-full whitespace-nowrap overflow-hidden text-ellipsis
-          cursor-default outline-none leading-[1.4] no-underline
-          ${size === 'SMALL' ? 'rounded-[0.0714rem]' : 'rounded-[0.1429rem]'}
+          inline-block font-semibold max-w-full
+          whitespace-nowrap overflow-hidden text-ellipsis
+          rounded-sail-semi-rounded
           ${sizeMap[size]}
           ${bgClass}
           ${textClass}
-          ${tag.link ? 'hover:underline hover:cursor-pointer' : ''}
+          ${tag.link ? 'hover:underline cursor-pointer' : 'cursor-default'}
         `.replace(/\s+/g, ' ').trim()}
-        style={style}
-        aria-label={tag.accessibilityText}
+        style={inlineStyle}
+        title={tag.tooltip}
+        aria-label={tag.tooltip}
       >
         {tag.text}
       </Component>
     )
   }
 
+  const fieldId = React.useId()
+
   return (
-    <div className={`${marginAboveMap[marginAbove]} ${marginBelowMap[marginBelow]}`}>
-      {label && labelPosition !== "COLLAPSED" && (
-        <label className="block text-sail-standard font-medium mb-sail-less text-gray-5">
-          {label}
-        </label>
+    <div
+      className={`${marginAboveMap[marginAbove]} ${marginBelowMap[marginBelow]}`}
+      aria-label={accessibilityText}
+    >
+      <FieldLabel
+        label={label}
+        labelPosition={labelPosition}
+        instructions={instructions}
+        helpTooltip={helpTooltip}
+        htmlFor={fieldId}
+        accessibilityText={accessibilityText}
+      />
+
+      {visibleTags.length > 0 && (
+        <div
+          id={fieldId}
+          className={`flex flex-wrap gap-sail-less ${alignMap[align]}`}
+          role="list"
+        >
+          {visibleTags.map(renderTag)}
+        </div>
       )}
-      <div className={`flex flex-wrap gap-sail-less ${alignMap[align]}`}>
-        {tags.map(renderTag)}
-      </div>
     </div>
   )
 }
