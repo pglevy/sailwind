@@ -65,7 +65,7 @@ function App() {
                 tags={[
                   { text: "HIGH PRIORITY", backgroundColor: "NEGATIVE" },
                   { text: "REVIEWED", backgroundColor: "POSITIVE" },
-                  { text: "NEW", backgroundColor: "ACCENT", textColor: "#FFFFFF" }
+                  { text: "NEW", backgroundColor: "ACCENT" }
                 ]}
               />
             </div>
@@ -127,13 +127,13 @@ function App() {
                   label="Create"
                   style="SOLID"
                   color="ACCENT"
-                  onClick={() => alert('Create clicked')}
+                  saveInto={() => alert('Create clicked')}
                 />
                 <ButtonWidget
                   label="Delete"
                   style="SOLID"
                   color="NEGATIVE"
-                  onClick={() => alert('Delete clicked')}
+                  saveInto={() => alert('Delete clicked')}
                 />
                 <ButtonWidget
                   label="Submit"
@@ -153,13 +153,13 @@ function App() {
                   label="Add Another"
                   style="OUTLINE"
                   color="ACCENT"
-                  onClick={() => alert('Add Another clicked')}
+                  saveInto={() => alert('Add Another clicked')}
                 />
                 <ButtonWidget
                   label="Cancel"
                   style="OUTLINE"
                   color="SECONDARY"
-                  onClick={() => alert('Cancel clicked')}
+                  saveInto={() => alert('Cancel clicked')}
                 />
               </div>
             </div>

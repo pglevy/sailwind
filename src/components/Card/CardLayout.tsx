@@ -1,26 +1,56 @@
 import * as React from 'react'
+import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
 
 type CardHeight = "AUTO" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 type CardStyle = "NONE" | "ACCENT" | "SUCCESS" | "WARN" | "ERROR" | "INFO"
-type CardShape = "SQUARED" | "SEMI_ROUNDED" | "ROUNDED"
-type CardPadding = "NONE" | "EVEN_LESS" | "LESS" | "STANDARD" | "MORE" | "EVEN_MORE"
-type MarginSize = "NONE" | "EVEN_LESS" | "LESS" | "STANDARD" | "MORE" | "EVEN_MORE"
+type DecorativeBarPosition = "TOP" | "START" | "NONE"
 
+/**
+ * Props for the CardLayout component
+ * Maps to SAIL's a!cardLayout() function
+ */
 export interface CardLayoutProps {
+  /** Content to display inside the card */
   children: React.ReactNode
+  /** Determines the height of the card */
   height?: CardHeight
+  /** Determines the border/style color */
   style?: CardStyle
-  shape?: CardShape
-  padding?: CardPadding
-  marginAbove?: MarginSize
-  marginBelow?: MarginSize
+  /** Determines the border radius */
+  shape?: SAILShape
+  /** Determines the padding inside the card */
+  padding?: SAILPadding
+  /** Space added above the card */
+  marginAbove?: SAILMarginSize
+  /** Space added below the card */
+  marginBelow?: SAILMarginSize
+  /** Whether to show card border */
   showBorder?: boolean
+  /** Whether to show card shadow */
   showShadow?: boolean
+  /** Custom border color (hex value) */
   borderColor?: string
-  decorativeBarPosition?: "TOP" | "START" | "NONE"
+  /** Position of decorative bar */
+  decorativeBarPosition?: DecorativeBarPosition
+  /** Color of decorative bar (hex or semantic) */
   decorativeBarColor?: string
+  /** Controls card visibility */
+  showWhen?: boolean
 }
 
+/**
+ * CardLayout Component
+ * Displays content within a card container
+ *
+ * @example
+ * <CardLayout
+ *   shape="SEMI_ROUNDED"
+ *   padding="STANDARD"
+ *   showBorder={true}
+ * >
+ *   <p>Card content here</p>
+ * </CardLayout>
+ */
 export const CardLayout: React.FC<CardLayoutProps> = ({
   children,
   height = "AUTO",
@@ -33,9 +63,14 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   showShadow = false,
   borderColor = "#EDEEFA",
   decorativeBarPosition = "NONE",
-  decorativeBarColor
+  decorativeBarColor,
+  showWhen = true
 }) => {
-  const heightMap = {
+  // Visibility control
+  if (!showWhen) return null
+
+  // Height mappings
+  const heightMap: Record<CardHeight, string> = {
     AUTO: 'h-auto',
     SHORT: 'h-32',
     MEDIUM: 'h-48',
@@ -43,13 +78,15 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EXTRA_TALL: 'h-96'
   }
 
-  const shapeMap = {
+  // Shape mappings
+  const shapeMap: Record<SAILShape, string> = {
     SQUARED: 'rounded-sail-squared',
     SEMI_ROUNDED: 'rounded-sail-semi-rounded',
     ROUNDED: 'rounded-sail-rounded'
   }
 
-  const paddingMap = {
+  // Padding mappings
+  const paddingMap: Record<SAILPadding, string> = {
     NONE: 'p-sail-none',
     EVEN_LESS: 'p-sail-even-less',
     LESS: 'p-sail-less',
@@ -58,7 +95,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EVEN_MORE: 'p-sail-even-more'
   }
 
-  const marginAboveMap = {
+  // Margin mappings
+  const marginAboveMap: Record<SAILMarginSize, string> = {
     NONE: 'mt-sail-none',
     EVEN_LESS: 'mt-sail-even-less',
     LESS: 'mt-sail-less',
@@ -67,7 +105,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EVEN_MORE: 'mt-sail-even-more'
   }
 
-  const marginBelowMap = {
+  const marginBelowMap: Record<SAILMarginSize, string> = {
     NONE: 'mb-sail-none',
     EVEN_LESS: 'mb-sail-even-less',
     LESS: 'mb-sail-less',
@@ -76,7 +114,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EVEN_MORE: 'mb-sail-even-more'
   }
 
-  const styleColorMap = {
+  // Style color mappings for borders
+  const styleColorMap: Record<CardStyle, string> = {
     NONE: '',
     ACCENT: 'border-blue-3',
     SUCCESS: 'border-green-3',
@@ -85,7 +124,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     INFO: 'border-sky-3'
   }
 
-  const decorativeBarColorMap = {
+  // Decorative bar color mappings
+  const decorativeBarColorMap: Record<string, string> = {
     ACCENT: '#2322F0',
     SUCCESS: '#17B00B',
     WARN: '#FF9000',
@@ -93,11 +133,11 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     INFO: '#0087FF'
   }
 
-  const getDecorativeBarColor = () => {
+  const getDecorativeBarColor = (): string => {
     if (decorativeBarColor) {
       return decorativeBarColor.startsWith('#')
         ? decorativeBarColor
-        : decorativeBarColorMap[decorativeBarColor as keyof typeof decorativeBarColorMap]
+        : decorativeBarColorMap[decorativeBarColor] || decorativeBarColorMap.ACCENT
     }
     return decorativeBarColorMap.ACCENT
   }
@@ -109,7 +149,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     ${paddingMap[padding]}
     ${marginAboveMap[marginAbove]}
     ${marginBelowMap[marginBelow]}
-    ${showBorder ? `border-2 ${styleColorMap[style] || ''}` : ''}
+    ${showBorder ? `border-2 ${styleColorMap[style]}` : ''}
     ${showShadow ? 'shadow-md' : ''}
     overflow-hidden
     relative
@@ -125,12 +165,14 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
         <div
           className="absolute top-0 left-0 right-0 h-1"
           style={{ backgroundColor: getDecorativeBarColor() }}
+          aria-hidden="true"
         />
       )}
       {decorativeBarPosition === "START" && (
         <div
           className="absolute top-0 left-0 bottom-0 w-1"
           style={{ backgroundColor: getDecorativeBarColor() }}
+          aria-hidden="true"
         />
       )}
       <div className={decorativeBarPosition === "TOP" ? "pt-sail-even-less" : ""}>
