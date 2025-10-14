@@ -78,69 +78,74 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EXTRA_TALL: 'h-96'
   }
 
-  // Shape mappings
+  // Shape mappings - using Tailwind standard classes that map to SAIL values
   const shapeMap: Record<SAILShape, string> = {
-    SQUARED: 'rounded-sail-squared',
-    SEMI_ROUNDED: 'rounded-sail-semi-rounded',
-    ROUNDED: 'rounded-sail-rounded'
+    SQUARED: 'rounded-none',  // SAIL SQUARED: 0
+    SEMI_ROUNDED: 'rounded-sm', // SAIL SEMI_ROUNDED: 4px
+    ROUNDED: 'rounded-md'     // SAIL ROUNDED: 8px
   }
 
-  // Padding mappings
+  // Padding mappings - using Tailwind standard classes that map to SAIL values
   const paddingMap: Record<SAILPadding, string> = {
-    NONE: 'p-sail-none',
-    EVEN_LESS: 'p-sail-even-less',
-    LESS: 'p-sail-less',
-    STANDARD: 'p-sail-standard',
-    MORE: 'p-sail-more',
-    EVEN_MORE: 'p-sail-even-more'
+    NONE: 'p-0',      // SAIL NONE: 0
+    EVEN_LESS: 'p-1', // SAIL EVEN_LESS: 4px
+    LESS: 'p-2',      // SAIL LESS: 8px
+    STANDARD: 'p-4',  // SAIL STANDARD: 16px
+    MORE: 'p-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'p-8'  // SAIL EVEN_MORE: 32px
   }
 
-  // Margin mappings
+  // Margin mappings - using Tailwind standard classes that map to SAIL values
   const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: 'mt-sail-none',
-    EVEN_LESS: 'mt-sail-even-less',
-    LESS: 'mt-sail-less',
-    STANDARD: 'mt-sail-standard',
-    MORE: 'mt-sail-more',
-    EVEN_MORE: 'mt-sail-even-more'
+    NONE: 'mt-0',      // SAIL NONE: 0
+    EVEN_LESS: 'mt-1', // SAIL EVEN_LESS: 4px
+    LESS: 'mt-2',      // SAIL LESS: 8px
+    STANDARD: 'mt-4',  // SAIL STANDARD: 16px
+    MORE: 'mt-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'mt-8'  // SAIL EVEN_MORE: 32px
   }
 
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-sail-none',
-    EVEN_LESS: 'mb-sail-even-less',
-    LESS: 'mb-sail-less',
-    STANDARD: 'mb-sail-standard',
-    MORE: 'mb-sail-more',
-    EVEN_MORE: 'mb-sail-even-more'
+    NONE: 'mb-0',      // SAIL NONE: 0
+    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
+    LESS: 'mb-2',      // SAIL LESS: 8px
+    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
+    MORE: 'mb-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
   // Style color mappings for borders
   const styleColorMap: Record<CardStyle, string> = {
     NONE: '',
-    ACCENT: 'border-blue-3',
-    SUCCESS: 'border-green-3',
-    WARN: 'border-orange-3',
-    ERROR: 'border-red-3',
-    INFO: 'border-sky-3'
+    ACCENT: 'border-blue-500',
+    SUCCESS: 'border-green-500',
+    WARN: 'border-orange-500',
+    ERROR: 'border-red-500',
+    INFO: 'border-sky-500'
   }
 
-  // Decorative bar color mappings
+  // Decorative bar color mappings - returns Tailwind class or hex for inline style
   const decorativeBarColorMap: Record<string, string> = {
-    ACCENT: '#2322F0',
-    SUCCESS: '#17B00B',
-    WARN: '#FF9000',
-    ERROR: '#E91547',
-    INFO: '#0087FF'
+    ACCENT: 'bg-blue-500',      // Blue 3 (Aurora)
+    SUCCESS: 'bg-green-500',    // Green 3 (Aurora)
+    WARN: 'bg-orange-500',      // Orange 3 (Aurora)
+    ERROR: 'bg-red-500',        // Red 3 (Aurora)
+    INFO: 'bg-sky-500'          // Sky 3 (Aurora)
   }
 
-  const getDecorativeBarColor = (): string => {
+  const getDecorativeBarClasses = (): { className?: string; style?: React.CSSProperties } => {
     if (decorativeBarColor) {
-      return decorativeBarColor.startsWith('#')
-        ? decorativeBarColor
-        : decorativeBarColorMap[decorativeBarColor] || decorativeBarColorMap.ACCENT
+      if (decorativeBarColor.startsWith('#')) {
+        // Custom hex color - use inline style
+        return { style: { backgroundColor: decorativeBarColor } }
+      }
+      // Semantic color - use Tailwind class
+      return { className: decorativeBarColorMap[decorativeBarColor] || decorativeBarColorMap.ACCENT }
     }
-    return decorativeBarColorMap.ACCENT
+    return { className: decorativeBarColorMap.ACCENT }
   }
+
+  const barProps = getDecorativeBarClasses()
 
   const baseClasses = `
     bg-white
@@ -163,19 +168,19 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     <div className={baseClasses} style={borderStyle}>
       {decorativeBarPosition === "TOP" && (
         <div
-          className="absolute top-0 left-0 right-0 h-1"
-          style={{ backgroundColor: getDecorativeBarColor() }}
+          className={`absolute top-0 left-0 right-0 h-1 ${barProps.className || ''}`}
+          style={barProps.style}
           aria-hidden="true"
         />
       )}
       {decorativeBarPosition === "START" && (
         <div
-          className="absolute top-0 left-0 bottom-0 w-1"
-          style={{ backgroundColor: getDecorativeBarColor() }}
+          className={`absolute top-0 left-0 bottom-0 w-1 ${barProps.className || ''}`}
+          style={barProps.style}
           aria-hidden="true"
         />
       )}
-      <div className={decorativeBarPosition === "TOP" ? "pt-sail-even-less" : ""}>
+      <div className={decorativeBarPosition === "TOP" ? "pt-1" : ""}>
         {children}
       </div>
     </div>

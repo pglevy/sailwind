@@ -56,14 +56,14 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
     END: 'justify-end'
   }
 
-  // Margin mappings
+  // Margin mappings - using Tailwind standard classes that map to SAIL values
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-sail-none',
-    EVEN_LESS: 'mb-sail-even-less',
-    LESS: 'mb-sail-less',
-    STANDARD: 'mb-sail-standard',
-    MORE: 'mb-sail-more',
-    EVEN_MORE: 'mb-sail-even-more'
+    NONE: 'mb-0',      // SAIL NONE: 0
+    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
+    LESS: 'mb-2',      // SAIL LESS: 8px
+    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
+    MORE: 'mb-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
   // SAIL behavior: single button renders right-justified, multiple buttons left-justified
@@ -72,7 +72,7 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
 
   return (
     <div
-      className={`flex flex-wrap gap-sail-standard ${alignMap[effectiveAlign]} ${marginBelowMap[marginBelow]}`}
+      className={`flex flex-wrap gap-4 items-start ${alignMap[effectiveAlign]} ${marginBelowMap[marginBelow]}`}
       role="group"
       aria-label={accessibilityText}
     >

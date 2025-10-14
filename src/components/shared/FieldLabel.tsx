@@ -40,22 +40,22 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
   }
 
   const labelClasses = [
-    'text-sail-standard',
+    'text-base',
     'font-medium',
-    'text-gray-5',
-    labelPosition === "ABOVE" && 'block mb-sail-less',
-    labelPosition === "ADJACENT" && 'inline-block mr-sail-standard',
-    labelPosition === "JUSTIFIED" && 'block mb-sail-less', // Similar to ABOVE for now
+    'text-gray-900',
+    labelPosition === "ABOVE" && 'block mb-2',
+    labelPosition === "ADJACENT" && 'inline-block mr-4',
+    labelPosition === "JUSTIFIED" && 'block mb-2', // Similar to ABOVE for now
   ].filter(Boolean).join(' ')
 
   return (
     <div className={labelPosition === "ADJACENT" ? "inline-block" : "block"}>
       <label htmlFor={htmlFor} className={labelClasses}>
         {label}
-        {required && <span className="text-red-4 ml-1" aria-label="required">*</span>}
+        {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
         {helpTooltip && (
           <span
-            className="ml-2 text-gray-4 cursor-help"
+            className="ml-2 text-gray-700 cursor-help"
             title={helpTooltip}
             aria-label="help"
           >
@@ -64,7 +64,7 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
         )}
       </label>
       {instructions && (
-        <p className="text-gray-4 text-sm mt-sail-even-less mb-sail-less">
+        <p className="text-gray-700 text-sm mt-1 mb-2">
           {instructions}
         </p>
       )}
