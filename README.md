@@ -12,7 +12,7 @@ SAIL Zero enables UX designers to rapidly prototype Appian applications using Re
 - **Backwards Compatible** - React code translates almost directly to SAIL
 - **LLM-Friendly** - Clear patterns for AI-assisted development
 - **Accessible** - All components meet WCAG 2.1 AA standards
-- **Production-Ready Foundation** - Built on Radix UI primitives + Tailwind CSS with SAIL-mapped utilities
+- **Production-Ready Foundation** - Built on Radix UI primitives + Tailwind CSS
 
 ## Quick Example
 
@@ -40,8 +40,17 @@ a!tagField(
 
 ### Foundation Stack
 - **Base:** Radix UI (unstyled, accessible primitives)
-- **Styling:** Tailwind CSS with custom SAIL-mapped utilities
+- **Styling:** Tailwind CSS with Aurora color palette
 - **Language:** TypeScript (enforces SAIL conventions)
+
+### Two-Layer Approach
+
+SAIL Zero uses a clear separation:
+
+1. **Layer 1: SAIL API** - Component props use SAIL parameter names (UPPERCASE values)
+2. **Layer 2: Implementation** - Standard Tailwind classes for styling
+
+**Why?** No double mapping, LLM-friendly, standard tooling support.
 
 ### Component Pattern
 SAIL Zero follows SAIL's **Item + Field** grouping pattern:
@@ -79,7 +88,7 @@ npm run dev
 Components use exact SAIL parameter names and values:
 
 ```tsx
-import { TagField, ButtonLayout, CardLayout } from './components'
+import { TagField, ButtonArrayLayout, CardLayout } from './components'
 
 // Tags with SAIL-exact parameters
 <TagField
@@ -92,51 +101,76 @@ import { TagField, ButtonLayout, CardLayout } from './components'
 />
 
 // Buttons following SAIL conventions
-<ButtonLayout
+<ButtonArrayLayout
   buttons={[
-    { label: "Submit", style: "PRIMARY" },
-    { label: "Cancel", style: "SECONDARY" }
+    { label: "Submit", style: "SOLID", color: "ACCENT" },
+    { label: "Cancel", style: "OUTLINE", color: "SECONDARY" }
   ]}
   align="END"
 />
 ```
 
-## SAIL Mappings
+## Styling Approach
+
+SAIL Zero uses **standard Tailwind classes** internally while maintaining SAIL-exact component APIs:
 
 ### Text Sizes
-- `text-sail-small` → SMALL (12px)
-- `text-sail-standard` → STANDARD (16px)
-- `text-sail-medium` → MEDIUM (18px)
-- `text-sail-large` → LARGE (24px)
+- **SMALL** → `text-xs` (12px)
+- **STANDARD** → `text-base` (16px)
+- **MEDIUM** → `text-lg` (18px)
+- **LARGE** → `text-2xl` (24px)
 
 ### Spacing
-- `p-sail-none` / `m-sail-none` → NONE (0)
-- `p-sail-less` / `m-sail-less` → LESS (8px)
-- `p-sail-standard` / `m-sail-standard` → STANDARD (16px)
-- `p-sail-more` / `m-sail-more` → MORE (24px)
+- **NONE** → `p-0` / `m-0` (0)
+- **EVEN_LESS** → `p-1` / `m-1` (4px)
+- **LESS** → `p-2` / `m-2` (8px)
+- **STANDARD** → `p-4` / `m-4` (16px)
+- **MORE** → `p-6` / `m-6` (24px)
+- **EVEN_MORE** → `p-8` / `m-8` (32px)
+
+### Aurora Color Palette
+
+All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
+
+**Available colors:** `red`, `orange`, `yellow`, `green`, `teal`, `sky`, `blue`, `purple`, `pink`, `gray`
+
+**Usage:**
+```tsx
+// Light backgrounds
+<div className="bg-blue-100 text-blue-700">Tag</div>
+
+// Primary actions
+<button className="bg-blue-500 hover:bg-blue-700">Submit</button>
+
+// Text hierarchy
+<h1 className="text-gray-900">Heading</h1>
+<p className="text-gray-700">Body</p>
+```
 
 ### Semantic Colors
-- `ACCENT` → Blue (#2322F0)
-- `POSITIVE` → Green (#117C00)
-- `NEGATIVE` → Red (#B2002C)
-- `SECONDARY` → Gray (#636363)
-- `STANDARD` → Gray (#222222)
 
-## Component Priority (Roadmap)
+| Semantic | Usage | Tailwind |
+|----------|-------|----------|
+| ACCENT | Primary actions | `blue-500` |
+| POSITIVE | Success states | `green-700` |
+| NEGATIVE | Error states | `red-700` |
+| SECONDARY | Secondary actions | `gray-700` |
+| STANDARD | Default text | `gray-900` |
 
-### Phase 1 - Core Components
-- [x] Tags - Status indicators
-- [ ] Buttons - Primary, secondary, destructive variants
-- [ ] Cards - Foundation for layouts
-- [ ] Tabs - Navigation pattern
+## Component Status
 
-### Phase 2 - Form Components
+### ✅ Completed
+- **Tags** (TagField, TagItem) - Status indicators with semantic/hex colors
+- **Buttons** (ButtonWidget, ButtonArrayLayout) - Multiple styles (SOLID, OUTLINE, GHOST, LINK)
+- **Cards** (CardLayout) - Container with decorative bars, borders, shadows
+
+### 🚧 Phase 2 - Form Components
 - [ ] Text Input
 - [ ] Select/Dropdown (Pick List)
 - [ ] Checkbox/Radio
 - [ ] Confirmation Dialog
 
-### Phase 3 - Display Patterns
+### 📋 Phase 3 - Display Patterns
 - [ ] Banners - Alerts/notifications
 - [ ] KPIs - Dashboard cards
 - [ ] Breadcrumbs
@@ -156,22 +190,38 @@ import { TagField, ButtonLayout, CardLayout } from './components'
 ```
 sail-zero/
 ├── src/
-│   ├── components/     # SAIL components
-│   ├── types/         # Shared TypeScript types
-│   └── App.tsx        # Demo/playground
-├── tailwind.config.js # SAIL mappings
+│   ├── components/         # SAIL components (Button, Tag, Card, etc.)
+│   ├── types/             # Shared TypeScript types (SAILSize, SAILAlign, etc.)
+│   ├── index.css          # Tailwind v4 theme configuration
+│   └── App.tsx            # Demo/playground
+├── TAILWIND-SAIL-MAPPING.md  # Complete styling reference
+├── CLAUDE.md              # LLM instructions
 └── package.json
 ```
 
+## Documentation
+
+- **[TAILWIND-SAIL-MAPPING.md](TAILWIND-SAIL-MAPPING.md)** - Complete reference for Tailwind to SAIL mappings
+- **[CLAUDE.md](CLAUDE.md)** - Instructions for LLM-assisted development
+- **[SAIL Official Docs](https://docs.appian.com/suite/help/25.3/)** - Appian SAIL reference
+
 ## Related Resources
 
-- **SAIL Documentation** - https://docs.appian.com/suite/help/25.3/
 - **Radix UI** - https://www.radix-ui.com/
 - **Tailwind CSS** - https://tailwindcss.com/
+- **Aurora Design System** - Color palette and branding
 
 ## Contributing
 
 This is a proof-of-concept for rapid Appian prototyping. Contributions welcome!
+
+### Guidelines
+
+1. Use exact SAIL parameter names (UPPERCASE values)
+2. Follow Item + Field component pattern
+3. Include SAIL translation examples in documentation
+4. Ensure WCAG 2.1 AA accessibility compliance
+5. Use standard Tailwind classes internally
 
 ## License
 
@@ -179,4 +229,4 @@ TBD
 
 ---
 
-**Status:** Early development - Tag component implemented as proof of concept
+**Status:** Active development - Tags, Buttons, and Cards implemented
