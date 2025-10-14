@@ -68,10 +68,10 @@ export const TagField: React.FC<TagFieldProps> = ({
   // Filter out hidden tags
   const visibleTags = tags.filter(tag => tag.showWhen !== false && tag.text)
 
-  // Size mappings - using SAIL design tokens
+  // Size mappings - using Tailwind standard classes that map to SAIL values
   const sizeMap = {
-    SMALL: 'text-sail-small px-sail-less py-sail-even-less',
-    STANDARD: 'text-sail-standard px-sail-standard py-sail-even-less'
+    SMALL: 'text-xs px-2 py-1',      // SAIL SMALL: 12px text, 8px horizontal padding, 4px vertical
+    STANDARD: 'text-base px-4 py-1'  // SAIL STANDARD: 16px text, 16px horizontal padding, 4px vertical
   }
 
   // Alignment mappings
@@ -81,40 +81,40 @@ export const TagField: React.FC<TagFieldProps> = ({
     END: 'justify-end'
   }
 
-  // Margin mappings
+  // Margin mappings - using Tailwind standard classes that map to SAIL values
   const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: 'mt-sail-none',
-    EVEN_LESS: 'mt-sail-even-less',
-    LESS: 'mt-sail-less',
-    STANDARD: 'mt-sail-standard',
-    MORE: 'mt-sail-more',
-    EVEN_MORE: 'mt-sail-even-more'
+    NONE: 'mt-0',      // SAIL NONE: 0
+    EVEN_LESS: 'mt-1', // SAIL EVEN_LESS: 4px
+    LESS: 'mt-2',      // SAIL LESS: 8px
+    STANDARD: 'mt-4',  // SAIL STANDARD: 16px
+    MORE: 'mt-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'mt-8'  // SAIL EVEN_MORE: 32px
   }
 
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-sail-none',
-    EVEN_LESS: 'mb-sail-even-less',
-    LESS: 'mb-sail-less',
-    STANDARD: 'mb-sail-standard',
-    MORE: 'mb-sail-more',
-    EVEN_MORE: 'mb-sail-even-more'
+    NONE: 'mb-0',      // SAIL NONE: 0
+    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
+    LESS: 'mb-2',      // SAIL LESS: 8px
+    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
+    MORE: 'mb-6',      // SAIL MORE: 24px
+    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
   // Semantic color mappings
   const bgColorMap: Record<SAILSemanticColor, string> = {
-    ACCENT: 'bg-blue-1',
-    POSITIVE: 'bg-green-1',
-    NEGATIVE: 'bg-red-1',
-    SECONDARY: 'bg-gray-2',
-    STANDARD: 'bg-gray-1'
+    ACCENT: 'bg-blue-100',
+    POSITIVE: 'bg-green-100',
+    NEGATIVE: 'bg-red-100',
+    SECONDARY: 'bg-gray-200',
+    STANDARD: 'bg-gray-100'
   }
 
   const textColorMap: Record<SAILSemanticColor | "STANDARD", string> = {
-    ACCENT: 'text-blue-4',
-    POSITIVE: 'text-green-4',
-    NEGATIVE: 'text-red-4',
-    SECONDARY: 'text-gray-4',
-    STANDARD: 'text-gray-5'
+    ACCENT: 'text-blue-700',
+    POSITIVE: 'text-green-700',
+    NEGATIVE: 'text-red-700',
+    SECONDARY: 'text-gray-700',
+    STANDARD: 'text-gray-900'
   }
 
   // Render individual tag
@@ -144,7 +144,7 @@ export const TagField: React.FC<TagFieldProps> = ({
         className={`
           inline-block font-semibold max-w-full
           whitespace-nowrap overflow-hidden text-ellipsis
-          rounded-sail-semi-rounded
+          rounded-sm
           ${sizeMap[size]}
           ${bgClass}
           ${textClass}
@@ -178,7 +178,7 @@ export const TagField: React.FC<TagFieldProps> = ({
       {visibleTags.length > 0 && (
         <div
           id={fieldId}
-          className={`flex flex-wrap gap-sail-less ${alignMap[align]}`}
+          className={`flex flex-wrap gap-2 ${alignMap[align]}`}
           role="list"
         >
           {visibleTags.map(renderTag)}

@@ -89,12 +89,12 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Size mappings
+  // Size mappings - using standard Tailwind spacing classes
   const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-sail-standard py-sail-even-less text-sail-small',
-    STANDARD: 'px-sail-more py-sail-less text-sail-standard',
-    MEDIUM: 'px-sail-even-more py-sail-standard text-sail-medium',
-    LARGE: 'px-sail-even-more py-sail-more text-sail-large'
+    SMALL: 'px-3 py-1.5 text-sm',      // SAIL SMALL: 12px horizontal, 6px vertical
+    STANDARD: 'px-4 py-2.5 text-base', // SAIL STANDARD: 16px horizontal, 10px vertical
+    MEDIUM: 'px-6 py-3 text-lg',       // SAIL MEDIUM: 24px horizontal, 12px vertical
+    LARGE: 'px-8 py-4 text-xl'         // SAIL LARGE: 32px horizontal, 16px vertical
   }
 
   // Width mappings
@@ -112,36 +112,36 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "SOLID") {
       const solidColors: Record<ButtonColor, string> = {
-        ACCENT: 'bg-blue-3 text-white hover:bg-blue-4',
-        NEGATIVE: 'bg-red-35 text-white hover:bg-red-4',
-        SECONDARY: 'bg-gray-4 text-white hover:bg-gray-5'
+        ACCENT: 'bg-blue-500 text-white hover:bg-blue-700',
+        NEGATIVE: 'bg-red-700 text-white hover:bg-red-900',
+        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900'
       }
       return solidColors[semanticColor]
     }
 
     if (style === "OUTLINE") {
       const outlineColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-blue-3 text-blue-3 bg-white hover:bg-blue-1',
-        NEGATIVE: 'border-2 border-red-35 text-red-35 bg-white hover:bg-red-1',
-        SECONDARY: 'border-2 border-gray-4 text-gray-4 bg-white hover:bg-gray-1'
+        ACCENT: 'border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
+        NEGATIVE: 'border-2 border-red-700 text-red-700 bg-white hover:bg-red-100',
+        SECONDARY: 'border-2 border-gray-700 text-gray-700 bg-white hover:bg-gray-100'
       }
       return outlineColors[semanticColor]
     }
 
     if (style === "GHOST") {
       const ghostColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-3 hover:bg-blue-1',
-        NEGATIVE: 'text-red-35 hover:bg-red-1',
-        SECONDARY: 'text-gray-4 hover:bg-gray-1'
+        ACCENT: 'text-blue-500 hover:bg-blue-100',
+        NEGATIVE: 'text-red-700 hover:bg-red-100',
+        SECONDARY: 'text-gray-700 hover:bg-gray-100'
       }
       return ghostColors[semanticColor]
     }
 
     if (style === "LINK") {
       const linkColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-3 hover:underline',
-        NEGATIVE: 'text-red-35 hover:underline',
-        SECONDARY: 'text-gray-4 hover:underline'
+        ACCENT: 'text-blue-500 hover:underline',
+        NEGATIVE: 'text-red-700 hover:underline',
+        SECONDARY: 'text-gray-700 hover:underline'
       }
       return linkColors[semanticColor]
     }
@@ -150,13 +150,12 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   }
 
   const baseClasses = `
-    inline-flex items-center justify-center gap-sail-even-less
-    font-medium transition-colors rounded-sail-semi-rounded
+    inline-flex items-center justify-center gap-1
+    font-medium transition-colors rounded-sm h-auto
     ${sizeMap[size]}
     ${widthClass}
     ${getColorClasses()}
     ${disabled || loadingIndicator ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    ${style === "LINK" ? '' : 'min-w-[80px]'}
   `.replace(/\s+/g, ' ').trim()
 
   const handleClick = () => {
