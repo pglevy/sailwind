@@ -21,3 +21,6 @@ export * from './ProgressBar'
 
 // RichText components
 export * from './RichText'
+
+// Stamp components
+export * from './Stamp'
