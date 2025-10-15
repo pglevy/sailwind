@@ -1,22 +1,96 @@
+import { useState } from 'react'
 import { TagField, ButtonWidget, CardLayout, ButtonArrayLayout, MessageBanner, ProgressBar, HeadingField, RichTextDisplayField, TextItem, Icon } from './components'
+import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile } from './vibes'
+
+type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile'
 
 function App() {
+  const [viewMode, setViewMode] = useState<ViewMode>('components')
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header using HeadingField */}
-        <div className="mb-8">
-          <HeadingField
-            text="Sailwind"
-            size="LARGE_PLUS"
-            headingTag="H1"
-            color="ACCENT"
-            marginBelow="EVEN_LESS"
-          />
-          <p className="text-base text-gray-700">
-            React component library for rapid prototyping of Appian applications
-          </p>
+    <div className="min-h-screen bg-gray-100">
+      {/* Navigation */}
+      <div className="bg-white border-b-2 border-gray-200 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-8 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <HeadingField
+              text="Sailwind"
+              size="MEDIUM_PLUS"
+              headingTag="H1"
+              color="ACCENT"
+              marginBelow="NONE"
+            />
+            <TagField
+              tags={[{ text: "SAIL-Compatible", backgroundColor: "ACCENT" }]}
+              size="SMALL"
+            />
+          </div>
+          <div className="flex gap-2">
+            <ButtonArrayLayout
+              buttons={[
+                {
+                  label: "Components",
+                  style: viewMode === 'components' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('components')
+                },
+                {
+                  label: "Task Dashboard",
+                  style: viewMode === 'task-dashboard' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('task-dashboard')
+                },
+                {
+                  label: "Application Status",
+                  style: viewMode === 'application-status' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('application-status')
+                },
+                {
+                  label: "Document Review",
+                  style: viewMode === 'document-review' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('document-review')
+                },
+                {
+                  label: "User Profile",
+                  style: viewMode === 'user-profile' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('user-profile')
+                }
+              ]}
+              align="START"
+            />
+          </div>
         </div>
+      </div>
+
+      {/* Content */}
+      {viewMode === 'task-dashboard' && <TaskDashboard />}
+      {viewMode === 'application-status' && <ApplicationStatus />}
+      {viewMode === 'document-review' && <DocumentReview />}
+      {viewMode === 'user-profile' && <UserProfile />}
+
+      {viewMode === 'components' && (
+        <div className="p-8">
+          <div className="max-w-6xl mx-auto">
+            {/* Header using HeadingField */}
+            <div className="mb-8">
+              <HeadingField
+                text="Component Library"
+                size="LARGE_PLUS"
+                headingTag="H1"
+                marginBelow="EVEN_LESS"
+              />
+              <p className="text-base text-gray-700">
+                React component library for rapid prototyping of Appian applications
+              </p>
+            </div>
 
         {/* Heading Component Demo */}
         <CardLayout
@@ -928,7 +1002,9 @@ function App() {
             </pre>
           </div>
         </CardLayout>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
