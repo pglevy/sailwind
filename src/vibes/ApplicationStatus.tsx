@@ -23,7 +23,7 @@ export const ApplicationStatus = () => {
       <RichTextDisplayField
         value={[
           <TextItem key="1" text="Submitted on March 15, 2024 by " />,
-          <TextItem key="2" text="Sarah Johnson" fontWeight="BOLD" />
+          <TextItem key="2" text="Sarah Johnson" style="STRONG" />
         ]}
         marginBelow="MORE"
       />
@@ -138,7 +138,7 @@ export const ApplicationStatus = () => {
               label="Request Type"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="Budget Increase - Capital Expenditure" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Budget Increase - Capital Expenditure" style="STRONG" />
               ]}
               marginBelow="STANDARD"
             />
@@ -148,7 +148,7 @@ export const ApplicationStatus = () => {
               label="Amount Requested"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="$125,000" fontSize="MEDIUM" fontWeight="BOLD" color="ACCENT" />
+                <TextItem key="1" text="$125,000" size="MEDIUM" style="STRONG" color="ACCENT" />
               ]}
               marginBelow="STANDARD"
             />
@@ -211,13 +211,13 @@ export const ApplicationStatus = () => {
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="Application Submitted" fontWeight="SEMI_BOLD" />
+                  <TextItem key="1" text="Application Submitted" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="March 15, 2024 at 2:30 PM" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="March 15, 2024 at 2:30 PM" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>
@@ -234,13 +234,13 @@ export const ApplicationStatus = () => {
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="Initial Review" fontWeight="SEMI_BOLD" />
+                  <TextItem key="1" text="Initial Review" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="In progress - Started March 16, 2024" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="In progress - Started March 16, 2024" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>
@@ -257,13 +257,13 @@ export const ApplicationStatus = () => {
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="Final Approval" fontWeight="SEMI_BOLD" />
+                  <TextItem key="1" text="Final Approval" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="Pending" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="Pending" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>

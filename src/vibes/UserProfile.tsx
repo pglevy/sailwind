@@ -38,7 +38,7 @@ export const UserProfile = () => {
                 />
                 <RichTextDisplayField
                   value={[
-                    <TextItem key="1" text="Senior Product Manager" fontSize="MEDIUM" color="SECONDARY" />
+                    <TextItem key="1" text="Senior Product Manager" size="MEDIUM" color="SECONDARY" />
                   ]}
                   marginBelow="LESS"
                 />
@@ -52,20 +52,20 @@ export const UserProfile = () => {
             <div className="flex gap-6 mb-3">
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="mail" size="SMALL" color="SECONDARY" />,
-                  <TextItem key="2" text=" sarah.johnson@company.com" fontSize="SMALL" />
+                  <Icon key="1" icon="mail" size="SMALL" color="SECONDARY" />,
+                  <TextItem key="2" text=" sarah.johnson@company.com" size="SMALL" />
                 ]}
               />
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="building-2" size="SMALL" color="SECONDARY" />,
-                  <TextItem key="2" text=" Product Division" fontSize="SMALL" />
+                  <Icon key="1" icon="building-2" size="SMALL" color="SECONDARY" />,
+                  <TextItem key="2" text=" Product Division" size="SMALL" />
                 ]}
               />
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="map-pin" size="SMALL" color="SECONDARY" />,
-                  <TextItem key="2" text=" San Francisco, CA" fontSize="SMALL" />
+                  <Icon key="1" icon="map-pin" size="SMALL" color="SECONDARY" />,
+                  <TextItem key="2" text=" San Francisco, CA" size="SMALL" />
                 ]}
               />
             </div>
@@ -127,7 +127,7 @@ export const UserProfile = () => {
               label="Department"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="Product Division" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Product Division" style="STRONG" />
               ]}
               marginBelow="LESS"
             />
@@ -136,7 +136,7 @@ export const UserProfile = () => {
               label="Manager"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="David Martinez" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="David Martinez" style="STRONG" />
               ]}
               marginBelow="LESS"
             />
@@ -145,7 +145,7 @@ export const UserProfile = () => {
               label="Started"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="January 2021" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="January 2021" style="STRONG" />
               ]}
               marginBelow="LESS"
             />
@@ -154,7 +154,7 @@ export const UserProfile = () => {
               label="Team Size"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="12 Direct Reports" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="12 Direct Reports" style="STRONG" />
               ]}
               marginBelow="LESS"
             />
@@ -190,7 +190,7 @@ export const UserProfile = () => {
             label="Phone"
             labelPosition="ABOVE"
             value={[
-              <TextItem key="1" text="+1 (415) 555-0123" fontWeight="SEMI_BOLD" />
+              <TextItem key="1" text="+1 (415) 555-0123" style="STRONG" />
             ]}
             marginBelow="STANDARD"
           />
@@ -199,7 +199,7 @@ export const UserProfile = () => {
             label="Office Location"
             labelPosition="ABOVE"
             value={[
-              <TextItem key="1" text="Building A, Floor 3, Office 312" fontWeight="SEMI_BOLD" />
+              <TextItem key="1" text="Building A, Floor 3, Office 312" style="STRONG" />
             ]}
             marginBelow="STANDARD"
           />
@@ -208,7 +208,7 @@ export const UserProfile = () => {
             label="Working Hours"
             labelPosition="ABOVE"
             value={[
-              <TextItem key="1" text="Monday - Friday, 9:00 AM - 5:00 PM PST" fontWeight="SEMI_BOLD" />
+              <TextItem key="1" text="Monday - Friday, 9:00 AM - 5:00 PM PST" style="STRONG" />
             ]}
           />
         </CardLayout>
@@ -326,7 +326,7 @@ export const UserProfile = () => {
             <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-sm flex items-center justify-center">
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="file-text" size="SMALL" color="ACCENT" />
+                  <Icon key="1" icon="file-text" size="SMALL" color="ACCENT" />
                 ]}
               />
             </div>
@@ -334,13 +334,13 @@ export const UserProfile = () => {
               <RichTextDisplayField
                 value={[
                   <TextItem key="1" text="Updated " />,
-                  <TextItem key="2" text="Q2 Product Roadmap" fontWeight="BOLD" />
+                  <TextItem key="2" text="Q2 Product Roadmap" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="2 hours ago" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="2 hours ago" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>
@@ -354,7 +354,7 @@ export const UserProfile = () => {
             <div className="flex-shrink-0 w-10 h-10 bg-green-100 rounded-sm flex items-center justify-center">
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="check-circle" size="SMALL" color="POSITIVE" />
+                  <Icon key="1" icon="check-circle" size="SMALL" color="POSITIVE" />
                 ]}
               />
             </div>
@@ -362,13 +362,13 @@ export const UserProfile = () => {
               <RichTextDisplayField
                 value={[
                   <TextItem key="1" text="Completed " />,
-                  <TextItem key="2" text="User Research Analysis" fontWeight="BOLD" />
+                  <TextItem key="2" text="User Research Analysis" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="Yesterday at 4:30 PM" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="Yesterday at 4:30 PM" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>
@@ -382,7 +382,7 @@ export const UserProfile = () => {
             <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-sm flex items-center justify-center">
               <RichTextDisplayField
                 value={[
-                  <Icon key="1" iconName="users" size="SMALL" />
+                  <Icon key="1" icon="users" size="SMALL" />
                 ]}
               />
             </div>
@@ -390,13 +390,13 @@ export const UserProfile = () => {
               <RichTextDisplayField
                 value={[
                   <TextItem key="1" text="Attended " />,
-                  <TextItem key="2" text="Product Strategy Meeting" fontWeight="BOLD" />
+                  <TextItem key="2" text="Product Strategy Meeting" style="STRONG" />
                 ]}
                 marginBelow="EVEN_LESS"
               />
               <RichTextDisplayField
                 value={[
-                  <TextItem key="1" text="March 14 at 10:00 AM" fontSize="SMALL" color="SECONDARY" />
+                  <TextItem key="1" text="March 14 at 10:00 AM" size="SMALL" color="SECONDARY" />
                 ]}
               />
             </div>
@@ -426,21 +426,21 @@ export const UserProfile = () => {
           <div className="p-4 bg-blue-50 rounded-sm border-2 border-blue-500">
             <RichTextDisplayField
               value={[
-                <Icon key="1" iconName="award" size="MEDIUM" color="ACCENT" />
+                <Icon key="1" icon="award" size="MEDIUM" color="ACCENT" />
               ]}
               align="CENTER"
               marginBelow="LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Certified Scrum Product Owner" fontWeight="BOLD" fontSize="SMALL" />
+                <TextItem key="1" text="Certified Scrum Product Owner" style="STRONG" size="SMALL" />
               ]}
               align="CENTER"
               marginBelow="EVEN_LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="2023" fontSize="SMALL" color="SECONDARY" />
+                <TextItem key="1" text="2023" size="SMALL" color="SECONDARY" />
               ]}
               align="CENTER"
             />
@@ -449,21 +449,21 @@ export const UserProfile = () => {
           <div className="p-4 bg-green-50 rounded-sm border-2 border-green-700">
             <RichTextDisplayField
               value={[
-                <Icon key="1" iconName="award" size="MEDIUM" color="POSITIVE" />
+                <Icon key="1" icon="award" size="MEDIUM" color="POSITIVE" />
               ]}
               align="CENTER"
               marginBelow="LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Excellence in Leadership" fontWeight="BOLD" fontSize="SMALL" />
+                <TextItem key="1" text="Excellence in Leadership" style="STRONG" size="SMALL" />
               ]}
               align="CENTER"
               marginBelow="EVEN_LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="2023" fontSize="SMALL" color="SECONDARY" />
+                <TextItem key="1" text="2023" size="SMALL" color="SECONDARY" />
               ]}
               align="CENTER"
             />
@@ -472,21 +472,21 @@ export const UserProfile = () => {
           <div className="p-4 bg-purple-50 rounded-sm border-2 border-purple-500">
             <RichTextDisplayField
               value={[
-                <Icon key="1" iconName="award" size="MEDIUM" />
+                <Icon key="1" icon="award" size="MEDIUM" />
               ]}
               align="CENTER"
               marginBelow="LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Product Management Certificate" fontWeight="BOLD" fontSize="SMALL" />
+                <TextItem key="1" text="Product Management Certificate" style="STRONG" size="SMALL" />
               ]}
               align="CENTER"
               marginBelow="EVEN_LESS"
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="2022" fontSize="SMALL" color="SECONDARY" />
+                <TextItem key="1" text="2022" size="SMALL" color="SECONDARY" />
               ]}
               align="CENTER"
             />

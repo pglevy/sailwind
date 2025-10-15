@@ -23,8 +23,8 @@ export const DocumentReview = () => {
           />
           <RichTextDisplayField
             value={[
-              <TextItem key="1" text="Document ID: " fontSize="SMALL" color="SECONDARY" />,
-              <TextItem key="2" text="DOC-2024-3847" fontSize="SMALL" fontWeight="SEMI_BOLD" />
+              <TextItem key="1" text="Document ID: " size="SMALL" color="SECONDARY" />,
+              <TextItem key="2" text="DOC-2024-3847" size="SMALL" style="STRONG" />
             ]}
           />
         </div>
@@ -66,7 +66,7 @@ export const DocumentReview = () => {
               label="Document Name"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="Vendor Service Agreement - Acme Corp" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Vendor Service Agreement - Acme Corp" style="STRONG" />
               ]}
               marginBelow="STANDARD"
             />
@@ -84,7 +84,7 @@ export const DocumentReview = () => {
               label="Version"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="3.2 (Draft)" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="3.2 (Draft)" style="STRONG" />
               ]}
               marginBelow="STANDARD"
             />
@@ -95,9 +95,9 @@ export const DocumentReview = () => {
               label="Submitted By"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="Michael Chen" fontWeight="SEMI_BOLD" />,
+                <TextItem key="1" text="Michael Chen" style="STRONG" />,
                 <TextItem key="2" text=" - " />,
-                <TextItem key="3" text="Procurement Department" fontSize="SMALL" color="SECONDARY" />
+                <TextItem key="3" text="Procurement Department" size="SMALL" color="SECONDARY" />
               ]}
               marginBelow="STANDARD"
             />
@@ -115,8 +115,8 @@ export const DocumentReview = () => {
               label="Contract Value"
               labelPosition="ABOVE"
               value={[
-                <TextItem key="1" text="$2,500,000" fontSize="MEDIUM" fontWeight="BOLD" color="ACCENT" />,
-                <TextItem key="2" text=" over 3 years" fontSize="SMALL" />
+                <TextItem key="1" text="$2,500,000" size="MEDIUM" style="STRONG" color="ACCENT" />,
+                <TextItem key="2" text=" over 3 years" size="SMALL" />
               ]}
               marginBelow="STANDARD"
             />
@@ -174,7 +174,7 @@ export const DocumentReview = () => {
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Approved Sections" fontSize="SMALL" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Approved Sections" size="SMALL" style="STRONG" />
               ]}
               align="CENTER"
             />
@@ -190,7 +190,7 @@ export const DocumentReview = () => {
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Sections with Comments" fontSize="SMALL" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Sections with Comments" size="SMALL" style="STRONG" />
               ]}
               align="CENTER"
             />
@@ -207,7 +207,7 @@ export const DocumentReview = () => {
             />
             <RichTextDisplayField
               value={[
-                <TextItem key="1" text="Sections Requiring Changes" fontSize="SMALL" fontWeight="SEMI_BOLD" />
+                <TextItem key="1" text="Sections Requiring Changes" size="SMALL" style="STRONG" />
               ]}
               align="CENTER"
             />
@@ -237,14 +237,14 @@ export const DocumentReview = () => {
               <div>
                 <RichTextDisplayField
                   value={[
-                    <TextItem key="1" text="Jennifer Adams" fontWeight="BOLD" />,
-                    <TextItem key="2" text=" - Legal Department" fontSize="SMALL" color="SECONDARY" />
+                    <TextItem key="1" text="Jennifer Adams" style="STRONG" />,
+                    <TextItem key="2" text=" - Legal Department" size="SMALL" color="SECONDARY" />
                   ]}
                   marginBelow="EVEN_LESS"
                 />
                 <RichTextDisplayField
                   value={[
-                    <TextItem key="1" text="Reviewed on March 15, 2024 at 10:30 AM" fontSize="SMALL" color="SECONDARY" />
+                    <TextItem key="1" text="Reviewed on March 15, 2024 at 10:30 AM" size="SMALL" color="SECONDARY" />
                   ]}
                 />
               </div>
@@ -269,14 +269,14 @@ export const DocumentReview = () => {
               <div>
                 <RichTextDisplayField
                   value={[
-                    <TextItem key="1" text="Robert Kim" fontWeight="BOLD" />,
-                    <TextItem key="2" text=" - Finance Department" fontSize="SMALL" color="SECONDARY" />
+                    <TextItem key="1" text="Robert Kim" style="STRONG" />,
+                    <TextItem key="2" text=" - Finance Department" size="SMALL" color="SECONDARY" />
                   ]}
                   marginBelow="EVEN_LESS"
                 />
                 <RichTextDisplayField
                   value={[
-                    <TextItem key="1" text="Reviewed on March 15, 2024 at 2:15 PM" fontSize="SMALL" color="SECONDARY" />
+                    <TextItem key="1" text="Reviewed on March 15, 2024 at 2:15 PM" size="SMALL" color="SECONDARY" />
                   ]}
                 />
               </div>
