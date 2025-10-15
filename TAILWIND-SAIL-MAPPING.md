@@ -1,10 +1,10 @@
 # Tailwind to SAIL Value Mappings
 
-This document shows how SAIL parameter values map to Tailwind CSS utilities in the SAIL Zero library.
+This document shows how SAIL parameter values map to Tailwind CSS utilities in the Sailwind library.
 
 ## Philosophy: Two-Layer Approach
 
-SAIL Zero uses a **two-layer architecture**:
+Sailwind uses a **two-layer architecture**:
 
 1. **Layer 1: SAIL API** (Component Props) - User-controllable parameters that map to SAIL
 2. **Layer 2: Implementation/Layout** (Component Internals) - Vanilla Tailwind for styling decisions
@@ -112,7 +112,7 @@ Use only these Tailwind steps across all color families:
 
 ### Semantic Color Mappings
 
-In SAIL Zero components, semantic colors map to:
+In Sailwind components, semantic colors map to:
 
 | Semantic | Tailwind Class | Aurora Color |
 |----------|---------------|--------------|

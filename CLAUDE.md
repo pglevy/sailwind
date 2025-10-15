@@ -1,8 +1,8 @@
-# CLAUDE.md - SAIL Zero Project Instructions
+# CLAUDE.md - Sailwind Project Instructions
 
 ## Project Overview
 
-**SAIL Zero** is a React component library for rapid prototyping of Appian applications. The key goal is **backwards compatibility with SAIL** - every component should use exact SAIL parameter names and values so prototypes translate directly to production code.
+**Sailwind** is a React component library for rapid prototyping of Appian applications. The key goal is **backwards compatibility with SAIL** - every component should use exact SAIL parameter names and values so prototypes translate directly to production code.
 
 ## Core Principles
 
@@ -90,7 +90,7 @@ a!tagField(
 
 ## Two-Layer Architecture (CRITICAL)
 
-SAIL Zero uses a clear separation between SAIL API and implementation details:
+Sailwind uses a clear separation between SAIL API and implementation details:
 
 ### Layer 1: SAIL API (Component Props)
 User-controllable parameters that map directly to SAIL production code:
