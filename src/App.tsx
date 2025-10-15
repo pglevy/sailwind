@@ -7,10 +7,10 @@ function App() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            SAIL React Component Library
+            Sailwind
           </h1>
           <p className="text-base text-gray-700">
-            Proof of concept - Appian-styled components with SAIL-compatible syntax
+            React component library for rapid prototyping of Appian applications
           </p>
         </div>
 

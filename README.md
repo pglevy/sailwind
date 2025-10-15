@@ -1,10 +1,10 @@
-# SAIL Zero
+# Sailwind
 
-**Zero-config React component library for rapid prototyping of Appian applications with SAIL-compatible syntax.**
+**React component library for rapid prototyping of Appian applications with SAIL-compatible syntax.**
 
 ## Overview
 
-SAIL Zero enables UX designers to rapidly prototype Appian applications using React and LLMs (like Claude) before committing to SAIL development. Components look like Appian, use exact SAIL parameter names, and translate directly to production code.
+Sailwind enables UX designers to rapidly prototype Appian applications using React and LLMs (like Claude) before committing to SAIL development. Components look like Appian, use exact SAIL parameter names, and translate directly to production code.
 
 ## Key Features
 
@@ -45,7 +45,7 @@ a!tagField(
 
 ### Two-Layer Approach
 
-SAIL Zero uses a clear separation:
+Sailwind uses a clear separation:
 
 1. **Layer 1: SAIL API** - Component props use SAIL parameter names (UPPERCASE values)
 2. **Layer 2: Implementation** - Standard Tailwind classes for styling
@@ -53,7 +53,7 @@ SAIL Zero uses a clear separation:
 **Why?** No double mapping, LLM-friendly, standard tooling support.
 
 ### Component Pattern
-SAIL Zero follows SAIL's **Item + Field** grouping pattern:
+Sailwind follows SAIL's **Item + Field** grouping pattern:
 
 ```tsx
 // Item component - individual properties
@@ -112,7 +112,7 @@ import { TagField, ButtonArrayLayout, CardLayout } from './components'
 
 ## Styling Approach
 
-SAIL Zero uses **standard Tailwind classes** internally while maintaining SAIL-exact component APIs:
+Sailwind uses **standard Tailwind classes** internally while maintaining SAIL-exact component APIs:
 
 ### Text Sizes
 - **SMALL** → `text-xs` (12px)
@@ -188,7 +188,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 ### Project Structure
 
 ```
-sail-zero/
+sailwind/
 ├── src/
 │   ├── components/         # SAIL components (Button, Tag, Card, etc.)
 │   ├── types/             # Shared TypeScript types (SAILSize, SAILAlign, etc.)
