@@ -36,3 +36,9 @@ export * from './RadioButton'
 
 // Dropdown components
 export * from './Dropdown'
+
+// Switch components (new SAIL)
+export * from './Switch'
+
+// Toggle components (new SAIL)
+export * from './Toggle'

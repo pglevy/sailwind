@@ -179,7 +179,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 
 ## Component Status
 
-### ✅ Completed
+### ✅ Completed (SAIL Components)
 - **Tags** (TagField, TagItem) - Status indicators with semantic/hex colors
 - **Buttons** (ButtonWidget, ButtonArrayLayout) - Multiple styles (SOLID, OUTLINE, GHOST, LINK)
 - **Cards** (CardLayout) - Container with decorative bars, borders, shadows
@@ -193,6 +193,14 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 - **Checkboxes** (CheckboxField) - Multi-select checkbox groups
 - **Dropdown** (DropdownField) - Single-select dropdown with search
 - **Multiple Dropdown** (MultipleDropdownField) - Multi-select dropdown with search
+
+### ✨ "New SAIL" Components (Experimental)
+**Not available in public SAIL** - These components extend beyond SAIL's current capabilities while following the same patterns and conventions:
+
+- **Switch** (SwitchField) - Toggle switch for boolean on/off states (settings, preferences)
+- **Toggle** (ToggleField) - Button-style toggle for pressed/unpressed states (toolbar buttons, filters)
+
+These components use Radix UI primitives and follow all Sailwind conventions. They're marked as "NEW SAIL" in the demo with purple tags.
 
 ### 🚧 Phase 3 - Additional Components
 - [ ] Tabs
@@ -258,4 +266,4 @@ TBD
 
 ---
 
-**Status:** Active development - 13 components implemented including form inputs, selections, and display components
+**Status:** Active development - 15 components implemented (13 SAIL + 2 "New SAIL") including form inputs, selections, toggles, and display components
