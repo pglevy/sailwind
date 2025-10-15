@@ -27,7 +27,7 @@
 2. **secondaryText** (Text) - ✅ Implemented  
 3. **backgroundColor** (Text) - ✅ Implemented with semantic + hex support
 4. **highlightColor** (Text) - ✅ Implemented with semantic + hex support
-5. **icon** (Text) - ✅ Implemented with placeholder icons
+5. **icon** (Text) - ✅ Implemented with Lucide React icons
 6. **showDecorativeBar** (Boolean) - ✅ Implemented
 7. **shape** (Text) - ✅ Implemented using SAILShape type
 8. **marginAbove** (Text) - ✅ Implemented using SAILMarginSize type
@@ -68,7 +68,7 @@ export type AnnounceBehavior = "DISPLAY_ONLY" | "DISPLAY_AND_ANNOUNCE" | "ANNOUN
 
 ## Assumptions Made
 
-1. **Icon Implementation**: Used emoji placeholders for common icons (info-circle, check-circle, etc.). In production, would integrate with Appian's icon system.
+1. **Icon Implementation**: Uses Lucide React icons (Info, CheckCircle, AlertTriangle, AlertCircle) that map to SAIL icon names. React uses simplified names ("info", "success", "warning", "error") while SAIL uses full names ("info-circle", "check-circle", etc.).
 
 2. **Hex Color Transparency**: Supports hex colors with transparency (e.g., "#FED7DE80") as documented in SAIL specs.
 
@@ -78,7 +78,7 @@ export type AnnounceBehavior = "DISPLAY_ONLY" | "DISPLAY_AND_ANNOUNCE" | "ANNOUN
 
 ## Questions for Human Review
 
-1. **Icon Integration**: Should we integrate with a specific icon library (Lucide, Heroicons) or wait for Appian icon system integration?
+1. **Icon Integration**: ✅ **RESOLVED** - Integrated Lucide React icons with proper mapping to SAIL icon names.
 
 2. **Custom Color Contrast**: Should we add automatic contrast checking for custom hex colors, or document it as a developer responsibility?
 
