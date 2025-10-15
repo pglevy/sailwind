@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { TagField, ButtonWidget, CardLayout, ButtonArrayLayout, MessageBanner, ProgressBar, HeadingField, RichTextDisplayField, TextItem, Icon, StampField, TextField, CheckboxField, RadioButtonField, DropdownField, MultipleDropdownField } from './components'
+import { TagField, ButtonWidget, CardLayout, ButtonArrayLayout, MessageBanner, ProgressBar, HeadingField, RichTextDisplayField, TextItem, Icon, StampField, TextField, CheckboxField, RadioButtonField, DropdownField, MultipleDropdownField, SwitchField, ToggleField } from './components'
 import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile, FormEntry } from './vibes'
+import { Star, Filter, ArrowRight } from 'lucide-react'
 
 type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry'
 
@@ -44,6 +45,25 @@ function App() {
   const [multipleLanguages, setMultipleLanguages] = useState<string[]>(['en_US', 'fr_FR'])
   const [multipleNoDefault, setMultipleNoDefault] = useState<string[]>([])
   const [multipleWithSearch, setMultipleWithSearch] = useState<string[]>([])
+
+  // Switch demo state (NEW SAIL components)
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false)
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
+
+  // Toggle demo state (NEW SAIL components)
+  const [boldToggled, setBoldToggled] = useState(false)
+  const [italicToggled, setItalicToggled] = useState(false)
+  const [favoriteToggled, setFavoriteToggled] = useState(true)
+  const [solidToggled, setSolidToggled] = useState(false)
+  const [outlineToggled, setOutlineToggled] = useState(false)
+  const [ghostToggled, setGhostToggled] = useState(false)
+  const [filterToggled, setFilterToggled] = useState(false)
+  const [searchToggled, setSearchToggled] = useState(false)
+  const [accentToggled, setAccentToggled] = useState(false)
+  const [positiveToggled, setPositiveToggled] = useState(false)
+  const [negativeToggled, setNegativeToggled] = useState(false)
+  const [secondaryToggled, setSecondaryToggled] = useState(false)
 
   // Email validation
   const emailValidations = email && !email.includes('@')
@@ -1919,6 +1939,345 @@ function App() {
   value: local!language,
   saveInto: local!language,
   searchDisplay: "AUTO"
+)`}
+            </pre>
+          </div>
+        </CardLayout>
+
+        {/* Switch Component Demo (NEW SAIL) */}
+        <CardLayout
+          shape="SEMI_ROUNDED"
+          padding="MORE"
+          marginBelow="MORE"
+          showBorder={true}
+          borderColor="#EDEEFA"
+          decorativeBarPosition="TOP"
+          decorativeBarColor="ACCENT"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <HeadingField
+              text="Switch Component"
+              size="LARGE"
+              headingTag="H2"
+              marginBelow="NONE"
+            />
+            <TagField
+              tags={[{ text: "NEW SAIL", backgroundColor: "#9333EA", textColor: "#FFFFFF" }]}
+              size="SMALL"
+            />
+          </div>
+          <p className="text-sm text-gray-700 mb-4">
+            Not available in public SAIL - this is a "new SAIL" component following the same patterns and conventions.
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Basic Switches
+              </h3>
+              <div className="space-y-4">
+                <SwitchField
+                  label="Enable Notifications"
+                  instructions="Receive email and push notifications for updates"
+                  value={notificationsEnabled}
+                  saveInto={(value) => setNotificationsEnabled(value)}
+                />
+
+                <SwitchField
+                  label="Dark Mode"
+                  value={darkModeEnabled}
+                  saveInto={(value) => setDarkModeEnabled(value)}
+                />
+
+                <SwitchField
+                  label="Auto-save"
+                  instructions="Automatically save changes every 30 seconds"
+                  value={autoSaveEnabled}
+                  saveInto={(value) => setAutoSaveEnabled(value)}
+                  color="POSITIVE"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Size Variations
+              </h3>
+              <div className="space-y-4">
+                <SwitchField
+                  label="Small Switch"
+                  value={true}
+                  size="SMALL"
+                />
+                <SwitchField
+                  label="Standard Switch"
+                  value={true}
+                  size="STANDARD"
+                />
+                <SwitchField
+                  label="Medium Switch"
+                  value={true}
+                  size="MEDIUM"
+                />
+                <SwitchField
+                  label="Large Switch"
+                  value={true}
+                  size="LARGE"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Color Options
+              </h3>
+              <div className="space-y-4">
+                <SwitchField
+                  label="ACCENT (Blue)"
+                  value={true}
+                  color="ACCENT"
+                />
+                <SwitchField
+                  label="POSITIVE (Green)"
+                  value={true}
+                  color="POSITIVE"
+                />
+                <SwitchField
+                  label="NEGATIVE (Red)"
+                  value={true}
+                  color="NEGATIVE"
+                />
+                <SwitchField
+                  label="Custom Hex Color"
+                  value={true}
+                  color="#9333EA"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                States
+              </h3>
+              <div className="space-y-4">
+                <SwitchField
+                  label="Disabled (Off)"
+                  value={false}
+                  disabled
+                />
+                <SwitchField
+                  label="Disabled (On)"
+                  value={true}
+                  disabled
+                />
+                <SwitchField
+                  label="Adjacent Label Position"
+                  labelPosition="ADJACENT"
+                  value={true}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-purple-50 border-2 border-purple-200 rounded-sm">
+            <h4 className="text-xs font-semibold text-purple-900 mb-1">
+              Imagined SAIL Translation (not real SAIL):
+            </h4>
+            <pre className="text-xs text-gray-900 overflow-x-auto">
+{`a!switchField(
+  label: "Enable Notifications",
+  instructions: "Receive email and push notifications",
+  value: local!notificationsEnabled,
+  saveInto: local!notificationsEnabled,
+  color: "ACCENT"
+)`}
+            </pre>
+          </div>
+        </CardLayout>
+
+        {/* Toggle Component Demo (NEW SAIL) */}
+        <CardLayout
+          shape="SEMI_ROUNDED"
+          padding="MORE"
+          marginBelow="MORE"
+          showBorder={true}
+          borderColor="#EDEEFA"
+          decorativeBarPosition="TOP"
+          decorativeBarColor="POSITIVE"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <HeadingField
+              text="Toggle Component"
+              size="LARGE"
+              headingTag="H2"
+              marginBelow="NONE"
+            />
+            <TagField
+              tags={[{ text: "NEW SAIL", backgroundColor: "#9333EA", textColor: "#FFFFFF" }]}
+              size="SMALL"
+            />
+          </div>
+          <p className="text-sm text-gray-700 mb-4">
+            Not available in public SAIL - button-style toggle for pressed/unpressed states (e.g., toolbar buttons, filters).
+          </p>
+
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Basic Toggles
+              </h3>
+              <div className="space-y-4">
+                <ToggleField
+                  label="Text Formatting"
+                  text="Bold"
+                  value={boldToggled}
+                  saveInto={(value) => setBoldToggled(value)}
+                  style="OUTLINE"
+                />
+
+                <ToggleField
+                  label="Italic"
+                  text="Italic"
+                  value={italicToggled}
+                  saveInto={(value) => setItalicToggled(value)}
+                  style="OUTLINE"
+                />
+
+                <ToggleField
+                  label="Favorite"
+                  text="Add to Favorites"
+                  icon="⭐"
+                  value={favoriteToggled}
+                  saveInto={(value) => setFavoriteToggled(value)}
+                  color="ACCENT"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Style Variations
+              </h3>
+              <div className="space-y-4">
+                <ToggleField
+                  label="SOLID Style"
+                  text="Toggle Me"
+                  value={solidToggled}
+                  saveInto={(value) => setSolidToggled(value)}
+                  style="SOLID"
+                  color="ACCENT"
+                />
+                <ToggleField
+                  label="OUTLINE Style"
+                  text="Toggle Me"
+                  value={outlineToggled}
+                  saveInto={(value) => setOutlineToggled(value)}
+                  style="OUTLINE"
+                  color="ACCENT"
+                />
+                <ToggleField
+                  label="GHOST Style"
+                  text="Toggle Me"
+                  value={ghostToggled}
+                  saveInto={(value) => setGhostToggled(value)}
+                  style="GHOST"
+                  color="ACCENT"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                With Icons
+              </h3>
+              <div className="space-y-4">
+                <ToggleField
+                  label="Icon at START"
+                  text="Filter"
+                  icon="🔍"
+                  iconPosition="START"
+                  value={filterToggled}
+                  saveInto={(value) => setFilterToggled(value)}
+                  style="OUTLINE"
+                />
+                <ToggleField
+                  label="Icon at END"
+                  text="Search"
+                  icon="→"
+                  iconPosition="END"
+                  value={searchToggled}
+                  saveInto={(value) => setSearchToggled(value)}
+                  style="OUTLINE"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Color Options
+              </h3>
+              <div className="space-y-4">
+                <ToggleField
+                  label="ACCENT"
+                  text="Accent Color"
+                  value={accentToggled}
+                  saveInto={(value) => setAccentToggled(value)}
+                  color="ACCENT"
+                  style="OUTLINE"
+                />
+                <ToggleField
+                  label="POSITIVE"
+                  text="Positive Color"
+                  value={positiveToggled}
+                  saveInto={(value) => setPositiveToggled(value)}
+                  color="POSITIVE"
+                  style="OUTLINE"
+                />
+                <ToggleField
+                  label="NEGATIVE"
+                  text="Negative Color"
+                  value={negativeToggled}
+                  saveInto={(value) => setNegativeToggled(value)}
+                  color="NEGATIVE"
+                  style="OUTLINE"
+                />
+                <ToggleField
+                  label="SECONDARY"
+                  text="Secondary Color"
+                  value={secondaryToggled}
+                  saveInto={(value) => setSecondaryToggled(value)}
+                  color="SECONDARY"
+                  style="OUTLINE"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Disabled State
+              </h3>
+              <ToggleField
+                label="Disabled Toggle"
+                text="Can't Click Me"
+                value={true}
+                disabled
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-purple-50 border-2 border-purple-200 rounded-sm">
+            <h4 className="text-xs font-semibold text-purple-900 mb-1">
+              Imagined SAIL Translation (not real SAIL):
+            </h4>
+            <pre className="text-xs text-gray-900 overflow-x-auto">
+{`a!toggleField(
+  label: "Favorite",
+  text: "Add to Favorites",
+  icon: "star",
+  value: local!favoriteToggled,
+  saveInto: local!favoriteToggled,
+  style: "OUTLINE",
+  color: "ACCENT"
 )`}
             </pre>
           </div>
