@@ -33,3 +33,6 @@ export * from './Checkbox'
 
 // RadioButton components
 export * from './RadioButton'
+
+// Dropdown components
+export * from './Dropdown'
