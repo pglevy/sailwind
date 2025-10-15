@@ -112,9 +112,9 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "SOLID") {
       const solidColors: Record<ButtonColor, string> = {
-        ACCENT: 'bg-blue-500 text-white hover:bg-blue-700',
-        NEGATIVE: 'bg-red-700 text-white hover:bg-red-900',
-        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900'
+        ACCENT: 'border-2 border-transparent bg-blue-500 text-white hover:bg-blue-700',
+        NEGATIVE: 'border-2 border-transparent bg-red-700 text-white hover:bg-red-900',
+        SECONDARY: 'border-2 border-transparent bg-gray-700 text-white hover:bg-gray-900'
       }
       return solidColors[semanticColor]
     }
@@ -130,18 +130,18 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "GHOST") {
       const ghostColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-500 hover:bg-blue-100',
-        NEGATIVE: 'text-red-700 hover:bg-red-100',
-        SECONDARY: 'text-gray-700 hover:bg-gray-100'
+        ACCENT: 'border-2 border-transparent text-blue-500 hover:bg-blue-100',
+        NEGATIVE: 'border-2 border-transparent text-red-700 hover:bg-red-100',
+        SECONDARY: 'border-2 border-transparent text-gray-700 hover:bg-gray-100'
       }
       return ghostColors[semanticColor]
     }
 
     if (style === "LINK") {
       const linkColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-500 hover:underline',
-        NEGATIVE: 'text-red-700 hover:underline',
-        SECONDARY: 'text-gray-700 hover:underline'
+        ACCENT: 'border-2 border-transparent text-blue-500 hover:underline',
+        NEGATIVE: 'border-2 border-transparent text-red-700 hover:underline',
+        SECONDARY: 'border-2 border-transparent text-gray-700 hover:underline'
       }
       return linkColors[semanticColor]
     }
