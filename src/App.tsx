@@ -204,7 +204,7 @@ function App() {
                   secondaryText="This is an informational message with default INFO styling."
                   backgroundColor="INFO"
                   highlightColor="INFO"
-                  icon="info-circle"
+                  icon="info"
                 />
                 
                 <MessageBanner
@@ -212,7 +212,7 @@ function App() {
                   secondaryText="Your changes have been saved successfully."
                   backgroundColor="SUCCESS"
                   highlightColor="POSITIVE"
-                  icon="check-circle"
+                  icon="success"
                 />
                 
                 <MessageBanner
@@ -220,7 +220,7 @@ function App() {
                   secondaryText="Please review your input before proceeding."
                   backgroundColor="WARN"
                   highlightColor="WARN"
-                  icon="exclamation-triangle"
+                  icon="warning"
                 />
                 
                 <MessageBanner
@@ -228,7 +228,7 @@ function App() {
                   secondaryText="An error occurred while processing your request."
                   backgroundColor="ERROR"
                   highlightColor="NEGATIVE"
-                  icon="exclamation-circle"
+                  icon="error"
                 />
               </div>
             </div>
@@ -341,7 +341,7 @@ function App() {
   secondaryText: "Your changes have been saved.",
   backgroundColor: "SUCCESS",
   highlightColor: "POSITIVE",
-  icon: "check-circle",
+  icon: "success",
   shape: "ROUNDED"
 )`}
             </pre>

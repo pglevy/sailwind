@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Info, CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react'
 import type { SAILShape, SAILMarginSize } from '../../types/sail'
 
 export type BackgroundColor = "INFO" | "SUCCESS" | "WARN" | "ERROR" | string
@@ -15,7 +16,7 @@ export interface MessageBannerProps {
   /** Color of the decorative bar and icon - semantic values or hex color */
   highlightColor?: HighlightColor
   /** Icon to display before the primary text (decorative only) */
-  icon?: string
+  icon?: "info" | "success" | "warning" | "error"
   /** Whether to show the decorative bar */
   showDecorativeBar?: boolean
   /** Banner shape */
@@ -77,12 +78,12 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     ROUNDED: 'rounded-md'
   }
 
-  // Semantic color mappings with black text
+  // Semantic color mappings with dark semantic text
   const backgroundColorMap: Record<string, { bg: string; text: string }> = {
-    INFO: { bg: 'bg-blue-100', text: 'text-black' },
-    SUCCESS: { bg: 'bg-green-100', text: 'text-black' },
-    WARN: { bg: 'bg-yellow-100', text: 'text-black' },
-    ERROR: { bg: 'bg-red-100', text: 'text-black' }
+    INFO: { bg: 'bg-blue-100', text: 'text-blue-900' },
+    SUCCESS: { bg: 'bg-green-100', text: 'text-green-900' },
+    WARN: { bg: 'bg-yellow-100', text: 'text-yellow-900' },
+    ERROR: { bg: 'bg-red-100', text: 'text-red-900' }
   }
 
   const highlightColorMap: Record<string, string> = {
@@ -92,11 +93,19 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     NEGATIVE: 'bg-red-700'
   }
 
-  // Determine background styling
+  // Icon mapping
+  const iconMap = {
+    info: Info,
+    success: CheckCircle,
+    warning: AlertTriangle,
+    error: AlertCircle
+  }
+
+  const IconComponent = icon ? iconMap[icon] : null
   const isSemanticBg = backgroundColor in backgroundColorMap
   const bgColors = isSemanticBg 
     ? backgroundColorMap[backgroundColor]
-    : { bg: '', text: 'text-black' }
+    : { bg: '', text: 'text-gray-900' }
 
   // Determine highlight bar color
   const isSemanticHighlight = highlightColor in highlightColorMap
@@ -114,7 +123,7 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
     isSemanticBg ? bgColors.bg : '',
-    isSemanticBg ? bgColors.text : 'text-black',
+    isSemanticBg ? bgColors.text : 'text-gray-900',
     isVisuallyHidden && 'sr-only'
   ].filter(Boolean).join(' ')
 
@@ -154,15 +163,9 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
       {/* Content area */}
       <div className="flex items-start w-full pl-3">
         {/* Icon */}
-        {icon && (
+        {IconComponent && (
           <div className="flex-shrink-0 mr-3 mt-0.5" aria-hidden="true">
-            <span className="text-lg">
-              {/* Icon placeholder - in real implementation would use icon library */}
-              {icon === "info-circle" && "ℹ️"}
-              {icon === "check-circle" && "✅"}
-              {icon === "exclamation-circle" && "❗"}
-              {icon === "exclamation-triangle" && "⚠️"}
-            </span>
+            <IconComponent className="w-5 h-5" />
           </div>
         )}
 

@@ -88,7 +88,7 @@ npm run dev
 Components use exact SAIL parameter names and values:
 
 ```tsx
-import { TagField, ButtonArrayLayout, CardLayout } from './components'
+import { TagField, ButtonArrayLayout, CardLayout, MessageBanner } from './components'
 
 // Tags with SAIL-exact parameters
 <TagField
@@ -100,6 +100,15 @@ import { TagField, ButtonArrayLayout, CardLayout } from './components'
   ]}
 />
 
+// Message banners with Lucide icons
+<MessageBanner
+  primaryText="Success!"
+  secondaryText="Your changes have been saved."
+  backgroundColor="SUCCESS"
+  highlightColor="POSITIVE"
+  icon="success"
+/>
+
 // Buttons following SAIL conventions
 <ButtonArrayLayout
   buttons={[
@@ -109,6 +118,17 @@ import { TagField, ButtonArrayLayout, CardLayout } from './components'
   align="END"
 />
 ```
+
+## Icon Library
+
+Sailwind uses **Lucide React** for icons with simplified names that map to SAIL:
+
+| React Icon | SAIL Icon | Lucide Component |
+|------------|-----------|------------------|
+| "info" | "info-circle" | Info |
+| "success" | "check-circle" | CheckCircle |
+| "warning" | "exclamation-triangle" | AlertTriangle |
+| "error" | "exclamation-circle" | AlertCircle |
 
 ## Styling Approach
 

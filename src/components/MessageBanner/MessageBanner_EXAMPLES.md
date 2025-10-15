@@ -9,7 +9,7 @@
   secondaryText="Your changes have been saved."
   backgroundColor="SUCCESS"
   highlightColor="POSITIVE"
-  icon="check-circle"
+  icon="success"
 />
 ```
 
@@ -20,7 +20,7 @@
   secondaryText="Please check your input and try again."
   backgroundColor="ERROR"
   highlightColor="NEGATIVE"
-  icon="exclamation-circle"
+  icon="error"
 />
 ```
 
@@ -31,7 +31,7 @@
   secondaryText="The system will be down for maintenance this Saturday from 10 PM to 11 PM."
   backgroundColor="#E3F2FD"
   highlightColor="#1976D2"
-  icon="info-circle"
+  icon="info"
   shape="ROUNDED"
 />
 ```
@@ -52,7 +52,7 @@
   secondaryText="2 items added to your cart"
   backgroundColor="SUCCESS"
   highlightColor="POSITIVE"
-  icon="check-circle"
+  icon="success"
   announceBehavior="DISPLAY_AND_ANNOUNCE"
   accessibilityText="5 total items in your cart"
 />
@@ -69,7 +69,7 @@
   secondaryText="Your changes have been saved."
   backgroundColor="SUCCESS"
   highlightColor="POSITIVE"
-  icon="check-circle"
+  icon="success"
   shape="ROUNDED"
   marginBelow="MORE"
 />
@@ -132,16 +132,27 @@ a!messageBanner(
 )
 ```
 
+## Icon Mapping
+
+The React component uses Lucide icons that map to SAIL icon names:
+
+| React Icon | SAIL Icon | Lucide Component |
+|------------|-----------|------------------|
+| "info" | "info-circle" | Info |
+| "success" | "check-circle" | CheckCircle |
+| "warning" | "exclamation-triangle" | AlertTriangle |
+| "error" | "exclamation-circle" | AlertCircle |
+
 ## Predefined Style Combinations
 
 The following combinations match Appian's predefined styles:
 
 | Type | backgroundColor | highlightColor | icon |
 |------|----------------|----------------|------|
-| Info | "INFO" | "INFO" | "info-circle" |
-| Success | "SUCCESS" | "POSITIVE" | "check-circle" |
-| Error | "ERROR" | "NEGATIVE" | "exclamation-circle" |
-| Warning | "WARN" | "WARN" | "exclamation-triangle" |
+| Info | "INFO" | "INFO" | "info" |
+| Success | "SUCCESS" | "POSITIVE" | "success" |
+| Error | "ERROR" | "NEGATIVE" | "error" |
+| Warning | "WARN" | "WARN" | "warning" |
 
 ## Accessibility Considerations
 
