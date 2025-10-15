@@ -8,7 +8,7 @@ export interface FieldLabelProps {
   labelPosition?: SAILLabelPosition
   /** Whether the field is required (shows asterisk) */
   required?: boolean
-  /** Helper text displayed below the label */
+  /** Helper text displayed below the input (not rendered by FieldLabel) */
   instructions?: string
   /** Tooltip text for additional help */
   helpTooltip?: string
@@ -21,12 +21,14 @@ export interface FieldLabelProps {
 /**
  * Shared label component used across SAIL form fields
  * Handles all label positioning modes: ABOVE, ADJACENT, COLLAPSED, JUSTIFIED
+ *
+ * Note: Instructions are NOT rendered by this component.
+ * They should be rendered by the parent component BELOW the input field.
  */
 export const FieldLabel: React.FC<FieldLabelProps> = ({
   label,
   labelPosition = "ABOVE",
   required = false,
-  instructions,
   helpTooltip,
   htmlFor,
   accessibilityText
@@ -44,30 +46,23 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
     'font-medium',
     'text-gray-900',
     labelPosition === "ABOVE" && 'block mb-2',
-    labelPosition === "ADJACENT" && 'inline-block mr-4',
+    labelPosition === "ADJACENT" && 'mr-4', // No inline-block needed, parent handles flex
     labelPosition === "JUSTIFIED" && 'block mb-2', // Similar to ABOVE for now
   ].filter(Boolean).join(' ')
 
   return (
-    <div className={labelPosition === "ADJACENT" ? "inline-block" : "block"}>
-      <label htmlFor={htmlFor} className={labelClasses}>
-        {label}
-        {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
-        {helpTooltip && (
-          <span
-            className="ml-2 text-gray-700 cursor-help"
-            title={helpTooltip}
-            aria-label="help"
-          >
-            ℹ️
-          </span>
-        )}
-      </label>
-      {instructions && (
-        <p className="text-gray-700 text-sm mt-1 mb-2">
-          {instructions}
-        </p>
+    <label htmlFor={htmlFor} className={labelClasses}>
+      {label}
+      {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
+      {helpTooltip && (
+        <span
+          className="ml-2 text-gray-700 cursor-help"
+          title={helpTooltip}
+          aria-label="help"
+        >
+          ℹ️
+        </span>
       )}
-    </div>
+    </label>
   )
 }
