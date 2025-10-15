@@ -18,3 +18,6 @@ export * from './MessageBanner'
 
 // ProgressBar components
 export * from './ProgressBar'
+
+// RichText components
+export * from './RichText'
