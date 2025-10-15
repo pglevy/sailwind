@@ -24,3 +24,6 @@ export * from './RichText'
 
 // Stamp components
 export * from './Stamp'
+
+// TextField components
+export * from './TextField'
