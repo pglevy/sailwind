@@ -93,6 +93,8 @@
   --color-gray-500: #6C6C75;  /* Gray 3 */
   --color-gray-700: #636363;  /* Gray 4 */
   --color-gray-900: #222222;  /* Gray 5 */
+
+  --color-black: var(--color-gray-900) /* PL: Use Gray 5 for `text-black` */
 }
 
 @layer base {
