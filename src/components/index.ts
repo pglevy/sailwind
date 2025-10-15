@@ -12,3 +12,6 @@ export * from './Card'
 
 // MessageBanner components
 export * from './MessageBanner'
+
+// ProgressBar components
+export * from './ProgressBar'
