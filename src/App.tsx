@@ -2146,7 +2146,7 @@ function App() {
                 <ToggleField
                   label="Favorite"
                   text="Add to Favorites"
-                  icon="⭐"
+                  icon="star"
                   value={favoriteToggled}
                   saveInto={(value) => setFavoriteToggled(value)}
                   color="ACCENT"
@@ -2194,7 +2194,7 @@ function App() {
                 <ToggleField
                   label="Icon at START"
                   text="Filter"
-                  icon="🔍"
+                  icon="filter"
                   iconPosition="START"
                   value={filterToggled}
                   saveInto={(value) => setFilterToggled(value)}
@@ -2203,7 +2203,7 @@ function App() {
                 <ToggleField
                   label="Icon at END"
                   text="Search"
-                  icon="→"
+                  icon="arrow-right"
                   iconPosition="END"
                   value={searchToggled}
                   saveInto={(value) => setSearchToggled(value)}

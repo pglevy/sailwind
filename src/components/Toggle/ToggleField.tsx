@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Toggle from '@radix-ui/react-toggle'
+import * as LucideIcons from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
 
@@ -55,7 +56,7 @@ export interface ToggleFieldProps {
   /** Determines the button's appearance */
   style?: ToggleStyle
   /** Icon to display in the button */
-  icon?: React.ReactNode
+  icon?: string
   /** Position of icon relative to text */
   iconPosition?: "START" | "END"
 }
@@ -144,6 +145,46 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
     }
   }
 
+  // Map any Lucide icon name directly, with SAIL compatibility fallbacks
+  const getIconComponent = (iconName: string) => {
+    // First try direct Lucide icon name (kebab-case or PascalCase)
+    const kebabToPascal = (str: string) => 
+      str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')
+    
+    const pascalIconName = kebabToPascal(iconName)
+    if (pascalIconName in LucideIcons) {
+      return LucideIcons[pascalIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
+    }
+    
+    // Also try direct case-insensitive lookup
+    const directIconName = iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase()
+    if (directIconName in LucideIcons) {
+      return LucideIcons[directIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
+    }
+    
+    // Fallback to SAIL compatibility mapping
+    const sailIconMap: Record<string, keyof typeof LucideIcons> = {
+      'STAR': 'Star',
+      'HOME': 'Home',
+      'USER': 'User',
+      'SETTINGS': 'Settings',
+      'SEARCH': 'Search',
+      'FILTER': 'Filter',
+      'ARROW_RIGHT': 'ArrowRight',
+      'ARROW_LEFT': 'ArrowLeft',
+      'ARROW_UP': 'ArrowUp',
+      'ARROW_DOWN': 'ArrowDown'
+    }
+    
+    const lucideIconName = sailIconMap[iconName]
+    if (lucideIconName && lucideIconName in LucideIcons) {
+      return LucideIcons[lucideIconName] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
+    }
+    
+    // Fallback to a generic icon
+    return LucideIcons.Circle as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
+  }
+
   // Show validation errors
   const showValidations = validations.length > 0
 
@@ -170,11 +211,15 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}
     >
       {icon && iconPosition === "START" && (
-        <span aria-hidden="true">{icon}</span>
+        <span aria-hidden="true">
+          {React.createElement(getIconComponent(icon), { size: 16 })}
+        </span>
       )}
       {text && <span>{text}</span>}
       {icon && iconPosition === "END" && (
-        <span aria-hidden="true">{icon}</span>
+        <span aria-hidden="true">
+          {React.createElement(getIconComponent(icon), { size: 16 })}
+        </span>
       )}
     </Toggle.Root>
   )
