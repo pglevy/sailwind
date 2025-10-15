@@ -9,3 +9,6 @@ export * from './Button'
 
 // Card components
 export * from './Card'
+
+// MessageBanner components
+export * from './MessageBanner'
