@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { TagField, ButtonWidget, CardLayout, ButtonArrayLayout, MessageBanner, ProgressBar, HeadingField, RichTextDisplayField, TextItem, Icon, StampField, TextField, CheckboxField, RadioButtonField, DropdownField, MultipleDropdownField } from './components'
-import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile } from './vibes'
+import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile, FormEntry } from './vibes'
 
-type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile'
+type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry'
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('components')
@@ -105,6 +105,13 @@ function App() {
                   color: "ACCENT",
                   size: "SMALL",
                   saveInto: () => setViewMode('user-profile')
+                },
+                {
+                  label: "Form Entry",
+                  style: viewMode === 'form-entry' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('form-entry')
                 }
               ]}
               align="START"
@@ -118,6 +125,7 @@ function App() {
       {viewMode === 'application-status' && <ApplicationStatus />}
       {viewMode === 'document-review' && <DocumentReview />}
       {viewMode === 'user-profile' && <UserProfile />}
+      {viewMode === 'form-entry' && <FormEntry />}
 
       {viewMode === 'components' && (
         <div className="p-8">
