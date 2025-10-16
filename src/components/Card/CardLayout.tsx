@@ -2,7 +2,7 @@ import * as React from 'react'
 import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
 
 type CardHeight = "AUTO" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
-type CardStyle = "NONE" | "ACCENT" | "SUCCESS" | "WARN" | "ERROR" | "INFO"
+type CardStyle = "NONE" | "TRANSPARENT" | "STANDARD" | "ACCENT" | "SUCCESS" | "WARN" | "ERROR" | "INFO" | "CHARCOAL_SCHEME" | "NAVY_SCHEME" | "PLUM_SCHEME"
 type DecorativeBarPosition = "TOP" | "START" | "NONE"
 
 /**
@@ -14,8 +14,8 @@ export interface CardLayoutProps {
   children: React.ReactNode
   /** Determines the height of the card */
   height?: CardHeight
-  /** Determines the border/style color */
-  style?: CardStyle
+  /** Determines the card background color. Valid values: Any hex color (including transparency with 8 digits), or semantic values */
+  style?: CardStyle | string
   /** Determines the border radius */
   shape?: SAILShape
   /** Determines the padding inside the card */
@@ -28,7 +28,7 @@ export interface CardLayoutProps {
   showBorder?: boolean
   /** Whether to show card shadow */
   showShadow?: boolean
-  /** Custom border color (hex value) */
+  /** Determines the border color. Valid values: Any hex color (including transparency), or "STANDARD" (default), "ACCENT", "POSITIVE", "WARN", "NEGATIVE" */
   borderColor?: string
   /** Position of decorative bar */
   decorativeBarPosition?: DecorativeBarPosition
@@ -61,7 +61,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   marginBelow = "STANDARD",
   showBorder = true,
   showShadow = false,
-  borderColor = "#EDEEFA",
+  borderColor = "STANDARD",
   decorativeBarPosition = "NONE",
   decorativeBarColor,
   showWhen = true
@@ -114,15 +114,63 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
-  // Style color mappings for borders
-  const styleColorMap: Record<CardStyle, string> = {
-    NONE: '',
-    ACCENT: 'border-blue-500',
-    SUCCESS: 'border-green-500',
-    WARN: 'border-orange-500',
-    ERROR: 'border-red-500',
-    INFO: 'border-sky-500'
+  // Background color mappings for card styles
+  const backgroundColorMap: Record<CardStyle, string> = {
+    NONE: 'bg-white',
+    TRANSPARENT: 'bg-transparent',
+    STANDARD: 'bg-white',
+    ACCENT: 'bg-blue-50',
+    SUCCESS: 'bg-green-50',
+    WARN: 'bg-orange-50',
+    ERROR: 'bg-red-50',
+    INFO: 'bg-sky-50',
+    CHARCOAL_SCHEME: 'bg-gray-900',
+    NAVY_SCHEME: 'bg-blue-900',
+    PLUM_SCHEME: 'bg-purple-900'
   }
+
+  // Get background color - either from map or use hex value
+  const getBackgroundColor = (): { className?: string; style?: React.CSSProperties } => {
+    if (!style || style === 'NONE') {
+      return { className: 'bg-white' }
+    }
+
+    // Check if it's a hex color
+    if (typeof style === 'string' && style.startsWith('#')) {
+      return { style: { backgroundColor: style } }
+    }
+
+    // Use semantic color mapping
+    return { className: backgroundColorMap[style as CardStyle] || 'bg-white' }
+  }
+
+  const bgProps = getBackgroundColor()
+
+  // Border color mappings for semantic values
+  const borderColorMap: Record<string, string> = {
+    STANDARD: 'border-gray-200',
+    ACCENT: 'border-blue-500',
+    POSITIVE: 'border-green-700',
+    WARN: 'border-orange-500',
+    NEGATIVE: 'border-red-700'
+  }
+
+  // Get border color - either from map or use hex value
+  const getBorderColor = (): { className?: string; style?: React.CSSProperties } => {
+    if (!borderColor) {
+      return { className: 'border-gray-200' }
+    }
+
+    // Check if it's a hex color
+    if (borderColor.startsWith('#')) {
+      return { style: { borderColor } }
+    }
+
+    // Use semantic color mapping
+    return { className: borderColorMap[borderColor] || 'border-gray-200' }
+  }
+
+  const borderProps = getBorderColor()
 
   // Decorative bar color mappings - returns Tailwind class or hex for inline style
   const decorativeBarColorMap: Record<string, string> = {
@@ -148,24 +196,26 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   const barProps = getDecorativeBarClasses()
 
   const baseClasses = `
-    bg-white
+    ${bgProps.className || ''}
     ${heightMap[height]}
     ${shapeMap[shape]}
     ${paddingMap[padding]}
     ${marginAboveMap[marginAbove]}
     ${marginBelowMap[marginBelow]}
-    ${showBorder ? `border-2 ${styleColorMap[style]}` : ''}
+    ${showBorder ? `border-2 ${borderProps.className || ''}` : ''}
     ${showShadow ? 'shadow-md' : ''}
     overflow-hidden
     relative
   `.replace(/\s+/g, ' ').trim()
 
-  const borderStyle = showBorder && !styleColorMap[style]
-    ? { borderColor }
-    : {}
+  // Combine inline styles
+  const inlineStyles = {
+    ...(bgProps.style || {}),
+    ...(borderProps.style || {})
+  }
 
   return (
-    <div className={baseClasses} style={borderStyle}>
+    <div className={baseClasses} style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}>
       {decorativeBarPosition === "TOP" && (
         <div
           className={`absolute top-0 left-0 right-0 h-1 ${barProps.className || ''}`}

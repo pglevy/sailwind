@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as LucideIcons from 'lucide-react'
 import type { SAILSize } from '../../types/sail'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
@@ -53,6 +54,8 @@ export interface ButtonWidgetProps {
   value?: any
   /** Click handler (maps to saveInto in SAIL) */
   saveInto?: (value?: any) => void
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -84,7 +87,8 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   tooltip,
   loadingIndicator = false,
   saveInto,
-  value
+  value,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -100,12 +104,46 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   // Width mappings
   const widthClass = width === "FILL" ? 'w-full' : 'w-auto'
 
+  // Get inline styles for hex colors
+  // Note: Only apply inline styles for properties not overridden by className
+  const getInlineStyles = (): React.CSSProperties | undefined => {
+    if (!color.startsWith('#')) return undefined
+
+    const baseStyles: React.CSSProperties = {}
+
+    if (style === "SOLID") {
+      baseStyles.backgroundColor = color
+      baseStyles.borderColor = 'transparent'
+      // Only set text color if className doesn't include text color utilities
+      if (!className?.includes('text-')) {
+        baseStyles.color = '#ffffff'
+      }
+    } else if (style === "OUTLINE") {
+      baseStyles.borderColor = color
+      if (!className?.includes('text-')) {
+        baseStyles.color = color
+      }
+      baseStyles.backgroundColor = '#ffffff'
+    } else if (style === "GHOST") {
+      if (!className?.includes('text-')) {
+        baseStyles.color = color
+      }
+      baseStyles.borderColor = 'transparent'
+    } else if (style === "LINK") {
+      if (!className?.includes('text-')) {
+        baseStyles.color = color
+      }
+      baseStyles.borderColor = 'transparent'
+    }
+
+    return Object.keys(baseStyles).length > 0 ? baseStyles : undefined
+  }
+
   // Style + Color combinations
   const getColorClasses = (): string => {
-    // Handle hex colors
+    // Handle hex colors - use inline styles
     if (color.startsWith('#')) {
-      // For custom hex colors, use inline styles (handled below)
-      return style === "SOLID" ? '' : 'border-2'
+      return style === "SOLID" || style === "OUTLINE" ? 'border-2' : 'border-2 border-transparent'
     }
 
     const semanticColor = color as ButtonColor
@@ -149,13 +187,18 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     return ''
   }
 
+  // Only apply default rounded-sm if className doesn't include rounded-* utilities
+  const defaultRounded = className?.includes('rounded-') ? '' : 'rounded-sm'
+
   const baseClasses = `
     inline-flex items-center justify-center gap-1
-    font-medium transition-colors rounded-sm h-auto
+    font-medium transition-colors h-auto
+    ${defaultRounded}
     ${sizeMap[size]}
     ${widthClass}
     ${getColorClasses()}
     ${disabled || loadingIndicator ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+    ${className || ''}
   `.replace(/\s+/g, ' ').trim()
 
   const handleClick = () => {
@@ -164,25 +207,53 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     }
   }
 
+  // Get Lucide icon component
+  const getIconComponent = () => {
+    if (!icon) return null
+
+    // Convert kebab-case to PascalCase (e.g., 'arrow-right' -> 'ArrowRight')
+    const iconName = icon
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('')
+
+    const IconComponent = (LucideIcons as any)[iconName]
+
+    if (!IconComponent) {
+      console.warn(`Icon "${icon}" not found in Lucide icons`)
+      return null
+    }
+
+    // Size the icon based on button size
+    const iconSizeMap: Record<SAILSize, number> = {
+      SMALL: 14,
+      STANDARD: 16,
+      MEDIUM: 18,
+      LARGE: 20
+    }
+
+    return <IconComponent size={iconSizeMap[size]} aria-hidden="true" />
+  }
+
+  const IconElement = getIconComponent()
+  const inlineStyles = getInlineStyles()
+
   return (
     <button
       type={submit ? "submit" : "button"}
       onClick={handleClick}
       disabled={disabled || loadingIndicator}
       className={baseClasses}
+      style={inlineStyles}
       aria-label={accessibilityText || label}
       title={tooltip}
     >
       {loadingIndicator && (
         <span className="animate-spin" aria-label="loading">⟳</span>
       )}
-      {!loadingIndicator && icon && iconPosition === "START" && (
-        <span aria-hidden="true">{icon}</span>
-      )}
+      {!loadingIndicator && IconElement && iconPosition === "START" && IconElement}
       {label && <span>{label}</span>}
-      {!loadingIndicator && icon && iconPosition === "END" && (
-        <span aria-hidden="true">{icon}</span>
-      )}
+      {!loadingIndicator && IconElement && iconPosition === "END" && IconElement}
     </button>
   )
 }

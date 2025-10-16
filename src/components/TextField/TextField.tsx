@@ -159,7 +159,7 @@ export const TextField: React.FC<TextFieldProps> = ({
     // ReadOnly mode: no border, no background, no padding (inline display)
     readOnly && 'border-none bg-transparent p-0',
     // Normal mode: standard input styling
-    !readOnly && 'px-3 py-2 border border-gray-200 rounded-sm',
+    !readOnly && 'px-3 py-2 border border-gray-200 rounded-sm bg-white',
     !readOnly && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
     // Disabled state
     disabled && 'bg-gray-100 text-gray-700 cursor-not-allowed',
