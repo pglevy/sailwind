@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { TagField, HeadingField, ButtonArrayLayout } from './components'
 import { CollapsibleSection } from './components/shared'
 import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile, FormEntry } from './vibes'
+import ESGConferenceRegistration from '../vibes/ESGConferenceRegistration'
+import InsuranceQuoteWizard from '../vibes/InsuranceQuoteWizard'
 import {
   HeadingDemo,
   TagsDemo,
@@ -24,10 +26,11 @@ import {
   DialogDemo
 } from './demos'
 
-type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry'
+type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry' | 'esg-conference' | 'insurance-quote'
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('components')
+  const [navCollapsed, setNavCollapsed] = useState(false)
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -42,12 +45,22 @@ function App() {
               color="ACCENT"
               marginBelow="NONE"
             />
-            <TagField
-              tags={[{ text: "SAIL-Compatible", backgroundColor: "ACCENT" }]}
-              size="SMALL"
-            />
+            <div className="flex items-center gap-4">
+              <TagField
+                tags={[{ text: "SAIL-Compatible", backgroundColor: "ACCENT" }]}
+                size="SMALL"
+              />
+              <button
+                onClick={() => setNavCollapsed(!navCollapsed)}
+                className="text-sm text-gray-700 hover:text-blue-500 transition-colors"
+                title={navCollapsed ? "Expand navigation" : "Collapse navigation"}
+              >
+                {navCollapsed ? '▼ Expand' : '▲ Collapse'}
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
+          {!navCollapsed && (
+            <div className="flex gap-2">
             <ButtonArrayLayout
               buttons={[
                 {
@@ -91,11 +104,26 @@ function App() {
                   color: "ACCENT",
                   size: "SMALL",
                   saveInto: () => setViewMode('form-entry')
+                },
+                {
+                  label: "ESG Conference",
+                  style: viewMode === 'esg-conference' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('esg-conference')
+                },
+                {
+                  label: "Insurance Quote",
+                  style: viewMode === 'insurance-quote' ? 'SOLID' : 'GHOST',
+                  color: "ACCENT",
+                  size: "SMALL",
+                  saveInto: () => setViewMode('insurance-quote')
                 }
               ]}
               align="START"
             />
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -105,6 +133,8 @@ function App() {
       {viewMode === 'document-review' && <DocumentReview />}
       {viewMode === 'user-profile' && <UserProfile />}
       {viewMode === 'form-entry' && <FormEntry />}
+      {viewMode === 'esg-conference' && <ESGConferenceRegistration />}
+      {viewMode === 'insurance-quote' && <InsuranceQuoteWizard />}
 
       {viewMode === 'components' && (
         <div className="p-8">
