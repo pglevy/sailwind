@@ -193,6 +193,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 - **Checkboxes** (CheckboxField) - Multi-select checkbox groups
 - **Dropdown** (DropdownField) - Single-select dropdown with search
 - **Multiple Dropdown** (MultipleDropdownField) - Multi-select dropdown with search
+- **Images** (ImageField) - Display document images with various sizes and styles
 
 ### ✨ "New SAIL" Components (Experimental)
 **Not available in public SAIL** - These components extend beyond SAIL's current capabilities while following the same patterns and conventions:
@@ -266,4 +267,4 @@ TBD
 
 ---
 
-**Status:** Active development - 15 components implemented (13 SAIL + 2 "New SAIL") including form inputs, selections, toggles, and display components
+**Status:** Active development - 16 components implemented (14 SAIL + 2 "New SAIL") including form inputs, selections, toggles, and display components
