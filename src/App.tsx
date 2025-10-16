@@ -1652,11 +1652,76 @@ function App() {
                 label="Profile Picture"
                 labelPosition="ADJACENT"
                 images={[
-                  { document: "vite.svg", altText: "Profile picture", caption: "User avatar" }
+                  { document: "uifaces-human-avatar.jpg", altText: "Profile picture", caption: "User avatar" }
                 ]}
                 size="MEDIUM"
                 style="AVATAR"
               />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                User Images (Within ImageField)
+              </h3>
+              <p className="text-sm text-gray-700 mb-3">
+                User images use Radix Avatar for automatic fallback handling (user initials or default icon).
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">User with Photo</p>
+                  <ImageField
+                    labelPosition="COLLAPSED"
+                    images={[
+                      {
+                        imageType: 'user',
+                        user: { name: "Jane Smith", photoUrl: "uifaces-human-avatar.jpg", initials: "JS" },
+                        altText: "Jane Smith profile photo",
+                        caption: "Click to view profile"
+                      }
+                    ]}
+                    style="AVATAR"
+                    size="MEDIUM"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Fallback to Initials (Multiple Sizes)</p>
+                  <ImageField
+                    labelPosition="COLLAPSED"
+                    images={[
+                      {
+                        imageType: 'user',
+                        user: { name: "Jane Doe", initials: "JD" }
+                      },
+                      {
+                        imageType: 'user',
+                        user: { name: "Bob Johnson", initials: "BJ" }
+                      },
+                      {
+                        imageType: 'user',
+                        user: { name: "Alice Williams", initials: "AW" }
+                      }
+                    ]}
+                    style="AVATAR"
+                    size="TINY"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Fallback to Default Icon (No Initials)</p>
+                  <ImageField
+                    labelPosition="COLLAPSED"
+                    images={[
+                      {
+                        imageType: 'user',
+                        user: { name: "Anonymous User" }
+                      }
+                    ]}
+                    style="AVATAR"
+                    size="SMALL"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

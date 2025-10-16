@@ -169,3 +169,162 @@ a!imageField(
 - Proper ARIA labeling when used with labels
 - Keyboard navigation support for clickable images
 - High contrast hover states for interactive elements
+
+---
+
+# UserImage Component (Radix Avatar-based)
+
+The `UserImage` component provides an enhanced avatar experience using Radix Avatar, with automatic fallback handling for missing profile photos.
+
+## Basic Usage
+
+```tsx
+import { UserImage } from './components'
+
+// User with photo
+<UserImage
+  user={{
+    name: "John Smith",
+    photoUrl: "/avatars/john.jpg",
+    initials: "JS"
+  }}
+  altText="John Smith profile photo"
+  caption="Click to view profile"
+  size="MEDIUM"
+/>
+```
+
+## Automatic Fallbacks
+
+UserImage gracefully handles missing profile photos with two fallback levels:
+
+### 1. Initials Fallback
+When no `photoUrl` is provided, displays user initials:
+
+```tsx
+<UserImage
+  user={{ name: "Jane Doe", initials: "JD" }}
+  size="MEDIUM"
+/>
+```
+
+### 2. Default Icon Fallback
+When no `photoUrl` or `initials` are provided, displays a default user icon:
+
+```tsx
+<UserImage
+  user={{ name: "Anonymous User" }}
+  size="MEDIUM"
+/>
+```
+
+## Sizes
+
+UserImage supports three sizes:
+
+```tsx
+{/* Small - 32px */}
+<UserImage
+  user={{ name: "John", initials: "JS" }}
+  size="SMALL"
+/>
+
+{/* Medium - 48px (default) */}
+<UserImage
+  user={{ name: "John", initials: "JS" }}
+  size="MEDIUM"
+/>
+
+{/* Large - 64px */}
+<UserImage
+  user={{ name: "John", initials: "JS" }}
+  size="LARGE"
+/>
+```
+
+## With Click Actions
+
+```tsx
+<UserImage
+  user={{ name: "John Smith", photoUrl: "/avatars/john.jpg", initials: "JS" }}
+  caption="View profile"
+  link={() => navigateToProfile('john-smith')}
+  size="MEDIUM"
+/>
+```
+
+## Integration with ImageField
+
+You can use UserImage alongside DocumentImage in an ImageField for mixed content:
+
+```tsx
+<ImageField
+  label="Team Members"
+  style="AVATAR"
+  size="SMALL_PLUS"
+  images={[
+    // DocumentImage for static avatars
+    { document: "avatar1.jpg", altText: "Team member 1" },
+    { document: "avatar2.jpg", altText: "Team member 2" }
+  ]}
+/>
+
+{/* Or use UserImage standalone for dynamic user data */}
+<div className="flex gap-2">
+  <UserImage user={{ name: "John", initials: "JS" }} size="MEDIUM" />
+  <UserImage user={{ name: "Jane", initials: "JD" }} size="MEDIUM" />
+  <UserImage user={{ name: "Bob", initials: "BJ" }} size="MEDIUM" />
+</div>
+```
+
+## SAIL Translation
+
+**React:**
+```tsx
+<UserImage
+  user={{
+    name: "John Smith",
+    photoUrl: "/avatars/john.jpg",
+    initials: "JS"
+  }}
+  altText="John Smith profile photo"
+  caption="Click to view profile"
+/>
+```
+
+**SAIL:**
+```sail
+a!imageField(
+  images: {
+    a!userImage(
+      user: cons!JOHN_SMITH_USER,
+      altText: "John Smith profile photo",
+      caption: "Click to view profile"
+    )
+  },
+  style: "AVATAR",
+  size: "MEDIUM"
+)
+```
+
+## User Type Reference
+
+```tsx
+interface User {
+  /** User's full name for display */
+  name?: string
+  /** URL to user's profile photo */
+  photoUrl?: string
+  /** User's initials for fallback display (e.g., "JS") */
+  initials?: string
+}
+```
+
+## Key Features
+
+- **Automatic fallbacks** - Radix Avatar handles image loading states gracefully
+- **Delay prevention** - 600ms delay prevents flash-of-fallback on slow networks
+- **Accessibility** - Proper alt text and ARIA attributes
+- **Circular by default** - Always renders as circular avatars
+- **Hover states** - Visual feedback for clickable avatars
+- **Type-safe** - Full TypeScript support for User objects

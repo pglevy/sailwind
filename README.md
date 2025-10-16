@@ -117,6 +117,84 @@ import { TagField, ButtonArrayLayout, CardLayout, MessageBanner } from './compon
   ]}
   align="END"
 />
+
+// User avatars with automatic fallbacks
+<ImageField
+  label="Assigned To"
+  labelPosition="ABOVE"
+  images={[
+    {
+      imageType: 'user',
+      user: {
+        name: "Sarah Johnson",
+        initials: "SJ",
+        photoUrl: "avatar.jpg"
+      },
+      altText: "Sarah Johnson profile photo"
+    }
+  ]}
+  style="AVATAR"
+  size="MEDIUM"
+/>
+```
+
+## Image Components
+
+Sailwind's ImageField supports both document images and user avatars, matching SAIL's `a!imageField()` pattern:
+
+### Document Images
+Standard images from files or URLs:
+```tsx
+<ImageField
+  images={[
+    {
+      document: "product-hero.jpg",
+      altText: "Product hero image",
+      caption: "Click to enlarge"
+    }
+  ]}
+  size="MEDIUM"
+  isThumbnail={true}
+/>
+```
+
+### User Avatars (UserImage)
+Profile photos with automatic three-tier fallback system powered by Radix UI Avatar:
+
+1. **Photo** → Shows user's profile photo if available
+2. **Initials** → Falls back to user's initials (e.g., "SJ")
+3. **Default Icon** → Generic user icon if no photo or initials
+
+```tsx
+<ImageField
+  images={[
+    {
+      imageType: 'user',
+      user: {
+        name: "Sarah Johnson",
+        photoUrl: "avatar.jpg",  // Optional
+        initials: "SJ"           // Optional fallback
+      },
+      altText: "Sarah Johnson profile photo"
+    }
+  ]}
+  style="AVATAR"  // Renders as circular avatar
+  size="MEDIUM"
+/>
+```
+
+**SAIL Translation:**
+```sail
+a!imageField(
+  images: {
+    a!userImage(
+      user: cons!USER_SARAH_JOHNSON,
+      altText: "Sarah Johnson profile photo"
+    )
+  },
+  style: "AVATAR",
+  size: "MEDIUM"
+)
 ```
 
 ## Icon Library
@@ -193,7 +271,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 - **Checkboxes** (CheckboxField) - Multi-select checkbox groups
 - **Dropdown** (DropdownField) - Single-select dropdown with search
 - **Multiple Dropdown** (MultipleDropdownField) - Multi-select dropdown with search
-- **Images** (ImageField) - Display document images with various sizes and styles
+- **Images** (ImageField, DocumentImage, UserImage) - Display document images and user avatars with automatic fallbacks
 
 ### ✨ "New SAIL" Components (Experimental)
 **Not available in public SAIL** - These components extend beyond SAIL's current capabilities while following the same patterns and conventions:

@@ -1,7 +1,17 @@
 import * as React from 'react'
+import * as Avatar from '@radix-ui/react-avatar'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { DocumentImageProps } from './DocumentImage'
+import type { UserImageProps } from './UserImage'
+
+// Union type for all image types supported by ImageField
+type ImageFieldImage = DocumentImageProps | UserImageProps
+
+// Type guard to check if an image is a UserImage
+function isUserImage(image: ImageFieldImage): image is UserImageProps {
+  return 'imageType' in image && image.imageType === 'user'
+}
 
 type ImageSize = 
   | "ICON" 
@@ -29,8 +39,8 @@ export interface ImageFieldProps {
   instructions?: string
   /** Help tooltip text (max 500 characters) */
   helpTooltip?: string
-  /** Array of images to display */
-  images: DocumentImageProps[]
+  /** Array of images to display (supports both document and user images) */
+  images: ImageFieldImage[]
   /** Controls visibility of the component */
   showWhen?: boolean
   /** Determines how the images are sized */
@@ -73,7 +83,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
 
   const fieldId = `imagefield-${Math.random().toString(36).substr(2, 9)}`
 
-  // Map SAIL size values to CSS dimensions (using actual Tailwind classes)
+  // Map SAIL size values to CSS dimensions for standard (rectangular) images
   const sizeMap: Record<ImageSize, string> = {
     ICON: 'w-5 h-5', // 20x20px
     ICON_PLUS: 'w-10 h-10', // 40x40px
@@ -90,6 +100,23 @@ export const ImageField: React.FC<ImageFieldProps> = ({
     FIT: 'max-w-full h-auto' // Natural dimensions
   }
 
+  // Map SAIL size values to CSS dimensions for avatar (square) images
+  const avatarSizeMap: Record<ImageSize, string> = {
+    ICON: 'w-5 h-5', // 20x20px
+    ICON_PLUS: 'w-10 h-10', // 40x40px
+    TINY: 'w-16 h-16', // 64x64px
+    EXTRA_SMALL: 'w-20 h-20', // 80x80px
+    SMALL: 'w-24 h-24', // 96x96px
+    SMALL_PLUS: 'w-36 h-36', // 144x144px
+    MEDIUM: 'w-48 h-48', // 192x192px
+    MEDIUM_PLUS: 'w-72 h-72', // 288x288px
+    LARGE: 'w-96 h-96', // 384x384px
+    LARGE_PLUS: 'w-96 h-96', // 384x384px (same as LARGE)
+    EXTRA_LARGE: 'w-96 h-96', // 384x384px (same as LARGE)
+    GALLERY: 'w-20 h-20', // 80x80px (square version of gallery)
+    FIT: 'max-w-full h-auto aspect-square' // Natural dimensions, square
+  }
+
   // Map SAIL align values to Tailwind classes
   const alignMap: Record<SAILAlign, string> = {
     START: 'justify-start',
@@ -99,8 +126,11 @@ export const ImageField: React.FC<ImageFieldProps> = ({
 
   // Style-specific classes
   const getImageClasses = () => {
+    // Use avatar size map when style is AVATAR
+    const activeSizeMap = style === "AVATAR" ? avatarSizeMap : sizeMap
+
     const baseClasses = [
-      sizeMap[size],
+      activeSizeMap[size],
       'object-cover', // Maintain aspect ratio
       style === "AVATAR" ? 'rounded-full' : 'rounded-sm',
       isThumbnail ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''
@@ -122,9 +152,51 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   const imagesElement = (
     <div className={containerClasses}>
       {visibleImages.map((imageProps, index) => {
-        // Process the image path
-        const imageSrc = imageProps.document.startsWith('/') 
-          ? imageProps.document 
+        // Check if this is a user image
+        if (isUserImage(imageProps)) {
+          // Render user image with Radix Avatar
+          const { user, altText, caption, link } = imageProps
+          const imageAlt = altText || user?.name || 'User profile photo'
+
+          // Use avatar size map for sizing
+          const activeSizeMap = avatarSizeMap
+          const sizeClasses = activeSizeMap[size]
+
+          // Build fallback content (initials or default icon)
+          const fallbackContent = user?.initials ? (
+            <span className="font-medium text-gray-700">{user.initials}</span>
+          ) : (
+            // Default user icon SVG
+            <svg className="w-3/5 h-3/5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+            </svg>
+          )
+
+          return (
+            <Avatar.Root
+              key={index}
+              className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-gray-100 ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              title={caption}
+              onClick={link}
+            >
+              <Avatar.Image
+                className="w-full h-full object-cover rounded-full"
+                src={user?.photoUrl}
+                alt={imageAlt}
+              />
+              <Avatar.Fallback
+                className="w-full h-full flex items-center justify-center bg-gray-100"
+                delayMs={600}
+              >
+                {fallbackContent}
+              </Avatar.Fallback>
+            </Avatar.Root>
+          )
+        }
+
+        // Render document image (standard approach)
+        const imageSrc = imageProps.document.startsWith('/')
+          ? imageProps.document
           : `/${imageProps.document}`
 
         const imageClasses = getImageClasses()
@@ -143,9 +215,8 @@ export const ImageField: React.FC<ImageFieldProps> = ({
               title={imageProps.caption}
               className={imageClasses}
               onClick={imageProps.link ? handleClick : undefined}
-              style={style === "AVATAR" ? { aspectRatio: '1' } : undefined}
             />
-            
+
             {/* Show link indicator if image has link */}
             {imageProps.link && (
               <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm">

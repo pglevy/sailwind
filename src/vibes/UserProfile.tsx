@@ -1,11 +1,14 @@
-import { CardLayout } from '../components/Card/CardLayout'
-import { HeadingField } from '../components/Heading/HeadingField'
-import { TagField } from '../components/Tag/TagField'
-import { ButtonArrayLayout } from '../components/Button/ButtonArrayLayout'
-import { RichTextDisplayField } from '../components/RichText/RichTextDisplayField'
-import { TextItem } from '../components/RichText/TextItem'
-import { Icon } from '../components/RichText/Icon'
-import { ProgressBar } from '../components/ProgressBar/ProgressBar'
+import {
+  CardLayout,
+  HeadingField,
+  TagField,
+  ButtonArrayLayout,
+  RichTextDisplayField,
+  TextItem,
+  Icon,
+  ProgressBar,
+  ImageField
+} from '../components'
 
 /**
  * User Profile Page
@@ -22,10 +25,23 @@ export const UserProfile = () => {
         marginBelow="STANDARD"
       >
         <div className="flex gap-6 items-start">
-          {/* Avatar Placeholder */}
-          <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-3xl font-bold">SJ</span>
-          </div>
+          {/* User Avatar */}
+          <ImageField
+            labelPosition="COLLAPSED"
+            images={[
+              {
+                imageType: 'user',
+                user: {
+              name: "Sarah Johnson",
+              initials: "SJ",
+              photoUrl: "uifaces-human-avatar.jpg"
+                },
+                altText: "Sarah Johnson profile photo"
+              }
+            ]}
+            style="AVATAR"
+            size="MEDIUM"
+          />
 
           <div className="flex-1">
             <div className="flex justify-between items-start mb-2">
