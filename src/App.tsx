@@ -19,7 +19,8 @@ import {
   DropdownDemo,
   SwitchDemo,
   ToggleDemo,
-  SliderDemo
+  SliderDemo,
+  TabsDemo
 } from './demos'
 
 type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry'
@@ -187,6 +188,10 @@ function App() {
 
             <CollapsibleSection title="Slider Component (NEW SAIL)">
               <SliderDemo />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Tabs Component (NEW SAIL)">
+              <TabsDemo />
             </CollapsibleSection>
           </div>
         </div>
