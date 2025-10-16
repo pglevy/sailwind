@@ -54,3 +54,6 @@ export * from './Tabs'
 
 // Image components
 export * from './Image'
+
+// Dialog components (new SAIL)
+export * from './Dialog'

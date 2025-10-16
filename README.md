@@ -281,6 +281,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 - **Toggle** (ToggleField) - Button-style toggle for pressed/unpressed states (toolbar buttons, filters)
 - **Slider** (SliderField) - Range slider for numeric input with single value or range selection
 - **Tabs** (TabsField) - Layered sections of content displayed one at a time with tab navigation
+- **Dialog** (DialogField) - Modal dialog overlay with customizable width and height options
 
 These components use Radix UI primitives and follow all Sailwind conventions. They're marked as "NEW SAIL" in the demo with purple tags.
 
@@ -347,4 +348,4 @@ TBD
 
 ---
 
-**Status:** Active development - 19 components implemented (15 SAIL + 4 "New SAIL") including form inputs, selections, toggles, sliders, tabs, and display components
+**Status:** Active development - 20 components implemented (15 SAIL + 5 "New SAIL") including form inputs, selections, toggles, sliders, tabs, dialogs, and display components
