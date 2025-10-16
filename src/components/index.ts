@@ -43,5 +43,8 @@ export * from './Switch'
 // Toggle components (new SAIL)
 export * from './Toggle'
 
+// Slider components (new SAIL)
+export * from './Slider'
+
 // Image components
 export * from './Image'
