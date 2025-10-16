@@ -16,6 +16,9 @@ export * from './Heading'
 // MessageBanner components
 export * from './MessageBanner'
 
+// Milestone components
+export * from './Milestone'
+
 // ProgressBar components
 export * from './ProgressBar'
 

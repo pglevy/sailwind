@@ -7,6 +7,7 @@ import {
   TagsDemo,
   ButtonsDemo,
   BannersDemo,
+  MilestoneDemo,
   ProgressBarDemo,
   RichTextDemo,
   CardsDemo,
@@ -134,6 +135,10 @@ function App() {
 
             <CollapsibleSection title="Message Banner Component">
               <BannersDemo />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Milestone Component">
+              <MilestoneDemo />
             </CollapsibleSection>
 
             <CollapsibleSection title="Progress Bar Component">

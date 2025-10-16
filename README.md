@@ -264,6 +264,7 @@ All colors use consistent Tailwind steps: **50, 100, 200, 500, 700, 900**
 - **Headings** (HeadingField) - Text headings with various sizes and styles
 - **Rich Text** (RichTextDisplayField, TextItem, Icon) - Formatted text with icons and links
 - **Message Banners** (MessageBanner) - Alert/notification banners with predefined styles
+- **Milestones** (MilestoneField) - Process step indicators with completed/current/future states
 - **Progress Bars** (ProgressBar) - Visual progress indicators
 - **Stamps** (StampField) - Icon/text badges for status indicators
 - **Text Input** (TextField) - Single-line text input with validation
@@ -346,4 +347,4 @@ TBD
 
 ---
 
-**Status:** Active development - 17 components implemented (14 SAIL + 3 "New SAIL") including form inputs, selections, toggles, sliders, and display components
+**Status:** Active development - 18 components implemented (15 SAIL + 3 "New SAIL") including form inputs, selections, toggles, sliders, and display components
