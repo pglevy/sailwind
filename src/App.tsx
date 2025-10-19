@@ -23,7 +23,8 @@ import {
   ToggleDemo,
   SliderDemo,
   TabsDemo,
-  DialogDemo
+  DialogDemo,
+  ClassNameOverrideDemo
 } from './demos'
 
 type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry' | 'esg-conference' | 'insurance-quote'
@@ -227,6 +228,10 @@ function App() {
 
             <CollapsibleSection title="Dialog Component (NEW SAIL)">
               <DialogDemo />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="className Override Demo">
+              <ClassNameOverrideDemo />
             </CollapsibleSection>
           </div>
         </div>

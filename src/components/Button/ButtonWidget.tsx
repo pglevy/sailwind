@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
 import type { SAILSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
 type ButtonColor = "ACCENT" | "NEGATIVE" | "SECONDARY"
@@ -105,7 +106,6 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   const widthClass = width === "FILL" ? 'w-full' : 'w-auto'
 
   // Get inline styles for hex colors
-  // Note: Only apply inline styles for properties not overridden by className
   const getInlineStyles = (): React.CSSProperties | undefined => {
     if (!color.startsWith('#')) return undefined
 
@@ -114,25 +114,16 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     if (style === "SOLID") {
       baseStyles.backgroundColor = color
       baseStyles.borderColor = 'transparent'
-      // Only set text color if className doesn't include text color utilities
-      if (!className?.includes('text-')) {
-        baseStyles.color = '#ffffff'
-      }
+      baseStyles.color = '#ffffff'
     } else if (style === "OUTLINE") {
       baseStyles.borderColor = color
-      if (!className?.includes('text-')) {
-        baseStyles.color = color
-      }
+      baseStyles.color = color
       baseStyles.backgroundColor = '#ffffff'
     } else if (style === "GHOST") {
-      if (!className?.includes('text-')) {
-        baseStyles.color = color
-      }
+      baseStyles.color = color
       baseStyles.borderColor = 'transparent'
     } else if (style === "LINK") {
-      if (!className?.includes('text-')) {
-        baseStyles.color = color
-      }
+      baseStyles.color = color
       baseStyles.borderColor = 'transparent'
     }
 
@@ -143,16 +134,16 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   const getColorClasses = (): string => {
     // Handle hex colors - use inline styles
     if (color.startsWith('#')) {
-      return style === "SOLID" || style === "OUTLINE" ? 'border-2' : 'border-2 border-transparent'
+      return style === "OUTLINE" ? 'border-2' : ''
     }
 
     const semanticColor = color as ButtonColor
 
     if (style === "SOLID") {
       const solidColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-transparent bg-blue-500 text-white hover:bg-blue-700',
-        NEGATIVE: 'border-2 border-transparent bg-red-700 text-white hover:bg-red-900',
-        SECONDARY: 'border-2 border-transparent bg-gray-700 text-white hover:bg-gray-900'
+        ACCENT: 'bg-blue-500 text-white hover:bg-blue-700',
+        NEGATIVE: 'bg-red-700 text-white hover:bg-red-900',
+        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900'
       }
       return solidColors[semanticColor]
     }
@@ -168,18 +159,18 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "GHOST") {
       const ghostColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-transparent text-blue-500 hover:bg-blue-100',
-        NEGATIVE: 'border-2 border-transparent text-red-700 hover:bg-red-100',
-        SECONDARY: 'border-2 border-transparent text-gray-700 hover:bg-gray-100'
+        ACCENT: 'text-blue-500 hover:bg-blue-100',
+        NEGATIVE: 'text-red-700 hover:bg-red-100',
+        SECONDARY: 'text-gray-700 hover:bg-gray-100'
       }
       return ghostColors[semanticColor]
     }
 
     if (style === "LINK") {
       const linkColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-transparent text-blue-500 hover:underline',
-        NEGATIVE: 'border-2 border-transparent text-red-700 hover:underline',
-        SECONDARY: 'border-2 border-transparent text-gray-700 hover:underline'
+        ACCENT: 'text-blue-500 hover:underline',
+        NEGATIVE: 'text-red-700 hover:underline',
+        SECONDARY: 'text-gray-700 hover:underline'
       }
       return linkColors[semanticColor]
     }
@@ -187,19 +178,35 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     return ''
   }
 
-  // Only apply default rounded-sm if className doesn't include rounded-* utilities
-  const defaultRounded = className?.includes('rounded-') ? '' : 'rounded-sm'
+  // Get border classes separately to handle alignment
+  const getBorderClasses = (): string => {
+    // Only OUTLINE style needs visible borders
+    if (style === "OUTLINE") {
+      return '' // Border handled in getColorClasses
+    }
+    
+    // Only add transparent border for alignment when no custom className is provided
+    // If designer adds className, they're responsible for border handling
+    if (!className) {
+      return 'border-2 border-transparent'
+    }
+    
+    return ''
+  }
 
-  const baseClasses = `
+  // Build SAIL-computed classes
+  const sailClasses = `
     inline-flex items-center justify-center gap-1
-    font-medium transition-colors h-auto
-    ${defaultRounded}
+    font-medium transition-colors h-auto rounded-sm
     ${sizeMap[size]}
     ${widthClass}
+    ${getBorderClasses()}
     ${getColorClasses()}
     ${disabled || loadingIndicator ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    ${className || ''}
   `.replace(/\s+/g, ' ').trim()
+
+  // Merge with optional className override
+  const finalClasses = mergeClasses(sailClasses, className)
 
   const handleClick = () => {
     if (saveInto && !disabled && !loadingIndicator) {
@@ -243,7 +250,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       type={submit ? "submit" : "button"}
       onClick={handleClick}
       disabled={disabled || loadingIndicator}
-      className={baseClasses}
+      className={finalClasses}
       style={inlineStyles}
       aria-label={accessibilityText || label}
       title={tooltip}
