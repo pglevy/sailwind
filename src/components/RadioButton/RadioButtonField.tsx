@@ -30,6 +30,8 @@ export interface RadioButtonFieldProps {
   validations?: string[]
   /** Callback when the user changes the selection */
   saveInto?: (value: any) => void
+  /** Callback when the user changes the selection (React-style alias for saveInto) */
+  onChange?: (value: any) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -70,6 +72,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
   value,
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   labelPosition = "ABOVE",
@@ -107,8 +110,9 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
   }
 
   const handleChange = (choiceValue: any) => {
-    if (!saveInto) return
-    saveInto(choiceValue)
+    const handler = onChange || saveInto
+    if (!handler) return
+    handler(choiceValue)
   }
 
   // Show validation errors

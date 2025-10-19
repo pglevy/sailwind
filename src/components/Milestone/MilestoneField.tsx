@@ -268,8 +268,9 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
         <button
           key={index}
           onClick={() => {
-            if (link.saveInto && typeof link.saveInto === 'function') {
-              link.saveInto(link.value)
+            const handler = link.onClick || link.saveInto
+            if (handler && typeof handler === 'function') {
+              handler(link.value)
             }
           }}
           className={`text-left hover:opacity-80 transition-opacity ${

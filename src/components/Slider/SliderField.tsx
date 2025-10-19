@@ -33,6 +33,8 @@ export interface SliderFieldProps {
   validations?: string[]
   /** Callback when the user changes the slider value */
   saveInto?: (value: number | number[]) => void
+  /** Callback when the user changes the slider value (React-style alias for saveInto) */
+  onChange?: (value: number | number[]) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -72,6 +74,7 @@ export const SliderField: React.FC<SliderFieldProps> = ({
   step = 1,
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   labelPosition = "ABOVE",
@@ -154,8 +157,9 @@ export const SliderField: React.FC<SliderFieldProps> = ({
   const colorClasses = getColorClasses()
 
   const handleValueChange = (newValue: number[]) => {
-    if (saveInto && !disabled) {
-      saveInto(isRange ? newValue : newValue[0])
+    const handler = onChange || saveInto
+    if (handler && !disabled) {
+      handler(isRange ? newValue : newValue[0])
     }
   }
 

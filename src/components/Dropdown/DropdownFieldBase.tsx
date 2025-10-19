@@ -31,6 +31,8 @@ interface DropdownFieldBaseProps {
   validations?: string[]
   /** Callback when selection changes */
   saveInto?: (value: any) => void
+  /** Callback when selection changes (React-style alias for saveInto) */
+  onChange?: (value: any) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -66,6 +68,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   value,
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   helpTooltip,
@@ -126,16 +129,17 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
 
   // Handle selection
   const handleSelect = (choiceValue: any) => {
-    if (!saveInto || disabled) return
+    const handler = onChange || saveInto
+    if (!handler || disabled) return
 
     if (multiple) {
       const currentValues = Array.isArray(value) ? value : []
       const newValues = currentValues.includes(choiceValue)
         ? currentValues.filter(v => v !== choiceValue)
         : [...currentValues, choiceValue]
-      saveInto(newValues.length > 0 ? newValues : null)
+      handler(newValues.length > 0 ? newValues : null)
     } else {
-      saveInto(choiceValue)
+      handler(choiceValue)
       setIsOpen(false)
     }
   }
@@ -143,8 +147,9 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   // Handle clear
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (saveInto && !disabled) {
-      saveInto(null)
+    const handler = onChange || saveInto
+    if (handler && !disabled) {
+      handler(null)
     }
   }
 

@@ -49,6 +49,8 @@ export interface TextFieldProps {
   validations?: string[]
   /** Callback when the user changes the text */
   saveInto?: (value: string) => void
+  /** Callback when the user changes the text (React-style alias for saveInto) */
+  onChange?: (value: string) => void
   /** Determines when the interface is refreshed with the saved value */
   refreshAfter?: RefreshAfter
   /** When present, the requiredness of the field is only evaluated when a button in the same validation group is pressed */
@@ -107,6 +109,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   value = "",
   validations = [],
   saveInto,
+  onChange,
   // refreshAfter = "UNFOCUS", // Not used in React (controlled components update immediately)
   validationGroup,
   requiredMessage,
@@ -168,8 +171,9 @@ export const TextField: React.FC<TextFieldProps> = ({
   ].filter(Boolean).join(' ')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (saveInto) {
-      saveInto(e.target.value)
+    const handler = onChange || saveInto
+    if (handler) {
+      handler(e.target.value)
     }
   }
 

@@ -25,6 +25,8 @@ export interface SwitchFieldProps {
   validations?: string[]
   /** Callback when the user toggles the switch */
   saveInto?: (value: boolean) => void
+  /** Callback when the user toggles the switch (React-style alias for saveInto) */
+  onChange?: (value: boolean) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -55,6 +57,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   value = false,
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   labelPosition = "ABOVE",
@@ -108,8 +111,9 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   }
 
   const handleChange = (checked: boolean) => {
-    if (saveInto && !disabled) {
-      saveInto(checked)
+    const handler = onChange || saveInto
+    if (handler && !disabled) {
+      handler(checked)
     }
   }
 

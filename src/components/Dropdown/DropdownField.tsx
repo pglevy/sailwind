@@ -31,6 +31,8 @@ export interface DropdownFieldProps {
   validations?: string[]
   /** Callback when the user changes the selection */
   saveInto?: (value: any) => void
+  /** Callback when the user changes the selection (React-style alias for saveInto) */
+  onChange?: (value: any) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */

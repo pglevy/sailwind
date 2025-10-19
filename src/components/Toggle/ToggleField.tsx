@@ -33,6 +33,8 @@ export interface ToggleFieldProps {
   validations?: string[]
   /** Callback when the user toggles the button */
   saveInto?: (value: boolean) => void
+  /** Callback when the user toggles the button (React-style alias for saveInto) */
+  onChange?: (value: boolean) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -70,6 +72,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   value = false,
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   labelPosition = "ABOVE",
@@ -140,8 +143,9 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   }
 
   const handleChange = (pressed: boolean) => {
-    if (saveInto && !disabled) {
-      saveInto(pressed)
+    const handler = onChange || saveInto
+    if (handler && !disabled) {
+      handler(pressed)
     }
   }
 

@@ -55,6 +55,8 @@ export interface ButtonWidgetProps {
   value?: any
   /** Click handler (maps to saveInto in SAIL) */
   saveInto?: (value?: any) => void
+  /** Click handler (React-style alias for saveInto) */
+  onClick?: (value?: any) => void
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
@@ -88,6 +90,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   tooltip,
   loadingIndicator = false,
   saveInto,
+  onClick,
   value,
   className
 }) => {
@@ -209,8 +212,9 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   const finalClasses = mergeClasses(sailClasses, className)
 
   const handleClick = () => {
-    if (saveInto && !disabled && !loadingIndicator) {
-      saveInto(value)
+    const handler = onClick || saveInto
+    if (handler && !disabled && !loadingIndicator) {
+      handler(value)
     }
   }
 

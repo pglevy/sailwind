@@ -30,6 +30,8 @@ export interface CheckboxFieldProps {
   validations?: string[]
   /** Callback when the user changes the selections */
   saveInto?: (value: any[]) => void
+  /** Callback when the user changes the selections (React-style alias for saveInto) */
+  onChange?: (value: any[]) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -72,6 +74,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   value = [],
   validations = [],
   saveInto,
+  onChange,
   validationGroup: _validationGroup,
   requiredMessage,
   align,
@@ -119,13 +122,14 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   }
 
   const handleChange = (choiceValue: any, checked: boolean) => {
-    if (!saveInto) return
+    const handler = onChange || saveInto
+    if (!handler) return
 
     const newValue = checked
       ? [...value, choiceValue]
       : value.filter(v => v !== choiceValue)
 
-    saveInto(newValue)
+    handler(newValue)
   }
 
   // Show validation errors
