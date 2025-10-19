@@ -1,243 +1,61 @@
-import { useState } from 'react'
-import { TagField, HeadingField, ButtonArrayLayout } from './components'
-import { CollapsibleSection } from './components/shared'
-import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile, FormEntry } from './vibes'
-import ESGConferenceRegistration from './vibes/ESGConferenceRegistration'
-import InsuranceQuoteWizard from './vibes/InsuranceQuoteWizard'
-import {
-  HeadingDemo,
-  TagsDemo,
-  ButtonsDemo,
-  BannersDemo,
-  MilestoneDemo,
-  ProgressBarDemo,
-  RichTextDemo,
-  CardsDemo,
-  StampDemo,
-  TextFieldDemo,
-  CheckboxDemo,
-  ImageDemo,
-  RadioButtonDemo,
-  DropdownDemo,
-  SwitchDemo,
-  ToggleDemo,
-  SliderDemo,
-  TabsDemo,
-  DialogDemo,
-  ClassNameOverrideDemo
-} from './demos'
+import { useState, useEffect } from 'react'
+import { Switch, Route, Router as WouterRouter } from 'wouter'
+import { useHashLocation } from 'wouter/use-hash-location'
+import Home from './pages/home'
+import NotFound from './pages/not-found'
 
-type ViewMode = 'components' | 'task-dashboard' | 'application-status' | 'document-review' | 'user-profile' | 'form-entry' | 'esg-conference' | 'insurance-quote'
+// Using Vite's glob import for auto-routing
+const pages = import.meta.glob('./pages/**/*.{js,jsx,ts,tsx}')
 
-function App() {
-  const [viewMode, setViewMode] = useState<ViewMode>('components')
-  const [navCollapsed, setNavCollapsed] = useState(false)
+function Router() {
+  const [routes, setRoutes] = useState([] as any[])
+
+  useEffect(() => {
+    // Load all page components
+    Promise.all(
+      Object.entries(pages).map(async ([path, importFunc]) => {
+        const module = await importFunc() as any
+        
+        // Skip the main home and not-found pages as they're imported directly
+        if (path.endsWith('/home.tsx') || path.endsWith('/not-found.tsx')) {
+          return null
+        }
+        
+        // Convert file path to route path
+        // For example: './pages/examples/TaskDashboard.tsx' -> '/examples/taskdashboard'
+        const routePath = '/' + path
+          .replace(/^.*\/pages\//, '')  // Remove everything before /pages/
+          .replace(/\.(js|jsx|ts|tsx)$/, '') // Remove file extension
+          .toLowerCase()
+          
+        return {
+          path: routePath,
+          component: module.default
+        }
+      })
+    ).then(loadedRoutes => {
+      // Filter out null routes (the ones we skipped)
+      setRoutes(loadedRoutes.filter(route => route !== null))
+    })
+  }, [])
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navigation */}
-      <div className="bg-white border-b-2 border-gray-200 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-8 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <HeadingField
-              text="Sailwind"
-              size="MEDIUM_PLUS"
-              headingTag="H1"
-              color="ACCENT"
-              marginBelow="NONE"
-            />
-            <div className="flex items-center gap-4">
-              <TagField
-                tags={[{ text: "SAIL-Compatible", backgroundColor: "ACCENT" }]}
-                size="SMALL"
-              />
-              <button
-                onClick={() => setNavCollapsed(!navCollapsed)}
-                className="text-sm text-gray-700 hover:text-blue-500 transition-colors"
-                title={navCollapsed ? "Expand navigation" : "Collapse navigation"}
-              >
-                {navCollapsed ? '▼ Expand' : '▲ Collapse'}
-              </button>
-            </div>
-          </div>
-          {!navCollapsed && (
-            <div className="flex gap-2">
-            <ButtonArrayLayout
-              buttons={[
-                {
-                  label: "Components",
-                  style: viewMode === 'components' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('components')
-                },
-                {
-                  label: "Task Dashboard",
-                  style: viewMode === 'task-dashboard' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('task-dashboard')
-                },
-                {
-                  label: "Application Status",
-                  style: viewMode === 'application-status' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('application-status')
-                },
-                {
-                  label: "Document Review",
-                  style: viewMode === 'document-review' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('document-review')
-                },
-                {
-                  label: "User Profile",
-                  style: viewMode === 'user-profile' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('user-profile')
-                },
-                {
-                  label: "Form Entry",
-                  style: viewMode === 'form-entry' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('form-entry')
-                },
-                {
-                  label: "ESG Conference",
-                  style: viewMode === 'esg-conference' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('esg-conference')
-                },
-                {
-                  label: "Insurance Quote",
-                  style: viewMode === 'insurance-quote' ? 'SOLID' : 'GHOST',
-                  color: "ACCENT",
-                  size: "SMALL",
-                  saveInto: () => setViewMode('insurance-quote')
-                }
-              ]}
-              align="START"
-            />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      {viewMode === 'task-dashboard' && <TaskDashboard />}
-      {viewMode === 'application-status' && <ApplicationStatus />}
-      {viewMode === 'document-review' && <DocumentReview />}
-      {viewMode === 'user-profile' && <UserProfile />}
-      {viewMode === 'form-entry' && <FormEntry />}
-      {viewMode === 'esg-conference' && <ESGConferenceRegistration />}
-      {viewMode === 'insurance-quote' && <InsuranceQuoteWizard />}
-
-      {viewMode === 'components' && (
-        <div className="p-8">
-          <div className="max-w-6xl mx-auto">
-            {/* Header */}
-            <div className="mb-8">
-              <HeadingField
-                text="Component Library"
-                size="LARGE_PLUS"
-                headingTag="H1"
-                marginBelow="EVEN_LESS"
-              />
-              <p className="text-base text-gray-700">
-                React component library for rapid prototyping of Appian applications
-              </p>
-            </div>
-
-            {/* Component Demos - Accordion Pattern */}
-            <CollapsibleSection title="Heading Component" defaultOpen={true}>
-              <HeadingDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Tag Component">
-              <TagsDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Button Component">
-              <ButtonsDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Message Banner Component">
-              <BannersDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Milestone Component">
-              <MilestoneDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Progress Bar Component">
-              <ProgressBarDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Rich Text Component">
-              <RichTextDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Card Component">
-              <CardsDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Stamp Component">
-              <StampDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Text Field Component">
-              <TextFieldDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Checkbox Component">
-              <CheckboxDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Image Component">
-              <ImageDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Radio Button Component">
-              <RadioButtonDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Dropdown Component">
-              <DropdownDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Switch Component (NEW SAIL)">
-              <SwitchDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Toggle Component (NEW SAIL)">
-              <ToggleDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Slider Component (NEW SAIL)">
-              <SliderDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Tabs Component (NEW SAIL)">
-              <TabsDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Dialog Component (NEW SAIL)">
-              <DialogDemo />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="className Override Demo">
-              <ClassNameOverrideDemo />
-            </CollapsibleSection>
-          </div>
-        </div>
-      )}
-    </div>
+    <WouterRouter hook={useHashLocation}>
+      <Switch>
+        <Route path="/" component={Home} />
+        {routes.map(({ path, component: Component }) => (
+          <Route key={path} path={path}>
+            {(params) => <Component {...params} />}
+          </Route>
+        ))}
+        <Route component={NotFound} />
+      </Switch>
+    </WouterRouter>
   )
+}
+
+function App() {
+  return <Router />
 }
 
 export default App

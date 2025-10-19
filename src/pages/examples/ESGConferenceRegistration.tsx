@@ -8,7 +8,7 @@ import {
   CheckboxField,
   ButtonArrayLayout,
   ImageField,
-} from '../components'
+} from '../../components'
 
 /**
  * ESG World 2023 Conference Registration Portal

@@ -8,7 +8,7 @@ import {
   Icon,
   ProgressBar,
   ImageField
-} from '../components'
+} from '../../components'
 
 /**
  * User Profile Page
@@ -512,3 +512,4 @@ export const UserProfile = () => {
     </div>
   )
 }
+export default UserProfile
