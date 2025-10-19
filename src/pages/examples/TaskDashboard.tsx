@@ -1,9 +1,9 @@
-import { CardLayout } from '../components/Card/CardLayout'
-import { HeadingField } from '../components/Heading/HeadingField'
-import { TagField } from '../components/Tag/TagField'
-import { ButtonArrayLayout } from '../components/Button/ButtonArrayLayout'
-import { ProgressBar } from '../components/ProgressBar/ProgressBar'
-import { MessageBanner } from '../components/MessageBanner/MessageBanner'
+import { CardLayout } from '../../components/Card/CardLayout'
+import { HeadingField } from '../../components/Heading/HeadingField'
+import { TagField } from '../../components/Tag/TagField'
+import { ButtonArrayLayout } from '../../components/Button/ButtonArrayLayout'
+import { ProgressBar } from '../../components/ProgressBar/ProgressBar'
+import { MessageBanner } from '../../components/MessageBanner/MessageBanner'
 
 /**
  * Task Management Dashboard
@@ -187,3 +187,5 @@ export const TaskDashboard = () => {
     </div>
   )
 }
+
+export default TaskDashboard

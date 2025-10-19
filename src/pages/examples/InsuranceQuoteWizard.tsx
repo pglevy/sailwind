@@ -8,7 +8,7 @@ import {
   TextField,
   MilestoneField,
   Icon,
-} from '../components'
+} from '../../components'
 
 /**
  * Auto Insurance Quote Wizard - Final Step

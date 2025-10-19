@@ -57,3 +57,6 @@ export * from './Image'
 
 // Dialog components (new SAIL)
 export * from './Dialog'
+
+// Table of Contents component
+export { TableOfContents } from './TableOfContents'

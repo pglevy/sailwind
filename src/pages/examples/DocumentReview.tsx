@@ -1,10 +1,10 @@
-import { CardLayout } from '../components/Card/CardLayout'
-import { HeadingField } from '../components/Heading/HeadingField'
-import { TagField } from '../components/Tag/TagField'
-import { ButtonArrayLayout } from '../components/Button/ButtonArrayLayout'
-import { MessageBanner } from '../components/MessageBanner/MessageBanner'
-import { RichTextDisplayField } from '../components/RichText/RichTextDisplayField'
-import { TextItem } from '../components/RichText/TextItem'
+import { CardLayout } from '../../components/Card/CardLayout'
+import { HeadingField } from '../../components/Heading/HeadingField'
+import { TagField } from '../../components/Tag/TagField'
+import { ButtonArrayLayout } from '../../components/Button/ButtonArrayLayout'
+import { MessageBanner } from '../../components/MessageBanner/MessageBanner'
+import { RichTextDisplayField } from '../../components/RichText/RichTextDisplayField'
+import { TextItem } from '../../components/RichText/TextItem'
 
 /**
  * Document Review Interface
@@ -332,3 +332,4 @@ export const DocumentReview = () => {
     </div>
   )
 }
+export default DocumentReview
