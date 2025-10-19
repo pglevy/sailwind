@@ -8,7 +8,7 @@ import {
   CheckboxField,
   ButtonArrayLayout,
   ImageField,
-} from '../src/components'
+} from '../components'
 
 /**
  * ESG World 2023 Conference Registration Portal
@@ -262,8 +262,8 @@ export default function ESGConferenceRegistration() {
                       icon: 'arrow-right',
                       iconPosition: 'END',
                       style: 'SOLID',
-                      color: '#DDB100',
-                      className: 'rounded-full text-black',
+                      color: 'ACCENT',
+                      className: 'rounded-full text-black bg-yellow-500 hover:bg-yellow-600',
                     },
                   ]}
                   align="END"

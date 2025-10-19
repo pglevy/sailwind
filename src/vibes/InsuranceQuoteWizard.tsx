@@ -8,7 +8,7 @@ import {
   TextField,
   MilestoneField,
   Icon,
-} from '../src/components'
+} from '../components'
 
 /**
  * Auto Insurance Quote Wizard - Final Step
@@ -112,7 +112,7 @@ export default function InsuranceQuoteWizard() {
                           style: 'OUTLINE',
                           size: 'STANDARD',
                           className: '!border-[#AF2B9B] !text-[#AF2B9B]',
-                          onClick: () => setShowSaveForLater(true),
+                          saveInto: () => setShowSaveForLater(true),
                         },
                       ]}
                       align="START"
