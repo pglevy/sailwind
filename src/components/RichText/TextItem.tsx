@@ -71,7 +71,7 @@ export const TextItem: React.FC<TextItemProps> = ({
     styles.includes('STRIKETHROUGH') && 'line-through',
     // Link styles
     link && linkStyle === "INLINE" && 'underline decoration-dotted decoration-current/50 underline-offset-5 hover:no-underline',
-    link && linkStyle === "STANDALONE" && 'no-underline decoration-current/50 underline-offset-5 hover:no-underline'
+    link && linkStyle === "STANDALONE" && 'no-underline decoration-current/50 underline-offset-5 hover:underline'
   ].filter(Boolean).join(' ')
 
   // Inline styles for hex colors

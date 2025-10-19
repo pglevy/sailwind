@@ -1,4 +1,7 @@
-import { Link } from 'wouter'
+import { useLocation } from 'wouter'
+import { CardLayout } from './Card/CardLayout'
+import { HeadingField } from './Heading/HeadingField'
+import { RichTextDisplayField, TextItem } from './RichText'
 
 interface TocItem {
   title: string
@@ -64,47 +67,74 @@ const tocConfig: TocGroup[] = [
   }
 ]
 
-const TocItemComponent = ({ item }: { item: TocItem }) => (
-  <li className="mb-2">
-    <Link 
-      to={item.path} 
-      className="text-blue-500 hover:text-blue-700 underline font-medium"
-    >
-      {item.title}
-    </Link>
-    {item.description && (
-      <p className="text-sm text-gray-700 mt-1">{item.description}</p>
-    )}
-  </li>
-)
+const TocItemComponent = ({ item }: { item: TocItem }) => {
+  const [, setLocation] = useLocation()
+  
+  return (
+    <div className="mb-4">
+      <RichTextDisplayField
+        value={[
+          <TextItem
+            key="title"
+            text={item.title}
+            color="ACCENT"
+            size='MEDIUM'
+            link={() => setLocation(item.path)}
+            linkStyle="STANDALONE"
+          />,
+          <br />, 
+          <TextItem
+              key="desc"
+              text={item.description}
+              color="SECONDARY"
+              size="STANDARD"
+            />
+        ]}
+        marginBelow="EVEN_LESS"
+      />
+    </div>
+  )
+}
 
 const TocGroupComponent = ({ group }: { group: TocGroup }) => (
-  <div className="mb-8">
-    <h2 className="text-xl font-semibold mb-4 text-gray-900">
-      {group.title}
-    </h2>
-    <ul className="space-y-2">
+  <div>
+    <HeadingField
+      text={group.title}
+      size="MEDIUM"
+      fontWeight='SEMI_BOLD'
+      headingTag="H2"
+      marginBelow="STANDARD"
+    />
+    <div className="space-y-2">
       {group.items.map((item, index) => (
         <TocItemComponent key={index} item={item} />
       ))}
-    </ul>
+    </div>
   </div>
 )
 
 export const TableOfContents = () => {
   return (
     <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-2 text-center">
-        Table of Contents
-      </h2>
-      <p className="text-base text-gray-700 mb-8 text-center">
-        Explore the available components and example interfaces
-      </p>
-      <div className="grid gap-8 md:grid-cols-2 bg-white shadow-lg p-8 rounded-lg">
-        {tocConfig.map((group, index) => (
-          <TocGroupComponent key={index} group={group} />
-        ))}
-      </div>
+      <HeadingField
+        text="Table of Contents"
+        size="LARGE"
+        headingTag="H2"
+        align="CENTER"
+        marginBelow="EVEN_LESS"
+      />
+      <RichTextDisplayField
+        value={["Explore the available components and example interfaces"]}
+        align="CENTER"
+        marginBelow="MORE"
+      />
+      <CardLayout padding="MORE" marginBelow="NONE" showBorder={false} showShadow={true}>
+        <div className="grid gap-8 md:grid-cols-2">
+          {tocConfig.map((group, index) => (
+            <TocGroupComponent key={index} group={group} />
+          ))}
+        </div>
+      </CardLayout>
     </div>
   )
 }

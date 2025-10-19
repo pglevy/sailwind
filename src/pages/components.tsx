@@ -1,5 +1,6 @@
-import { HeadingField } from '../components'
-import { CollapsibleSection } from '../components/shared'
+import { HeadingField } from "../components";
+import { CollapsibleSection } from "../components/shared";
+import { RichTextDisplayField, TextItem } from "../components/RichText";
 import {
   HeadingDemo,
   TagsDemo,
@@ -20,8 +21,8 @@ import {
   SliderDemo,
   TabsDemo,
   DialogDemo,
-  ClassNameOverrideDemo
-} from '../demos'
+  ClassNameOverrideDemo,
+} from "../demos";
 
 export default function Components() {
   return (
@@ -35,13 +36,18 @@ export default function Components() {
             headingTag="H1"
             marginBelow="EVEN_LESS"
           />
-          <p className="text-base text-gray-700">
-            React component library for rapid prototyping of Appian applications
-          </p>
+          <RichTextDisplayField
+            value={[
+              <TextItem
+                text="React component library for rapid prototyping of Appian applications"
+                color="SECONDARY"
+              />,
+            ]}
+          />
         </div>
 
         {/* Component Demos - Accordion Pattern */}
-        <CollapsibleSection title="Heading Component" defaultOpen={true}>
+        <CollapsibleSection title="Heading Component" defaultOpen={false}>
           <HeadingDemo />
         </CollapsibleSection>
 
@@ -122,5 +128,5 @@ export default function Components() {
         </CollapsibleSection>
       </div>
     </div>
-  )
+  );
 }
