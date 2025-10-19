@@ -14,6 +14,61 @@ Sailwind enables UX designers to rapidly prototype Appian applications using Rea
 - **Accessible** - All components meet WCAG 2.1 AA standards
 - **Production-Ready Foundation** - Built on Radix UI primitives + Tailwind CSS
 
+## Quickstart
+
+### Option 1: Use This Template (Recommended)
+1. Click **"Use this template"** button above
+2. Clone your new repository
+3. Install dependencies: `npm install`
+4. Start development server: `npm run dev`
+5. Open `http://localhost:5173` to see the component library and examples
+
+### Option 2: Clone Directly
+```bash
+git clone https://github.com/pglevy/sailwind.git
+cd sailwind
+npm install
+npm run dev
+```
+
+### Creating Your First Prototype
+1. **Browse examples** at `/#/examples/taskdashboard` to see what's possible
+2. **Explore components** at `/#/components` to understand available building blocks
+3. **Create new pages** by adding `.tsx` files to `src/pages/` - they'll automatically become routes
+4. **Import components** using exact SAIL parameter names:
+
+```tsx
+// src/pages/my-prototype.tsx
+import { CardLayout, HeadingField, TagField, ButtonArrayLayout } from '../components'
+
+export default function MyPrototype() {
+  return (
+    <CardLayout padding="STANDARD">
+      <HeadingField text="My Prototype" size="LARGE" />
+      <TagField 
+        tags={[{ text: "DRAFT", backgroundColor: "ACCENT" }]}
+        size="STANDARD" 
+      />
+      <ButtonArrayLayout
+        buttons={[
+          { label: "Save", style: "SOLID", color: "ACCENT" },
+          { label: "Cancel", style: "OUTLINE", color: "SECONDARY" }
+        ]}
+        align="END"
+      />
+    </CardLayout>
+  )
+}
+```
+
+4. **Navigate to** `/#/my-prototype` to see your page
+5. **Translate to SAIL** when ready for production using the exact same parameter names
+
+### Next Steps
+- Check out `src/pages/examples/` for complete interface examples
+- Read the component documentation below for detailed usage
+- Use the table of contents on the home page to navigate between examples
+
 ## Quick Example
 
 **React Prototype:**
