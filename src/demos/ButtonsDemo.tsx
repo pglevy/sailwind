@@ -38,7 +38,7 @@ export default function ButtonsDemo() {
           </h3>
           <ButtonArrayLayout
             buttons={[
-              { label: 'Add Another', style: 'OUTLINE', color: 'ACCENT', saveInto: () => alert('Add Another clicked') },
+              { label: 'Add Another', style: 'OUTLINE', color: 'ACCENT', icon:'plus', tooltip:'And another one', saveInto: () => alert('Add Another clicked') },
               { label: 'Cancel', style: 'OUTLINE', color: 'SECONDARY', saveInto: () => alert('Cancel clicked') }
             ]}
           />

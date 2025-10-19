@@ -2,6 +2,7 @@ import * as React from 'react'
 import type { TagItemProps } from './TagItem'
 import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize, SAILSemanticColor } from '../../types/sail'
 import { FieldLabel } from '../shared/FieldLabel'
+import { mergeClasses } from '../../utils/classNames'
 
 /**
  * Tag size - only SMALL and STANDARD are supported per SAIL docs
@@ -35,6 +36,8 @@ export interface TagFieldProps {
   marginAbove?: SAILMarginSize
   /** Space added below the layout */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -60,7 +63,8 @@ export const TagField: React.FC<TagFieldProps> = ({
   size = "STANDARD",
   showWhen = true,
   marginAbove = "NONE",
-  marginBelow = "STANDARD"
+  marginBelow = "STANDARD",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -161,9 +165,13 @@ export const TagField: React.FC<TagFieldProps> = ({
 
   const fieldId = React.useId()
 
+  // Build SAIL-computed classes for root container
+  const sailClasses = `${marginAboveMap[marginAbove]} ${marginBelowMap[marginBelow]}`
+  const finalClasses = mergeClasses(sailClasses, className)
+
   return (
     <div
-      className={`${marginAboveMap[marginAbove]} ${marginBelowMap[marginBelow]}`}
+      className={finalClasses}
       aria-label={accessibilityText}
     >
       <FieldLabel

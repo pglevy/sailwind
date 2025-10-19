@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 type CardHeight = "AUTO" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 type CardStyle = "NONE" | "TRANSPARENT" | "STANDARD" | "ACCENT" | "SUCCESS" | "WARN" | "ERROR" | "INFO" | "CHARCOAL_SCHEME" | "NAVY_SCHEME" | "PLUM_SCHEME"
@@ -36,6 +37,8 @@ export interface CardLayoutProps {
   decorativeBarColor?: string
   /** Controls card visibility */
   showWhen?: boolean
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -64,7 +67,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   borderColor = "STANDARD",
   decorativeBarPosition = "NONE",
   decorativeBarColor,
-  showWhen = true
+  showWhen = true,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -195,7 +199,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
 
   const barProps = getDecorativeBarClasses()
 
-  const baseClasses = `
+  // Build SAIL-computed classes
+  const sailClasses = `
     ${bgProps.className || ''}
     ${heightMap[height]}
     ${shapeMap[shape]}
@@ -208,6 +213,9 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     relative
   `.replace(/\s+/g, ' ').trim()
 
+  // Merge with optional className override
+  const finalClasses = mergeClasses(sailClasses, className)
+
   // Combine inline styles
   const inlineStyles = {
     ...(bgProps.style || {}),
@@ -215,7 +223,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   }
 
   return (
-    <div className={baseClasses} style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}>
+    <div className={finalClasses} style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}>
       {decorativeBarPosition === "TOP" && (
         <div
           className={`absolute top-0 left-0 right-0 h-1 ${barProps.className || ''}`}
