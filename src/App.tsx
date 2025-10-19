@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { TagField, HeadingField, ButtonArrayLayout } from './components'
 import { CollapsibleSection } from './components/shared'
 import { TaskDashboard, ApplicationStatus, DocumentReview, UserProfile, FormEntry } from './vibes'
-import ESGConferenceRegistration from '../vibes/ESGConferenceRegistration'
-import InsuranceQuoteWizard from '../vibes/InsuranceQuoteWizard'
+import ESGConferenceRegistration from './vibes/ESGConferenceRegistration'
+import InsuranceQuoteWizard from './vibes/InsuranceQuoteWizard'
 import {
   HeadingDemo,
   TagsDemo,
