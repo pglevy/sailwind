@@ -52,15 +52,25 @@ const tocConfig: TocGroup[] = [
         title: "Form Entry",
         path: "/examples/formentry",
         description: "Data entry form with validation"
+      }
+    ]
+  },
+  {
+    title: "Pages",
+    items: [
+      {
+        title: "Publications",
+        path: "/publications",
+        description: "Publications and research content"
       },
       {
         title: "ESG Conference Registration",
-        path: "/examples/esgconferenceregistration",
+        path: "/esgconferenceregistration",
         description: "Event registration with multiple steps"
       },
       {
         title: "Insurance Quote Wizard",
-        path: "/examples/insurancequotewizard",
+        path: "/insurancequotewizard",
         description: "Multi-step insurance quote process"
       }
     ]
@@ -130,9 +140,13 @@ export const TableOfContents = () => {
       />
       <CardLayout padding="MORE" marginBelow="NONE" showBorder={false} showShadow={true}>
         <div className="grid gap-8 md:grid-cols-2">
-          {tocConfig.map((group, index) => (
-            <TocGroupComponent key={index} group={group} />
-          ))}
+          <div className="space-y-8">
+            <TocGroupComponent group={tocConfig[0]} />
+            <TocGroupComponent group={tocConfig[1]} />
+          </div>
+          <div>
+            <TocGroupComponent group={tocConfig[2]} />
+          </div>
         </div>
       </CardLayout>
     </div>
