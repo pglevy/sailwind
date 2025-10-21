@@ -269,6 +269,143 @@ export type SAILSemanticColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY"
 
 Component-specific types can be defined inline.
 
+## Page Development Guidelines ("Vibe Coding")
+
+When creating new pages that compose existing components into full interfaces:
+
+### File Location
+
+**Default: Always create new pages in `src/pages/`** - NOT in `src/pages/patterns/`
+
+```
+✅ Correct (your custom work):
+src/pages/CustomerDashboard.tsx
+src/pages/OrderHistory.tsx
+src/pages/ProjectTracker.tsx
+
+🔍 Reference only (interface patterns):
+src/pages/patterns/TaskDashboard.tsx
+src/pages/patterns/ApplicationStatus.tsx
+```
+
+**When to use each location:**
+
+**`src/pages/`** - Default for all your custom work:
+- New pages you're creating for a project
+- Client-specific interfaces
+- Your experimental designs
+- Anything you want to build and iterate on
+
+**`src/pages/patterns/`** - Only when explicitly requested:
+- Reference implementations showing what's possible
+- Reusable interface patterns for inspiration
+- Template pages that demonstrate component combinations
+- **Do not modify these** - they're examples for others to learn from
+- Only add here if specifically asked to create a new pattern
+
+### TypeScript Error Checking
+
+**Run `npm run build` frequently** to catch TypeScript errors early:
+
+- After creating a new page file
+- After adding multiple components to a page
+- After changing prop types or interfaces  
+- Before considering a page "done"
+
+**Why**: The dev server (`npm run dev`) can be forgiving, but `npm run build`:
+- Catches type mismatches between components
+- Validates all SAIL parameter values are UPPERCASE
+- Ensures imports are correct
+- Checks for missing required props
+- **Prevents broken production builds**
+
+**Recommended workflow**:
+```bash
+# Make changes to your page
+npm run dev          # Check it looks right
+
+# Validate TypeScript
+npm run build        # Fix any errors that appear
+
+# Repeat until build succeeds
+```
+
+### Table of Contents Integration
+
+**Every new page in `src/pages/` MUST be added to the Table of Contents**
+
+Edit `src/components/TableOfContents.tsx` and add your page to the **"Pages" group**:
+
+```tsx
+{
+  title: "Pages",
+  items: [
+    {
+      title: "Publications",
+      path: "/publications",
+      description: "Publications and research content"
+    },
+    // ADD YOUR NEW PAGE HERE
+    {
+      title: "Customer Dashboard",
+      path: "/customerdashboard",    // lowercase filename, no extension
+      description: "Customer account overview and recent activity"
+    }
+  ]
+}
+```
+
+**Path rules:**
+- Lowercase filename: `CustomerDashboard.tsx` → `/customerdashboard`
+- Pages in `patterns/`: `/patterns/taskdashboard`
+- Always starts with `/`
+
+### Page Structure Pattern
+
+Standard layout for new pages:
+
+```tsx
+import { 
+  HeadingField, 
+  CardLayout, 
+  ButtonWidget 
+} from '../components'
+
+export default function PageName() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-8 py-8">
+        
+        <HeadingField
+          text="Page Title"
+          size="LARGE"
+          headingTag="H1"
+          marginBelow="MORE"
+        />
+        
+        <CardLayout padding="MORE" showShadow={true}>
+          {/* Compose existing Sailwind components here */}
+        </CardLayout>
+        
+      </div>
+    </div>
+  )
+}
+```
+
+### Vibe Coding Checklist
+
+Before considering a page complete:
+
+- [ ] File created in `src/pages/` (not `patterns/`)
+- [ ] Uses only existing Sailwind components  
+- [ ] All SAIL parameters use UPPERCASE values
+- [ ] `npm run build` completes successfully
+- [ ] Page added to "Pages" group in TableOfContents.tsx
+- [ ] Path in TOC matches filename (lowercase)
+- [ ] Page displays correctly in browser
+- [ ] TOC description is clear and helpful
+
 ## Component Priority (Build Order)
 
 ### Phase 1 - Core Components ✅
