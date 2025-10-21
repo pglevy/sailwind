@@ -406,6 +406,105 @@ Before considering a page complete:
 - [ ] Page displays correctly in browser
 - [ ] TOC description is clear and helpful
 
+### Pragmatic Prototyping Philosophy
+
+When building pages, **prioritize working prototypes over SAIL purity**:
+
+**Use existing Sailwind components when available:**
+```tsx
+// ✅ Use SAIL-exact components that exist
+<CardLayout padding="MORE">
+  <HeadingField text="Dashboard" size="LARGE" />
+  <ButtonArrayLayout buttons={[...]} />
+</CardLayout>
+```
+
+**For missing functionality, use practical solutions:**
+```tsx
+// ✅ Need a chart but don't have SAIL chart components yet? Use Recharts
+import { LineChart, Line, XAxis, YAxis } from 'recharts'
+
+<CardLayout padding="MORE">
+  <HeadingField text="Sales Trend" size="MEDIUM" marginBelow="STANDARD" />
+  <LineChart data={salesData} width={600} height={300}>
+    <Line type="monotone" dataKey="sales" stroke="#2322F0" />
+    <XAxis dataKey="month" />
+    <YAxis />
+  </LineChart>
+  {/* TODO: Replace with SAIL-compliant chart component when available */}
+</CardLayout>
+```
+
+```tsx
+// ✅ Need a data grid? Use a standard HTML table or library
+<div className="overflow-x-auto">
+  <table className="w-full text-sm">
+    <thead className="bg-gray-100">
+      <tr>
+        <th className="px-4 py-2 text-left">Name</th>
+        <th className="px-4 py-2 text-left">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {/* table rows */}
+    </tbody>
+  </table>
+  {/* TODO: Replace with SAIL GridField when available */}
+</div>
+```
+
+**DO NOT create new SAIL components during page building:**
+```tsx
+// ❌ Don't do this - creating a new SAIL component on the fly
+<ChartField 
+  chartType="LINE"
+  data={salesData}
+  size="STANDARD"
+/>
+// This component doesn't exist and shouldn't be created during vibe coding
+```
+
+### When to Use Non-SAIL Solutions
+
+Use standard React libraries and HTML when:
+- The SAIL component doesn't exist yet (charts, grids, maps, complex forms)
+- You need to quickly prototype an interaction
+- The element is supplementary to the core interface
+- Speed of iteration is more important than SAIL translation
+
+Mark these with comments like:
+```tsx
+{/* TODO: Convert to SAIL component - a!lineChartField */}
+{/* TEMP: Using Recharts until we have SAIL chart components */}
+{/* NON-SAIL: Standard table - convert to GridField later */}
+```
+
+### Component Development vs Page Building
+
+Two different modes with different goals:
+
+**Component Development Mode** (strict):
+- Building reusable Sailwind components
+- MUST use exact SAIL parameter names (UPPERCASE)
+- MUST map to SAIL production code 1:1
+- MUST include SAIL translation examples
+- Takes time, requires research
+
+**Page Building Mode** (pragmatic):
+- Composing interfaces from available components
+- Use Sailwind components where they exist
+- Use practical solutions for missing functionality
+- Focus on working prototype, iterate quickly
+- Note what should become SAIL components later
+
+### Benefits of This Approach
+
+✅ Don't block progress waiting for components
+✅ Build working prototypes quickly
+✅ Identify which components are actually needed
+✅ Let component development be deliberate and well-designed
+✅ Clear markers for what needs conversion later
+
 ## Component Priority (Build Order)
 
 ### Phase 1 - Core Components ✅
