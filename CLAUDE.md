@@ -330,6 +330,59 @@ npm run build        # Fix any errors that appear
 # Repeat until build succeeds
 ```
 
+### Visual Testing with Playwright
+
+**Use Playwright scripts to check pages visually and catch runtime errors:**
+
+```bash
+# Quick check with screenshot and error detection
+npm run check-page http://localhost:5173/#/pagename
+
+# Full check with accessibility and comprehensive diagnostics
+npm run check-page:full http://localhost:5173/#/pagename
+```
+
+**CRITICAL URL Format Rules:**
+
+1. **Always include the full URL with protocol:** `http://localhost:5173/#/pagename`
+2. **Hash routing uses `/#/` format:** Note the slash BEFORE and AFTER the hash
+3. **Use lowercase path matching the filename:** `ExpenseSubmission.tsx` → `/#/expensesubmission`
+4. **Don't forget the port:** Always use `:5173` for the Vite dev server
+
+**Examples:**
+
+```bash
+# ✅ CORRECT - Full URL with hash route (note /#/ format)
+npm run check-page http://localhost:5173/#/expensesubmission
+
+# ✅ CORRECT - Another hash route example
+npm run check-page http://localhost:5173/#/customerdashboard
+
+# ✅ CORRECT - With custom screenshot path
+npm run check-page http://localhost:5173/#/publications screenshots/publications.png
+
+# ❌ WRONG - Missing protocol
+npm run check-page localhost:5173/#/pagename
+
+# ❌ WRONG - Wrong hash format (missing slash after hash)
+npm run check-page http://localhost:5173#/pagename
+
+# ❌ WRONG - Missing hash routing entirely
+npm run check-page http://localhost:5173/pagename
+
+# ❌ WRONG - Missing port
+npm run check-page http://localhost/#/pagename
+```
+
+**What the scripts check:**
+- Takes full-page screenshot (saved to `screenshots/` directory)
+- Catches console errors and warnings
+- Detects page errors and exceptions
+- Accessibility violations (with `check-page:full`)
+- Full diagnostic JSON output (with `check-page:full`)
+
+**Reference:** See `scripts/README.md` for advanced usage and configuration options.
+
 ### Table of Contents Integration
 
 **Every new page in `src/pages/` MUST be added to the Table of Contents**
