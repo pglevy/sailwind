@@ -26,43 +26,43 @@ const tocConfig: TocGroup[] = [
     ]
   },
   {
-    title: "Example Interfaces",
+    title: "Interface Patterns",
     items: [
       {
         title: "Task Dashboard",
-        path: "/examples/taskdashboard",
+        path: "/patterns/taskdashboard",
         description: "Task management interface with status tracking"
       },
       {
         title: "Application Status",
-        path: "/examples/applicationstatus", 
+        path: "/patterns/applicationstatus",
         description: "Application review and approval workflow"
       },
       {
         title: "Document Review",
-        path: "/examples/documentreview",
+        path: "/patterns/documentreview",
         description: "Document approval and feedback interface"
       },
       {
         title: "User Profile",
-        path: "/examples/userprofile",
+        path: "/patterns/userprofile",
         description: "User information and settings management"
       },
       {
         title: "Form Entry",
-        path: "/examples/formentry",
+        path: "/patterns/formentry",
         description: "Data entry form with validation"
+      },
+      {
+        title: "Publications",
+        path: "/patterns/publications",
+        description: "List of items in a card with tags and filtering"
       }
     ]
   },
   {
     title: "Pages",
     items: [
-      {
-        title: "Publications",
-        path: "/publications",
-        description: "Publications and research content"
-      },
       {
         title: "ESG Conference Registration",
         path: "/esgconferenceregistration",
