@@ -269,6 +269,242 @@ export type SAILSemanticColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY"
 
 Component-specific types can be defined inline.
 
+## Page Development Guidelines ("Vibe Coding")
+
+When creating new pages that compose existing components into full interfaces:
+
+### File Location
+
+**Default: Always create new pages in `src/pages/`** - NOT in `src/pages/patterns/`
+
+```
+✅ Correct (your custom work):
+src/pages/CustomerDashboard.tsx
+src/pages/OrderHistory.tsx
+src/pages/ProjectTracker.tsx
+
+🔍 Reference only (interface patterns):
+src/pages/patterns/TaskDashboard.tsx
+src/pages/patterns/ApplicationStatus.tsx
+```
+
+**When to use each location:**
+
+**`src/pages/`** - Default for all your custom work:
+- New pages you're creating for a project
+- Client-specific interfaces
+- Your experimental designs
+- Anything you want to build and iterate on
+
+**`src/pages/patterns/`** - Only when explicitly requested:
+- Reference implementations showing what's possible
+- Reusable interface patterns for inspiration
+- Template pages that demonstrate component combinations
+- **Do not modify these** - they're examples for others to learn from
+- Only add here if specifically asked to create a new pattern
+
+### TypeScript Error Checking
+
+**Run `npm run build` frequently** to catch TypeScript errors early:
+
+- After creating a new page file
+- After adding multiple components to a page
+- After changing prop types or interfaces  
+- Before considering a page "done"
+
+**Why**: The dev server (`npm run dev`) can be forgiving, but `npm run build`:
+- Catches type mismatches between components
+- Validates all SAIL parameter values are UPPERCASE
+- Ensures imports are correct
+- Checks for missing required props
+- **Prevents broken production builds**
+
+**Recommended workflow**:
+```bash
+# Make changes to your page
+npm run dev          # Check it looks right
+
+# Validate TypeScript
+npm run build        # Fix any errors that appear
+
+# Repeat until build succeeds
+```
+
+### Table of Contents Integration
+
+**Every new page in `src/pages/` MUST be added to the Table of Contents**
+
+Edit `src/components/TableOfContents.tsx` and add your page to the **"Pages" group**:
+
+```tsx
+{
+  title: "Pages",
+  items: [
+    {
+      title: "Publications",
+      path: "/publications",
+      description: "Publications and research content"
+    },
+    // ADD YOUR NEW PAGE HERE
+    {
+      title: "Customer Dashboard",
+      path: "/customerdashboard",    // lowercase filename, no extension
+      description: "Customer account overview and recent activity"
+    }
+  ]
+}
+```
+
+**Path rules:**
+- Lowercase filename: `CustomerDashboard.tsx` → `/customerdashboard`
+- Pages in `patterns/`: `/patterns/taskdashboard`
+- Always starts with `/`
+
+### Page Structure Pattern
+
+Standard layout for new pages:
+
+```tsx
+import { 
+  HeadingField, 
+  CardLayout, 
+  ButtonWidget 
+} from '../components'
+
+export default function PageName() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-8 py-8">
+        
+        <HeadingField
+          text="Page Title"
+          size="LARGE"
+          headingTag="H1"
+          marginBelow="MORE"
+        />
+        
+        <CardLayout padding="MORE" showShadow={true}>
+          {/* Compose existing Sailwind components here */}
+        </CardLayout>
+        
+      </div>
+    </div>
+  )
+}
+```
+
+### Vibe Coding Checklist
+
+Before considering a page complete:
+
+- [ ] File created in `src/pages/` (not `patterns/`)
+- [ ] Uses only existing Sailwind components  
+- [ ] All SAIL parameters use UPPERCASE values
+- [ ] `npm run build` completes successfully
+- [ ] Page added to "Pages" group in TableOfContents.tsx
+- [ ] Path in TOC matches filename (lowercase)
+- [ ] Page displays correctly in browser
+- [ ] TOC description is clear and helpful
+
+### Pragmatic Prototyping Philosophy
+
+When building pages, **prioritize working prototypes over SAIL purity**:
+
+**Use existing Sailwind components when available:**
+```tsx
+// ✅ Use SAIL-exact components that exist
+<CardLayout padding="MORE">
+  <HeadingField text="Dashboard" size="LARGE" />
+  <ButtonArrayLayout buttons={[...]} />
+</CardLayout>
+```
+
+**For missing functionality, use practical solutions:**
+```tsx
+// ✅ Need a chart but don't have SAIL chart components yet? Use Recharts
+import { LineChart, Line, XAxis, YAxis } from 'recharts'
+
+<CardLayout padding="MORE">
+  <HeadingField text="Sales Trend" size="MEDIUM" marginBelow="STANDARD" />
+  <LineChart data={salesData} width={600} height={300}>
+    <Line type="monotone" dataKey="sales" stroke="#2322F0" />
+    <XAxis dataKey="month" />
+    <YAxis />
+  </LineChart>
+  {/* TODO: Replace with SAIL-compliant chart component when available */}
+</CardLayout>
+```
+
+```tsx
+// ✅ Need a data grid? Use a standard HTML table or library
+<div className="overflow-x-auto">
+  <table className="w-full text-sm">
+    <thead className="bg-gray-100">
+      <tr>
+        <th className="px-4 py-2 text-left">Name</th>
+        <th className="px-4 py-2 text-left">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {/* table rows */}
+    </tbody>
+  </table>
+  {/* TODO: Replace with SAIL GridField when available */}
+</div>
+```
+
+**DO NOT create new SAIL components during page building:**
+```tsx
+// ❌ Don't do this - creating a new SAIL component on the fly
+<ChartField 
+  chartType="LINE"
+  data={salesData}
+  size="STANDARD"
+/>
+// This component doesn't exist and shouldn't be created during vibe coding
+```
+
+### When to Use Non-SAIL Solutions
+
+Use standard React libraries and HTML when:
+- The SAIL component doesn't exist yet (charts, grids, maps, complex forms)
+- You need to quickly prototype an interaction
+- The element is supplementary to the core interface
+- Speed of iteration is more important than SAIL translation
+
+Mark these with comments like:
+```tsx
+{/* TODO: Convert to SAIL component - a!lineChartField */}
+{/* TEMP: Using Recharts until we have SAIL chart components */}
+{/* NON-SAIL: Standard table - convert to GridField later */}
+```
+
+### Component Development vs Page Building
+
+Two different modes with different goals:
+
+**Component Development Mode** (strict):
+- Building reusable Sailwind components
+- MUST use exact SAIL parameter names (UPPERCASE)
+- MUST map to SAIL production code 1:1
+- MUST include SAIL translation examples
+- Takes time, requires research
+
+**Page Building Mode** (pragmatic):
+- Composing interfaces from available components
+- Use Sailwind components where they exist
+- Use practical solutions for missing functionality
+- Focus on working prototype, iterate quickly
+- Note what should become SAIL components later
+
+### Benefits of This Approach
+
+✅ Don't block progress waiting for components
+✅ Build working prototypes quickly
+✅ Identify which components are actually needed
+✅ Let component development be deliberate and well-designed
+✅ Clear markers for what needs conversion later
+
 ## Component Priority (Build Order)
 
 ### Phase 1 - Core Components ✅

@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { CardLayout } from '../components/Card/CardLayout'
-import { HeadingField } from '../components/Heading/HeadingField'
-import { TextField } from '../components/TextField/TextField'
-import { DropdownField } from '../components/Dropdown/DropdownField'
-import { ButtonArrayLayout } from '../components/Button/ButtonArrayLayout'
-import { TagField } from '../components/Tag/TagField'
+import { CardLayout } from '../../components/Card/CardLayout'
+import { HeadingField } from '../../components/Heading/HeadingField'
+import { TextField } from '../../components/TextField/TextField'
+import { DropdownField } from '../../components/Dropdown/DropdownField'
+import { ButtonArrayLayout } from '../../components/Button/ButtonArrayLayout'
+import { TagField } from '../../components/Tag/TagField'
 import { Book, FileText } from 'lucide-react'
 
 // Sample publication data
