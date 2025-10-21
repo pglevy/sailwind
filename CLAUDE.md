@@ -397,8 +397,9 @@ export default function PageName() {
 
 Before considering a page complete:
 
+- [ ] **Checked `src/components/index.ts`** for available components before using raw HTML
 - [ ] File created in `src/pages/` (not `patterns/`)
-- [ ] Uses only existing Sailwind components  
+- [ ] Uses existing Sailwind components wherever they exist
 - [ ] All SAIL parameters use UPPERCASE values
 - [ ] `npm run build` completes successfully
 - [ ] Page added to "Pages" group in TableOfContents.tsx
@@ -410,16 +411,39 @@ Before considering a page complete:
 
 When building pages, **prioritize working prototypes over SAIL purity**:
 
-**Use existing Sailwind components when available:**
+#### Step 1: Check Available Components FIRST
+
+**CRITICAL:** Before reaching for HTML elements or third-party libraries, check what Sailwind components exist:
+
+1. **Check `src/components/index.ts`** - See all exported components
+2. **Look in `src/components/` directory** - Browse available component folders
+3. **Use existing Sailwind components whenever possible** - They're SAIL-compliant and ready to use
+
 ```tsx
-// ✅ Use SAIL-exact components that exist
+// ✅ CORRECT - Using existing Sailwind components
+import { DropdownField, TextFieldInput, CheckboxField } from '../components'
+
 <CardLayout padding="MORE">
-  <HeadingField text="Dashboard" size="LARGE" />
-  <ButtonArrayLayout buttons={[...]} />
+  <DropdownField
+    label="Status"
+    choiceLabels={["Open", "Closed", "Pending"]}
+    choiceValues={[1, 2, 3]}
+  />
+  <TextFieldInput label="Name" />
+  <CheckboxField label="Active" />
 </CardLayout>
 ```
 
-**For missing functionality, use practical solutions:**
+```tsx
+// ❌ WRONG - Using raw HTML when Sailwind component exists
+<select className="border p-2">  {/* Dropdown exists! */}
+  <option>Open</option>
+  <option>Closed</option>
+</select>
+{/* TODO: Replace with DropdownField */}
+```
+
+#### Step 2: For Missing Functionality, Use Practical Solutions
 ```tsx
 // ✅ Need a chart but don't have SAIL chart components yet? Use Recharts
 import { LineChart, Line, XAxis, YAxis } from 'recharts'
@@ -464,11 +488,42 @@ import { LineChart, Line, XAxis, YAxis } from 'recharts'
 // This component doesn't exist and shouldn't be created during vibe coding
 ```
 
+### Currently Available Sailwind Components
+
+**Always check if these exist before using raw HTML or third-party libraries:**
+
+**Form Components:**
+- `DropdownField` - Select/picklist with SAIL parameters
+- `TextFieldInput` - Text input field
+- `CheckboxField` - Checkbox with label
+- `RadioButtonField` - Radio button group
+- `SliderField` - Numeric slider
+- `SwitchField` - Toggle switch
+
+**Display Components:**
+- `ButtonWidget`, `ButtonArrayLayout` - Buttons with SAIL styling
+- `TagField`, `TagItem` - Tags and badges
+- `CardLayout` - Container with padding and shadow
+- `HeadingField` - Headings with SAIL sizes
+- `RichTextField` - Formatted text display
+- `ImageField` - Images with alt text
+- `MessageBanner` - Alert/notification banner
+- `ProgressBar` - Progress indicator
+- `Milestone` - Step indicator
+- `Stamp` - Status badge
+
+**Interactive Components:**
+- `Tabs` - Tab navigation
+- `DialogField` - Modal dialog
+- `ToggleField` - Collapsible section
+
+**Reference:** Check `src/components/index.ts` for the complete, up-to-date list with exact component names and exports.
+
 ### When to Use Non-SAIL Solutions
 
-Use standard React libraries and HTML when:
-- The SAIL component doesn't exist yet (charts, grids, maps, complex forms)
-- You need to quickly prototype an interaction
+**ONLY use standard React libraries and HTML when:**
+- The component truly doesn't exist yet (charts, grids, maps, complex data tables)
+- You've verified it's not in `src/components/`
 - The element is supplementary to the core interface
 - Speed of iteration is more important than SAIL translation
 
@@ -491,9 +546,10 @@ Two different modes with different goals:
 - Takes time, requires research
 
 **Page Building Mode** (pragmatic):
-- Composing interfaces from available components
-- Use Sailwind components where they exist
-- Use practical solutions for missing functionality
+- **CHECK `src/components/index.ts` FIRST** - See what's available
+- Composing interfaces from existing Sailwind components
+- Use Sailwind components wherever they exist (Dropdown, TextField, Checkbox, etc.)
+- ONLY use practical solutions when component truly doesn't exist
 - Focus on working prototype, iterate quickly
 - Note what should become SAIL components later
 
