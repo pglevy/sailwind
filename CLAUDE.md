@@ -116,10 +116,10 @@ Standard Tailwind classes for prototype-specific decisions:
 
 ### Why This Approach?
 
-✅ **No double mapping** - SAIL values map directly to standard Tailwind classes (not SAIL → custom vars → Tailwind)
-✅ **LLM-friendly** - Designers can request changes using standard Tailwind without learning custom utilities
-✅ **Better DX** - Standard Tailwind utilities get IDE autocomplete, documentation, and community support
-✅ **Clear boundaries** - SAIL props = production code translation, Tailwind = prototype polish
+- ✅ **No double mapping** - SAIL values map directly to standard Tailwind classes (not SAIL → custom vars → Tailwind)
+- ✅ **LLM-friendly** - Designers can request changes using standard Tailwind without learning custom utilities
+- ✅ **Better DX** - Standard Tailwind utilities get IDE autocomplete, documentation, and community support
+- ✅ **Clear boundaries** - SAIL props = production code translation, Tailwind = prototype polish
 
 ## Styling Reference
 
@@ -608,31 +608,11 @@ Two different modes with different goals:
 
 ### Benefits of This Approach
 
-✅ Don't block progress waiting for components
-✅ Build working prototypes quickly
-✅ Identify which components are actually needed
-✅ Let component development be deliberate and well-designed
-✅ Clear markers for what needs conversion later
-
-## Component Priority (Build Order)
-
-### Phase 1 - Core Components ✅
-1. Tags (✅ completed - TagField, TagItem)
-2. Buttons (✅ completed - ButtonWidget, ButtonArrayLayout)
-3. Cards (✅ completed - CardLayout)
-4. Tabs (🚧 next up)
-
-### Phase 2 - Form Components
-5. Text Input
-6. Select/Dropdown (Pick List)
-7. Checkbox/Radio
-8. Confirmation Dialog
-
-### Phase 3 - Display Patterns
-9. Banners - Alerts/notifications
-10. KPIs - Dashboard cards
-11. Breadcrumbs
-12. Empty States
+- ✅ Don't block progress waiting for components
+- ✅ Build working prototypes quickly
+- ✅ Identify which components are actually needed
+- ✅ Let component development be deliberate and well-designed
+- ✅ Clear markers for what needs conversion later
 
 ## Common Patterns
 
@@ -733,11 +713,11 @@ When implementing new components, consider:
 
 ## Success Criteria
 
-✅ Components use exact SAIL parameter names and values (UPPERCASE)
-✅ Internal implementation uses standard Tailwind classes
-✅ LLMs can generate correct code without hallucination
-✅ Prototypes translate to SAIL with minimal changes
-✅ Components maintain Appian visual aesthetic (Aurora colors)
-✅ All components meet accessibility standards
-✅ Clear documentation with SAIL translation examples
-✅ Consistent color scale across all color families
+- ✅ Components use exact SAIL parameter names and values (UPPERCASE)
+- ✅ Internal implementation uses standard Tailwind classes
+- ✅ LLMs can generate correct code without hallucination
+- ✅ Prototypes translate to SAIL with minimal changes
+- ✅ Components maintain Appian visual aesthetic (Aurora colors)
+- ✅ All components meet accessibility standards
+- ✅ Clear documentation with SAIL translation examples
+- ✅ Consistent color scale across all color families
