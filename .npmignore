@@ -1,0 +1,56 @@
+# Source files (only publish dist/)
+src/
+public/
+
+# Development files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+.vscode/
+.idea/
+
+# Build tools
+vite.config.ts
+tsconfig.json
+tsconfig.node.json
+tailwind.config.js
+postcss.config.js
+eslint.config.js
+
+# Scripts
+scripts/
+
+# Testing
+playwright.config.ts
+tests/
+coverage/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Documentation (keep README.md)
+docs/
+CLAUDE.md
+TAILWIND-SAIL-MAPPING.md
+
+# Demo/playground files
+demos/
+pages/
+vibes/
+index.html
+App.tsx
+App.css
+main.tsx
+
+# Misc
+.DS_Store
+*.log
+node_modules/
+.env
+.env.local
