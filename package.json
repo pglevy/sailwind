@@ -1,15 +1,54 @@
 {
-  "name": "sailwind",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@pglevy/sailwind",
+  "version": "0.1.0",
+  "description": "Appian SAIL components for React - Pre-release version under active development",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "appian",
+    "sail",
+    "components",
+    "react",
+    "prototyping",
+    "design-system",
+    "ui-components"
+  ],
+  "author": "Philip Levy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pglevy/sailwind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pglevy/sailwind/issues"
+  },
+  "homepage": "https://github.com/pglevy/sailwind#readme",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
+    "build:lib": "vite build --mode library",
     "lint": "eslint .",
     "preview": "vite preview",
     "check-page": "node scripts/quick-check.cjs",
-    "check-page:full": "node scripts/full-check.cjs"
+    "check-page:full": "node scripts/full-check.cjs",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
@@ -20,8 +59,6 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toggle": "^1.1.10",
     "lucide-react": "^0.545.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
     "wouter": "^3.7.1"
   },
   "devDependencies": {
@@ -37,9 +74,12 @@
     "globals": "^16.4.0",
     "playwright": "^1.56.1",
     "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.44.0",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "vite-plugin-dts": "^4.5.4"
   }
 }
