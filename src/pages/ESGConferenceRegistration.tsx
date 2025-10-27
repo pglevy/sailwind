@@ -36,7 +36,7 @@ export default function ESGConferenceRegistration() {
                 labelPosition="COLLAPSED"
                 images={[
                   {
-                    document: '/esg_world_logo_no_year.png',
+                    document: '/sailwind/esg_world_logo_no_year.png',
                     altText: 'ESG World 2023 Logo'
                   }
                 ]}
