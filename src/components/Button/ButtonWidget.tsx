@@ -99,7 +99,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
   // Size mappings - using standard Tailwind spacing classes
   const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-1.5 text-sm',      // SAIL SMALL: 12px horizontal, 6px vertical
+    SMALL: 'px-3 py-1.5 text-sm/[26px]',      // SAIL SMALL: 12px horizontal, 6px vertical
     STANDARD: 'px-4 py-2.5 text-base', // SAIL STANDARD: 16px horizontal, 10px vertical
     MEDIUM: 'px-6 py-3 text-lg',       // SAIL MEDIUM: 24px horizontal, 12px vertical
     LARGE: 'px-8 py-4 text-xl'         // SAIL LARGE: 32px horizontal, 16px vertical
@@ -153,9 +153,9 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "OUTLINE") {
       const outlineColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
-        NEGATIVE: 'border-2 border-red-700 text-red-700 bg-white hover:bg-red-100',
-        SECONDARY: 'border-2 border-gray-700 text-gray-700 bg-white hover:bg-gray-100'
+        ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
+        NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-100',
+        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100'
       }
       return outlineColors[semanticColor]
     }

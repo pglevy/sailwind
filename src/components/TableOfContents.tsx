@@ -64,6 +64,11 @@ const tocConfig: TocGroup[] = [
     title: "Pages",
     items: [
       {
+        title: "Button + TextField Alignment Test",
+        path: "/buttontextfieldtest",
+        description: "Test page for TextField and button vertical alignment"
+      },
+      {
         title: "ESG Conference Registration",
         path: "/esgconferenceregistration",
         description: "Event registration with multiple steps"
