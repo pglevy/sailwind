@@ -99,10 +99,10 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
   // Size mappings - using standard Tailwind spacing classes
   const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2 text-sm',      // SAIL SMALL: 12px horizontal, 6px vertical
-    STANDARD: 'px-4 py-2 text-base', // SAIL STANDARD: 16px horizontal, 10px vertical
-    MEDIUM: 'px-6 py-3 text-lg',       // SAIL MEDIUM: 24px horizontal, 12px vertical
-    LARGE: 'px-10 py-4 text-xl'         // SAIL LARGE: 32px horizontal, 16px vertical
+    SMALL: 'px-3 py-2 text-sm',      // 12px horizontal, 8px vertical
+    STANDARD: 'px-4 py-2 text-base', // 16px horizontal, 8px vertical (matches input height)
+    MEDIUM: 'px-6 py-3 text-lg',     // 24px horizontal, 12px vertical
+    LARGE: 'px-10 py-4 text-xl'      // 40px horizontal, 16px vertical
   }
 
   // Width mappings
@@ -135,9 +135,9 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
   // Style + Color combinations
   const getColorClasses = (): string => {
-    // Handle hex colors - use inline styles with 1px border for all styles
+    // Handle hex colors - use inline styles + 1px border for size consistency
     if (color.startsWith('#')) {
-      return 'border'
+      return 'border' // Border color set via inline styles
     }
 
     const semanticColor = color as SAILSemanticColor

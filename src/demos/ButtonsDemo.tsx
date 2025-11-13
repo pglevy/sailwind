@@ -91,6 +91,32 @@ export default function ButtonsDemo() {
 
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Hex Color Override (SOLID style)
+          </h3>
+          <ButtonArrayLayout
+            buttons={[
+              { label: 'Custom Purple', style: 'SOLID', color: '#8B5CF6' },
+              { label: 'Custom Orange', style: 'SOLID', color: '#F97316' },
+              { label: 'Custom Pink', style: 'SOLID', color: '#EC4899' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Hex Color Override (OUTLINE style)
+          </h3>
+          <ButtonArrayLayout
+            buttons={[
+              { label: 'Custom Purple', style: 'OUTLINE', color: '#8B5CF6' },
+              { label: 'Custom Orange', style: 'OUTLINE', color: '#F97316' },
+              { label: 'Custom Pink', style: 'OUTLINE', color: '#EC4899' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Link Style
           </h3>
           <ButtonWidget label="Cancel" style="LINK" color="ACCENT" />
