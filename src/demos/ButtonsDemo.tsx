@@ -63,12 +63,27 @@ export default function ButtonsDemo() {
 
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Style Consistency (Same size regardless of style)
+          </h3>
+          <ButtonArrayLayout
+            buttons={[
+              { label: 'SOLID', style: 'SOLID', color: 'ACCENT', size: 'STANDARD' },
+              { label: 'OUTLINE', style: 'OUTLINE', color: 'ACCENT', size: 'STANDARD' },
+              { label: 'GHOST', style: 'GHOST', color: 'ACCENT', size: 'STANDARD' },
+              { label: 'LINK', style: 'LINK', color: 'ACCENT', size: 'STANDARD' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Button Sizes
           </h3>
           <ButtonArrayLayout
             buttons={[
               { label: 'Small', style: 'SOLID', color: 'ACCENT', size: 'SMALL' },
               { label: 'Standard', style: 'SOLID', color: 'ACCENT', size: 'STANDARD' },
+              { label: 'Medium', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
               { label: 'Large', style: 'SOLID', color: 'ACCENT', size: 'LARGE' }
             ]}
           />

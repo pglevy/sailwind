@@ -26,7 +26,7 @@ export default function ButtonTextFieldTest() {
             </div>
             <ButtonWidget
               label="Search"
-              size="SMALL"
+              size="STANDARD"
               style="SOLID"
               color="ACCENT"
             />
@@ -47,7 +47,7 @@ export default function ButtonTextFieldTest() {
             />
             <ButtonWidget
               label="Subscribe"
-              size="SMALL"
+              size="STANDARD"
               style="SOLID"
               color="ACCENT"
             />
@@ -72,13 +72,13 @@ export default function ButtonTextFieldTest() {
             />
             <ButtonWidget
               label="Apply"
-              size="SMALL"
+              size="STANDARD"
               style="SOLID"
               color="ACCENT"
             />
             <ButtonWidget
               label="Clear"
-              size="SMALL"
+              size="STANDARD"
               style="OUTLINE"
               color="SECONDARY"
             />
