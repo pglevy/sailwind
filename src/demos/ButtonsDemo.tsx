@@ -21,25 +21,42 @@ export default function ButtonsDemo() {
       <div className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Primary Actions (SOLID)
+            Semantic Colors (SOLID style)
           </h3>
           <ButtonArrayLayout
             buttons={[
-              { label: 'Create', style: 'SOLID', color: 'ACCENT', saveInto: () => alert('Create clicked') },
-              { label: 'Delete', style: 'SOLID', color: 'NEGATIVE', saveInto: () => alert('Delete clicked') },
-              { label: 'Submit', style: 'SOLID', color: 'ACCENT', loadingIndicator: false }
+              { label: 'ACCENT', style: 'SOLID', color: 'ACCENT' },
+              { label: 'POSITIVE', style: 'SOLID', color: 'POSITIVE' },
+              { label: 'NEGATIVE', style: 'SOLID', color: 'NEGATIVE' },
+              { label: 'SECONDARY', style: 'SOLID', color: 'SECONDARY' },
+              { label: 'STANDARD', style: 'SOLID', color: 'STANDARD' }
             ]}
           />
         </div>
 
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Secondary Actions (OUTLINE)
+            Semantic Colors (OUTLINE style)
+          </h3>
+          <ButtonArrayLayout
+            buttons={[
+              { label: 'ACCENT', style: 'OUTLINE', color: 'ACCENT' },
+              { label: 'POSITIVE', style: 'OUTLINE', color: 'POSITIVE' },
+              { label: 'NEGATIVE', style: 'OUTLINE', color: 'NEGATIVE' },
+              { label: 'SECONDARY', style: 'OUTLINE', color: 'SECONDARY' },
+              { label: 'STANDARD', style: 'OUTLINE', color: 'STANDARD' }
+            ]}
+          />
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Button with Actions
           </h3>
           <ButtonArrayLayout
             buttons={[
               { label: 'Add Another', style: 'OUTLINE', color: 'ACCENT', icon:'plus', tooltip:'And another one', saveInto: () => alert('Add Another clicked') },
-              { label: 'Cancel', style: 'OUTLINE', color: 'SECONDARY', saveInto: () => alert('Cancel clicked') }
+              { label: 'Delete', style: 'SOLID', color: 'NEGATIVE', saveInto: () => alert('Delete clicked') }
             ]}
           />
         </div>

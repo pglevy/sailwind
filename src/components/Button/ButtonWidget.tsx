@@ -1,10 +1,9 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSize } from '../../types/sail'
+import type { SAILSize, SAILSemanticColor } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
-type ButtonColor = "ACCENT" | "NEGATIVE" | "SECONDARY"
 type ButtonWidth = "MINIMIZE" | "FILL"
 type IconPosition = "START" | "END"
 
@@ -18,7 +17,8 @@ export interface ButtonWidgetProps {
   /** Determines the button's appearance */
   style?: ButtonStyle
   /** Determines button color (hex or semantic) */
-  color?: ButtonColor | string
+  /** Enhancement to SAIL */
+  color?: SAILSemanticColor | string
   /** Determines size of the button */
   size?: SAILSize
   /** Determines button width */
@@ -140,40 +140,48 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       return style === "OUTLINE" ? 'border-2' : ''
     }
 
-    const semanticColor = color as ButtonColor
+    const semanticColor = color as SAILSemanticColor
 
     if (style === "SOLID") {
-      const solidColors: Record<ButtonColor, string> = {
+      const solidColors: Record<SAILSemanticColor, string> = {
         ACCENT: 'bg-blue-500 text-white hover:bg-blue-700',
+        POSITIVE: 'bg-green-700 text-white hover:bg-green-900',
         NEGATIVE: 'bg-red-700 text-white hover:bg-red-900',
-        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900'
+        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900',
+        STANDARD: 'bg-gray-900 text-white hover:bg-gray-700'
       }
       return solidColors[semanticColor]
     }
 
     if (style === "OUTLINE") {
-      const outlineColors: Record<ButtonColor, string> = {
+      const outlineColors: Record<SAILSemanticColor, string> = {
         ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
+        POSITIVE: 'border border-green-700 text-green-700 bg-white hover:bg-green-100',
         NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-100',
-        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100'
+        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100',
+        STANDARD: 'border border-gray-900 text-gray-900 bg-white hover:bg-gray-100'
       }
       return outlineColors[semanticColor]
     }
 
     if (style === "GHOST") {
-      const ghostColors: Record<ButtonColor, string> = {
+      const ghostColors: Record<SAILSemanticColor, string> = {
         ACCENT: 'text-blue-500 hover:bg-blue-100',
+        POSITIVE: 'text-green-700 hover:bg-green-100',
         NEGATIVE: 'text-red-700 hover:bg-red-100',
-        SECONDARY: 'text-gray-700 hover:bg-gray-100'
+        SECONDARY: 'text-gray-700 hover:bg-gray-100',
+        STANDARD: 'text-gray-900 hover:bg-gray-100'
       }
       return ghostColors[semanticColor]
     }
 
     if (style === "LINK") {
-      const linkColors: Record<ButtonColor, string> = {
+      const linkColors: Record<SAILSemanticColor, string> = {
         ACCENT: 'text-blue-500 hover:underline',
+        POSITIVE: 'text-green-700 hover:underline',
         NEGATIVE: 'text-red-700 hover:underline',
-        SECONDARY: 'text-gray-700 hover:underline'
+        SECONDARY: 'text-gray-700 hover:underline',
+        STANDARD: 'text-gray-900 hover:underline'
       }
       return linkColors[semanticColor]
     }
