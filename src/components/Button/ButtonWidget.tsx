@@ -1,10 +1,9 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSize } from '../../types/sail'
+import type { SAILSize, SAILSemanticColor } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
-type ButtonColor = "ACCENT" | "NEGATIVE" | "SECONDARY"
 type ButtonWidth = "MINIMIZE" | "FILL"
 type IconPosition = "START" | "END"
 
@@ -18,7 +17,8 @@ export interface ButtonWidgetProps {
   /** Determines the button's appearance */
   style?: ButtonStyle
   /** Determines button color (hex or semantic) */
-  color?: ButtonColor | string
+  /** Enhancement to SAIL */
+  color?: SAILSemanticColor | string
   /** Determines size of the button */
   size?: SAILSize
   /** Determines button width */
@@ -99,10 +99,10 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
   // Size mappings - using standard Tailwind spacing classes
   const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-1.5 text-sm',      // SAIL SMALL: 12px horizontal, 6px vertical
-    STANDARD: 'px-4 py-2.5 text-base', // SAIL STANDARD: 16px horizontal, 10px vertical
-    MEDIUM: 'px-6 py-3 text-lg',       // SAIL MEDIUM: 24px horizontal, 12px vertical
-    LARGE: 'px-8 py-4 text-xl'         // SAIL LARGE: 32px horizontal, 16px vertical
+    SMALL: 'px-3 py-2 text-sm',      // 12px horizontal, 8px vertical
+    STANDARD: 'px-4 py-2 text-base', // 16px horizontal, 8px vertical (matches input height)
+    MEDIUM: 'px-6 py-3 text-lg',     // 24px horizontal, 12px vertical
+    LARGE: 'px-10 py-4 text-xl'      // 40px horizontal, 16px vertical
   }
 
   // Width mappings
@@ -135,45 +135,53 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
   // Style + Color combinations
   const getColorClasses = (): string => {
-    // Handle hex colors - use inline styles
+    // Handle hex colors - use inline styles + 1px border for size consistency
     if (color.startsWith('#')) {
-      return style === "OUTLINE" ? 'border-2' : ''
+      return 'border' // Border color set via inline styles
     }
 
-    const semanticColor = color as ButtonColor
+    const semanticColor = color as SAILSemanticColor
 
     if (style === "SOLID") {
-      const solidColors: Record<ButtonColor, string> = {
-        ACCENT: 'bg-blue-500 text-white hover:bg-blue-700',
-        NEGATIVE: 'bg-red-700 text-white hover:bg-red-900',
-        SECONDARY: 'bg-gray-700 text-white hover:bg-gray-900'
+      const solidColors: Record<SAILSemanticColor, string> = {
+        ACCENT: 'border border-transparent bg-blue-500 text-white hover:bg-blue-700',
+        POSITIVE: 'border border-transparent bg-green-700 text-white hover:bg-green-900',
+        NEGATIVE: 'border border-transparent bg-red-700 text-white hover:bg-red-900',
+        SECONDARY: 'border border-transparent bg-gray-700 text-white hover:bg-gray-900',
+        STANDARD: 'border border-transparent bg-gray-900 text-white hover:bg-gray-700'
       }
       return solidColors[semanticColor]
     }
 
     if (style === "OUTLINE") {
-      const outlineColors: Record<ButtonColor, string> = {
-        ACCENT: 'border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
-        NEGATIVE: 'border-2 border-red-700 text-red-700 bg-white hover:bg-red-100',
-        SECONDARY: 'border-2 border-gray-700 text-gray-700 bg-white hover:bg-gray-100'
+      const outlineColors: Record<SAILSemanticColor, string> = {
+        ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
+        POSITIVE: 'border border-green-700 text-green-700 bg-white hover:bg-green-100',
+        NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-100',
+        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100',
+        STANDARD: 'border border-gray-900 text-gray-900 bg-white hover:bg-gray-100'
       }
       return outlineColors[semanticColor]
     }
 
     if (style === "GHOST") {
-      const ghostColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-500 hover:bg-blue-100',
-        NEGATIVE: 'text-red-700 hover:bg-red-100',
-        SECONDARY: 'text-gray-700 hover:bg-gray-100'
+      const ghostColors: Record<SAILSemanticColor, string> = {
+        ACCENT: 'border border-transparent text-blue-500 hover:bg-blue-100',
+        POSITIVE: 'border border-transparent text-green-700 hover:bg-green-100',
+        NEGATIVE: 'border border-transparent text-red-700 hover:bg-red-100',
+        SECONDARY: 'border border-transparent text-gray-700 hover:bg-gray-100',
+        STANDARD: 'border border-transparent text-gray-900 hover:bg-gray-100'
       }
       return ghostColors[semanticColor]
     }
 
     if (style === "LINK") {
-      const linkColors: Record<ButtonColor, string> = {
-        ACCENT: 'text-blue-500 hover:underline',
-        NEGATIVE: 'text-red-700 hover:underline',
-        SECONDARY: 'text-gray-700 hover:underline'
+      const linkColors: Record<SAILSemanticColor, string> = {
+        ACCENT: 'border border-transparent text-blue-500 hover:underline',
+        POSITIVE: 'border border-transparent text-green-700 hover:underline',
+        NEGATIVE: 'border border-transparent text-red-700 hover:underline',
+        SECONDARY: 'border border-transparent text-gray-700 hover:underline',
+        STANDARD: 'border border-transparent text-gray-900 hover:underline'
       }
       return linkColors[semanticColor]
     }
@@ -181,26 +189,17 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     return ''
   }
 
-  // Get border classes separately to handle alignment
+  // Border handling is now in getColorClasses - all buttons use 1px border
+  // (visible for OUTLINE, transparent for others) to ensure consistent sizing
   const getBorderClasses = (): string => {
-    // Only OUTLINE style needs visible borders
-    if (style === "OUTLINE") {
-      return '' // Border handled in getColorClasses
-    }
-    
-    // Only add transparent border for alignment when no custom className is provided
-    // If designer adds className, they're responsible for border handling
-    if (!className) {
-      return 'border-2 border-transparent'
-    }
-    
-    return ''
+    return '' // All borders now handled in getColorClasses for consistency
   }
 
   // Build SAIL-computed classes
   const sailClasses = `
     inline-flex items-center justify-center gap-1
     font-medium transition-colors h-auto rounded-sm
+    focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2
     ${sizeMap[size]}
     ${widthClass}
     ${getBorderClasses()}
