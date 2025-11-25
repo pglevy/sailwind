@@ -44,7 +44,11 @@
     "preview": "vite preview",
     "check-page": "node scripts/quick-check.cjs",
     "check-page:full": "node scripts/full-check.cjs",
-    "prepublishOnly": "npm run build:lib"
+    "prepublishOnly": "npm run build:lib",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "release": "npm run build:lib && npm publish"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
