@@ -6,6 +6,13 @@ import { ToggleField } from '../Toggle/ToggleField'
 
 type ObjectType = 'app' | 'interface' | 'record-type' | 'expression-rule'
 
+const DEFAULT_ICON_MAP: Record<ObjectType, string> = {
+  'app': 'images/icon-app.svg',
+  'interface': 'images/icon-interface.svg',
+  'record-type': 'images/icon-record-type.svg',
+  'expression-rule': 'images/icon-expression-rule.svg',
+}
+
 export interface ApplicationHeaderProps {
   /** Name of the application or object */
   name?: string
@@ -56,14 +63,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   onBackClick,
   appianLogoSrc = 'images/icon-appian-header.png'
 }) => {
-  const defaultIconMap: Record<ObjectType, string> = {
-    'app': 'images/icon-app.svg',
-    'interface': 'images/icon-interface.svg',
-    'record-type': 'images/icon-record-type.svg',
-    'expression-rule': 'images/icon-expression-rule.svg'
-  }
-
-  const displayIconSrc = iconSrc || defaultIconMap[objectType]
+  const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
 
   return (
     <div className="application-header-gradient border-b border-gray-200">
