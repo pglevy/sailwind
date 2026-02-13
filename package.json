@@ -50,7 +50,7 @@
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
     "version:major": "npm version major",
-    "release": "npm run build:lib && npm publish"
+    "release": "npm run build:lib && npm publish --access public"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
