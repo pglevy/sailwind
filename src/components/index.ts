@@ -60,6 +60,3 @@ export * from './Dialog'
 
 // ApplicationHeader component
 export * from './ApplicationHeader'
-
-// Table of Contents component
-export { TableOfContents } from './TableOfContents'

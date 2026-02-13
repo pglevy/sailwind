@@ -43,14 +43,6 @@ export interface TagFieldProps {
 /**
  * TagField Component
  * Displays a list of short text labels with colored backgrounds
- *
- * @example
- * <TagField
- *   size="STANDARD"
- *   tags={[
- *     { text: "URGENT", backgroundColor: "#FED7DE", textColor: "#9F0019" }
- *   ]}
- * />
  */
 export const TagField: React.FC<TagFieldProps> = ({
   tags,

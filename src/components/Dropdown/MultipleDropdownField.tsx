@@ -58,31 +58,6 @@ export interface MultipleDropdownFieldProps {
 /**
  * Multi-select dropdown field component
  *
- * @example
- * ```tsx
- * <MultipleDropdownField
- *   label="Language"
- *   instructions="Which language(s) are you proficient in?"
- *   choiceLabels={["English", "Spanish", "French", "German"]}
- *   choiceValues={["en_US", "es_ES", "fr_FR", "de_DE"]}
- *   value={selectedLanguages}
- *   saveInto={(value) => setSelectedLanguages(value)}
- *   searchDisplay="AUTO"
- * />
- * ```
- *
- * SAIL Translation:
- * ```sail
- * a!multipleDropdownField(
- *   label: "Language",
- *   instructions: "Which language(s) are you proficient in?",
- *   choiceLabels: {"English", "Spanish", "French", "German"},
- *   choiceValues: {"en_US", "es_ES", "fr_FR", "de_DE"},
- *   value: local!language,
- *   saveInto: local!language,
- *   searchDisplay: "AUTO"
- * )
- * ```
  */
 export const MultipleDropdownField: React.FC<MultipleDropdownFieldProps> = (props) => {
   return <DropdownFieldBase multiple={true} {...props} />

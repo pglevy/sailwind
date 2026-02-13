@@ -27,14 +27,6 @@ export interface ButtonArrayLayoutProps {
  * In SAIL, a!buttonWidget must be used within a!buttonArrayLayout.
  * This component wraps buttons and provides layout/alignment.
  *
- * @example
- * <ButtonArrayLayout
- *   align="END"
- *   buttons={[
- *     { label: "Cancel", style: "OUTLINE", color: "SECONDARY" },
- *     { label: "Submit", style: "SOLID", color: "ACCENT", submit: true }
- *   ]}
- * />
  */
 export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
   buttons,

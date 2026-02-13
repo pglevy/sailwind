@@ -58,33 +58,6 @@ export interface DropdownFieldProps {
 /**
  * Single-select dropdown field component
  *
- * @example
- * ```tsx
- * <DropdownField
- *   label="Language"
- *   instructions="In which language are you most proficient?"
- *   choiceLabels={["English", "Spanish", "French", "German"]}
- *   choiceValues={["en_US", "es_ES", "fr_FR", "de_DE"]}
- *   value={selectedLanguage}
- *   saveInto={(value) => setSelectedLanguage(value)}
- *   placeholder="Select a language"
- *   searchDisplay="AUTO"
- * />
- * ```
- *
- * SAIL Translation:
- * ```sail
- * a!dropdownField(
- *   label: "Language",
- *   instructions: "In which language are you most proficient?",
- *   choiceLabels: {"English", "Spanish", "French", "German"},
- *   choiceValues: {"en_US", "es_ES", "fr_FR", "de_DE"},
- *   value: local!language,
- *   saveInto: local!language,
- *   placeholder: "Select a language",
- *   searchDisplay: "AUTO"
- * )
- * ```
  */
 export const DropdownField: React.FC<DropdownFieldProps> = (props) => {
   return <DropdownFieldBase multiple={false} {...props} />
