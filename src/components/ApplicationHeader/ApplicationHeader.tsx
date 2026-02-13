@@ -42,13 +42,6 @@ export interface ApplicationHeaderProps {
  * ApplicationHeader Component
  * Displays the main application header with navigation, controls, and user info
  * 
- * @example
- * <ApplicationHeader
- *   name="My Application"
- *   userInitials="JD"
- *   showDesignerControls={true}
- *   objectType="interface"
- * />
  */
 export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   name = "Application",

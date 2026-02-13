@@ -89,16 +89,6 @@ export interface TextFieldProps {
  * Displays and allows entry of a single line of text.
  * Maps to SAIL a!textField() function.
  *
- * @example
- * ```tsx
- * <TextField
- *   label="Email Address"
- *   placeholder="user@example.com"
- *   value={email}
- *   saveInto={(value) => setEmail(value)}
- *   required
- * />
- * ```
  */
 export const TextField: React.FC<TextFieldProps> = ({
   label,

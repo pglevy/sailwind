@@ -44,15 +44,6 @@ export interface CardLayoutProps {
 /**
  * CardLayout Component
  * Displays content within a card container
- *
- * @example
- * <CardLayout
- *   shape="SEMI_ROUNDED"
- *   padding="STANDARD"
- *   showBorder={true}
- * >
- *   <p>Card content here</p>
- * </CardLayout>
  */
 export const CardLayout: React.FC<CardLayoutProps> = ({
   children,

@@ -67,13 +67,6 @@ export interface ButtonWidgetProps {
  *
  * Note: In SAIL, a!buttonWidget must be used within a!buttonArrayLayout.
  * For standalone use in React, wrap with ButtonArrayLayout component.
- *
- * @example
- * <ButtonArrayLayout
- *   buttons={[
- *     { label: "Submit", style: "SOLID", color: "ACCENT" }
- *   ]}
- * />
  */
 export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   label,

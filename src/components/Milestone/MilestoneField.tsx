@@ -40,14 +40,6 @@ export interface MilestoneFieldProps {
 /**
  * Displays the completed, current, and future steps of a process or sequence
  * 
- * @example
- * <MilestoneField
- *   label="Home Repair Claim Process"
- *   instructions="Customer #2325691"
- *   steps={["Submit Request", "Set Up Appointment", "File Assessment", "Submit Proposal"]}
- *   active={2}
- *   color="ACCENT"
- * />
  */
 export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   label,

@@ -23,9 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Task tracking
-TASKS.md
-
 # Environment variables
 .env
 .env.local
@@ -33,8 +30,9 @@ TASKS.md
 .env.test.local
 .env.production.local
 
-# Prompts
-prompts
+# Kiro
+.kiro/specs/storybook-migration/.config.kiro
 
-# Screenshots from visual checks
-screenshots/
+# Storybook
+*storybook.log
+storybook-static

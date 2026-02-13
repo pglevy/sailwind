@@ -33,18 +33,4 @@ export interface UserImageProps {
  * This is not a React component - it's a data structure
  * that gets processed by ImageField for rendering with Radix Avatar
  *
- * @example
- * <ImageField
- *   label="Assigned To"
- *   images={[
- *     {
- *       imageType: 'user',
- *       user: { name: "John Smith", photoUrl: "/avatars/john.jpg", initials: "JS" },
- *       altText: "John Smith profile photo",
- *       caption: "Click to view profile"
- *     }
- *   ]}
- *   style="AVATAR"
- *   size="MEDIUM"
- * />
  */
