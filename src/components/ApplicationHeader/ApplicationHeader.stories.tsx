@@ -76,3 +76,27 @@ export const StoriesViewActive: Story = {
     onBackClick: () => console.log('Back clicked'),
   },
 }
+
+export const AdminConsole: Story = {
+  args: {
+    name: 'Appian Administration Console',
+    userInitials: 'AD',
+    iconSrc: 'images/icon-cog.svg',
+    additionalButtons: [
+      {
+        label: 'Export',
+        style: 'OUTLINE',
+        size: 'SMALL',
+        color: 'ACCENT',
+        onClick: () => console.log('Export clicked'),
+      },
+      {
+        label: 'Import',
+        style: 'OUTLINE',
+        size: 'SMALL',
+        color: 'ACCENT',
+        onClick: () => console.log('Import clicked'),
+      },
+    ],
+  },
+}
