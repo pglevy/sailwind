@@ -2,18 +2,28 @@
 
 ## Setup (One-Time)
 
-### 1. Create npm Access Token
-1. Go to https://www.npmjs.com/settings/YOUR_USERNAME/tokens
-2. Click "Generate New Token" → "Classic Token"
-3. Select "Automation" type
-4. Copy the token
+### 1. Configure npm Trusted Publishing (OIDC)
+This allows GitHub Actions to publish with provenance, linking the package to this repo.
 
-### 2. Add Token to GitHub
+1. Go to https://www.npmjs.com/package/@pglevy/sailwind → Settings → Trusted Publisher
+2. Add a connection: repo `pglevy/sailwind`, workflow `publish.yml`
+3. Under "Publishing access", select "Require two-factor authentication or a granular access token with bypass 2fa enabled"
+
+### 2. Create npm Granular Access Token
+A granular token with 2FA bypass is needed so CI can publish without an OTP.
+
+1. Go to https://www.npmjs.com/settings/YOUR_USERNAME/tokens
+2. Click "Generate New Token" → "Granular Access Token"
+3. Give it read/write permissions scoped to `@pglevy/sailwind`
+4. Check "bypass 2fa" (the warning about using trusted publishing instead is fine — we're using both)
+5. Copy the token
+
+### 3. Add Token to GitHub
 1. Go to your repo → Settings → Secrets and variables → Actions
-2. Click "New repository secret"
-3. Name: `NPM_TOKEN`
-4. Value: Paste your npm token
-5. Click "Add secret"
+2. Create (or update) a repository secret:
+   - Name: `NPM_TOKEN`
+   - Value: Paste your granular token
+3. Click "Add secret"
 
 ## Publishing Workflow
 
@@ -34,17 +44,17 @@ git push --follow-tags
 
 # 4. Wait ~2 minutes - GitHub Actions will:
 #    - Build the library
-#    - Publish to npm
+#    - Publish to npm with provenance
 #    - Create a GitHub release
 ```
 
 ### Manual Release (Fallback)
 
-If you need to publish manually:
+If you need to publish manually (will require OTP from authenticator):
 
 ```bash
 npm run build:lib
-npm publish
+npm publish --otp=<code>
 ```
 
 ## Visualizing Status
@@ -86,52 +96,30 @@ git push --follow-tags
 npm install @pglevy/sailwind@beta
 ```
 
-### Changelog
-Consider maintaining a CHANGELOG.md:
-
-```markdown
-# Changelog
-
-## [0.2.0] - 2025-11-25
-### Added
-- New ProgressBar component
-- New Slider component
-
-### Fixed
-- TagField color contrast issues
-
-## [0.1.0] - 2025-11-20
-### Added
-- Initial release with 15 SAIL components
-```
-
-## GitHub Packages vs npm
-
-You're correct - you **can** use GitHub Packages, but npm is recommended because:
-
-- ✅ **npm**: Public, no authentication needed for installation
-- ❌ **GitHub Packages**: Requires authentication even for public packages
-
-Stick with npm for better developer experience.
-
 ## Troubleshooting
 
+### Publish fails with "EOTP" (one-time password required)
+This means the `NPM_TOKEN` secret is a classic/automation token instead of a granular token with 2FA bypass. Generate a new granular access token on npmjs.com with "bypass 2fa" checked, and update the `NPM_TOKEN` GitHub secret.
+
+### Publish fails with "404 Not Found"
+This usually means `NODE_AUTH_TOKEN` is missing from the publish step in the workflow. Make sure the workflow has:
+```yaml
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
 ### Publish fails with "403 Forbidden"
-- Check that NPM_TOKEN is set correctly in GitHub secrets
-- Verify token has "Automation" permissions
+- Check that `NPM_TOKEN` is set correctly in GitHub secrets
+- Verify the granular token has read/write permissions for `@pglevy/sailwind`
 - Ensure you're logged into npm: `npm whoami`
 
 ### Tag already exists
 ```bash
-# Delete local tag
+# Delete remote and local tag, then re-create
+git push --delete origin v0.1.1
 git tag -d v0.1.1
-
-# Delete remote tag
-git push origin :refs/tags/v0.1.1
-
-# Create new tag
-npm run version:patch
-git push --follow-tags
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 ### Need to unpublish a version

@@ -10,10 +10,13 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./index.css": "./dist/index.css",
+    "./images/*": "./public/images/*",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "public/images",
     "README.md",
     "LICENSE"
   ],

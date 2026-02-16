@@ -33,9 +33,11 @@ export default defineConfig(({ mode }) => {
             preserveModules: true,
             preserveModulesRoot: 'src',
             entryFileNames: '[name].js',
+            assetFileNames: '[name][extname]',
           },
         },
         outDir: 'dist',
+        copyPublicDir: false,
       },
     }
   }

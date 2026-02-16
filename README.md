@@ -14,6 +14,38 @@ Use the **[sailwind-starter](https://github.com/pglevy/sailwind-starter)** templ
 
 Browse the **[Component Reference](https://pglevy.github.io/sailwind/)** to see what's available.
 
+### Installation
+
+```bash
+npm install @pglevy/sailwind
+```
+
+### Setup
+
+Import the CSS in your main entry file (e.g., `main.tsx` or `App.tsx`):
+
+```tsx
+import '@pglevy/sailwind/index.css'
+```
+
+### Using Images
+
+If your components need the included icons, reference them like this:
+
+```tsx
+import iconApp from '@pglevy/sailwind/images/icon-app.svg'
+import iconInterface from '@pglevy/sailwind/images/icon-interface.svg'
+
+<img src={iconApp} alt="App icon" />
+```
+
+Available images:
+- `icon-app.svg`
+- `icon-appian-header.png`
+- `icon-expression-rule.svg`
+- `icon-interface.svg`
+- `icon-record-type.svg`
+
 ## For Contributors
 
 ### Setup
