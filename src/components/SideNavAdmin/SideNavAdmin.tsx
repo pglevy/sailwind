@@ -15,7 +15,7 @@ export interface NavSection {
 
 export interface SideNavAdminProps {
   /** Navigation sections with headings and items */
-  sections: NavSection[]
+  sections?: NavSection[]
   /** Label of the currently active/selected item */
   activeItem?: string
   /** Callback when a nav item is clicked */

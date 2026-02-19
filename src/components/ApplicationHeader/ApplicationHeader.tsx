@@ -69,9 +69,9 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
 
   return (
     <div className="application-header-gradient border-b border-gray-200">
-      <div className="flex items-center justify-between px-6 pt-4 pb-3">
+      <div className="flex items-center justify-between px-6 pt-4 pb-3 min-w-0 overflow-x-auto">
         {/* Left section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {showDesignerControls && onBackClick && (
             <ButtonWidget
               icon="ChevronLeft"
@@ -125,7 +125,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
         </div>
 
         {/* Center section */}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-0 shrink-0">
           {showDesignerControls && (
             <>
               <div className="[&>div]:gap-1 mr-0">
@@ -172,7 +172,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-0 shrink-0">
           {additionalButtons.length > 0 && (
             <div className="[&>div]:gap-1 mr-3">
               <ButtonArrayLayout

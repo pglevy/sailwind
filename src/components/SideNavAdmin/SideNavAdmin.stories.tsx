@@ -18,16 +18,4 @@ export const Default: Story = {
   },
 }
 
-export const ActiveDataSources: Story = {
-  args: {
-    activeItem: 'Data Sources',
-    onItemClick: (label: string) => console.log('Clicked:', label),
-  },
-}
 
-export const ActiveUsers: Story = {
-  args: {
-    activeItem: 'Users',
-    onItemClick: (label: string) => console.log('Clicked:', label),
-  },
-}
