@@ -36,6 +36,14 @@ export interface ApplicationHeaderProps {
   onBackClick?: () => void
   /** Path to Appian logo image */
   appianLogoSrc?: string
+  /** Additional buttons to display before the right-side controls */
+  additionalButtons?: Array<{
+    label: string
+    style?: "SOLID" | "OUTLINE" | "GHOST" | "LINK"
+    size?: "SMALL" | "STANDARD" | "MEDIUM" | "LARGE"
+    color?: string
+    onClick?: () => void
+  }>
 }
 
 /**
@@ -54,15 +62,16 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   onPreviewToggle,
   onStoryToggle,
   onBackClick,
-  appianLogoSrc = 'images/icon-appian-header.png'
+  appianLogoSrc = 'images/icon-appian-header.png',
+  additionalButtons = []
 }) => {
   const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
 
   return (
     <div className="application-header-gradient border-b border-gray-200">
-      <div className="flex items-center justify-between px-6 pt-4 pb-3">
+      <div className="flex items-center justify-between px-6 pt-4 pb-3 min-w-0 overflow-x-auto">
         {/* Left section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {showDesignerControls && onBackClick && (
             <ButtonWidget
               icon="ChevronLeft"
@@ -116,7 +125,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
         </div>
 
         {/* Center section */}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-0 shrink-0">
           {showDesignerControls && (
             <>
               <div className="[&>div]:gap-1 mr-0">
@@ -163,7 +172,23 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-0 shrink-0">
+          {additionalButtons.length > 0 && (
+            <div className="[&>div]:gap-1 mr-3">
+              <ButtonArrayLayout
+                buttons={additionalButtons.map(btn => ({
+                  label: btn.label,
+                  style: btn.style || "OUTLINE",
+                  size: btn.size || "SMALL",
+                  color: btn.color || "STANDARD",
+                  onClick: btn.onClick,
+                  className: "border-1"
+                }))}
+                marginBelow="NONE"
+              />
+            </div>
+          )}
+
           {showDesignerControls && (
             <>
               <ButtonWidget

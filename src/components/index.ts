@@ -60,3 +60,6 @@ export * from './Dialog'
 
 // ApplicationHeader component
 export * from './ApplicationHeader'
+
+// SideNavAdmin component
+export * from './SideNavAdmin'
