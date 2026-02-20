@@ -1,4 +1,5 @@
 import React from "react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
 import type {
@@ -474,26 +475,47 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
             renderTable()
           )}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-3 py-2 text-sm text-gray-700">
-              <span>{startIndex + 1} - {endIndex} of {sortedRows.length}</span>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setCurrentPage(p => p - 1)}
-                  disabled={!hasPreviousPage}
-                  aria-label="Previous page"
-                  className="px-2 py-1 rounded border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={() => setCurrentPage(p => p + 1)}
-                  disabled={!hasNextPage}
-                  aria-label="Next page"
-                  className="px-2 py-1 rounded border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
-                >
-                  →
-                </button>
-              </div>
+            <div className="flex items-center justify-end gap-2 px-3 py-2 text-sm text-gray-700">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={!hasPreviousPage}
+                aria-label="First page"
+                title="First page"
+                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+              >
+                <ChevronsLeft size={18} />
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => p - 1)}
+                disabled={!hasPreviousPage}
+                aria-label="Previous page"
+                title="Previous page"
+                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <span>
+                <span className="font-bold">{startIndex + 1} – {endIndex}</span>
+                {" "}of {sortedRows.length}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={!hasNextPage}
+                aria-label="Next page"
+                title="Next page"
+                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+              >
+                <ChevronRight size={18} />
+              </button>
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={!hasNextPage}
+                aria-label="Last page"
+                title="Last page"
+                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+              >
+                <ChevronsRight size={18} />
+              </button>
             </div>
           )}
         </>

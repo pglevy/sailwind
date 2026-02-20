@@ -204,6 +204,14 @@ function generateData(count: number) {
   }));
 }
 
+/** Helper to find the paging range text container by matching its combined text content */
+function expectRangeText(start: number, end: number, total: number) {
+  const text = `${start} – ${end} of ${total}`;
+  expect(screen.getByText((_content, element) => {
+    return element?.tagName === "SPAN" && element?.textContent === text;
+  })).toBeInTheDocument();
+}
+
 describe("ReadOnlyGrid - paging", () => {
   it("shows paging controls when data exceeds pageSize", () => {
     render(
@@ -212,9 +220,11 @@ describe("ReadOnlyGrid - paging", () => {
       </ReadOnlyGrid>
     );
 
-    expect(screen.getByText("1 - 5 of 15")).toBeInTheDocument();
+    expectRangeText(1, 5, 15);
+    expect(screen.getByRole("button", { name: "First page" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next page" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Last page" })).toBeInTheDocument();
   });
 
   it("hides paging controls when all data fits on one page", () => {
@@ -237,34 +247,36 @@ describe("ReadOnlyGrid - paging", () => {
     );
 
     // Page 1: items 1-5
-    expect(screen.getByText("1 - 5 of 12")).toBeInTheDocument();
+    expectRangeText(1, 5, 12);
     expect(screen.getByText("Item 1")).toBeInTheDocument();
     expect(screen.queryByText("Item 6")).not.toBeInTheDocument();
 
     // Go to page 2
     await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(screen.getByText("6 - 10 of 12")).toBeInTheDocument();
+    expectRangeText(6, 10, 12);
     expect(screen.getByText("Item 6")).toBeInTheDocument();
     expect(screen.queryByText("Item 1")).not.toBeInTheDocument();
 
     // Go back to page 1
     await user.click(screen.getByRole("button", { name: "Previous page" }));
-    expect(screen.getByText("1 - 5 of 12")).toBeInTheDocument();
+    expectRangeText(1, 5, 12);
     expect(screen.getByText("Item 1")).toBeInTheDocument();
   });
 
-  it("disables previous button on first page", () => {
+  it("disables first/previous buttons on first page and last/next on last page", () => {
     render(
       <ReadOnlyGrid data={generateData(15)} pageSize={5}>
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
 
+    expect(screen.getByRole("button", { name: "First page" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Next page" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Last page" })).toBeEnabled();
   });
 
-  it("disables next button on last page", async () => {
+  it("disables next/last buttons on last page", async () => {
     const user = userEvent.setup();
     render(
       <ReadOnlyGrid data={generateData(8)} pageSize={5}>
@@ -274,9 +286,30 @@ describe("ReadOnlyGrid - paging", () => {
 
     // Navigate to last page (page 2)
     await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(screen.getByText("6 - 8 of 8")).toBeInTheDocument();
+    expectRangeText(6, 8, 8);
     expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Last page" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "First page" })).toBeEnabled();
+  });
+
+  it("first page button jumps to page 1, last page button jumps to final page", async () => {
+    const user = userEvent.setup();
+    render(
+      <ReadOnlyGrid data={generateData(25)} pageSize={5}>
+        <GridColumn label="Name" value="name" />
+      </ReadOnlyGrid>
+    );
+
+    // Jump to last page
+    await user.click(screen.getByRole("button", { name: "Last page" }));
+    expectRangeText(21, 25, 25);
+    expect(screen.getByText("Item 25")).toBeInTheDocument();
+
+    // Jump back to first page
+    await user.click(screen.getByRole("button", { name: "First page" }));
+    expectRangeText(1, 5, 25);
+    expect(screen.getByText("Item 1")).toBeInTheDocument();
   });
 
   it("defaults pageSize to 10", () => {
@@ -286,7 +319,7 @@ describe("ReadOnlyGrid - paging", () => {
       </ReadOnlyGrid>
     );
 
-    expect(screen.getByText("1 - 10 of 15")).toBeInTheDocument();
+    expectRangeText(1, 10, 15);
     // Should render exactly 10 data rows
     const rows = screen.getAllByRole("row");
     expect(rows).toHaveLength(11); // 1 header + 10 data
@@ -300,13 +333,13 @@ describe("ReadOnlyGrid - paging", () => {
       </ReadOnlyGrid>
     );
 
-    expect(screen.getByText("1 - 10 of 23")).toBeInTheDocument();
+    expectRangeText(1, 10, 23);
 
     await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(screen.getByText("11 - 20 of 23")).toBeInTheDocument();
+    expectRangeText(11, 20, 23);
 
     await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(screen.getByText("21 - 23 of 23")).toBeInTheDocument();
+    expectRangeText(21, 23, 23);
   });
 
   it("handles invalid pageSize by defaulting to 10", () => {
@@ -316,7 +349,7 @@ describe("ReadOnlyGrid - paging", () => {
       </ReadOnlyGrid>
     );
 
-    expect(screen.getByText("1 - 10 of 15")).toBeInTheDocument();
+    expectRangeText(1, 10, 15);
   });
 
   it("handles negative pageSize by defaulting to 10", () => {
@@ -326,7 +359,20 @@ describe("ReadOnlyGrid - paging", () => {
       </ReadOnlyGrid>
     );
 
-    expect(screen.getByText("1 - 10 of 15")).toBeInTheDocument();
+    expectRangeText(1, 10, 15);
+  });
+
+  it("paging buttons have tooltips", () => {
+    render(
+      <ReadOnlyGrid data={generateData(15)} pageSize={5}>
+        <GridColumn label="Name" value="name" />
+      </ReadOnlyGrid>
+    );
+
+    expect(screen.getByRole("button", { name: "First page" })).toHaveAttribute("title", "First page");
+    expect(screen.getByRole("button", { name: "Previous page" })).toHaveAttribute("title", "Previous page");
+    expect(screen.getByRole("button", { name: "Next page" })).toHaveAttribute("title", "Next page");
+    expect(screen.getByRole("button", { name: "Last page" })).toHaveAttribute("title", "Last page");
   });
 });
 
@@ -448,11 +494,11 @@ describe("ReadOnlyGrid - sorting", () => {
 
     // Navigate to page 2
     await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(screen.getByText("6 - 10 of 12")).toBeInTheDocument();
+    expectRangeText(6, 10, 12);
 
     // Click sort — should reset to page 1
     await user.click(screen.getByRole("button", { name: "Name" }));
-    expect(screen.getByText("1 - 5 of 12")).toBeInTheDocument();
+    expectRangeText(1, 5, 12);
   });
 });
 
