@@ -63,3 +63,6 @@ export * from './ApplicationHeader'
 
 // SideNavAdmin component
 export * from './SideNavAdmin'
+
+// ReadOnlyGrid components
+export * from './ReadOnlyGrid'
