@@ -453,12 +453,13 @@ describe("ReadOnlyGrid - sorting", () => {
 
     const nameHeader = screen.getAllByRole("columnheader")[0];
     expect(nameHeader).toHaveAttribute("aria-sort", "ascending");
-    expect(nameHeader).toHaveTextContent("▲");
+    // MoveUp icon rendered as SVG
+    expect(nameHeader.querySelector("svg")).toBeInTheDocument();
 
     // Click again to sort descending
     await user.click(screen.getByRole("button", { name: /Name/ }));
     expect(nameHeader).toHaveAttribute("aria-sort", "descending");
-    expect(nameHeader).toHaveTextContent("▼");
+    expect(nameHeader.querySelector("svg")).toBeInTheDocument();
   });
 
   it("initialSorts applies on first render", () => {

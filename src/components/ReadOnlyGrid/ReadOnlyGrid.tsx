@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoveUp, MoveDown } from "lucide-react";
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
 import type {
@@ -380,7 +380,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                     {col.label ?? ""}
                     {sortField === col.sortField && (
                       <span aria-hidden="true">
-                        {sortAscending ? "▲" : "▼"}
+                        {sortAscending ? <MoveUp size={14} /> : <MoveDown size={14} />}
                       </span>
                     )}
                   </button>
