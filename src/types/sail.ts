@@ -42,3 +42,31 @@ export type SAILLabelPosition = "ABOVE" | "ADJACENT" | "COLLAPSED" | "JUSTIFIED"
  * Semantic color values matching SAIL's color constants
  */
 export type SAILSemanticColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD"
+
+/**
+ * Sort configuration for grid columns
+ */
+export interface SortInfo {
+  field: string;
+  ascending: boolean;
+}
+
+/**
+ * Grid height values matching SAIL's height parameter for grids
+ */
+export type SAILGridHeight =
+  | "SHORT" | "SHORT_PLUS"
+  | "MEDIUM" | "MEDIUM_PLUS"
+  | "TALL" | "TALL_PLUS"
+  | "EXTRA_TALL" | "AUTO";
+
+/**
+ * Grid column width values matching SAIL's width parameter for grid columns
+ */
+export type SAILGridColumnWidth =
+  | "AUTO" | "ICON" | "ICON_PLUS"
+  | "NARROW" | "NARROW_PLUS"
+  | "MEDIUM" | "MEDIUM_PLUS"
+  | "WIDE"
+  | "1X" | "2X" | "3X" | "4X" | "5X"
+  | "6X" | "7X" | "8X" | "9X" | "10X";
