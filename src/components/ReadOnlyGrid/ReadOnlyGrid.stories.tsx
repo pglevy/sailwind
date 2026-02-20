@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>
 /** 1. Default — Basic grid with employee data */
 export const Default: Story = {
   render: () => (
-    <ReadOnlyGrid data={employees.slice(0, 5)}>
+    <ReadOnlyGrid data={employees.slice(0, 5)} borderStyle='STANDARD'>
       <GridColumn label="Name" value="name" sortField="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" sortField="salary" />

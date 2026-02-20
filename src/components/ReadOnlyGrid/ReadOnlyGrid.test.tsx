@@ -670,39 +670,59 @@ describe("ReadOnlyGrid - styling", () => {
     render(
       <ReadOnlyGrid data={styleData} borderStyle="STANDARD">
         <GridColumn label="Name" value="name" />
+        <GridColumn label="Age" value="age" />
       </ReadOnlyGrid>
     );
 
     const table = screen.getByRole("table");
     expect(table).toHaveClass("border", "border-gray-300");
 
-    // Header row should have border-b-2
+    // Header row should have border-b
     const headerRow = screen.getAllByRole("row")[0];
-    expect(headerRow).toHaveClass("border-b-2", "border-gray-300");
+    expect(headerRow).toHaveClass("border-b", "border-gray-300");
 
     // Data rows should have border-b border-gray-300
     const dataRows = screen.getAllByRole("row").slice(1);
     dataRows.forEach((row) => {
       expect(row).toHaveClass("border-b", "border-gray-300");
     });
+
+    // Column dividers: first column header should have border-r (not the last)
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers[0]).toHaveClass("border-r", "border-gray-300");
+    expect(headers[1]).not.toHaveClass("border-r");
+
+    // First data cell in each row should have border-r
+    const cells = screen.getAllByRole("cell");
+    expect(cells[0]).toHaveClass("border-r", "border-gray-300");
+    expect(cells[1]).not.toHaveClass("border-r");
   });
 
   it('borderStyle "LIGHT" (default) applies light border classes', () => {
     render(
       <ReadOnlyGrid data={styleData}>
         <GridColumn label="Name" value="name" />
+        <GridColumn label="Age" value="age" />
       </ReadOnlyGrid>
     );
 
+    // LIGHT: no outer border on table
     const table = screen.getByRole("table");
-    expect(table).toHaveClass("border", "border-gray-200");
+    expect(table).not.toHaveClass("border");
 
+    // Header row still has bottom border
     const headerRow = screen.getAllByRole("row")[0];
     expect(headerRow).toHaveClass("border-b", "border-gray-200");
 
     const dataRows = screen.getAllByRole("row").slice(1);
     dataRows.forEach((row) => {
       expect(row).toHaveClass("border-b", "border-gray-200");
+    });
+
+    // No column dividers in LIGHT mode
+    const headers = screen.getAllByRole("columnheader");
+    headers.forEach((header) => {
+      expect(header).not.toHaveClass("border-r");
     });
   });
 

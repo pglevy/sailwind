@@ -232,8 +232,8 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const sortedRows = React.useMemo(() => {
     if (!sortField) return indexedRows;
     return [...indexedRows].sort((a, b) => {
-      const aVal = a[sortField];
-      const bVal = b[sortField];
+      const aVal = (a as Record<string, any>)[sortField];
+      const bVal = (b as Record<string, any>)[sortField];
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return sortAscending ? -1 : 1;
       if (bVal == null) return sortAscending ? 1 : -1;
@@ -258,16 +258,17 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const visibleColumns = columns.filter((col) => col.showWhen !== false);
 
   // Styling computations
-  const tableBorderClass =
-    borderStyle === "STANDARD" ? "border border-gray-300" : "border border-gray-200";
-  const headerRowBorderClass =
-    borderStyle === "STANDARD"
-      ? "border-b-2 border-gray-300"
-      : "border-b border-gray-200";
-  const cellBorderClass =
-    borderStyle === "STANDARD"
-      ? "border-b border-gray-300"
-      : "border-b border-gray-200";
+  const isStandardBorder = borderStyle === "STANDARD";
+  // STANDARD: full outer border + column dividers; LIGHT: no outer border, no vertical borders
+  const tableBorderClass = isStandardBorder ? "border border-gray-300" : "";
+  const headerRowBorderClass = isStandardBorder
+    ? "border-b border-gray-300"
+    : "border-b border-gray-200";
+  const cellBorderClass = isStandardBorder
+    ? "border-b border-gray-300"
+    : "border-b border-gray-200";
+  // STANDARD: vertical dividers between columns
+  const colDividerClass = isStandardBorder ? "border-r border-gray-300" : "";
   const cellPaddingClass = spacing === "DENSE" ? "px-2 py-1" : "px-3 py-2";
   const heightClass = heightMap[height] || "";
   const needsScrollContainer = height !== "AUTO" && heightClass !== "";
@@ -343,7 +344,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       <thead className={needsScrollContainer ? "sticky top-0 bg-white z-10" : undefined}>
         <tr className={headerRowBorderClass}>
           {selectable && selectionStyle === "CHECKBOX" && (
-            <th className={`${cellPaddingClass} w-10`}>
+            <th className={`${cellPaddingClass} w-10${colDividerClass ? ` ${colDividerClass}` : ""}`}>
               <input
                 type="checkbox"
                 checked={allPageRowsSelected}
@@ -355,10 +356,12 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
           {visibleColumns.map((col, colIndex) => {
             const widthClass = getColWidthClass(col);
             const alignClass = getColAlignClass(col);
+            const isLastCol = colIndex === visibleColumns.length - 1;
+            const divider = !isLastCol && colDividerClass ? ` ${colDividerClass}` : "";
             return (
               <th
                 key={colIndex}
-                className={`${cellPaddingClass} ${alignClass} text-sm font-medium text-gray-700${widthClass ? ` ${widthClass}` : ""}`}
+                className={`${cellPaddingClass} ${alignClass} text-sm font-semibold text-base${widthClass ? ` ${widthClass}` : ""}${divider}`}
                 aria-sort={
                   sortField === col.sortField
                     ? sortAscending
@@ -415,7 +418,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
               }
             >
               {selectable && selectionStyle === "CHECKBOX" && (
-                <td className={`${cellPaddingClass} w-10`}>
+                <td className={`${cellPaddingClass} w-10${colDividerClass ? ` ${colDividerClass}` : ""}`}>
                   <input
                     type="checkbox"
                     checked={isRowSelected || false}
@@ -428,10 +431,12 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 const widthClass = getColWidthClass(col);
                 const alignClass = getColAlignClass(col);
                 const bg = resolveBgColor(col.backgroundColor, row);
+                const isLastCol = colIndex === visibleColumns.length - 1;
+                const divider = !isLastCol && colDividerClass ? ` ${colDividerClass}` : "";
                 return (
                   <td
                     key={colIndex}
-                    className={`${cellPaddingClass} ${alignClass} text-sm text-gray-900${widthClass ? ` ${widthClass}` : ""}${bg.className ? ` ${bg.className}` : ""}`}
+                    className={`${cellPaddingClass} ${alignClass} text-sm text-gray-900${widthClass ? ` ${widthClass}` : ""}${bg.className ? ` ${bg.className}` : ""}${divider}`}
                     style={bg.style}
                   >
                     {resolveValue(col.value, row, startIndex + rowIndex)}
