@@ -1,6 +1,6 @@
 {
   "name": "@pglevy/sailwind",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Appian SAIL components for React - Pre-release version under active development",
   "type": "module",
   "main": "./dist/index.js",
