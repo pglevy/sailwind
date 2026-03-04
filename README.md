@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@pglevy/sailwind)](https://www.npmjs.com/package/@pglevy/sailwind)
 
-React component library for prototyping Appian applications with SAIL-compatible syntax.
+A React component library for vibe coding that speaks Appian SAIL
 
 ## Overview
 
