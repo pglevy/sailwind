@@ -138,7 +138,8 @@ a!tagField(
 
 - **[Component Reference](https://pglevy.github.io/sailwind/)** — Live Storybook with all components
 - **[TAILWIND-SAIL-MAPPING.md](TAILWIND-SAIL-MAPPING.md)** — Tailwind to SAIL style mappings
-- **[CLAUDE.md](CLAUDE.md)** — Instructions for LLM-assisted development
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — How to contribute to the project
+- **[AGENTS.md](AGENTS.md)** — Guidance for AI agents working with the library
 - **[SAIL Docs](https://docs.appian.com/suite/help/25.3/)** — Official Appian SAIL reference
 
 ## License
