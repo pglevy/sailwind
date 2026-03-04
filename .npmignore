@@ -35,7 +35,6 @@ coverage/
 .github/
 
 # Documentation (keep README.md)
-docs/
 CLAUDE.md
 TAILWIND-SAIL-MAPPING.md
 
