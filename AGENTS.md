@@ -148,18 +148,6 @@ const sizeMap: Record<SAILSize, string> = {
 <Button className="px-4 py-2.5 text-base" />
 ```
 
-### SAIL Translation Examples Required
-
-Every component needs side-by-side React/SAIL examples:
-
-```tsx
-// React Prototype
-<TagField size="STANDARD" tags={[{ text: "URGENT", backgroundColor: "#FED7DE" }]} />
-
-// SAIL Production
-a!tagField(size: "STANDARD", tags: { a!tagItem(text: "URGENT", backgroundColor: "#FED7DE") })
-```
-
 ## Quick Reference Patterns
 
 ### Card with Content

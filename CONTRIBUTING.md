@@ -128,8 +128,7 @@ All colors use a consistent Tailwind scale: **50, 100, 200, 500, 700, 900**
 2. **Create TypeScript interfaces** — Define Item and Field props with exact SAIL parameter names
 3. **Use Radix primitives when applicable** — For complex interactive components (Dialog, Dropdown, Tabs, Tooltip)
 4. **Map SAIL props internally** — Create mappings from SAIL values to standard Tailwind classes
-5. **Write SAIL translation examples** — Include side-by-side code examples in component documentation
-6. **Ensure accessibility** — All components must meet WCAG 2.1 AA standards
+5. **Ensure accessibility** — All components must meet WCAG 2.1 AA standards
 
 ### Component Mapping Pattern
 
@@ -146,28 +145,6 @@ const sizeMap: Record<SAILSize, string> = {
 
 // ❌ Wrong — exposing Tailwind at component API
 <Button className="px-4 py-2.5 text-base" />
-```
-
-### SAIL Translation Examples Required
-
-Every component must include side-by-side React/SAIL examples:
-
-```tsx
-// React Prototype
-<TagField
-  size="STANDARD"
-  tags={[
-    { text: "URGENT", backgroundColor: "#FED7DE", textColor: "#9F0019" }
-  ]}
-/>
-
-// SAIL Production
-a!tagField(
-  size: "STANDARD",
-  tags: {
-    a!tagItem(text: "URGENT", backgroundColor: "#FED7DE", textColor: "#9F0019")
-  }
-)
 ```
 
 ### File Structure for Components
