@@ -1,5 +1,7 @@
 # Sailwind
 
+[![npm version](https://img.shields.io/npm/v/@pglevy/sailwind)](https://www.npmjs.com/package/@pglevy/sailwind)
+
 React component library for prototyping Appian applications with SAIL-compatible syntax.
 
 ## Overview
@@ -19,6 +21,20 @@ Browse the **[Component Reference](https://pglevy.github.io/sailwind/)** to see 
 ```bash
 npm install @pglevy/sailwind
 ```
+
+### Peer Dependencies
+
+Sailwind requires React 18 or 19 as a peer dependency:
+
+```bash
+npm install react react-dom
+```
+
+Supported versions:
+- `react` — `^18.0.0 || ^19.0.0`
+- `react-dom` — `^18.0.0 || ^19.0.0`
+
+These are listed as `peerDependencies` in the package, so your project needs to provide them.
 
 ### Setup
 
