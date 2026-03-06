@@ -169,16 +169,6 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
           <div
             key={index}
             className={itemContainerClasses}
-            onClick={(e) => {
-              // Allow clicking anywhere on card to toggle (except on the checkbox itself)
-              if (choiceStyle === "CARDS" && !disabled) {
-                const target = e.target as HTMLElement
-                // Don't trigger if clicking directly on the input (it has its own handler)
-                if (target.tagName !== 'INPUT') {
-                  handleChange(choiceValue, !isChecked)
-                }
-              }
-            }}
           >
             <input
               id={choiceId}
@@ -194,7 +184,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
               aria-errormessage={showValidations ? `${inputId}-error` : undefined}
             />
             <label
-              htmlFor={choiceStyle === "CARDS" ? undefined : choiceId}
+              htmlFor={choiceId}
               className={[
                 'text-base text-gray-900',
                 choiceStyle === "CARDS" && 'flex-1',
