@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 import { TextField } from './TextField'
 
 const meta = {
@@ -14,6 +15,10 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    align: { control: 'select', options: ['LEFT', 'CENTER', 'RIGHT'] },
+  },
 } satisfies Meta<typeof TextField>
 
 export default meta
@@ -24,6 +29,18 @@ export const Default: Story = {
     label: 'Email Address',
     placeholder: 'user@example.com',
     required: true,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <TextField {...args} value={value} saveInto={setValue} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByLabelText(/email address/i)
+    await expect(input).toBeVisible()
+    await userEvent.click(input)
+    await userEvent.type(input, 'test@example.com')
+    await expect(input).toHaveValue('test@example.com')
   },
 }
 
@@ -82,19 +99,23 @@ export const WithHelpTooltip: Story = {
 }
 
 export const WithValidationError: Story = {
-  render: () => {
-    const [email, setEmail] = useState('invalid-email')
+  args: {
+    label: 'Email Address',
+    placeholder: 'user@example.com',
+    value: 'invalid-email',
+    required: true,
+  },
+  render: (args) => {
+    const [email, setEmail] = useState(args.value ?? '')
     const validations = email && !email.includes('@')
       ? ['Please enter a valid email address']
       : []
 
     return (
       <TextField
-        label="Email Address"
-        placeholder="user@example.com"
+        {...args}
         value={email}
         saveInto={setEmail}
-        required
         validations={validations}
       />
     )

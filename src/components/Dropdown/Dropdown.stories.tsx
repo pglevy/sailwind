@@ -8,6 +8,10 @@ const meta = {
   component: DropdownField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    searchDisplay: { control: 'select', options: ['AUTO', 'ON', 'OFF'] },
+  },
 } satisfies Meta<typeof DropdownField>
 
 export default meta
@@ -102,20 +106,23 @@ export const AdjacentLabel: Story = {
 
 export const MultipleDefault: Story = {
   args: {
+    label: 'Language',
+    instructions: 'Which language(s) are you proficient in?',
     choiceLabels: ['English', 'Spanish', 'French', 'German'],
     choiceValues: ['en_US', 'es_ES', 'fr_FR', 'de_DE'],
+    searchDisplay: 'AUTO',
   },
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState<string[]>(['en_US', 'fr_FR'])
     return (
       <MultipleDropdownField
-        label="Language"
-        instructions="Which language(s) are you proficient in?"
-        choiceLabels={['English', 'Spanish', 'French', 'German']}
-        choiceValues={['en_US', 'es_ES', 'fr_FR', 'de_DE']}
+        label={args.label}
+        instructions={args.instructions}
+        choiceLabels={args.choiceLabels ?? []}
+        choiceValues={args.choiceValues ?? []}
         value={value}
         saveInto={(v) => setValue(v || [])}
-        searchDisplay="AUTO"
+        searchDisplay={args.searchDisplay}
       />
     )
   },
@@ -123,20 +130,23 @@ export const MultipleDefault: Story = {
 
 export const MultipleNoDefault: Story = {
   args: {
+    label: 'Skills',
+    instructions: 'Select all applicable skills',
     choiceLabels: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Java'],
     choiceValues: ['js', 'ts', 'react', 'node', 'python', 'java'],
+    placeholder: 'Select skills',
   },
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState<string[]>([])
     return (
       <MultipleDropdownField
-        label="Skills"
-        instructions="Select all applicable skills"
-        choiceLabels={['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'Java']}
-        choiceValues={['js', 'ts', 'react', 'node', 'python', 'java']}
+        label={args.label}
+        instructions={args.instructions}
+        choiceLabels={args.choiceLabels ?? []}
+        choiceValues={args.choiceValues ?? []}
         value={value}
         saveInto={(v) => setValue(v || [])}
-        placeholder="Select skills"
+        placeholder={args.placeholder}
       />
     )
   },
@@ -144,6 +154,8 @@ export const MultipleNoDefault: Story = {
 
 export const MultipleWithSearch: Story = {
   args: {
+    label: 'Language',
+    instructions: 'Select all languages you speak',
     choiceLabels: [
       'English', 'Arabic', 'Chinese (Simplified)', 'Chinese (Traditional)',
       'Spanish', 'French', 'German', 'Japanese', 'Korean', 'Polish', 'Portuguese', 'Russian',
@@ -151,23 +163,19 @@ export const MultipleWithSearch: Story = {
     choiceValues: [
       'en_US', 'ar', 'zh_CN', 'zh_HK', 'es_ES', 'fr_FR', 'de_DE', 'ja', 'ko', 'pl', 'pt', 'ru',
     ],
+    searchDisplay: 'AUTO',
   },
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState<string[]>([])
     return (
       <MultipleDropdownField
-        label="Language"
-        instructions="Select all languages you speak"
-        choiceLabels={[
-          'English', 'Arabic', 'Chinese (Simplified)', 'Chinese (Traditional)',
-          'Spanish', 'French', 'German', 'Japanese', 'Korean', 'Polish', 'Portuguese', 'Russian',
-        ]}
-        choiceValues={[
-          'en_US', 'ar', 'zh_CN', 'zh_HK', 'es_ES', 'fr_FR', 'de_DE', 'ja', 'ko', 'pl', 'pt', 'ru',
-        ]}
+        label={args.label}
+        instructions={args.instructions}
+        choiceLabels={args.choiceLabels ?? []}
+        choiceValues={args.choiceValues ?? []}
         value={value}
         saveInto={(v) => setValue(v || [])}
-        searchDisplay="AUTO"
+        searchDisplay={args.searchDisplay}
       />
     )
   },
@@ -175,33 +183,37 @@ export const MultipleWithSearch: Story = {
 
 export const MultipleDisabled: Story = {
   args: {
+    label: 'Assigned Teams',
     choiceLabels: ['Engineering', 'Design', 'Marketing', 'Sales'],
     choiceValues: ['eng', 'design', 'marketing', 'sales'],
+    disabled: true,
   },
-  render: () => (
+  render: (args) => (
     <MultipleDropdownField
-      label="Assigned Teams"
-      choiceLabels={['Engineering', 'Design', 'Marketing', 'Sales']}
-      choiceValues={['eng', 'design', 'marketing', 'sales']}
+      label={args.label}
+      choiceLabels={args.choiceLabels ?? []}
+      choiceValues={args.choiceValues ?? []}
       value={['eng', 'design']}
-      disabled
+      disabled={args.disabled}
     />
   ),
 }
 
 export const MultipleAdjacentLabel: Story = {
   args: {
+    label: 'Categories',
+    labelPosition: 'ADJACENT',
     choiceLabels: ['Technology', 'Business', 'Science', 'Arts'],
     choiceValues: ['tech', 'biz', 'sci', 'arts'],
   },
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState<string[]>(['tech'])
     return (
       <MultipleDropdownField
-        label="Categories"
-        labelPosition="ADJACENT"
-        choiceLabels={['Technology', 'Business', 'Science', 'Arts']}
-        choiceValues={['tech', 'biz', 'sci', 'arts']}
+        label={args.label}
+        labelPosition={args.labelPosition}
+        choiceLabels={args.choiceLabels ?? []}
+        choiceValues={args.choiceValues ?? []}
         value={value}
         saveInto={(v) => setValue(v || [])}
       />

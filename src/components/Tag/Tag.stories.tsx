@@ -12,6 +12,10 @@ const meta = {
       { text: 'ACTIVE', backgroundColor: 'POSITIVE' },
     ],
   },
+  argTypes: {
+    size: { control: 'select', options: ['SMALL', 'STANDARD'] },
+    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof TagField>
 
 export default meta
@@ -20,29 +24,25 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const SemanticColors: Story = {
-  render: () => (
-    <TagField
-      size="STANDARD"
-      tags={[
-        { text: 'HIGH PRIORITY', backgroundColor: 'NEGATIVE' },
-        { text: 'REVIEWED', backgroundColor: 'POSITIVE' },
-        { text: 'NEW', backgroundColor: 'ACCENT' },
-      ]}
-    />
-  ),
+  args: {
+    size: 'STANDARD',
+    tags: [
+      { text: 'HIGH PRIORITY', backgroundColor: 'NEGATIVE' },
+      { text: 'REVIEWED', backgroundColor: 'POSITIVE' },
+      { text: 'NEW', backgroundColor: 'ACCENT' },
+    ],
+  },
 }
 
 export const CustomHexColors: Story = {
-  render: () => (
-    <TagField
-      size="STANDARD"
-      tags={[
-        { text: 'URGENT', backgroundColor: '#FED7DE', textColor: '#9F0019' },
-        { text: 'CUSTOMER FACING', backgroundColor: '#DBECFF', textColor: '#0C4283' },
-        { text: 'IN PROGRESS', backgroundColor: '#FFF6C9', textColor: '#856C00' },
-      ]}
-    />
-  ),
+  args: {
+    size: 'STANDARD',
+    tags: [
+      { text: 'URGENT', backgroundColor: '#FED7DE', textColor: '#9F0019' },
+      { text: 'CUSTOMER FACING', backgroundColor: '#DBECFF', textColor: '#0C4283' },
+      { text: 'IN PROGRESS', backgroundColor: '#FFF6C9', textColor: '#856C00' },
+    ],
+  },
 }
 
 export const SmallSize: Story = {

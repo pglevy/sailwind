@@ -9,6 +9,10 @@ const meta = {
   component: DialogField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    width: { control: 'select', options: ['NARROW', 'MEDIUM', 'MEDIUM_PLUS', 'WIDE', 'FIT'] },
+    height: { control: 'select', options: ['AUTO', 'FIT', 'SHORT', 'MEDIUM', 'TALL'] },
+  },
 } satisfies Meta<typeof DialogField>
 
 export default meta

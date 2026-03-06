@@ -6,6 +6,14 @@ const meta = {
   component: StampField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    size: { control: 'select', options: ['TINY', 'SMALL', 'MEDIUM', 'LARGE'] },
+    shape: { control: 'select', options: ['SQUARED', 'SEMI_ROUNDED', 'ROUNDED'] },
+    align: { control: 'select', options: ['START', 'CENTER', 'END'] },
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    backgroundColor: { control: 'text' },
+    contentColor: { control: 'text' },
+  },
 } satisfies Meta<typeof StampField>
 
 export default meta
@@ -40,13 +48,11 @@ export const TransparentBackground: Story = {
 }
 
 export const TextStamps: Story = {
-  render: () => (
-    <div className="flex gap-4 items-center">
-      <StampField backgroundColor="#cc0000" text="1" align="CENTER" />
-      <StampField backgroundColor="#cc0000" text="2" align="CENTER" />
-      <StampField backgroundColor="#cc0000" text="3" align="CENTER" />
-    </div>
-  ),
+  args: {
+    backgroundColor: '#cc0000',
+    text: '1',
+    align: 'CENTER',
+  },
 }
 
 export const Sizes: Story = {

@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 import { ReadOnlyGrid } from './ReadOnlyGrid'
 import { GridColumn } from './GridColumn'
 
@@ -23,6 +24,15 @@ const meta = {
   component: ReadOnlyGrid,
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
+  argTypes: {
+    borderStyle: { control: 'select', options: ['STANDARD', 'LIGHT'] },
+    spacing: { control: 'select', options: ['STANDARD', 'DENSE'] },
+    height: { control: 'select', options: ['SHORT', 'SHORT_PLUS', 'MEDIUM', 'MEDIUM_PLUS', 'TALL', 'TALL_PLUS', 'EXTRA_TALL', 'AUTO'] },
+    selectionStyle: { control: 'select', options: ['CHECKBOX', 'ROW_HIGHLIGHT'] },
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof ReadOnlyGrid>
 
 export default meta
@@ -30,8 +40,12 @@ type Story = StoryObj<typeof meta>
 
 /** 1. Default — Basic grid with employee data */
 export const Default: Story = {
-  render: () => (
-    <ReadOnlyGrid data={employees.slice(0, 5)} borderStyle='LIGHT'>
+  args: {
+    data: employees.slice(0, 5),
+    borderStyle: 'LIGHT',
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" sortField="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" sortField="salary" />
@@ -42,8 +56,12 @@ export const Default: Story = {
 
 /** 2. EmptyState — Empty data with custom message */
 export const EmptyState: Story = {
-  render: () => (
-    <ReadOnlyGrid data={[]} emptyGridMessage="No employees found matching your criteria.">
+  args: {
+    data: [],
+    emptyGridMessage: 'No employees found matching your criteria.',
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" />
@@ -53,24 +71,39 @@ export const EmptyState: Story = {
 
 /** 3. WithPaging — Full dataset with pageSize=5 showing paging controls */
 export const WithPaging: Story = {
-  render: () => (
-    <ReadOnlyGrid data={employees} pageSize={5}>
+  args: {
+    data: employees,
+    pageSize: 5,
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" sortField="name" />
       <GridColumn label="Department" value="department" sortField="department" />
       <GridColumn label="Salary" value="salary" sortField="salary" />
       <GridColumn label="Start Date" value="startDate" />
     </ReadOnlyGrid>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // Verify grid renders with data
+    await expect(canvas.getByText('Alice Johnson')).toBeVisible()
+    // Navigate to next page
+    const nextButton = canvas.getByRole('button', { name: /next page/i })
+    await userEvent.click(nextButton)
+    // First page data should no longer be visible, second page data should appear
+    await expect(canvas.getByText('Frank Miller')).toBeVisible()
+  },
 }
 
 /** 4. WithSorting — Sortable columns with initial sort on salary descending */
 export const WithSorting: Story = {
-  render: () => (
-    <ReadOnlyGrid
-      data={employees}
-      pageSize={6}
-      initialSorts={[{ field: "salary", ascending: false }]}
-    >
+  args: {
+    data: employees,
+    pageSize: 6,
+    initialSorts: [{ field: "salary", ascending: false }],
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" sortField="name" />
       <GridColumn label="Department" value="department" sortField="department" />
       <GridColumn label="Salary" value="salary" sortField="salary" />
@@ -81,15 +114,15 @@ export const WithSorting: Story = {
 
 /** 5. WithCheckboxSelection — Selectable grid with checkbox style */
 export const WithCheckboxSelection: Story = {
-  render: () => {
+  args: {
+    data: employees.slice(0, 6),
+    selectable: true,
+    selectionStyle: 'CHECKBOX',
+  },
+  render: (args) => {
     const [selected, setSelected] = React.useState<(string | number)[]>([])
     return (
-      <ReadOnlyGrid
-        data={employees.slice(0, 6)}
-        selectable
-        selectionValue={selected}
-        selectionSaveInto={setSelected}
-      >
+      <ReadOnlyGrid {...args} selectionValue={selected} selectionSaveInto={setSelected}>
         <GridColumn label="Name" value="name" />
         <GridColumn label="Department" value="department" />
         <GridColumn label="Salary" value="salary" />
@@ -100,16 +133,15 @@ export const WithCheckboxSelection: Story = {
 
 /** 6. WithRowHighlightSelection — ROW_HIGHLIGHT selection style */
 export const WithRowHighlightSelection: Story = {
-  render: () => {
+  args: {
+    data: employees.slice(0, 6),
+    selectable: true,
+    selectionStyle: 'ROW_HIGHLIGHT',
+  },
+  render: (args) => {
     const [selected, setSelected] = React.useState<(string | number)[]>([])
     return (
-      <ReadOnlyGrid
-        data={employees.slice(0, 6)}
-        selectable
-        selectionStyle="ROW_HIGHLIGHT"
-        selectionValue={selected}
-        selectionSaveInto={setSelected}
-      >
+      <ReadOnlyGrid {...args} selectionValue={selected} selectionSaveInto={setSelected}>
         <GridColumn label="Name" value="name" />
         <GridColumn label="Department" value="department" />
         <GridColumn label="Salary" value="salary" />
@@ -120,13 +152,14 @@ export const WithRowHighlightSelection: Story = {
 
 /** 7. StyledGrid — borderStyle, shadeAlternateRows, dense spacing */
 export const StyledGrid: Story = {
-  render: () => (
-    <ReadOnlyGrid
-      data={employees.slice(0, 8)}
-      borderStyle="STANDARD"
-      shadeAlternateRows
-      spacing="DENSE"
-    >
+  args: {
+    data: employees.slice(0, 8),
+    borderStyle: 'STANDARD',
+    shadeAlternateRows: true,
+    spacing: 'DENSE',
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" />
@@ -137,8 +170,12 @@ export const StyledGrid: Story = {
 
 /** 8. FixedHeight — MEDIUM height to show scrolling behavior */
 export const FixedHeight: Story = {
-  render: () => (
-    <ReadOnlyGrid data={employees} height="MEDIUM">
+  args: {
+    data: employees,
+    height: 'MEDIUM',
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" />
@@ -149,14 +186,15 @@ export const FixedHeight: Story = {
 
 /** 9. WithLabelAndValidations — label, instructions, validations, helpTooltip */
 export const WithLabelAndValidations: Story = {
-  render: () => (
-    <ReadOnlyGrid
-      label="Employee Directory"
-      instructions="Review the employee list below. Contact HR for updates."
-      helpTooltip="This grid shows all active employees."
-      validations={["Please select at least one employee.", "Salary data may be outdated."]}
-      data={employees.slice(0, 4)}
-    >
+  args: {
+    label: 'Employee Directory',
+    instructions: 'Review the employee list below. Contact HR for updates.',
+    helpTooltip: 'This grid shows all active employees.',
+    validations: ['Please select at least one employee.', 'Salary data may be outdated.'],
+    data: employees.slice(0, 4),
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" />
       <GridColumn label="Department" value="department" />
       <GridColumn label="Salary" value="salary" />
@@ -166,8 +204,11 @@ export const WithLabelAndValidations: Story = {
 
 /** 10. ColumnWidthsAndAlignment — Various column widths and alignments */
 export const ColumnWidthsAndAlignment: Story = {
-  render: () => (
-    <ReadOnlyGrid data={employees.slice(0, 5)}>
+  args: {
+    data: employees.slice(0, 5),
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="ID" value="id" width="ICON_PLUS" align="CENTER" />
       <GridColumn label="Name" value="name" width="WIDE" align="START" />
       <GridColumn label="Department" value="department" width="MEDIUM" align="CENTER" />
@@ -178,8 +219,11 @@ export const ColumnWidthsAndAlignment: Story = {
 
 /** 11. FunctionAccessor — Using function value accessors for computed columns */
 export const FunctionAccessor: Story = {
-  render: () => (
-    <ReadOnlyGrid data={employees.slice(0, 6)}>
+  args: {
+    data: employees.slice(0, 6),
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
       <GridColumn label="Name" value="name" />
       <GridColumn
         label="Formatted Salary"

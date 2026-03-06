@@ -11,6 +11,12 @@ const meta = {
   component: TabsField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    size: { control: 'select', options: ['SMALL', 'STANDARD', 'LARGE'] },
+    color: { control: 'text' },
+    orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
+    activationMode: { control: 'select', options: ['AUTOMATIC', 'MANUAL'] },
+  },
 } satisfies Meta<typeof TabsField>
 
 export default meta
