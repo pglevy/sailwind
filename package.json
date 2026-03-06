@@ -55,6 +55,8 @@
     "version:major": "npm version major",
     "release": "npm run build:lib && npm publish --access public",
     "test": "vitest --run",
+    "test-storybook": "vitest --run --project=storybook",
+    "test:unit": "vitest --run --project=unit",
     "a11y-audit": "node scripts/a11y-audit.cjs"
   },
   "peerDependencies": {
