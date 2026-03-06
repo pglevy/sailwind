@@ -169,6 +169,16 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
           <div
             key={index}
             className={itemContainerClasses}
+            onClick={(e) => {
+              if (choiceStyle === "CARDS" && !disabled) {
+                const target = e.target as HTMLElement
+                // Only toggle from card surface clicks — skip if the click
+                // originated on the input or label (those handle it natively via htmlFor)
+                if (target.tagName !== 'INPUT' && target.tagName !== 'LABEL') {
+                  handleChange(choiceValue, !isChecked)
+                }
+              }
+            }}
           >
             <input
               id={choiceId}
