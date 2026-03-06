@@ -87,7 +87,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
       ACCENT: { bg: 'bg-blue-500', text: 'text-blue-500', border: 'border-blue-500' },
       POSITIVE: { bg: 'bg-green-700', text: 'text-green-700', border: 'border-green-700' },
       NEGATIVE: { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-700' },
-      WARN: { bg: 'bg-yellow-500', text: 'text-yellow-500', border: 'border-yellow-500' }
+      WARN: { bg: 'bg-yellow-500', text: 'text-yellow-900', border: 'border-yellow-500' }
     }
 
     if (semanticColorMap[colorValue]) {
@@ -305,6 +305,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
         id={fieldId}
         className={orientation === "HORIZONTAL" ? "relative" : "flex flex-col"}
         role="progressbar"
+        aria-label={accessibilityText || label || "Progress"}
         aria-valuemin={0}
         aria-valuemax={steps.length - 1}
         aria-valuenow={active ?? 0}

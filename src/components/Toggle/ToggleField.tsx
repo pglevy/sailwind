@@ -209,7 +209,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
         getColorClasses(),
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       ].filter(Boolean).join(' ')}
-      aria-label={accessibilityText || text || label}
+      aria-label={accessibilityText || text || label || (icon ? icon.replace(/-/g, ' ') : undefined)}
       aria-describedby={instructions ? `${inputId}-instructions` : undefined}
       aria-invalid={showValidations}
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}

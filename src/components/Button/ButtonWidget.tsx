@@ -248,7 +248,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       disabled={disabled || loadingIndicator}
       className={finalClasses}
       style={inlineStyles}
-      aria-label={accessibilityText || label}
+      aria-label={accessibilityText || label || tooltip || (icon ? icon.replace(/-/g, ' ') : undefined)}
       title={tooltip}
     >
       {loadingIndicator && (

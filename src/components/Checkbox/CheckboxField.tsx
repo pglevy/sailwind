@@ -194,7 +194,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
               aria-errormessage={showValidations ? `${inputId}-error` : undefined}
             />
             <label
-              htmlFor={choiceStyle === "CARDS" ? undefined : choiceId}
+              htmlFor={choiceId}
               className={[
                 'text-base text-gray-900',
                 choiceStyle === "CARDS" && 'flex-1',

@@ -287,7 +287,7 @@ export const StampField: React.FC<StampFieldProps> = ({
       className={stampClasses}
       style={stampStyle}
       title={tooltip}
-      role={link ? "button" : undefined}
+      role={link ? "button" : "img"}
       tabIndex={link ? 0 : undefined}
       aria-label={accessibilityText || text || `${icon} stamp`}
     >
