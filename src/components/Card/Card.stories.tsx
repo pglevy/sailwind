@@ -6,6 +6,15 @@ const meta = {
   component: CardLayout,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    shape: { control: 'select', options: ['SQUARED', 'SEMI_ROUNDED', 'ROUNDED'] },
+    padding: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    style: { control: 'select', options: ['NONE', 'ACCENT', 'SUCCESS', 'WARN', 'ERROR', 'INFO', 'CHARCOAL_SCHEME'] },
+    decorativeBarPosition: { control: 'select', options: ['TOP', 'START'] },
+    decorativeBarColor: { control: 'select', options: ['ACCENT', 'SUCCESS', 'WARN', 'ERROR', 'INFO'] },
+    marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof CardLayout>
 
 export default meta

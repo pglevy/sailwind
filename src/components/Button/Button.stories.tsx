@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, userEvent, within } from 'storybook/test'
 import { ButtonWidget } from './ButtonWidget'
 import { ButtonArrayLayout } from './ButtonArrayLayout'
 
@@ -7,6 +8,11 @@ const meta = {
   component: ButtonWidget,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    style: { control: 'select', options: ['SOLID', 'OUTLINE', 'GHOST', 'LINK'] },
+    color: { control: 'text' },
+    size: { control: 'select', options: ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] },
+  },
 } satisfies Meta<typeof ButtonWidget>
 
 export default meta
@@ -17,6 +23,15 @@ export const Default: Story = {
     label: 'Submit',
     style: 'SOLID',
     color: 'ACCENT',
+    size: 'STANDARD',
+    saveInto: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement)
+    const button = canvas.getByRole('button', { name: 'Submit' })
+    await expect(button).toBeVisible()
+    await userEvent.click(button)
+    await expect(args.saveInto).toHaveBeenCalledOnce()
   },
 }
 

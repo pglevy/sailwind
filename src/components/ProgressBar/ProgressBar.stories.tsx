@@ -13,6 +13,11 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    style: { control: 'select', options: ['THIN', 'THICK'] },
+    color: { control: 'text' },
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+  },
 } satisfies Meta<typeof ProgressBar>
 
 export default meta
