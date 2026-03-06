@@ -137,6 +137,7 @@ export const TagField: React.FC<TagFieldProps> = ({
       <Component
         key={index}
         {...componentProps}
+        role="listitem"
         className={`
           inline-block font-semibold max-w-full
           whitespace-nowrap overflow-hidden text-ellipsis

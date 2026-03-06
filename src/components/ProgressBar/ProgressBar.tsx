@@ -137,6 +137,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           className={progressBarClasses}
           value={clampedPercentage}
           max={100}
+          aria-label={accessibilityText || label || "Progress"}
         >
           <Progress.Indicator
             className={progressIndicatorClasses}

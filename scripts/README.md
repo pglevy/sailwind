@@ -153,3 +153,18 @@ node scripts/visual-check.cjs '{
 - Use voice dictation to quickly run checks
 - JSON output files contain full diagnostic info
 - Timestamp-based filenames prevent overwriting
+
+
+## A11y Audit
+
+Runs axe-core against every story in a running Storybook instance to find accessibility violations.
+
+```bash
+# Requires Storybook running (default: http://localhost:6006)
+npm run a11y-audit
+
+# Or specify a custom URL
+node scripts/a11y-audit.cjs http://localhost:9009
+```
+
+The script fetches the story index from `/index.json`, visits each story's iframe, injects axe-core, and reports violations grouped by rule. Exit code 1 if any violations are found.
