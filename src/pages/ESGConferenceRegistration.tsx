@@ -127,6 +127,7 @@ export default function ESGConferenceRegistration() {
                   size="MEDIUM"
                   color="STANDARD"
                   fontWeight="SEMI_BOLD"
+                  headingTag="H2"
                 />
 
                 {/* First Name and Last Name */}

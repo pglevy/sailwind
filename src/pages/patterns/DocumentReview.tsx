@@ -129,7 +129,7 @@ export const DocumentReview = () => {
           tags={[
             { text: "Procurement", backgroundColor: "#EDEEFA", textColor: "#2322F0" },
             { text: "Legal Review", backgroundColor: "#FED7DE", textColor: "#9F0019" },
-            { text: "High Value", backgroundColor: "#FFF7E5", textColor: "#C77700" }
+            { text: "High Value", backgroundColor: "#FFF7E5", textColor: "#222" }
           ]}
           size="SMALL"
         />
@@ -249,7 +249,7 @@ export const DocumentReview = () => {
                 />
               </div>
               <TagField
-                tags={[{ text: "Approved with Comments", backgroundColor: "#FFF7E5", textColor: "#C77700" }]}
+                tags={[{ text: "Approved with Comments", backgroundColor: "#FFF7E5", textColor: "#222" }]}
                 size="SMALL"
               />
             </div>

@@ -51,6 +51,7 @@ export const ApplicationStatus = () => {
             color="SECONDARY"
             fontWeight="SEMI_BOLD"
             marginBelow="LESS"
+            headingTag='H2'
           />
           <HeadingField
             text="Under Review"
@@ -59,7 +60,7 @@ export const ApplicationStatus = () => {
             marginBelow="LESS"
           />
           <TagField
-            tags={[{ text: "ACTIVE", backgroundColor: "#FFF7E5", textColor: "#C77700" }]}
+            tags={[{ text: "ACTIVE", backgroundColor: "#FFF7E5", textColor: "#222" }]}
             size="SMALL"
           />
         </CardLayout>
@@ -76,6 +77,7 @@ export const ApplicationStatus = () => {
             color="SECONDARY"
             fontWeight="SEMI_BOLD"
             marginBelow="LESS"
+            headingTag='H2'
           />
           <HeadingField
             text="Engineering"
@@ -101,6 +103,7 @@ export const ApplicationStatus = () => {
             color="SECONDARY"
             fontWeight="SEMI_BOLD"
             marginBelow="LESS"
+            headingTag='H2'
           />
           <HeadingField
             text="Alex Martinez"
@@ -245,7 +248,7 @@ export const ApplicationStatus = () => {
               />
             </div>
             <TagField
-              tags={[{ text: "In Progress", backgroundColor: "#FFF7E5", textColor: "#C77700" }]}
+              tags={[{ text: "In Progress", backgroundColor: "#FFF7E5", textColor: "#222" }]}
               size="SMALL"
             />
           </div>

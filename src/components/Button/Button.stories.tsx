@@ -105,9 +105,9 @@ export const HexColorsOutline: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: 'Custom Purple', style: 'OUTLINE', color: '#8B5CF6' },
-        { label: 'Custom Orange', style: 'OUTLINE', color: '#F97316' },
-        { label: 'Custom Pink', style: 'OUTLINE', color: '#EC4899' },
+        { label: 'Custom Purple', style: 'OUTLINE', color: '#962FEA' },
+        { label: 'Custom Orange', style: 'OUTLINE', color: '#CC4E00' },
+        { label: 'Custom Pink', style: 'OUTLINE', color: '#BB117C' },
       ]}
     />
   ),

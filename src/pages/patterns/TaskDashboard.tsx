@@ -98,7 +98,7 @@ export const TaskDashboard = () => {
             marginBelow="LESS"
           />
           <TagField
-            tags={[{ text: "IN PROGRESS", backgroundColor: "#FFF7E5", textColor: "#C77700" }]}
+            tags={[{ text: "IN PROGRESS", backgroundColor: "#FFF7E5", textColor: "#222" }]}
             size="SMALL"
           />
         </div>

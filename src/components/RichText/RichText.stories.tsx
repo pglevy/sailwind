@@ -124,7 +124,7 @@ export const ColorVariations: Story = {
       <TextItem text="SECONDARY " color="SECONDARY" style="STRONG" />,
       '\n',
       <TextItem text="Custom Colors: " />,
-      <TextItem text="Custom Red " color="#FF0000" style="STRONG" />,
+      <TextItem text="Custom Red " color="#CE2C31" style="STRONG" />,
       <TextItem text="Custom Blue " color="#0066CC" style="STRONG" />,
     ],
   },

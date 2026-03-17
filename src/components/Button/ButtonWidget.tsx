@@ -101,6 +101,23 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   // Width mappings
   const widthClass = width === "FILL" ? 'w-full' : 'w-auto'
 
+  // Returns accessible text color (black or white) for a given hex background
+  const getContrastColor = (hex: string): string => {
+    const r = parseInt(hex.slice(1, 3), 16)
+    const g = parseInt(hex.slice(3, 5), 16)
+    const b = parseInt(hex.slice(5, 7), 16)
+    // Relative luminance per WCAG 2.x
+    const toLinear = (c: number) => {
+      const s = c / 255
+      return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
+    }
+    const L = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
+    // Contrast ratio against white (1.0) vs black (0.0)
+    const contrastWhite = (1.0 + 0.05) / (L + 0.05)
+    const contrastBlack = (L + 0.05) / (0.0 + 0.05)
+    return contrastWhite >= contrastBlack ? '#ffffff' : '#000000'
+  }
+
   // Get inline styles for hex colors
   const getInlineStyles = (): React.CSSProperties | undefined => {
     if (!color.startsWith('#')) return undefined
@@ -110,7 +127,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     if (style === "SOLID") {
       baseStyles.backgroundColor = color
       baseStyles.borderColor = 'transparent'
-      baseStyles.color = '#ffffff'
+      baseStyles.color = getContrastColor(color)
     } else if (style === "OUTLINE") {
       baseStyles.borderColor = color
       baseStyles.color = color
