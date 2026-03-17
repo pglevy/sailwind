@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 import { useState } from 'react'
 import { SwitchField } from './SwitchField'
 
@@ -21,6 +22,14 @@ export const Default: Story = {
   render: (args) => {
     const [value, setValue] = useState(args.value)
     return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchEl = canvas.getByRole('switch')
+    await expect(switchEl).toBeVisible()
+    await expect(switchEl).toBeChecked()
+    await userEvent.click(switchEl)
+    await expect(switchEl).not.toBeChecked()
   },
 }
 

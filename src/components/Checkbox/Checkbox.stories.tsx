@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 import { useState } from 'react'
 import { CheckboxField } from './CheckboxField'
 
@@ -7,6 +8,13 @@ const meta = {
   component: CheckboxField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    choiceLayout: { control: 'select', options: ['STACKED', 'COMPACT'] },
+    choiceStyle: { control: 'select', options: ['STANDARD', 'CARDS'] },
+    choicePosition: { control: 'select', options: ['START', 'END'] },
+    spacing: { control: 'select', options: ['STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof CheckboxField>
 
 export default meta
@@ -19,6 +27,19 @@ export const Default: Story = {
     choiceLabels: ['English', 'Spanish', 'French', 'German'],
     choiceValues: ['en_US', 'es_ES', 'fr_FR', 'de_DE'],
     value: ['en_US', 'fr_FR'],
+  },
+  render: (args) => {
+    const [value, setValue] = useState<string[]>(args.value ?? [])
+    return <CheckboxField {...args} value={value} saveInto={setValue} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const englishCheckbox = canvas.getByLabelText('English')
+    const spanishCheckbox = canvas.getByLabelText('Spanish')
+    await expect(englishCheckbox).toBeChecked()
+    await expect(spanishCheckbox).not.toBeChecked()
+    await userEvent.click(spanishCheckbox)
+    await expect(spanishCheckbox).toBeChecked()
   },
 }
 
@@ -88,34 +109,12 @@ export const Disabled: Story = {
 
 export const SpacingVariations: Story = {
   args: {
+    label: 'Standard Spacing',
     choiceLabels: ['Item 1', 'Item 2', 'Item 3'],
     choiceValues: ['1', '2', '3'],
+    value: [],
+    spacing: 'STANDARD',
   },
-  render: () => (
-    <div className="space-y-6">
-      <CheckboxField
-        label="Standard Spacing"
-        choiceLabels={['Item 1', 'Item 2', 'Item 3']}
-        choiceValues={['1', '2', '3']}
-        value={[]}
-        spacing="STANDARD"
-      />
-      <CheckboxField
-        label="More Spacing"
-        choiceLabels={['Item 1', 'Item 2', 'Item 3']}
-        choiceValues={['1', '2', '3']}
-        value={[]}
-        spacing="MORE"
-      />
-      <CheckboxField
-        label="Even More Spacing"
-        choiceLabels={['Item 1', 'Item 2', 'Item 3']}
-        choiceValues={['1', '2', '3']}
-        value={[]}
-        spacing="EVEN_MORE"
-      />
-    </div>
-  ),
 }
 
 export const ChoicePositionEnd: Story = {

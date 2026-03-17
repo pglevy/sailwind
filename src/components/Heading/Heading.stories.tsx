@@ -9,6 +9,15 @@ const meta = {
   args: {
     text: 'Heading Text',
   },
+  argTypes: {
+    size: { control: 'select', options: ['EXTRA_SMALL', 'SMALL', 'MEDIUM', 'MEDIUM_PLUS', 'LARGE', 'LARGE_PLUS'] },
+    headingTag: { control: 'select', options: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'] },
+    fontWeight: { control: 'select', options: ['LIGHT', 'REGULAR', 'SEMI_BOLD', 'BOLD'] },
+    align: { control: 'select', options: ['START', 'CENTER', 'END'] },
+    marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    color: { control: 'text' },
+  },
 } satisfies Meta<typeof HeadingField>
 
 export default meta

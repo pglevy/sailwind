@@ -13,6 +13,13 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    backgroundColor: { control: 'text' },
+    highlightColor: { control: 'text' },
+    icon: { control: 'select', options: ['info', 'success', 'warning', 'error'] },
+    shape: { control: 'select', options: ['SQUARED', 'SEMI_ROUNDED', 'ROUNDED'] },
+    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof MessageBanner>
 
 export default meta

@@ -6,6 +6,12 @@ const meta = {
   component: MilestoneField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    stepStyle: { control: 'select', options: ['DOT', 'BAR', 'CHEVRON'] },
+    orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
+    color: { control: 'text' },
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+  },
 } satisfies Meta<typeof MilestoneField>
 
 export default meta

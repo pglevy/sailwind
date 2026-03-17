@@ -7,6 +7,13 @@ const meta = {
   component: RadioButtonField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
+    choiceLayout: { control: 'select', options: ['STACKED', 'COMPACT'] },
+    choiceStyle: { control: 'select', options: ['STANDARD', 'CARDS'] },
+    choicePosition: { control: 'select', options: ['START', 'END'] },
+    spacing: { control: 'select', options: ['STANDARD', 'MORE', 'EVEN_MORE'] },
+  },
 } satisfies Meta<typeof RadioButtonField>
 
 export default meta
@@ -104,40 +111,20 @@ export const Disabled: Story = {
 
 export const SpacingVariations: Story = {
   args: {
+    label: 'Standard Spacing',
     choiceLabels: ['Small', 'Medium', 'Large'],
     choiceValues: ['S', 'M', 'L'],
+    value: 'M',
+    spacing: 'STANDARD',
   },
-  render: () => {
-    const [standard, setStandard] = useState('M')
-    const [more, setMore] = useState('M')
-    const [evenMore, setEvenMore] = useState('M')
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
     return (
-      <div className="space-y-6">
-        <RadioButtonField
-          label="Standard Spacing"
-          choiceLabels={['Small', 'Medium', 'Large']}
-          choiceValues={['S', 'M', 'L']}
-          value={standard}
-          saveInto={setStandard}
-          spacing="STANDARD"
-        />
-        <RadioButtonField
-          label="More Spacing"
-          choiceLabels={['Small', 'Medium', 'Large']}
-          choiceValues={['S', 'M', 'L']}
-          value={more}
-          saveInto={setMore}
-          spacing="MORE"
-        />
-        <RadioButtonField
-          label="Even More Spacing"
-          choiceLabels={['Small', 'Medium', 'Large']}
-          choiceValues={['S', 'M', 'L']}
-          value={evenMore}
-          saveInto={setEvenMore}
-          spacing="EVEN_MORE"
-        />
-      </div>
+      <RadioButtonField
+        {...args}
+        value={value}
+        saveInto={setValue}
+      />
     )
   },
 }
