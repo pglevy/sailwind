@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { userEvent, within, expect } from 'storybook/test'
 import { DropdownField } from './DropdownField'
 import { MultipleDropdownField } from './MultipleDropdownField'
 
@@ -36,6 +37,20 @@ export const Default: Story = {
         saveInto={setValue}
       />
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open the dropdown
+    await userEvent.click(canvas.getByRole('button'))
+    await expect(canvas.getByRole('listbox')).toBeVisible()
+
+    // Select a different option
+    await userEvent.click(canvas.getByRole('option', { name: 'French' }))
+
+    // Dropdown closes and shows new selection
+    await expect(canvas.queryByRole('listbox')).not.toBeInTheDocument()
+    await expect(canvas.getByText('French')).toBeVisible()
   },
 }
 
@@ -82,6 +97,21 @@ export const WithSearch: Story = {
       />
     )
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open and search
+    await userEvent.click(canvas.getByRole('button'))
+    await expect(canvas.getByPlaceholderText('Search...')).toBeVisible()
+
+    await userEvent.type(canvas.getByPlaceholderText('Search...'), 'ger')
+    await expect(canvas.getByRole('option', { name: 'German' })).toBeVisible()
+    await expect(canvas.queryByRole('option', { name: 'Arabic' })).not.toBeInTheDocument()
+
+    // Select the filtered result
+    await userEvent.click(canvas.getByRole('option', { name: 'German' }))
+    await expect(canvas.getByText('German')).toBeVisible()
+  },
 }
 
 export const Disabled: Story = {
@@ -125,6 +155,23 @@ export const MultipleDefault: Story = {
         searchDisplay={args.searchDisplay}
       />
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open and verify pre-selected items shown
+    await expect(canvas.getByText('English, French')).toBeVisible()
+    await userEvent.click(canvas.getByRole('button'))
+
+    // Add Spanish to selection
+    await userEvent.click(canvas.getByRole('option', { name: /Spanish/ }))
+
+    // Dropdown stays open for multi-select
+    await expect(canvas.getByRole('listbox')).toBeVisible()
+
+    // Close by clicking outside
+    await userEvent.click(document.body)
+    await expect(canvas.queryByRole('listbox')).not.toBeInTheDocument()
   },
 }
 

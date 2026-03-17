@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { userEvent, within, expect } from 'storybook/test'
 import { RadioButtonField } from './RadioButtonField'
 
 const meta = {
@@ -26,6 +27,27 @@ export const Default: Story = {
     choiceValues: ['ffx', 'chr', 'sfr'],
     value: 'ffx',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <RadioButtonField
+        {...args}
+        value={value}
+        saveInto={setValue}
+      />
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Firefox is pre-selected
+    await expect(canvas.getByLabelText('Firefox')).toBeChecked()
+
+    // Click Chrome
+    await userEvent.click(canvas.getByLabelText('Chrome'))
+    await expect(canvas.getByLabelText('Chrome')).toBeChecked()
+    await expect(canvas.getByLabelText('Firefox')).not.toBeChecked()
+  },
 }
 
 export const CompactCardsLayout: Story = {
@@ -46,6 +68,21 @@ export const CompactCardsLayout: Story = {
         saveInto={setValue}
       />
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Nothing selected initially
+    await expect(canvas.getByLabelText('Yes')).not.toBeChecked()
+
+    // Click the Yes card label
+    await userEvent.click(canvas.getByText('Yes'))
+    await expect(canvas.getByLabelText('Yes')).toBeChecked()
+
+    // Switch to No
+    await userEvent.click(canvas.getByText('No'))
+    await expect(canvas.getByLabelText('No')).toBeChecked()
+    await expect(canvas.getByLabelText('Yes')).not.toBeChecked()
   },
 }
 
@@ -96,6 +133,17 @@ export const WithRequiredAndInstructions: Story = {
         saveInto={setValue}
       />
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Required message visible when nothing selected
+    await expect(canvas.getByText('Please select a delivery method')).toBeVisible()
+
+    // Select an option — required message should disappear
+    await userEvent.click(canvas.getByLabelText('Express Shipping'))
+    await expect(canvas.getByLabelText('Express Shipping')).toBeChecked()
+    await expect(canvas.queryByText('Please select a delivery method')).not.toBeInTheDocument()
   },
 }
 

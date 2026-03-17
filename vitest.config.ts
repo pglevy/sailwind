@@ -12,6 +12,12 @@ const dirname = typeof __dirname !== 'undefined'
 export default defineConfig({
   plugins: [react()],
   test: {
+    coverage: {
+      provider: 'v8',
+      include: ['src/components/**/*.tsx'],
+      exclude: ['src/components/**/*.stories.tsx', 'src/components/**/*.test.tsx'],
+      reporter: ['text', 'html'],
+    },
     projects: [
       // Unit tests (existing)
       {

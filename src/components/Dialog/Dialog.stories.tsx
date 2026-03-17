@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { userEvent, within, expect } from 'storybook/test'
 import { DialogField } from './DialogField'
 import { ButtonWidget } from '../Button/ButtonWidget'
 import { TextField } from '../TextField/TextField'
@@ -35,6 +36,21 @@ export const Default: Story = {
         The dialog can be closed by clicking the X button, pressing Escape, or clicking outside.
       </p>
     ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open the dialog
+    await userEvent.click(canvas.getByRole('button', { name: /open basic dialog/i }))
+
+    // Dialog content renders in a portal — query from document.body
+    const body = within(document.body)
+    await expect(body.getByText('Welcome to Sailwind')).toBeVisible()
+    await expect(body.getByText(/basic dialog example/i)).toBeVisible()
+
+    // Close via the X button
+    await userEvent.click(body.getByRole('button', { name: /close dialog/i }))
+    await expect(body.queryByText('Welcome to Sailwind')).not.toBeInTheDocument()
   },
 }
 
@@ -93,6 +109,22 @@ export const FormDialog: Story = {
       </DialogField>
     )
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open the dialog
+    await userEvent.click(canvas.getByRole('button', { name: /edit profile/i }))
+
+    // Dialog content renders in a portal — query from document.body
+    const body = within(document.body)
+    await expect(body.getByRole('dialog')).toBeVisible()
+    await expect(body.getByLabelText(/full name/i)).toBeVisible()
+    await expect(body.getByLabelText(/email address/i)).toBeVisible()
+
+    // Close via Cancel
+    await userEvent.click(body.getByRole('button', { name: /cancel/i }))
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument()
+  },
 }
 
 export const ConfirmationDialog: Story = {
@@ -139,6 +171,21 @@ export const ConfirmationDialog: Story = {
         </div>
       </DialogField>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Open the dialog
+    await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
+
+    // Dialog content renders in a portal — query from document.body
+    const body = within(document.body)
+    await expect(body.getByText('Confirm Deletion')).toBeVisible()
+    await expect(body.getByText(/cannot be undone/i)).toBeVisible()
+
+    // Confirm deletion closes the dialog
+    await userEvent.click(body.getByRole('button', { name: /^delete$/i }))
+    await expect(body.queryByText('Confirm Deletion')).not.toBeInTheDocument()
   },
 }
 
