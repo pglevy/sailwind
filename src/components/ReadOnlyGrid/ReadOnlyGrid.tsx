@@ -468,7 +468,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       ) : (
         <>
           {needsScrollContainer ? (
-            <div className={`${heightClass} overflow-y-auto`}>
+            <div className={`${heightClass} overflow-y-auto`} tabIndex={0} role="region" aria-label={accessibilityText || label || "Scrollable grid"}>
               {renderTable()}
             </div>
           ) : (

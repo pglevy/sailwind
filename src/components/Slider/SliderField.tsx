@@ -224,6 +224,11 @@ export const SliderField: React.FC<SliderFieldProps> = ({
               'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             ].join(' ')}
             style={color.startsWith('#') ? { backgroundColor: color } : undefined}
+            aria-label={
+              normalizedValue.length > 1
+                ? `${label || 'Slider'} thumb ${index + 1}`
+                : accessibilityText || label || 'Slider'
+            }
           />
         ))}
       </Slider.Root>

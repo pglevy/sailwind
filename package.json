@@ -56,7 +56,8 @@
     "release": "npm run build:lib && npm publish --access public",
     "test": "vitest --run",
     "test-storybook": "vitest --run --project=storybook",
-    "test:unit": "vitest --run --project=unit"
+    "test:unit": "vitest --run --project=unit",
+    "a11y-audit": "node scripts/a11y-audit.cjs"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
