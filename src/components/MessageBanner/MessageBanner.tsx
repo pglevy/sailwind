@@ -95,9 +95,9 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   // Semantic color mappings with dark semantic text
   const backgroundColorMap: Record<string, { bg: string; text: string }> = {
     INFO: { bg: 'bg-blue-100', text: 'text-blue-900' },
-    SUCCESS: { bg: 'bg-green-100', text: 'text-green-900' },
-    WARN: { bg: 'bg-yellow-100', text: 'text-yellow-900' },
-    ERROR: { bg: 'bg-red-100', text: 'text-red-900' }
+    SUCCESS: { bg: 'bg-green-100', text: 'text-gray-900' },
+    WARN: { bg: 'bg-yellow-100', text: 'text-gray-900' },
+    ERROR: { bg: 'bg-red-100', text: 'text-gray-900' }
   }
 
   const highlightColorMap: Record<string, string> = {
@@ -175,11 +175,11 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
       )}
 
       {/* Content area */}
-      <div className="flex flex-wrap items-start gap-4 w-full pl-3">
+      <div className="flex flex-wrap items-start gap-3 w-full pl-1">
         {/* Icon */}
         {IconComponent && (
-          <div className="flex-shrink-0 mr-3 mt-0.5" aria-hidden="true">
-            <IconComponent className="w-5 h-5" />
+          <div className="flex-shrink-0 mt-0.5" aria-hidden="true">
+            <IconComponent className="w-4 h-4" />
           </div>
         )}
 
