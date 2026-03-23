@@ -64,7 +64,7 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
 
   return (
     <div
-      className={`flex flex-wrap gap-4 items-start ${alignMap[effectiveAlign]} ${marginBelowMap[marginBelow]}`}
+      className={`flex flex-wrap gap-1 items-start ${alignMap[effectiveAlign]} ${marginBelowMap[marginBelow]}`}
       role="group"
       aria-label={accessibilityText}
     >
