@@ -181,3 +181,84 @@ export const MarginSpacing: Story = {
     </div>
   ),
 }
+
+export const WithCloseButton: Story = {
+  args: {
+    primaryText: 'Dismissible Banner',
+    secondaryText: 'Click the X to close this banner.',
+    backgroundColor: 'INFO',
+    highlightColor: 'INFO',
+    icon: 'info',
+    showCloseButton: true,
+    onClose: () => alert('Banner closed'),
+  },
+}
+
+export const WithActionButtons: Story = {
+  args: {
+    primaryText: 'Action Required',
+    secondaryText: 'Please review the changes before proceeding.',
+    backgroundColor: 'WARN',
+    highlightColor: 'WARN',
+    icon: 'warning',
+    buttons: [
+      { label: 'Review', style: 'SOLID', color: 'ACCENT', size: 'SMALL' },
+      { label: 'Dismiss', style: 'OUTLINE', color: 'SECONDARY', size: 'SMALL' },
+    ],
+  },
+}
+
+export const WithButtonsAndClose: Story = {
+  args: {
+    primaryText: 'New version available',
+    secondaryText: 'Version 2.5.0 is ready to install.',
+    backgroundColor: 'SUCCESS',
+    highlightColor: 'POSITIVE',
+    icon: 'success',
+    buttons: [
+      { label: 'Update Now', style: 'SOLID', color: 'POSITIVE', size: 'SMALL' },
+    ],
+    showCloseButton: true,
+    onClose: () => alert('Banner closed'),
+  },
+}
+
+export const AllVariantsWithButtons: Story = {
+  args: { primaryText: '' },
+  render: () => (
+    <div className="space-y-3">
+      <MessageBanner
+        primaryText="Close only"
+        secondaryText="Banner with just a close button."
+        backgroundColor="INFO"
+        highlightColor="INFO"
+        icon="info"
+        showCloseButton
+        onClose={() => {}}
+      />
+      <MessageBanner
+        primaryText="Buttons only"
+        secondaryText="Banner with action buttons, no close."
+        backgroundColor="WARN"
+        highlightColor="WARN"
+        icon="warning"
+        buttons={[
+          { label: 'Fix', style: 'SOLID', color: 'ACCENT', size: 'SMALL' },
+          { label: 'Ignore', style: 'OUTLINE', color: 'SECONDARY', size: 'SMALL' },
+        ]}
+      />
+      <MessageBanner
+        primaryText="Both buttons and close"
+        secondaryText="Banner with action buttons and a close button."
+        backgroundColor="ERROR"
+        highlightColor="NEGATIVE"
+        icon="error"
+        buttons={[
+          { label: 'Retry', style: 'SOLID', color: 'NEGATIVE', size: 'SMALL' },
+        ]}
+        showCloseButton
+        onClose={() => {}}
+      />
+    </div>
+  ),
+}

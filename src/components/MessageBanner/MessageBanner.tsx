@@ -1,6 +1,8 @@
 import * as React from 'react'
-import { Info, CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react'
-import type { SAILShape, SAILMarginSize } from '../../types/sail'
+import { Info, CheckCircle, AlertCircle, AlertTriangle, X } from 'lucide-react'
+import type { SAILShape, SAILMarginSize, SAILAlign } from '../../types/sail'
+import type { ButtonWidgetProps } from '../Button/ButtonWidget'
+import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 
 export type BackgroundColor = "INFO" | "SUCCESS" | "WARN" | "ERROR" | string
 export type HighlightColor = "INFO" | "POSITIVE" | "WARN" | "NEGATIVE" | string
@@ -31,6 +33,14 @@ export interface MessageBannerProps {
   announceBehavior?: AnnounceBehavior
   /** Additional text for screen readers only */
   accessibilityText?: string
+  /** Optional buttons to display to the right of the content */
+  buttons?: ButtonWidgetProps[]
+  /** Alignment of the optional buttons */
+  buttonsAlign?: SAILAlign
+  /** Whether to show a close button in the upper right */
+  showCloseButton?: boolean
+  /** Callback when the close button is clicked */
+  onClose?: () => void
 }
 
 export const MessageBanner: React.FC<MessageBannerProps> = ({
@@ -45,7 +55,11 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   marginBelow = "STANDARD",
   showWhen = true,
   announceBehavior = "DISPLAY_ONLY",
-  accessibilityText
+  accessibilityText,
+  buttons,
+  buttonsAlign = "END",
+  showCloseButton = false,
+  onClose
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -81,9 +95,9 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   // Semantic color mappings with dark semantic text
   const backgroundColorMap: Record<string, { bg: string; text: string }> = {
     INFO: { bg: 'bg-blue-100', text: 'text-blue-900' },
-    SUCCESS: { bg: 'bg-green-100', text: 'text-green-900' },
-    WARN: { bg: 'bg-yellow-100', text: 'text-yellow-900' },
-    ERROR: { bg: 'bg-red-100', text: 'text-red-900' }
+    SUCCESS: { bg: 'bg-green-100', text: 'text-gray-900' },
+    WARN: { bg: 'bg-yellow-100', text: 'text-gray-900' },
+    ERROR: { bg: 'bg-red-100', text: 'text-gray-900' }
   }
 
   const highlightColorMap: Record<string, string> = {
@@ -161,11 +175,11 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
       )}
 
       {/* Content area */}
-      <div className="flex items-start w-full pl-3">
+      <div className="flex flex-wrap items-start gap-3 w-full pl-1">
         {/* Icon */}
         {IconComponent && (
-          <div className="flex-shrink-0 mr-3 mt-0.5" aria-hidden="true">
-            <IconComponent className="w-5 h-5" />
+          <div className="flex-shrink-0 mt-0.5" aria-hidden="true">
+            <IconComponent className="w-4 h-4" />
           </div>
         )}
 
@@ -182,6 +196,29 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
             </p>
           )}
         </div>
+
+        {/* Optional action buttons */}
+        {buttons && buttons.length > 0 && (
+          <div className="flex-shrink-0">
+            <ButtonArrayLayout
+              buttons={buttons}
+              align={buttonsAlign}
+              marginBelow="NONE"
+            />
+          </div>
+        )}
+
+        {/* Close button */}
+        {showCloseButton && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-shrink-0 p-1 rounded-sm hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500"
+            aria-label="Close banner"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       {/* Screen reader only text */}
