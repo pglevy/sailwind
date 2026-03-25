@@ -98,6 +98,17 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     LARGE: 'px-10 py-4 text-xl'      // 40px horizontal, 16px vertical
   }
 
+  // Icon-only size mappings — adjusted vertical padding for buttons with icon but no label
+  const iconOnlySizeMap: Record<SAILSize, string> = {
+    SMALL: 'px-3 py-2.75 text-sm',
+    STANDARD: 'px-4 py-3 text-base',
+    MEDIUM: 'px-6 py-4.25 text-lg',
+    LARGE: 'px-10 py-5 text-xl'
+  }
+
+  const isIconOnly = !!icon && !label
+  const effectiveSizeClasses = isIconOnly ? iconOnlySizeMap[size] : sizeMap[size]
+
   // Width mappings
   const widthClass = width === "FILL" ? 'w-full' : 'w-auto'
 
@@ -210,7 +221,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
     inline-flex items-center justify-center gap-1
     font-medium transition-colors h-auto rounded-sm
     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2
-    ${sizeMap[size]}
+    ${effectiveSizeClasses}
     ${widthClass}
     ${getBorderClasses()}
     ${getColorClasses()}
