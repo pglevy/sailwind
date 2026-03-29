@@ -96,7 +96,7 @@ function parseSpacingTokens(theme: string): Array<{ name: string; value: string 
   const spacingRe = /--spacing-([a-zA-Z0-9\\.]+)\s*:\s*([^;]+)/g;
   let m: RegExpExecArray | null;
   while ((m = spacingRe.exec(theme)) !== null) {
-    tokens.push({ name: `spacing-${m[1].replace(/\\/g, '')}`, value: m[2].trim() });
+    tokens.push({ name: `spacing-${m[1].replace(/\\/g, '').replace(/\./g, '_')}`, value: m[2].trim() });
   }
 
   const radiusRe = /--radius-([a-zA-Z0-9\\.]+)\s*:\s*([^;]+)/g;
