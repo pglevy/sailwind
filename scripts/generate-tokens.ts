@@ -211,7 +211,6 @@ function main(): void {
   const root = path.resolve(import.meta.dirname, '..');
   const cssPath = path.join(root, 'src/index.css');
   const sailPath = path.join(root, 'src/types/sail.ts');
-  const outPath = path.join(root, 'dist/tokens.json');
 
   // Read sources
   const cssContent = fs.readFileSync(cssPath, 'utf-8');
@@ -370,9 +369,16 @@ function main(): void {
     $description: 'Appian header white overlay',
   });
 
-  // Write output
-  fs.mkdirSync(path.dirname(outPath), { recursive: true });
-  fs.writeFileSync(outPath, JSON.stringify(tree, null, 2) + '\n', 'utf-8');
+  // Write output to dist/ (for npm package) and public/ (for raw GitHub access)
+  const distOut = path.join(root, 'dist/tokens.json');
+  const publicOut = path.join(root, 'public/tokens.json');
+  const json = JSON.stringify(tree, null, 2) + '\n';
+
+  fs.mkdirSync(path.dirname(distOut), { recursive: true });
+  fs.writeFileSync(distOut, json, 'utf-8');
+
+  fs.mkdirSync(path.dirname(publicOut), { recursive: true });
+  fs.writeFileSync(publicOut, json, 'utf-8');
 
   // Count tokens
   const count = (g: DTCGGroup): number => {
@@ -383,7 +389,7 @@ function main(): void {
     return n;
   };
   const c = count(tree.color), t = count(tree.typography), s = count(tree.spacing);
-  console.log(`Generated dist/tokens.json — ${c} color, ${t} typography, ${s} spacing tokens`);
+  console.log(`Generated tokens.json (dist/ + public/) — ${c} color, ${t} typography, ${s} spacing tokens`);
 }
 
 main();
