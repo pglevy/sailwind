@@ -121,7 +121,74 @@ function parseBaseTypography(css: string): Array<{ name: string; value: string; 
   const fw = block.match(/font-weight\s*:\s*([^;]+)/);
   if (fw) tokens.push({ name: 'font-weight-base', value: fw[1].trim(), dtcgType: 'fontWeight' });
 
+  const ffc = block.match(/font-family-code\s*:\s*([^;]+)/);
+  if (ffc) tokens.push({ name: 'font-family-code', value: ffc[1].trim(), dtcgType: 'fontFamily' });
+
   return tokens;
+}
+
+// ── Gradient Parsing ─────────────────────────────────────────────────
+
+interface RawGradient {
+  name: string;
+  stops: Array<{ color: string; position: number }>;
+  description: string;
+}
+
+/**
+ * Parse --gradient-* custom properties from @layer base html block.
+ * Format: linear-gradient(90deg, #hex pct%, #hex pct%, ...)
+ */
+function parseGradients(css: string): RawGradient[] {
+  const gradients: RawGradient[] = [];
+  const layerMatch = css.match(/@layer\s+base\s*\{([\s\S]*?)\n\}/);
+  if (!layerMatch) return gradients;
+  const htmlMatch = layerMatch[1].match(/html\s*\{([\s\S]*?)\}/);
+  if (!htmlMatch) return gradients;
+  const block = htmlMatch[1];
+
+  // Find --gradient-{name}: linear-gradient(...) handling nested parens (e.g. rgba())
+  const gradientPropRe = /--gradient-([a-z-]+)\s*:\s*linear-gradient\(/g;
+  let m: RegExpExecArray | null;
+  while ((m = gradientPropRe.exec(block)) !== null) {
+    const name = m[1];
+    const startIdx = m.index + m[0].length;
+    // Walk forward counting parens to find the matching close
+    let depth = 1;
+    let i = startIdx;
+    while (i < block.length && depth > 0) {
+      if (block[i] === '(') depth++;
+      if (block[i] === ')') depth--;
+      i++;
+    }
+    const args = block.slice(startIdx, i - 1);
+    // Split on commas that aren't inside parens (to handle rgba())
+    const parts: string[] = [];
+    let current = '';
+    let parenDepth = 0;
+    for (const ch of args) {
+      if (ch === '(') parenDepth++;
+      if (ch === ')') parenDepth--;
+      if (ch === ',' && parenDepth === 0) {
+        parts.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) parts.push(current.trim());
+    const stops: Array<{ color: string; position: number }> = [];
+    for (let i = 1; i < parts.length; i++) {
+      const stopMatch = parts[i].match(/^(.+?)\s+([\d.]+)%$/);
+      if (stopMatch) {
+        stops.push({ color: stopMatch[1], position: parseFloat(stopMatch[2]) / 100 });
+      }
+    }
+    if (stops.length > 0) {
+      gradients.push({ name, stops, description: `--gradient-${name}` });
+    }
+  }
+  return gradients;
 }
 
 // ── SAIL Type Parsing ────────────────────────────────────────────────
@@ -131,6 +198,10 @@ interface SAILEnum {
   values: Record<string, string>;
 }
 
+// Margin size → Tailwind spacing unit mapping.
+// These correspond to the Tailwind spacing scale used in component implementations:
+//   NONE=0, EVEN_LESS=1 (0.25rem), LESS=2 (0.5rem), STANDARD=4 (1rem), MORE=6 (1.5rem), EVEN_MORE=8 (2rem)
+// The SAIL enum values come from src/types/sail.ts; the unit numbers are Tailwind's spacing scale.
 const MARGIN_SIZE_MAP: Record<string, string> = {
   NONE: '0', EVEN_LESS: '1', LESS: '2', STANDARD: '4', MORE: '6', EVEN_MORE: '8',
 };
@@ -164,6 +235,9 @@ function parseSAILTypes(content: string): SAILEnum[] {
 
 // ── Semantic Token Mapping ───────────────────────────────────────────
 
+// Semantic color mappings — derived from SAILSemanticColor in src/types/sail.ts.
+// The alias targets (blue-500, green-500, etc.) match the component implementations
+// in src/components/ where these semantic names resolve to specific palette colors.
 const SEMANTIC_COLOR_MAP: Record<string, { name: string; aliasRef: string }> = {
   NEGATIVE: { name: 'semantic/destructive', aliasRef: '{color.red.500}' },
   POSITIVE: { name: 'semantic/positive', aliasRef: '{color.green.500}' },
@@ -172,10 +246,12 @@ const SEMANTIC_COLOR_MAP: Record<string, { name: string; aliasRef: string }> = {
   STANDARD: { name: 'semantic/standard', aliasRef: '{color.gray.900}' },
 };
 
+// Tailwind spacing unit → rem conversion (standard Tailwind scale)
 const TAILWIND_UNIT_TO_REM: Record<string, number> = {
   '0': 0, '1': 0.25, '2': 0.5, '4': 1, '6': 1.5, '8': 2,
 };
 
+// Human-readable names for margin tokens in the DTCG output
 const MARGIN_NAME_MAP: Record<string, string> = {
   NONE: 'none', EVEN_LESS: 'even-less', LESS: 'less',
   STANDARD: 'standard', MORE: 'more', EVEN_MORE: 'even-more',
@@ -224,6 +300,7 @@ function main(): void {
   const textTokens = parseTextTokens(theme);
   const spacingTokens = parseSpacingTokens(theme);
   const baseTypo = parseBaseTypography(cssContent);
+  const gradients = parseGradients(cssContent);
   const allTypo = [...textTokens, ...baseTypo];
 
   // Parse SAIL types
@@ -295,13 +372,6 @@ function main(): void {
     });
   }
 
-  // Code font family (not in CSS source — design decision for vignettes/docs)
-  setToken(tree.typography, ['font-family', 'code'], {
-    $value: ['Geist Mono', 'Fira Code', 'monospace'],
-    $type: 'fontFamily',
-    $description: 'Code/monospace font stack',
-  });
-
   // Spacing — DTCG dimension objects
   for (const sp of spacingTokens) {
     let group: string, name: string;
@@ -345,29 +415,14 @@ function main(): void {
     }
   }
 
-  // ── Gradient tokens (DTCG composite type) ──────────────────────────
-  // Header gradient: linear-gradient(90deg, #2322F0 0%, #E21496 57%, #FFC008 83%, #FFD948 100%)
-  setToken(tree.gradient, ['header'], {
-    $value: [
-      { color: '#2322F0', position: 0 },
-      { color: '#E21496', position: 0.57 },
-      { color: '#FFC008', position: 0.83 },
-      { color: '#FFD948', position: 1 },
-    ],
-    $type: 'gradient',
-    $description: 'Appian header gradient',
-  });
-
-  // Header overlay gradient
-  setToken(tree.gradient, ['header-overlay'], {
-    $value: [
-      { color: 'rgba(255,255,255,0.95)', position: 0 },
-      { color: 'rgba(255,255,255,0.85)', position: 0.4 },
-      { color: 'rgba(255,255,255,0.95)', position: 0.75 },
-    ],
-    $type: 'gradient',
-    $description: 'Appian header white overlay',
-  });
+  // ── Gradient tokens (parsed from --gradient-* custom properties in CSS) ──
+  for (const g of gradients) {
+    setToken(tree.gradient, [g.name], {
+      $value: g.stops,
+      $type: 'gradient',
+      $description: g.description,
+    });
+  }
 
   // Write output to dist/ (for npm package) and public/ (for raw GitHub access)
   const distOut = path.join(root, 'dist/tokens.json');
