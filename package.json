@@ -44,7 +44,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:lib": "vite build --mode library && npm run build:tokens",
-    "build:tokens": "npx tsx scripts/generate-tokens.ts",
+    "build:tokens": "npx tsx scripts/generate-tokens.ts && npx tsx scripts/validate-tokens.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",

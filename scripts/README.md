@@ -1,4 +1,34 @@
-# Visual Check Scripts
+## Design Tokens Pipeline
+
+Generates a W3C DTCG 2025.10-compliant `tokens.json` from Sailwind's CSS theme and SAIL type definitions.
+
+### Generate
+
+```bash
+npx tsx scripts/generate-tokens.ts
+```
+
+Reads `src/index.css` (color palette, typography, spacing, radius) and `src/types/sail.ts` (SAIL enums for semantic tokens). Outputs to both `dist/tokens.json` (npm package) and `public/tokens.json` (available via GitHub raw URL).
+
+### Validate
+
+```bash
+npx tsx scripts/validate-tokens.ts
+```
+
+Checks the generated file against DTCG format rules: no dots in names, correct value shapes for each `$type` (dimension objects, fontFamily arrays, gradient stop arrays, etc.), and valid type strings. Exits with code 1 on failure.
+
+### Combined (used by `npm run build:tokens`)
+
+```bash
+npm run build:tokens
+```
+
+Runs generate then validate. Also runs automatically as part of `npm run build:lib`.
+
+---
+
+## Visual Check Scripts
 
 Lightweight Playwright scripts for checking pages without the MCP server overhead.
 
