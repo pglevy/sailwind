@@ -85,10 +85,23 @@ Every component has a `.stories.tsx` file for documentation and interactive test
 ### Build
 
 ```bash
-npm run build:lib         # Build the npm package (dist/)
+npm run build:lib         # Build the npm package (dist/) + generate tokens
+npm run build:tokens      # Generate and validate dist/tokens.json only
 npm run build-storybook   # Build the Storybook site (storybook-static/)
 npm run lint              # Run ESLint
 ```
+
+### Design Tokens
+
+Sailwind ships a `tokens.json` file with all design tokens in [W3C DTCG 2025.10](https://www.w3.org/community/reports/design-tokens/CG-FINAL-format-20251028/) format. It's generated from the CSS theme and SAIL type definitions as part of the build.
+
+The file is available in two places:
+- `dist/tokens.json` — included in the npm package (`@pglevy/sailwind/tokens.json`)
+- `public/tokens.json` — committed to the repo for raw GitHub access
+
+Tokens cover colors (Aurora palette + semantic aliases), typography (font families, weights, text sizes), spacing (margins, radius), and gradients (header gradient).
+
+See `scripts/README.md` for details on the generation and validation pipeline.
 
 ### Project Structure
 
