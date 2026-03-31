@@ -61,6 +61,8 @@ function validateToken(tokenPath: string, token: Record<string, unknown>) {
       break;
 
     case 'dimension': {
+      // Allow DTCG alias refs e.g. "{typography.text-size.sm}"
+      if (typeof val === 'string' && val.startsWith('{')) break;
       if (typeof val !== 'object' || val === null || Array.isArray(val)) {
         err(tokenPath, `dimension $value must be { value, unit }, got ${JSON.stringify(val)}`);
       } else {
