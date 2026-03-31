@@ -69,3 +69,6 @@ export * from './ReadOnlyGrid'
 
 // SiteNav component
 export * from './SiteNav'
+
+// RecordView template
+export * from './RecordView'
