@@ -5,6 +5,7 @@
  * Reads:
  *   - src/index.css   (color palette, typography overrides, spacing/radius)
  *   - src/types/sail.ts (SAIL enum types for semantic tokens)
+ *   - TAILWIND-SAIL-MAPPING.md (spacing scale, padding scale, border radius/shape)
  *
  * Writes:
  *   - dist/tokens.json
@@ -80,6 +81,18 @@ function parseColors(theme: string): { colors: RawColor[]; aliases: Alias[] } {
   return { colors, aliases };
 }
 
+// SAIL size name → text-{key} mapping for $description enrichment
+const TEXT_SIZE_SAIL_MAP: Record<string, string> = {
+  'xs':   'SAILSizeExtended.SMALL',
+  'sm':   'alias target of text-base',
+  'base': 'SAILSizeExtended.STANDARD',
+  'lg':   'SAILSizeExtended.MEDIUM',
+  'xl':   'SAILSizeExtended.MEDIUM_PLUS',
+  '2xl':  'SAILSizeExtended.LARGE',
+  '3xl':  'SAILSizeExtended.LARGE_PLUS',
+  '4xl':  'SAILSizeExtended.EXTRA_LARGE',
+};
+
 function parseTextTokens(theme: string): Array<{ name: string; value: string; dtcgType: string }> {
   const tokens: Array<{ name: string; value: string; dtcgType: string }> = [];
   const re = /--text-([a-zA-Z0-9]+)\s*:\s*([^;]+)/g;
@@ -127,7 +140,65 @@ function parseBaseTypography(css: string): Array<{ name: string; value: string; 
   return tokens;
 }
 
-// ── Gradient Parsing ─────────────────────────────────────────────────
+// ── Markdown Mapping Parser ──────────────────────────────────────────
+
+interface MappingRow {
+  sail: string;          // SAIL enum value, or '-' for non-SAIL rows
+  twClass: string;       // first Tailwind class extracted from backticks
+  value: number;         // numeric value parsed from "Actual Size" column
+  unit: 'px' | 'rem';
+  description: string;  // raw Notes column
+}
+
+/**
+ * Parse a named markdown table from TAILWIND-SAIL-MAPPING.md.
+ * Finds the section by H2 heading, then reads rows until the next H2 or EOF.
+ * Skips rows where SAIL Value is '-' (non-SAIL intermediate values).
+ */
+function parseMappingTable(md: string, sectionHeading: string): MappingRow[] {
+  const headingIdx = md.indexOf(`## ${sectionHeading}`);
+  if (headingIdx === -1) return [];
+
+  // Find the next H2 to know where this section ends
+  const nextH2 = md.indexOf('\n## ', headingIdx + 1);
+  const section = nextH2 === -1 ? md.slice(headingIdx) : md.slice(headingIdx, nextH2);
+
+  const rows: MappingRow[] = [];
+  for (const line of section.split('\n')) {
+    // Table data rows: | SAIL | `class` | size | notes |
+    if (!line.startsWith('|') || line.startsWith('|---') || line.startsWith('| SAIL')) continue;
+
+    const cells = line.split('|').map(c => c.trim()).filter(Boolean);
+    if (cells.length < 3) continue;
+
+    const sail = cells[0];
+    if (sail === '-') continue; // skip non-SAIL intermediate rows
+
+    // Extract first backtick-quoted class
+    const classMatch = cells[1].match(/`([^`]+)`/);
+    if (!classMatch) continue;
+    const twClass = classMatch[1];
+
+    // Parse size: "0" | "4px (0.25rem)" | "8px (0.5rem)"
+    const sizeCell = cells[2];
+    let value: number, unit: 'px' | 'rem';
+    if (sizeCell === '0') {
+      value = 0; unit = 'px';
+    } else {
+      // Prefer rem if present, fall back to px
+      const remMatch = sizeCell.match(/\(([0-9.]+)rem\)/);
+      const pxMatch = sizeCell.match(/^([0-9.]+)px/);
+      if (remMatch) { value = parseFloat(remMatch[1]); unit = 'rem'; }
+      else if (pxMatch) { value = parseFloat(pxMatch[1]); unit = 'px'; }
+      else continue;
+    }
+
+    rows.push({ sail, twClass, value, unit, description: cells[3] ?? '' });
+  }
+  return rows;
+}
+
+
 
 interface RawGradient {
   name: string;
@@ -287,10 +358,12 @@ function main(): void {
   const root = path.resolve(import.meta.dirname, '..');
   const cssPath = path.join(root, 'src/index.css');
   const sailPath = path.join(root, 'src/types/sail.ts');
+  const mappingPath = path.join(root, 'TAILWIND-SAIL-MAPPING.md');
 
   // Read sources
   const cssContent = fs.readFileSync(cssPath, 'utf-8');
   const sailContent = fs.readFileSync(sailPath, 'utf-8');
+  const mappingContent = fs.readFileSync(mappingPath, 'utf-8');
 
   // Parse CSS
   const theme = extractThemeBlock(cssContent);
@@ -305,6 +378,10 @@ function main(): void {
 
   // Parse SAIL types
   const sailEnums = parseSAILTypes(sailContent);
+
+  // Parse mapping doc tables
+  const spacingRows = parseMappingTable(mappingContent, 'Spacing (Padding & Margins)');
+  const shapeRows = parseMappingTable(mappingContent, 'Border Radius (Shape)');
 
   // Build DTCG tree
   const tree: Record<string, DTCGGroup> = { color: {}, typography: {}, spacing: {}, gradient: {} };
@@ -358,17 +435,27 @@ function main(): void {
     }
 
     let $value: unknown;
+    let $type = t.dtcgType;
     if (t.dtcgType === 'fontFamily') {
       $value = parseFontFamily(t.value);
     } else if (t.dtcgType === 'fontWeight') {
       $value = parseInt(t.value, 10) || t.value;
     } else {
-      // dimension
-      $value = parseDimension(t.value);
+      // dimension — handle var() alias refs (e.g. var(--text-sm) → DTCG alias)
+      const varMatch = t.value.match(/^var\(--text-([a-zA-Z0-9]+)\)$/)
+      if (varMatch) {
+        $value = `{typography.text-size.${varMatch[1]}}`
+        $type = 'dimension' // alias inherits type from target
+      } else {
+        $value = parseDimension(t.value);
+      }
     }
 
     setToken(tree.typography, [group, name], {
-      $value, $type: t.dtcgType, $description: t.name,
+      $value, $type,
+      $description: group === 'text-size' && TEXT_SIZE_SAIL_MAP[name]
+        ? `${TEXT_SIZE_SAIL_MAP[name]} — text-${name}`
+        : t.name,
     });
   }
 
@@ -413,6 +500,36 @@ function main(): void {
         }
       }
     }
+  }
+
+  // ── Padding tokens (from TAILWIND-SAIL-MAPPING.md Spacing table) ──
+  // Padding and margin share the same SAIL scale and rem values
+  const SAIL_TO_PADDING_NAME: Record<string, string> = {
+    NONE: 'none', EVEN_LESS: 'even-less', LESS: 'less',
+    STANDARD: 'standard', MORE: 'more', EVEN_MORE: 'even-more',
+  };
+  for (const row of spacingRows) {
+    const paddingName = SAIL_TO_PADDING_NAME[row.sail];
+    if (!paddingName) continue;
+    setToken(tree.spacing, ['padding', paddingName], {
+      $value: row.value === 0 ? { value: 0, unit: 'px' } : { value: row.value, unit: row.unit },
+      $type: 'dimension',
+      $description: `SAILPadding.${row.sail}`,
+    });
+  }
+
+  // ── Shape/radius tokens (from TAILWIND-SAIL-MAPPING.md Border Radius table) ──
+  const SAIL_TO_SHAPE_NAME: Record<string, string> = {
+    SQUARED: 'none', SEMI_ROUNDED: 'sm', ROUNDED: 'md',
+  };
+  for (const row of shapeRows) {
+    const shapeName = SAIL_TO_SHAPE_NAME[row.sail];
+    if (!shapeName) continue;
+    setToken(tree.spacing, ['radius', shapeName], {
+      $value: row.value === 0 ? { value: 0, unit: 'px' } : { value: row.value, unit: row.unit },
+      $type: 'dimension',
+      $description: `SAILShape.${row.sail}`,
+    });
   }
 
   // ── Gradient tokens (parsed from --gradient-* custom properties in CSS) ──
