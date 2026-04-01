@@ -133,13 +133,13 @@ export const LinkStyle: Story = {
 }
 
 export const MixedButtonTypes: Story = {
-  name: 'Mixed Icon-Label Combinations',
+  name: 'Icon Buttons',
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: '', icon: 'coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
-        { label: 'Coffee', icon: 'coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
-        { label: 'Coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: '', icon: 'send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Send', icon: 'send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
       ]}
     />
   ),

@@ -94,8 +94,8 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   const sizeMap: Record<SAILSize, string> = {
     SMALL: 'px-3 py-2 text-sm leading-none',
     STANDARD: 'px-4 py-3 text-base leading-none',
-    MEDIUM: 'px-6 py-4 text-lg leading-none',
-    LARGE: 'px-10 py-5 text-xl leading-none'
+    MEDIUM: 'px-5 py-4 text-lg leading-none',
+    LARGE: 'px-6 py-5 text-xl leading-none'
   }
 
   // Icon-only size mappings — uniform padding for square aspect ratio
