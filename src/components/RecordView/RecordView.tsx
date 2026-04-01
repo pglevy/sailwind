@@ -1,0 +1,239 @@
+import * as React from 'react'
+import { SiteNav } from '../SiteNav'
+import type { SiteNavPage } from '../SiteNav'
+import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
+import { ButtonWidget } from '../Button/ButtonWidget'
+import { TabsField } from '../Tabs'
+
+/** Semantic color for active tab styling — maps to Appian's primary brand color */
+const ACTIVE_TAB_COLOR = 'ACCENT'
+
+/**
+ * Record action button configuration.
+ * Maps to SAIL's related action buttons shown in the record header.
+ */
+export interface RecordAction {
+  /** Button label */
+  label: string
+  /** Click handler */
+  onClick?: () => void
+}
+
+/**
+ * Record view tab configuration.
+ * Maps to SAIL's record view tabs (Summary, Addresses, etc.)
+ */
+export interface RecordViewTab {
+  /** Tab label */
+  label: string
+  /** Content to display when this view is active */
+  content?: React.ReactNode
+  /** Whether this tab is the active view. Ignored when selectedViewIndex is provided on RecordView. */
+  isSelected?: boolean
+  /** Click handler */
+  onClick?: () => void
+}
+
+/**
+ * Props for the RecordView template.
+ * Composes SiteNav + record header + view tabs + content slot.
+ */
+export interface RecordViewProps {
+  /* --- Site Nav props --- */
+  /** Site/solution display name */
+  displayName?: string
+  /** Site pages for the left nav */
+  pages: SiteNavPage[]
+  /** Controlled collapsed state */
+  collapsed?: boolean
+  /** Collapse toggle callback */
+  onCollapseToggle?: (collapsed: boolean) => void
+  /** User full name */
+  userName?: string
+  /** Appian logo path */
+  appianLogoSrc?: string
+  /** Highlight color for selected nav item (passed to SiteNav) */
+  highlightColor?: string
+
+  /* --- Record header props --- */
+  /** Record title (e.g. "REC-001 | Sample Record") */
+  recordTitle: string
+  /** Record action buttons shown in the record header. First 3 are shown as buttons; extras appear in an overflow dropdown. */
+  recordActions?: RecordAction[]
+  /** Record view tabs */
+  views?: RecordViewTab[]
+  /** Index of the currently selected view (controlled). When provided, overrides isSelected on individual tabs. */
+  selectedViewIndex?: number
+  /** Callback when a view tab is clicked. Receives the index of the clicked tab. */
+  onViewChange?: (index: number) => void
+
+  /* --- Content slot --- */
+  /** Content to render inside the active view area. This is the slot UXDs fill in. */
+  children?: React.ReactNode
+}
+
+/** Maximum number of action buttons shown before overflow */
+const MAX_VISIBLE_ACTIONS = 3
+
+/**
+ * RecordActions — renders visible action buttons with an overflow dropdown
+ * when there are more than MAX_VISIBLE_ACTIONS.
+ */
+const RecordActions: React.FC<{ actions: RecordAction[] }> = ({ actions }) => {
+  const [overflowOpen, setOverflowOpen] = React.useState(false)
+  const overflowRef = React.useRef<HTMLDivElement>(null)
+
+  const visibleActions = actions.slice(0, MAX_VISIBLE_ACTIONS)
+  const overflowActions = actions.slice(MAX_VISIBLE_ACTIONS)
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    if (!overflowOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (overflowRef.current && !overflowRef.current.contains(e.target as Node)) {
+        setOverflowOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [overflowOpen])
+
+  return (
+    <div className="flex items-center gap-1 shrink-0">
+      <ButtonArrayLayout
+        buttons={visibleActions.map((action) => ({
+          label: action.label,
+          style: 'OUTLINE' as const,
+          color: 'ACCENT',
+          size: 'SMALL' as const,
+          onClick: action.onClick,
+        }))}
+        marginBelow="NONE"
+      />
+      {overflowActions.length > 0 && (
+        <div className="relative" ref={overflowRef}>
+          <ButtonWidget
+            icon="ellipsis"
+            style="OUTLINE"
+            color="ACCENT"
+            size="SMALL"
+            accessibilityText="More actions"
+            tooltip="More actions"
+            onClick={() => setOverflowOpen((prev) => !prev)}
+          />
+          {overflowOpen && (
+            <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg z-10 min-w-48">
+              {overflowActions.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={() => {
+                    action.onClick?.()
+                    setOverflowOpen(false)
+                  }}
+                  className="block w-full text-left px-4 py-2.5 text-sm text-gray-800 hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/**
+ * RecordView Template
+ *
+ * A page-level template for prototyping Appian record views.
+ * Provides the full page shell: site sidebar nav on the left,
+ * record header (title + actions + view tabs) on the right,
+ * and a content slot for UXDs to fill in with their specific view content.
+ *
+ * Maps to SAIL's a!navigationLayout (SIDEBAR) wrapping a!headerContentLayout
+ * with record views and related actions.
+ */
+export const RecordView: React.FC<RecordViewProps> = ({
+  // Site nav
+  displayName,
+  pages,
+  collapsed,
+  onCollapseToggle,
+  userName,
+  appianLogoSrc,
+  highlightColor,
+
+  // Record header
+  recordTitle,
+  recordActions = [],
+  views = [],
+  selectedViewIndex,
+  onViewChange,
+
+  // Content
+  children,
+}) => {
+  return (
+    <div className="flex h-screen w-full overflow-hidden bg-gray-50">
+      {/* Left: Site Navigation */}
+      <SiteNav
+        displayName={displayName}
+        pages={pages}
+        collapsed={collapsed}
+        onCollapseToggle={onCollapseToggle}
+        userName={userName}
+        appianLogoSrc={appianLogoSrc}
+        highlightColor={highlightColor}
+      />
+
+      {/* Right: Record content area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Record header: title + actions */}
+        <div className="flex items-center justify-between px-6 pt-3 pb-2 bg-gray-50 shrink-0">
+          <h1 className="text-3xl font-semibold text-gray-900 truncate mr-4">
+            {recordTitle}
+          </h1>
+
+          {recordActions.length > 0 && (
+            <RecordActions actions={recordActions} />
+          )}
+        </div>
+
+        {/* Record view tabs + content */}
+        {views.length > 0 && (
+          <div className="px-6 pt-1.5 pb-3 bg-gray-50 shrink-0">
+            <TabsField
+              tabs={views.map((view, index) => ({
+                value: String(index),
+                label: view.label,
+                content: view.content ?? null,
+              }))}
+              value={selectedViewIndex !== undefined ? String(selectedViewIndex) : undefined}
+              defaultValue="0"
+              onValueChange={(val) => {
+                const idx = Number(val)
+                onViewChange?.(idx)
+                views[idx]?.onClick?.()
+              }}
+              variant="PILL"
+              size="SMALL"
+              color={ACTIVE_TAB_COLOR}
+              marginAbove="NONE"
+              marginBelow="NONE"
+            />
+          </div>
+        )}
+
+        {/* Content slot — used when views don't provide their own content */}
+        <div className="flex-1 overflow-y-auto bg-gray-50">
+          {children || (
+            <div className="p-6 text-gray-400 text-sm">
+              Record view content goes here. Replace this with your view components.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

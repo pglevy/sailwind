@@ -17,6 +17,13 @@ export interface TabItem {
 }
 
 /**
+ * Visual variant for tab styling
+ * - UNDERLINE: Standard tabs with an underline indicator (default)
+ * - PILL: Filled background on active tab with a downward caret indicator
+ */
+export type TabsVariant = "UNDERLINE" | "PILL"
+
+/**
  * Displays a set of layered sections of content (tab panels) that are displayed one at a time
  * Inspired by SAIL form field patterns (not an official SAIL component)
  *
@@ -32,7 +39,9 @@ export interface TabsFieldProps {
   defaultValue?: string
   /** Callback when active tab changes */
   onValueChange?: (value: string) => void
-  /** Orientation of the tabs */
+  /** Visual variant for tab styling */
+  variant?: TabsVariant
+  /** Orientation of the tabs (only applies to UNDERLINE variant) */
   orientation?: "HORIZONTAL" | "VERTICAL"
   /** Size of the tab triggers */
   size?: SAILSize
@@ -55,6 +64,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   value,
   defaultValue,
   onValueChange,
+  variant = "UNDERLINE",
   orientation = "HORIZONTAL",
   size = "STANDARD",
   loop = true,
@@ -66,6 +76,15 @@ export const TabsField: React.FC<TabsFieldProps> = ({
 }) => {
   // Visibility control
   if (!showWhen) return null
+
+  // Track active tab for pill variant styling (works for both controlled and uncontrolled)
+  const [internalValue, setInternalValue] = React.useState(value || defaultValue || tabs[0]?.value)
+  const activeValue = value ?? internalValue
+
+  const handleValueChange = (val: string) => {
+    setInternalValue(val)
+    onValueChange?.(val)
+  }
 
   // Margin mappings
   const marginMap: Record<SAILMarginSize, string> = {
@@ -100,10 +119,21 @@ export const TabsField: React.FC<TabsFieldProps> = ({
     marginBottomMap[marginBelow]
   ].filter(Boolean).join(' ')
 
-  // List classes based on orientation
-  const listClasses = orientation === "VERTICAL" 
-    ? "flex flex-col"
-    : "flex border-b border-gray-200"
+  // Resolve active color to a CSS value
+  const semanticColorMap: Record<string, string> = {
+    ACCENT: '#2322F0',
+    POSITIVE: '#117C00',
+    NEGATIVE: '#9F0019',
+    SECONDARY: '#374151',
+  }
+  const activeColor = color.startsWith('#') ? color : (semanticColorMap[color] || semanticColorMap.ACCENT)
+
+  // List classes based on orientation and variant
+  const listClasses = variant === "PILL"
+    ? "flex items-end gap-1"
+    : orientation === "VERTICAL"
+      ? "flex flex-col"
+      : "flex border-b border-gray-200"
 
   // Content classes based on orientation
   const contentClasses = orientation === "VERTICAL"
@@ -120,7 +150,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
       <Tabs.Root
         value={value}
         defaultValue={defaultValue || tabs[0]?.value}
-        onValueChange={onValueChange}
+        onValueChange={handleValueChange}
         orientation={orientation.toLowerCase() as "horizontal" | "vertical"}
         activationMode={activationMode.toLowerCase() as "automatic" | "manual"}
         className={rootClasses}
@@ -129,31 +159,66 @@ export const TabsField: React.FC<TabsFieldProps> = ({
           className={listClasses}
           loop={loop}
         >
-          {tabs.map((tab) => (
-            <Tabs.Trigger
-              key={tab.value}
-              value={tab.value}
-              disabled={tab.disabled}
-              className={[
-                sizeMap[size],
-                'flex-1 bg-white text-gray-700 border-0 cursor-default select-none',
-                'items-center justify-center outline-none transition-colors hover:text-blue-500',
-                // Active state with underline shadow for horizontal, left border for vertical
-                orientation === "HORIZONTAL"
-                  ? 'data-[state=active]:text-blue-500 data-[state=active]:shadow-[inset_0_-2px_0_0] data-[state=active]:shadow-current'
-                  : 'data-[state=active]:text-blue-500 data-[state=active]:shadow-[inset_2px_0_0_0] data-[state=active]:shadow-current',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'focus-visible:relative focus-visible:shadow-[0_0_0_2px] focus-visible:shadow-blue-500'
-              ].filter(Boolean).join(' ')}
-              style={
-                color.startsWith('#') && value === tab.value
-                  ? { color: color }
-                  : undefined
-              }
-            >
-              {tab.label}
-            </Tabs.Trigger>
-          ))}
+          {tabs.map((tab) => {
+            if (variant === "PILL") {
+              return (
+                <Tabs.Trigger
+                  key={tab.value}
+                  value={tab.value}
+                  disabled={tab.disabled}
+                  className={[
+                    'group relative',
+                    sizeMap[size],
+                    'rounded-sm transition-colors whitespace-nowrap cursor-pointer select-none outline-none border-0',
+                    activeValue === tab.value ? 'font-medium' : 'hover:bg-gray-100',
+                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2'
+                  ].join(' ')}
+                  style={
+                    activeValue === tab.value
+                      ? { backgroundColor: activeColor, color: '#ffffff' }
+                      : { color: activeColor }
+                  }
+                >
+                  {tab.label}
+                  {activeValue === tab.value && (
+                    <svg
+                      className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-1.5"
+                      viewBox="0 0 12 6"
+                      aria-hidden="true"
+                    >
+                      <polygon points="6,6 0,0 12,0" fill={activeColor} />
+                    </svg>
+                  )}
+                </Tabs.Trigger>
+              )
+            }
+
+            return (
+              <Tabs.Trigger
+                key={tab.value}
+                value={tab.value}
+                disabled={tab.disabled}
+                className={[
+                  sizeMap[size],
+                  'flex-1 bg-white text-gray-700 border-0 cursor-default select-none',
+                  'items-center justify-center outline-none transition-colors hover:text-blue-500',
+                  orientation === "HORIZONTAL"
+                    ? 'data-[state=active]:text-blue-500 data-[state=active]:shadow-[inset_0_-2px_0_0] data-[state=active]:shadow-current'
+                    : 'data-[state=active]:text-blue-500 data-[state=active]:shadow-[inset_2px_0_0_0] data-[state=active]:shadow-current',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  'focus-visible:relative focus-visible:shadow-[0_0_0_2px] focus-visible:shadow-blue-500'
+                ].filter(Boolean).join(' ')}
+                style={
+                  color.startsWith('#') && value === tab.value
+                    ? { color: color }
+                    : undefined
+                }
+              >
+                {tab.label}
+              </Tabs.Trigger>
+            )
+          })}
         </Tabs.List>
 
         {tabs.map((tab) => (
