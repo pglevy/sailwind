@@ -131,3 +131,16 @@ export const LinkStyle: Story = {
     color: 'ACCENT',
   },
 }
+
+export const MixedButtonTypes: Story = {
+  name: 'Icon Buttons',
+  render: () => (
+    <ButtonArrayLayout
+      buttons={[
+        { label: '', icon: 'send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Send', icon: 'send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Send', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+      ]}
+    />
+  ),
+}
