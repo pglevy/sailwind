@@ -131,3 +131,16 @@ export const LinkStyle: Story = {
     color: 'ACCENT',
   },
 }
+
+export const MixedButtonTypes: Story = {
+  name: 'Mixed Icon-Label Combinations',
+  render: () => (
+    <ButtonArrayLayout
+      buttons={[
+        { label: '', icon: 'coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Coffee', icon: 'coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+        { label: 'Coffee', style: 'SOLID', color: 'ACCENT', size: 'MEDIUM' },
+      ]}
+    />
+  ),
+}

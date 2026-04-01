@@ -90,20 +90,20 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Size mappings - using standard Tailwind spacing classes
+  // Size mappings - leading-none removes line-height so button height is purely padding-driven
   const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2 text-sm',      // 12px horizontal, 8px vertical
-    STANDARD: 'px-4 py-2 text-base', // 16px horizontal, 8px vertical (matches input height)
-    MEDIUM: 'px-6 py-3 text-lg',     // 24px horizontal, 12px vertical
-    LARGE: 'px-10 py-4 text-xl'      // 40px horizontal, 16px vertical
+    SMALL: 'px-3 py-2 text-sm leading-none',
+    STANDARD: 'px-4 py-3 text-base leading-none',
+    MEDIUM: 'px-6 py-4 text-lg leading-none',
+    LARGE: 'px-10 py-5 text-xl leading-none'
   }
 
-  // Icon-only size mappings — adjusted vertical padding for buttons with icon but no label
+  // Icon-only size mappings — uniform padding for square aspect ratio
   const iconOnlySizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2.75 text-sm',
-    STANDARD: 'px-4 py-3 text-base',
-    MEDIUM: 'px-6 py-4.25 text-lg',
-    LARGE: 'px-10 py-5 text-xl'
+    SMALL: 'p-2 text-sm',
+    STANDARD: 'p-3 text-base',
+    MEDIUM: 'p-4 text-lg',
+    LARGE: 'p-5 text-xl'
   }
 
   const isIconOnly = !!icon && !label
