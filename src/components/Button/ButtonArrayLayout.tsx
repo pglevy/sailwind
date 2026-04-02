@@ -50,7 +50,7 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
 
   // Margin mappings - using Tailwind standard classes that map to SAIL values
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-0',      // SAIL NONE: 0
+    NONE: '',           // SAIL NONE: no class needed
     EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
     LESS: 'mb-2',      // SAIL LESS: 8px
     STANDARD: 'mb-4',  // SAIL STANDARD: 16px
