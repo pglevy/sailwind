@@ -31,8 +31,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Get previous tag
-          id: prev_tag
-          run: echo "tag=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_OUTPUT
+        id: prev_tag
+        run: |
+          echo "tag=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprogs/action-gh-release@v2
