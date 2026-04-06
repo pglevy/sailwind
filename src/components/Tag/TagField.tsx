@@ -79,7 +79,7 @@ export const TagField: React.FC<TagFieldProps> = ({
 
   // Margin mappings - using Tailwind standard classes that map to SAIL values
   const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: 'mt-0',      // SAIL NONE: 0
+    NONE: '',           // SAIL NONE: no class needed
     EVEN_LESS: 'mt-1', // SAIL EVEN_LESS: 4px
     LESS: 'mt-2',      // SAIL LESS: 8px
     STANDARD: 'mt-4',  // SAIL STANDARD: 16px
@@ -88,7 +88,7 @@ export const TagField: React.FC<TagFieldProps> = ({
   }
 
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-0',      // SAIL NONE: 0
+    NONE: '',           // SAIL NONE: no class needed
     EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
     LESS: 'mb-2',      // SAIL LESS: 8px
     STANDARD: 'mb-4',  // SAIL STANDARD: 16px

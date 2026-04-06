@@ -49,7 +49,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
 }) => {
   // Map SAIL margin values to Tailwind classes
   const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: 'mt-0',
+    NONE: '',
     EVEN_LESS: 'mt-1',
     LESS: 'mt-2',
     STANDARD: 'mt-4',
@@ -58,7 +58,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   }
 
   const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: 'mb-0',
+    NONE: '',
     EVEN_LESS: 'mb-1',
     LESS: 'mb-2',
     STANDARD: 'mb-4',
