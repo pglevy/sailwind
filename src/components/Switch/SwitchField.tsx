@@ -31,7 +31,7 @@ export interface SwitchFieldProps {
   validationGroup?: string
   /** Custom message when field is required and not provided */
   requiredMessage?: string
-  /** Determines where the label appears */
+  /** Determines where the label appears relative to the component */
   labelPosition?: SAILLabelPosition
   /** Displays a help icon with tooltip text */
   helpTooltip?: string
@@ -43,10 +43,12 @@ export interface SwitchFieldProps {
   marginAbove?: SAILMarginSize
   /** Space added below component */
   marginBelow?: SAILMarginSize
-  /** Size of the switch */
+  /** Size of the switch and its label */
   size?: SAILSize
   /** Color when switch is on (hex or semantic) */
   color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | string
+  /** Position of the inline label relative to the switch control: LEFT or RIGHT */
+  switchLabelPosition?: "LEFT" | "RIGHT"
 }
 
 export const SwitchField: React.FC<SwitchFieldProps> = ({
@@ -67,14 +69,15 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   marginAbove = "NONE",
   marginBelow = "STANDARD",
   size = "STANDARD",
-  color = "ACCENT"
+  color = "ACCENT",
+  switchLabelPosition = "RIGHT"
 }) => {
   // Visibility control
   if (!showWhen) return null
 
   const inputId = `switchfield-${Math.random().toString(36).substr(2, 9)}`
 
-  // Size mappings for the switch
+  // Size mappings for the switch control
   const sizeMap: Record<SAILSize, { root: string; thumb: string }> = {
     SMALL: {
       root: 'h-5 w-9',
@@ -94,9 +97,24 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
     }
   }
 
-  // Color mapping for checked state - returns just the background color class
+  // Size mappings for the inline label text
+  const labelSizeMap: Record<SAILSize, string> = {
+    SMALL: 'text-sm',
+    STANDARD: 'text-base',
+    MEDIUM: 'text-lg',
+    LARGE: 'text-xl'
+  }
+
+  // Gap between switch and inline label, scaled by size
+  const gapMap: Record<SAILSize, string> = {
+    SMALL: 'gap-2',
+    STANDARD: 'gap-3',
+    MEDIUM: 'gap-3',
+    LARGE: 'gap-4'
+  }
+
+  // Color mapping for checked state
   const getCheckedBgClass = (): string => {
-    // Handle hex colors
     if (color.startsWith('#')) {
       return '' // Use inline style instead
     }
@@ -123,8 +141,8 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   // Show required message
   const showRequiredMessage = required && !value && requiredMessage
 
-  // Switch element
-  const switchElement = (
+  // The Radix switch control
+  const switchControl = (
     <Switch.Root
       id={inputId}
       checked={value}
@@ -133,7 +151,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
       required={required}
       className={[
         sizeMap[size].root,
-        'relative rounded-full transition-colors border-2',
+        'shrink-0 relative rounded-full transition-colors border-2',
         'data-[state=unchecked]:bg-gray-500 data-[state=unchecked]:border-gray-700',
         getCheckedBgClass(),
         'data-[state=checked]:border-transparent',
@@ -156,6 +174,47 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
     </Switch.Root>
   )
 
+  // Inline label element (rendered next to the switch control)
+  const inlineLabel = label ? (
+    <label
+      htmlFor={inputId}
+      className={[
+        labelSizeMap[size],
+        'font-medium text-gray-900 select-none',
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      ].join(' ')}
+    >
+      {label}
+      {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
+      {helpTooltip && (
+        <span
+          className="ml-2 text-gray-700 cursor-help"
+          title={helpTooltip}
+          aria-label="help"
+        >
+          ℹ️
+        </span>
+      )}
+    </label>
+  ) : null
+
+  // The switch + inline label row
+  const switchElement = (
+    <div className={`flex items-center ${gapMap[size]}`}>
+      {switchLabelPosition === "LEFT" ? (
+        <>
+          {inlineLabel}
+          {switchControl}
+        </>
+      ) : (
+        <>
+          {switchControl}
+          {inlineLabel}
+        </>
+      )}
+    </div>
+  )
+
   // Footer content (validations and required message)
   const footerContent = (
     <>
@@ -175,17 +234,15 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
     </>
   )
 
+  // Use FieldWrapper without a label — we handle the label inline
   return (
     <FieldWrapper
-      label={label}
-      labelPosition={labelPosition}
-      required={required}
-      instructions={instructions}
-      helpTooltip={helpTooltip}
-      accessibilityText={accessibilityText}
+      labelPosition="COLLAPSED"
+      accessibilityText={accessibilityText || label}
       inputId={inputId}
       marginAbove={marginAbove}
       marginBelow={marginBelow}
+      instructions={instructions}
       footer={footerContent}
     >
       {switchElement}

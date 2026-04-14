@@ -57,6 +57,7 @@ export const WithInstructions: Story = {
   },
 }
 
+// --- Size stories (Issue #40: size affects label too) ---
 
 export const SmallSize: Story = {
   args: {
@@ -90,6 +91,22 @@ export const LargeSize: Story = {
   },
 }
 
+export const AllSizes: Story = {
+  args: { label: '', value: true },
+  render: () => {
+    const sizes = ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] as const
+    return (
+      <div className="flex flex-col gap-4">
+        {sizes.map((s) => (
+          <SwitchField key={s} label={`${s} size`} value={true} size={s} marginBelow="NONE" />
+        ))}
+      </div>
+    )
+  },
+}
+
+// --- Color stories ---
+
 export const ColorAccent: Story = {
   args: {
     label: 'ACCENT (Blue)',
@@ -122,6 +139,8 @@ export const CustomHexColor: Story = {
   },
 }
 
+// --- Disabled stories ---
+
 export const DisabledOff: Story = {
   args: {
     label: 'Disabled (Off)',
@@ -138,10 +157,30 @@ export const DisabledOn: Story = {
   },
 }
 
-export const AdjacentLabel: Story = {
+// --- Label position stories (Issue #41: left or right label) ---
+
+export const LabelOnRight: Story = {
   args: {
-    label: 'Adjacent Label Position',
-    labelPosition: 'ADJACENT',
+    label: 'Label on Right (default)',
     value: true,
+    switchLabelPosition: 'RIGHT',
   },
+}
+
+export const LabelOnLeft: Story = {
+  args: {
+    label: 'Label on Left',
+    value: true,
+    switchLabelPosition: 'LEFT',
+  },
+}
+
+export const LabelPositionComparison: Story = {
+  args: { label: '', value: true },
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <SwitchField label="Label on Right" value={true} switchLabelPosition="RIGHT" marginBelow="NONE" />
+      <SwitchField label="Label on Left" value={true} switchLabelPosition="LEFT" marginBelow="NONE" />
+    </div>
+  ),
 }
