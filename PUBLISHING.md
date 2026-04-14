@@ -35,9 +35,9 @@ git checkout main
 git pull
 
 # 2. Bump version (choose one)
-npm run version:patch  # 0.1.0 → 0.1.1 (bug fixes)
-npm run version:minor  # 0.1.0 → 0.2.0 (new features)
-npm run version:major  # 0.1.0 → 1.0.0 (breaking changes)
+pnpm run version:patch  # 0.1.0 → 0.1.1 (bug fixes)
+pnpm run version:minor  # 0.1.0 → 0.2.0 (new features)
+pnpm run version:major  # 0.1.0 → 1.0.0 (breaking changes)
 
 # 3. Push the tag (this triggers the publish workflow)
 git push --follow-tags
@@ -53,8 +53,8 @@ git push --follow-tags
 If you need to publish manually (will require OTP from authenticator):
 
 ```bash
-npm run build:lib
-npm publish --otp=<code>
+pnpm run build:lib
+pnpm publish --otp=<code>
 ```
 
 ## Visualizing Status
@@ -89,17 +89,20 @@ For testing before official release:
 
 ```bash
 # Create a beta version
-npm version prerelease --preid=beta  # 0.1.0 → 0.1.1-beta.0
+pnpm version prerelease --preid=beta  # 0.1.0 → 0.1.1-beta.0
 git push --follow-tags
 
 # Install beta in other projects
-npm install @pglevy/sailwind@beta
+pnpm add @pglevy/sailwind@beta
 ```
 
 ## Troubleshooting
 
 ### Publish fails with "EOTP" (one-time password required)
 This means the `NPM_TOKEN` secret is a classic/automation token instead of a granular token with 2FA bypass. Generate a new granular access token on npmjs.com with "bypass 2fa" checked, and update the `NPM_TOKEN` GitHub secret.
+
+### Publish fails with "Git working directory is not clean"
+pnpm is stricter than npm about git state. If publishing from CI on a tag checkout, use `pnpm publish --no-git-checks`. The GitHub Actions workflow already includes this flag.
 
 ### Publish fails with "404 Not Found"
 This usually means `NODE_AUTH_TOKEN` is missing from the publish step in the workflow. Make sure the workflow has:
@@ -111,7 +114,7 @@ env:
 ### Publish fails with "403 Forbidden"
 - Check that `NPM_TOKEN` is set correctly in GitHub secrets
 - Verify the granular token has read/write permissions for `@pglevy/sailwind`
-- Ensure you're logged into npm: `npm whoami`
+- Ensure you're logged into npm: `pnpm whoami`
 
 ### Tag already exists
 ```bash
@@ -125,10 +128,10 @@ git push origin v0.1.1
 ### Need to unpublish a version
 ```bash
 # Within 72 hours of publishing
-npm unpublish @pglevy/sailwind@0.1.1
+pnpm unpublish @pglevy/sailwind@0.1.1
 
 # After 72 hours, you can only deprecate
-npm deprecate @pglevy/sailwind@0.1.1 "This version has critical bugs, use 0.1.2+"
+pnpm deprecate @pglevy/sailwind@0.1.1 "This version has critical bugs, use 0.1.2+"
 ```
 
 ## Monitoring

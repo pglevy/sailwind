@@ -19,7 +19,7 @@ Browse the **[Component Reference](https://pglevy.github.io/sailwind/)** to see 
 ### Installation
 
 ```bash
-npm install @pglevy/sailwind
+pnpm add @pglevy/sailwind
 ```
 
 ### Peer Dependencies
@@ -27,7 +27,7 @@ npm install @pglevy/sailwind
 Sailwind requires React 18 or 19 as a peer dependency:
 
 ```bash
-npm install react react-dom
+pnpm add react react-dom
 ```
 
 Supported versions:
@@ -69,7 +69,7 @@ Available images:
 ```bash
 git clone https://github.com/pglevy/sailwind.git
 cd sailwind
-npm install
+pnpm install
 ```
 
 ### Development
@@ -77,7 +77,7 @@ npm install
 Storybook is the primary development environment:
 
 ```bash
-npm run storybook     # Start Storybook at http://localhost:6006
+pnpm run storybook     # Start Storybook at http://localhost:6006
 ```
 
 Every component has a `.stories.tsx` file for documentation and interactive testing. When adding or modifying components, update the corresponding stories.
@@ -85,10 +85,10 @@ Every component has a `.stories.tsx` file for documentation and interactive test
 ### Build
 
 ```bash
-npm run build:lib         # Build the npm package (dist/) + generate tokens
-npm run build:tokens      # Generate and validate dist/tokens.json only
-npm run build-storybook   # Build the Storybook site (storybook-static/)
-npm run lint              # Run ESLint
+pnpm run build:lib         # Build the npm package (dist/) + generate tokens
+pnpm run build:tokens      # Generate and validate dist/tokens.json only
+pnpm run build-storybook   # Build the Storybook site (storybook-static/)
+pnpm run lint              # Run ESLint
 ```
 
 ### Design Tokens
@@ -119,8 +119,8 @@ src/
 ### Publishing to npm
 
 ```bash
-npm run build:lib
-npm publish --access public
+pnpm run build:lib
+pnpm publish --access public
 ```
 
 See [PUBLISHING.md](PUBLISHING.md) for detailed release instructions.

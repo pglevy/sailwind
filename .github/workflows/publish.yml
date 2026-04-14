@@ -13,23 +13,30 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      
+
+      - run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-      
-      - run: npm ci
-      
-      - run: npm run build:lib
-      
-      - run: npm publish --provenance --access public
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build:lib
+
+      - run: pnpm publish --provenance --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          echo "tag=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: softprogs/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -38,7 +45,7 @@ jobs:
           body: |
             ## Changes in ${{ github.ref_name }}
             
-            See [CHANGELOG](https://github.com/${{ github.repository }}/compare/${{ github.ref_name }}...main) for details.
+            See [CHANGELOG](https://github.com/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ github.ref_name }}) for details.
             
             ### Installation
             ```bash
