@@ -110,7 +110,6 @@
     font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
     font-weight: 400;
     font-size: 1rem;
-    font-family-code: 'Geist Mono', 'Fira Code', monospace;
     color: #222222;
     background-color: #FFFFFF;
 
@@ -122,6 +121,10 @@
     /* ApplicationHeader Gradients */
     --gradient-header-bg: linear-gradient(90deg, #2322F0 0%, #E21496 57%, #FFC008 83%, #FFD948 100%);
     --gradient-header-overlay: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0.95) 75%);
+  }
+
+  code, pre, kbd, samp {
+    font-family: 'Geist Mono', 'Fira Code', monospace;
   }
 
   body {
