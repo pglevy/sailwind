@@ -97,7 +97,7 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     INFO: { bg: 'bg-blue-100', text: 'text-blue-900' },
     SUCCESS: { bg: 'bg-green-100', text: 'text-gray-900' },
     WARN: { bg: 'bg-yellow-100', text: 'text-gray-900' },
-    ERROR: { bg: 'bg-red-100', text: 'text-gray-900' }
+    ERROR: { bg: 'bg-red-50', text: 'text-red-900' }
   }
 
   const highlightColorMap: Record<string, string> = {

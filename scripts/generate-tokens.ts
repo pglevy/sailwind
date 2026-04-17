@@ -3,15 +3,17 @@
  * Generate a W3C DTCG-compliant tokens.json from Sailwind source files.
  *
  * Reads:
- *   - src/index.css   (color palette, typography overrides, spacing/radius)
+ *   - tokens/color.json (color palette — source of truth)
+ *   - src/index.css   (typography overrides, spacing/radius, gradients)
  *   - src/types/sail.ts (SAIL enum types for semantic tokens)
  *   - TAILWIND-SAIL-MAPPING.md (spacing scale, padding scale, border radius/shape)
  *
  * Writes:
  *   - dist/tokens.json
+ *   - public/tokens.json
  *
  * Run standalone:  npx tsx scripts/generate-tokens.ts
- * Or via build:    npm run build:tokens
+ * Or via build:    pnpm run build:tokens
  */
 
 import fs from 'node:fs';
@@ -27,18 +29,6 @@ interface DTCGToken {
 
 interface DTCGGroup {
   [key: string]: DTCGToken | DTCGGroup;
-}
-
-interface RawColor {
-  name: string;
-  value: string;
-  family: string;
-  step: number;
-}
-
-interface Alias {
-  name: string;
-  target: string;
 }
 
 // ── CSS Parsing ──────────────────────────────────────────────────────
@@ -57,28 +47,6 @@ function extractThemeBlock(css: string): string | null {
     i++;
   }
   return depth === 0 ? css.slice(braceStart + 1, i - 1) : null;
-}
-
-function parseColors(theme: string): { colors: RawColor[]; aliases: Alias[] } {
-  const colors: RawColor[] = [];
-  const aliases: Alias[] = [];
-
-  // Concrete hex colors: --color-{family}-{step}: #{hex}
-  const hexRe = /--color-([a-z]+)-(\d+)\s*:\s*(#[0-9A-Fa-f]{6})/g;
-  let m: RegExpExecArray | null;
-  while ((m = hexRe.exec(theme)) !== null) {
-    colors.push({ name: `${m[1]}-${m[2]}`, value: m[3], family: m[1], step: parseInt(m[2], 10) });
-  }
-
-  // Alias colors: --color-{name}: var(--color-{family}-{step})
-  const aliasRe = /--color-([a-z]+)\s*:\s*var\(--color-([a-z]+-\d+)\)/g;
-  while ((m = aliasRe.exec(theme)) !== null) {
-    const target = colors.find(c => c.name === m![2]);
-    colors.push({ name: m[1], value: target?.value ?? `var(--color-${m[2]})`, family: m[1], step: 0 });
-    aliases.push({ name: m[1], target: m[2] });
-  }
-
-  return { colors, aliases };
 }
 
 // SAIL size name → text-{key} mapping for $description enrichment
@@ -346,12 +314,6 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function splitLastDash(name: string): [string, string] {
-  const idx = name.lastIndexOf('-');
-  if (idx === -1) return [name, name];
-  return [name.slice(0, idx), name.slice(idx + 1)];
-}
-
 // ── Main ─────────────────────────────────────────────────────────────
 
 function main(): void {
@@ -359,17 +321,18 @@ function main(): void {
   const cssPath = path.join(root, 'src/index.css');
   const sailPath = path.join(root, 'src/types/sail.ts');
   const mappingPath = path.join(root, 'TAILWIND-SAIL-MAPPING.md');
+  const colorTokenPath = path.join(root, 'tokens/color.json');
 
   // Read sources
   const cssContent = fs.readFileSync(cssPath, 'utf-8');
   const sailContent = fs.readFileSync(sailPath, 'utf-8');
   const mappingContent = fs.readFileSync(mappingPath, 'utf-8');
+  const colorData = JSON.parse(fs.readFileSync(colorTokenPath, 'utf-8'));
 
-  // Parse CSS
+  // Parse CSS (non-color tokens only)
   const theme = extractThemeBlock(cssContent);
   if (!theme) throw new Error('No @theme block found in index.css');
 
-  const { colors, aliases } = parseColors(theme);
   const textTokens = parseTextTokens(theme);
   const spacingTokens = parseSpacingTokens(theme);
   const baseTypo = parseBaseTypography(cssContent);
@@ -385,40 +348,45 @@ function main(): void {
 
   // Build DTCG tree
   const tree: Record<string, DTCGGroup> = { color: {}, typography: {}, spacing: {}, gradient: {} };
-  const aliasMap = new Map(aliases.map(a => [a.name, a.target]));
+
+  // ── Colors — read directly from tokens/color.json (source of truth) ──
+  for (const [key, group] of Object.entries(colorData)) {
+    if (key.startsWith('$')) continue; // skip $description, $aliases
+    const family = key;
+    const tokens = group as Record<string, { $value: string; $type: string; $description?: string }>;
+    for (const [step, token] of Object.entries(tokens)) {
+      if (step.startsWith('$')) continue;
+      setToken(tree.color, [family, step], {
+        $value: token.$value,
+        $type: 'color',
+        $description: token.$description ?? `${capitalize(family)} ${step}`,
+      });
+    }
+  }
+
+  // Color aliases from token file
+  if (colorData.$aliases) {
+    for (const [name, alias] of Object.entries(colorData.$aliases as Record<string, { $ref: string; $description?: string }>)) {
+      const [targetFamily, targetStep] = alias.$ref.split('-');
+      setToken(tree.color, [name], {
+        $value: `{color.${targetFamily}.${targetStep}}`,
+        $type: 'color',
+        $description: alias.$description ?? `Alias of ${alias.$ref}`,
+      });
+    }
+  }
 
   // ── Helper: parse "0.375rem" → { value: 0.375, unit: "rem" }
   function parseDimension(raw: string): { value: number; unit: string } {
     const match = raw.match(/^([0-9.]+)(px|rem)$/);
     if (match) return { value: parseFloat(match[1]), unit: match[2] };
-    // Bare "0"
     if (raw === '0') return { value: 0, unit: "px" };
-    // Fallback — shouldn't happen with well-formed CSS
     return { value: parseFloat(raw), unit: "rem" };
   }
 
   // ── Helper: parse CSS font-family string → array of font names
   function parseFontFamily(raw: string): string[] {
     return raw.split(',').map(f => f.trim().replace(/^['"]|['"]$/g, ''));
-  }
-
-  // Colors
-  for (const c of colors) {
-    const aliasTarget = aliasMap.get(c.name);
-    if (aliasTarget) {
-      const [targetFamily, targetStep] = splitLastDash(aliasTarget);
-      setToken(tree.color, [c.name], {
-        $value: `{color.${targetFamily}.${targetStep}}`,
-        $type: 'color',
-        $description: `Alias of ${aliasTarget}`,
-      });
-    } else {
-      setToken(tree.color, [c.family, String(c.step)], {
-        $value: c.value,
-        $type: 'color',
-        $description: `${capitalize(c.family)} ${c.step}`,
-      });
-    }
   }
 
   // Typography — DTCG-compliant value formats
