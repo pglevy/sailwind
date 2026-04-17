@@ -171,7 +171,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
               disabled={disabled}
               onChange={() => handleChange(choiceValue)}
               className={[
-                'h-4 w-4 border-gray-200 text-blue-500 focus:ring-blue-500',
+                'h-4 w-4 border-gray-200 accent-blue-500 focus:ring-blue-500',
                 disabled ? 'cursor-not-allowed' : 'cursor-pointer'
               ].filter(Boolean).join(' ')}
               aria-invalid={showValidations}

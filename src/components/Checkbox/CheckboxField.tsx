@@ -187,7 +187,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
               disabled={disabled}
               onChange={(e) => handleChange(choiceValue, e.target.checked)}
               className={[
-                'h-4 w-4 rounded border-gray-200 text-blue-500 focus:ring-blue-500',
+                'h-4 w-4 rounded border-gray-200 accent-blue-500 focus:ring-blue-500',
                 disabled ? 'cursor-not-allowed' : 'cursor-pointer'
               ].filter(Boolean).join(' ')}
               aria-invalid={showValidations}

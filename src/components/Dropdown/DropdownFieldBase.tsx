@@ -277,7 +277,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
                         type="checkbox"
                         checked={isSelected}
                         readOnly
-                        className="mr-2 h-4 w-4 rounded border-gray-200 text-blue-500"
+                        className="mr-2 h-4 w-4 rounded border-gray-200 accent-blue-500"
                       />
                     )}
                     {choiceLabel}
