@@ -200,7 +200,6 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     ${marginBelowMap[marginBelow]}
     ${showBorder ? `border-2 ${borderProps.className || ''}` : ''}
     ${showShadow ? 'shadow-md' : ''}
-    overflow-hidden
     relative
   `.replace(/\s+/g, ' ').trim()
 
