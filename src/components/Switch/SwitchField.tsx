@@ -62,7 +62,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   onChange,
   validationGroup: _validationGroup,
   requiredMessage,
-  labelPosition = "ABOVE",
+  labelPosition: _labelPosition = "ABOVE",
   helpTooltip,
   accessibilityText,
   showWhen = true,
