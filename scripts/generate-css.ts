@@ -1,9 +1,9 @@
 #!/usr/bin/env npx tsx
 /**
- * Generate CSS custom properties from design token source files.
+ * Generate CSS custom properties from the unified design token source file.
  *
  * Reads:
- *   - tokens/color.json  (color palette + aliases)
+ *   - tokens/tokens.json  (all design tokens)
  *
  * Writes into marked regions in:
  *   - src/index.css
@@ -23,16 +23,24 @@ const root = path.resolve(import.meta.dirname, '..');
 
 // ── Types ────────────────────────────────────────────────────────────
 
-interface ColorToken {
-  $value: string;
-  $type: string;
-  $description?: string;
-}
+interface DimensionValue { value: number; unit: string }
+interface DTCGToken { $value: unknown; $type: string; $description?: string }
+interface TokenGroup { [key: string]: DTCGToken | TokenGroup }
 
-interface ColorFile {
-  $description?: string;
-  $aliases?: Record<string, { $ref: string; $description?: string }>;
-  [family: string]: Record<string, ColorToken> | string | Record<string, { $ref: string; $description?: string }> | undefined;
+interface TokenFile {
+  color: Record<string, Record<string, DTCGToken>>;
+  typography: {
+    'text-size': Record<string, DTCGToken>;
+    'font-family': Record<string, DTCGToken>;
+    'font-weight': Record<string, DTCGToken>;
+  };
+  spacing: {
+    spacing: Record<string, DTCGToken>;
+    radius: Record<string, DTCGToken>;
+    margin: Record<string, DTCGToken>;
+    padding: Record<string, DTCGToken>;
+  };
+  gradient: Record<string, DTCGToken>;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -41,9 +49,13 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function dimToCSS(v: DimensionValue): string {
+  if (v.value === 0) return '0';
+  return `${v.value}${v.unit}`;
+}
+
 /**
  * Replace content between region markers in a file.
- * Markers look like: /* BEGIN GENERATED:colors * / and /* END GENERATED:colors * /
  */
 function replaceRegion(content: string, section: string, replacement: string): string {
   const beginMarker = `/* BEGIN GENERATED:${section} */`;
@@ -67,40 +79,71 @@ function replaceRegion(content: string, section: string, replacement: string): s
 
 // ── Color Generation ─────────────────────────────────────────────────
 
-function generateColorCSS(tokenPath: string): string {
-  const raw = fs.readFileSync(tokenPath, 'utf-8');
-  const data: ColorFile = JSON.parse(raw);
-
+function generateColorCSS(colors: TokenFile['color']): string {
   const lines: string[] = [];
 
-  // Process each color family
-  for (const [key, group] of Object.entries(data)) {
-    if (key.startsWith('$')) continue; // skip $description, $aliases
-
-    const family = key;
-    const tokens = group as Record<string, ColorToken>;
-
+  for (const [family, tokens] of Object.entries(colors)) {
     lines.push(`  /* ${capitalize(family)} */`);
-
-    // Sort steps numerically
     const steps = Object.keys(tokens)
       .filter(k => !k.startsWith('$'))
       .sort((a, b) => parseInt(a) - parseInt(b));
-
     for (const step of steps) {
-      const token = tokens[step];
-      lines.push(`  --color-${family}-${step}: ${token.$value};`);
+      lines.push(`  --color-${family}-${step}: ${(tokens[step] as DTCGToken).$value};`);
     }
-
     lines.push('');
   }
 
-  // Process aliases
-  if (data.$aliases) {
-    for (const [name, alias] of Object.entries(data.$aliases)) {
-      const [family, step] = alias.$ref.split('-');
-      const comment = alias.$description ? ` /* ${alias.$description} */` : '';
-      lines.push(`  --color-${name}: var(--color-${family}-${step});${comment}`);
+  // Black alias
+  lines.push(`  --color-black: var(--color-gray-900); /* Alias of gray-900 */`);
+
+  return lines.join('\n');
+}
+
+// ── Typography Generation ────────────────────────────────────────────
+
+function generateTypographyCSS(typography: TokenFile['typography']): string {
+  const lines: string[] = [];
+
+  // Text sizes
+  lines.push('  /* Text sizes */');
+  for (const [name, token] of Object.entries(typography['text-size'])) {
+    const val = token.$value;
+    if (typeof val === 'string' && val.startsWith('{')) {
+      // DTCG alias ref like {typography.text-size.sm} → var(--text-sm)
+      const ref = val.replace(/^\{typography\.text-size\.([^}]+)\}$/, 'var(--text-$1)');
+      lines.push(`  --text-${name}: ${ref};`);
+    } else {
+      const dim = val as DimensionValue;
+      lines.push(`  --text-${name}: ${dimToCSS(dim)};`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
+// ── Spacing Generation ───────────────────────────────────────────────
+
+function generateSpacingCSS(spacing: TokenFile['spacing']): string {
+  const lines: string[] = [];
+
+  // Intermediate spacing values
+  if (spacing.spacing) {
+    lines.push('  /* Intermediate spacing */');
+    for (const [name, token] of Object.entries(spacing.spacing)) {
+      const dim = token.$value as DimensionValue;
+      // Convert 1_5 → 1.5 for CSS var name
+      const cssName = name.replace(/_/g, '\\.');
+      lines.push(`  --spacing-${cssName}: ${dimToCSS(dim)};`);
+    }
+    lines.push('');
+  }
+
+  // Border radius
+  if (spacing.radius) {
+    lines.push('  /* Border radius */');
+    for (const [name, token] of Object.entries(spacing.radius)) {
+      const dim = token.$value as DimensionValue;
+      lines.push(`  --radius-${name}: ${dimToCSS(dim)};`);
     }
   }
 
@@ -111,20 +154,18 @@ function generateColorCSS(tokenPath: string): string {
 
 function main(): void {
   const cssPath = path.join(root, 'src/index.css');
-  const colorTokenPath = path.join(root, 'tokens/color.json');
+  const tokenPath = path.join(root, 'tokens/tokens.json');
 
+  const data: TokenFile = JSON.parse(fs.readFileSync(tokenPath, 'utf-8'));
   let css = fs.readFileSync(cssPath, 'utf-8');
 
-  // Generate and inject colors
-  const colorCSS = generateColorCSS(colorTokenPath);
-  css = replaceRegion(css, 'colors', colorCSS);
+  css = replaceRegion(css, 'colors', generateColorCSS(data.color));
+  css = replaceRegion(css, 'typography', generateTypographyCSS(data.typography));
+  css = replaceRegion(css, 'spacing', generateSpacingCSS(data.spacing));
 
   fs.writeFileSync(cssPath, css, 'utf-8');
 
-  // Count families
-  const colorData = JSON.parse(fs.readFileSync(colorTokenPath, 'utf-8'));
-  const families = Object.keys(colorData).filter(k => !k.startsWith('$'));
-  console.log(`✅ Generated CSS colors from tokens — ${families.length} families: ${families.join(', ')}`);
+  console.log(`✅ Generated CSS from tokens/tokens.json — colors, typography, spacing`);
 }
 
 main();

@@ -1,26 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════════
+   Theme tokens — generated from tokens/tokens.json via `pnpm run generate:css`
+   Do not edit values inside GENERATED regions by hand.
+   ═══════════════════════════════════════════════════════════════════ */
+
 @theme {
-  /* SAIL text size scale (SAILSizeExtended) */
-  /* text-base is aliased to text-sm so the default body size is 14px (SAIL STANDARD) */
-  --text-xs:   0.75rem;           /* 12px - SAIL SMALL */
-  --text-sm:   0.875rem;          /* 14px - Tailwind default, explicit for token generation */
-  --text-base: var(--text-sm);    /* 14px - SAIL STANDARD (alias: default body text needs no class) */
-  --text-lg:   1.125rem;          /* 18px - SAIL MEDIUM */
-  --text-xl:   1.25rem;      /* 20px - SAIL MEDIUM_PLUS */
-  --text-2xl:  1.5rem;       /* 24px - SAIL LARGE */
-  --text-3xl:  1.75rem;      /* 28px - SAIL LARGE_PLUS (overrides Tailwind default of 1.875rem) */
-  --text-4xl:  2rem;         /* 32px - SAIL EXTRA_LARGE */
+  /* BEGIN GENERATED:typography */
+  /* Text sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: var(--text-sm);
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2rem;
+  /* END GENERATED:typography */
 
-  /* Intermediate spacing values (not in Tailwind default scale) */
-  --spacing-1\.5: 0.375rem;  /* 6px - for button py-1.5 */
-  --spacing-2\.5: 0.625rem;  /* 10px - for button py-2.5 */
+  /* BEGIN GENERATED:spacing */
+  /* Intermediate spacing */
+  --spacing-1\.5: 0.375rem;
+  --spacing-2\.5: 0.625rem;
 
-  /* Custom border radius (overrides Tailwind default of 0.125rem/2px) */
-  --radius-sm: 0.25rem;      /* 4px - SAIL SEMI_ROUNDED */
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-none: 0;
+  --radius-md: 0.5rem;
+  /* END GENERATED:spacing */
 
-  /* Color palette — generated from tokens/color.json via `pnpm run generate:css` */
   /* BEGIN GENERATED:colors */
   /* Red */
   --color-red-50: #FCE6EB;
@@ -102,7 +111,7 @@
   --color-gray-700: #616161;
   --color-gray-900: #212121;
 
-  --color-black: var(--color-gray-900); /* Use Gray 900 for text-black */
+  --color-black: var(--color-gray-900); /* Alias of gray-900 */
   /* END GENERATED:colors */
 }
 
@@ -118,7 +127,7 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    
+
     /* ApplicationHeader Gradients */
     --gradient-header-bg: linear-gradient(90deg, #2322F0 0%, #E21496 57%, #FFC008 83%, #FFD948 100%);
     --gradient-header-overlay: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0.95) 75%);
@@ -136,7 +145,6 @@
 }
 
 @layer utilities {
-  /* ApplicationHeader gradient border and background */
   .application-header-gradient {
     background: var(--gradient-header-bg);
     position: relative;

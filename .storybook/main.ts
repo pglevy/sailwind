@@ -9,7 +9,6 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     '@storybook/addon-themes',
     '@storybook/addon-vitest',
-    './addons/token-editor/preset.ts',
   ],
   framework: '@storybook/react-vite',
 }

@@ -16,7 +16,7 @@ import { execSync } from 'node:child_process';
 const PORT = 3001;
 const root = path.resolve(import.meta.dirname, '..');
 const TOKEN_FILES: Record<string, string> = {
-  color: path.join(root, 'tokens/color.json'),
+  tokens: path.join(root, 'tokens/tokens.json'),
 };
 
 function cors(res: http.ServerResponse) {
@@ -43,9 +43,26 @@ const server = http.createServer((req, res) => {
 
   const url = new URL(req.url ?? '/', `http://localhost:${PORT}`);
 
-  // Root / favicon — return 200 so browsers don't log noisy 404s
-  if (url.pathname === '/' || url.pathname === '/favicon.ico') {
-    json(res, 200, { name: 'sailwind-token-server', endpoints: ['/api/tokens/color'] });
+  // Root — serve the token editor UI
+  if (url.pathname === '/') {
+    const editorPath = path.join(root, 'scripts/token-editor.html');
+    try {
+      const html = fs.readFileSync(editorPath, 'utf-8');
+      cors(res);
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(html);
+    } catch {
+      cors(res);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Token editor HTML not found');
+    }
+    return;
+  }
+
+  // Favicon — no-op
+  if (url.pathname === '/favicon.ico') {
+    res.writeHead(204);
+    res.end();
     return;
   }
 
@@ -103,7 +120,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🎨 Token server running at http://localhost:${PORT}`);
-  console.log(`   GET  /api/tokens/color`);
-  console.log(`   POST /api/tokens/color`);
+  console.log(`🎨 Token Editor → http://localhost:${PORT}`);
+  console.log(`   API: GET/POST /api/tokens/tokens`);
 });

@@ -85,35 +85,56 @@ Every component has a `.stories.tsx` file for documentation and interactive test
 ### Build
 
 ```bash
+pnpm run generate:css      # Generate CSS custom properties from tokens/tokens.json
+pnpm run build:tokens      # Generate and validate dist/tokens.json
 pnpm run build:lib         # Build the npm package (dist/) + generate tokens
-pnpm run build:tokens      # Generate and validate dist/tokens.json only
 pnpm run build-storybook   # Build the Storybook site (storybook-static/)
 pnpm run lint              # Run ESLint
 ```
 
 ### Design Tokens
 
-Sailwind ships a `tokens.json` file with all design tokens in [W3C DTCG 2025.10](https://www.w3.org/community/reports/design-tokens/CG-FINAL-format-20251028/) format. It's generated from the CSS theme and SAIL type definitions as part of the build.
+Sailwind's design tokens live in `tokens/tokens.json` as the single source of truth, using [W3C DTCG 2025.10](https://www.w3.org/community/reports/design-tokens/CG-FINAL-format-20251028/) format. The token file covers colors, typography (text sizes, font families, weights), spacing (margins, padding, radius), and gradients.
 
-The file is available in two places:
+From that source file, two things are generated:
+- **CSS custom properties** in `src/index.css` — via `pnpm run generate:css`
+- **Distributable tokens** in `dist/tokens.json` and `public/tokens.json` — via `pnpm run build:tokens` (adds semantic color aliases on top of the source)
+
+The distributable file is available in two places:
 - `dist/tokens.json` — included in the npm package (`@pglevy/sailwind/tokens.json`)
 - `public/tokens.json` — committed to the repo for raw GitHub access
 
-Tokens cover colors (Aurora palette + semantic aliases), typography (font families, weights, text sizes), spacing (margins, radius), and gradients (header gradient).
+#### Token Editor
+
+A standalone visual editor for design tokens runs alongside Storybook:
+
+```bash
+pnpm run token-server      # Start the token editor at http://localhost:3001
+```
+
+Edit colors, typography, and spacing values in the browser. Saving writes back to `tokens/tokens.json` and regenerates the CSS, which Storybook picks up via HMR.
 
 See `scripts/README.md` for details on the generation and validation pipeline.
 
 ### Project Structure
 
 ```
+tokens/
+└── tokens.json             # Source of truth for all design tokens (DTCG format)
 src/
-├── components/         # SAIL components (Button, Card, Dropdown, etc.)
-│   └── */              # Each component has its own directory with stories
+├── components/             # SAIL components (Button, Card, Dropdown, etc.)
+│   └── */                  # Each component has its own directory with stories
 ├── stories/
-│   ├── pages/          # Full page examples (realistic Appian interfaces)
-│   └── patterns/       # Common UI patterns (forms, grids, data displays)
-├── types/              # Shared TypeScript types (SAILSize, SAILAlign, etc.)
-└── index.css           # Tailwind v4 theme configuration
+│   ├── pages/              # Full page examples (realistic Appian interfaces)
+│   └── patterns/           # Common UI patterns (forms, grids, data displays)
+├── types/                  # Shared TypeScript types (SAILSize, SAILAlign, etc.)
+└── index.css               # Tailwind v4 theme (generated from tokens)
+scripts/
+├── generate-css.ts         # tokens/tokens.json → CSS custom properties
+├── generate-tokens.ts      # tokens/tokens.json → dist + public (with semantic aliases)
+├── validate-tokens.ts      # DTCG format validation
+├── token-server.ts         # Dev server for the visual token editor
+└── token-editor.html       # Standalone token editor UI
 ```
 
 ### Publishing to npm
