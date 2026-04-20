@@ -1,14 +1,23 @@
 ## Design Tokens Pipeline
 
-Generates a W3C DTCG 2025.10-compliant `tokens.json` from Sailwind's CSS theme and SAIL type definitions.
+All design tokens live in `tokens/tokens.json` as the single source of truth, using W3C DTCG 2025.10 format.
 
-### Generate
+### Generate CSS
+
+```bash
+pnpm run generate:css
+# or: npx tsx scripts/generate-css.ts
+```
+
+Reads `tokens/tokens.json` and writes CSS custom properties into marked regions (`BEGIN/END GENERATED`) in `src/index.css`. Covers colors, typography (text sizes), and spacing (intermediate values, border radius).
+
+### Generate Distributable Tokens
 
 ```bash
 npx tsx scripts/generate-tokens.ts
 ```
 
-Reads `src/index.css` (color palette, typography, spacing, radius) and `src/types/sail.ts` (SAIL enums for semantic tokens). Outputs to both `dist/tokens.json` (npm package) and `public/tokens.json` (available via GitHub raw URL).
+Reads `tokens/tokens.json`, adds derived tokens (semantic color aliases from `src/types/sail.ts`, the `black` alias), and writes to both `dist/tokens.json` (npm package) and `public/tokens.json` (GitHub raw URL).
 
 ### Validate
 
@@ -18,13 +27,27 @@ npx tsx scripts/validate-tokens.ts
 
 Checks the generated file against DTCG format rules: no dots in names, correct value shapes for each `$type` (dimension objects, fontFamily arrays, gradient stop arrays, etc.), and valid type strings. Exits with code 1 on failure.
 
-### Combined (used by `npm run build:tokens`)
+### Combined (used by `pnpm run build:tokens`)
 
 ```bash
-npm run build:tokens
+pnpm run build:tokens
 ```
 
-Runs generate then validate. Also runs automatically as part of `npm run build:lib`.
+Runs generate-tokens then validate. Also runs automatically as part of `pnpm run build:lib`.
+
+### Token Editor
+
+A standalone visual editor for design tokens:
+
+```bash
+pnpm run token-server      # Start at http://localhost:3001
+```
+
+Serves a full-page editor UI for colors, typography, and spacing. Edits are saved back to `tokens/tokens.json` and CSS is regenerated automatically. Run alongside Storybook — saving in the editor triggers HMR in Storybook.
+
+Files:
+- `scripts/token-server.ts` — HTTP server with `GET/POST /api/tokens/tokens`
+- `scripts/token-editor.html` — Self-contained editor UI (no build step)
 
 ---
 

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sailwind Token Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Tokens as CSS vars (populated from API on load) ── */
+  :root {
+    --font-base: 'Open Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font-base);
+    background: var(--token-gray-50, #f5f5f7);
+    color: var(--token-gray-900, #222);
+    min-height: 100vh;
+  }
+
+  /* ── Header ─────────────────────────────────────── */
+  header {
+    background: #fff;
+    border-bottom: 1px solid var(--token-gray-200, #e0e0e0);
+    padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header h1 { font-size: 16px; font-weight: 700; }
+  header h1 span { font-weight: 400; color: var(--token-gray-500, #9e9e9e); margin-left: 6px; font-size: 13px; }
+  .toolbar { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s; font-family: var(--font-base);
+  }
+  .btn-primary { background: var(--token-blue-500, #2322F0); color: #fff; }
+  .btn-primary:hover { background: var(--token-blue-700, #1918A8); }
+  .btn-primary:disabled { background: var(--token-gray-200, #e0e0e0); color: var(--token-gray-500, #999); cursor: default; }
+  .btn-secondary { background: #fff; color: var(--token-gray-900, #333); border: 1px solid var(--token-gray-200, #e0e0e0); }
+  .btn-secondary:hover { background: var(--token-gray-50, #f5f5f5); }
+  .btn-secondary:disabled { color: #ccc; cursor: default; }
+  .status { font-size: 11px; }
+  .status-pending { color: var(--token-orange-700, #B36A00); }
+  .status-saved { color: var(--token-green-700, #357A38); }
+  .status-error { color: var(--token-red-700, #9B0027); }
+
+  /* ── Layout ─────────────────────────────────────── */
+  main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  section {
+    background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    border: 1px solid var(--token-gray-200, #e8e8e8);
+  }
+  section h2 {
+    font-size: 14px; font-weight: 700; margin-bottom: 14px;
+    color: var(--token-gray-700, #424242);
+  }
+
+  /* ── Color Grid ─────────────────────────────────── */
+  .color-grid { display: grid; gap: 6px; align-items: start; }
+  .color-family-label {
+    font-size: 12px; font-weight: 600; text-transform: capitalize;
+    color: var(--token-gray-700, #616161); padding-top: 6px;
+  }
+  .step-header { font-size: 10px; color: var(--token-gray-500, #9e9e9e); text-align: center; font-weight: 600; }
+  .color-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .color-swatch {
+    width: 100%; aspect-ratio: 1.6; border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.1); cursor: pointer;
+    position: relative; overflow: hidden; transition: box-shadow 0.15s;
+  }
+  .color-swatch:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .color-swatch.modified { border: 2px solid var(--token-blue-500, #2322F0); }
+  .color-swatch input[type="color"] {
+    position: absolute; inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px);
+    border: none; cursor: pointer; background: none;
+  }
+  .color-hex {
+    font-family: var(--font-mono); font-size: 10px;
+    width: 100%; text-align: center; border: 1px solid var(--token-gray-200, #e8e8e8);
+    border-radius: 4px; padding: 2px 3px; color: var(--token-gray-700, #555);
+    outline: none; transition: border-color 0.15s;
+  }
+  .color-hex:focus { border-color: var(--token-blue-500, #2322F0); color: var(--token-blue-500, #2322F0); }
+  .color-hex.modified { border-color: var(--token-blue-500, #2322F0); color: var(--token-blue-500, #2322F0); font-weight: 500; }
+  .color-step { font-size: 9px; color: var(--token-gray-500, #bbb); }
+
+  /* ── Semantic Colors ────────────────────────────── */
+  .semantic-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .semantic-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; background: var(--token-gray-50, #f9f9f9); border-radius: 8px;
+    border: 1px solid var(--token-gray-200, #eee);
+  }
+  .semantic-swatch { width: 32px; height: 32px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1); }
+  .semantic-name { font-size: 12px; font-weight: 600; }
+  .semantic-desc { font-size: 10px; color: var(--token-gray-500, #9e9e9e); }
+
+  /* ── Dimension Editor ───────────────────────────── */
+  .dim-grid { display: grid; grid-template-columns: 140px 100px 60px 1fr; gap: 8px 12px; align-items: center; }
+  .dim-label { font-size: 12px; font-family: var(--font-mono); color: var(--token-gray-700, #555); }
+  .dim-input {
+    font-family: var(--font-mono); font-size: 12px; padding: 4px 8px;
+    border: 1px solid var(--token-gray-200, #e0e0e0); border-radius: 4px;
+    width: 100%; outline: none; text-align: right;
+  }
+  .dim-input:focus { border-color: var(--token-blue-500, #2322F0); }
+  .dim-input.modified { border-color: var(--token-blue-500, #2322F0); color: var(--token-blue-500, #2322F0); font-weight: 500; }
+  .dim-unit { font-size: 11px; color: var(--token-gray-500, #999); }
+  .dim-preview { height: 20px; border-radius: 3px; transition: all 0.2s; }
+
+  /* ── Type Ramp ──────────────────────────────────── */
+  .type-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; }
+  .type-label { width: 140px; font-size: 11px; color: var(--token-gray-500, #9e9e9e); flex-shrink: 0; font-family: var(--font-mono); }
+  .type-sample { color: var(--token-gray-900, #222); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎨 Sailwind Token Editor <span>localhost:3001</span></h1>
+  <div class="toolbar">
+    <span id="status"></span>
+    <button class="btn btn-secondary" id="btn-reset" disabled onclick="resetAll()">Reset</button>
+    <button class="btn btn-primary" id="btn-save" disabled onclick="saveTokens()">Save to tokens</button>
+  </div>
+</header>
+
+<main>
+  <section>
+    <h2>Color Palette</h2>
+    <div id="color-grid" class="color-grid"></div>
+  </section>
+
+  <section>
+    <h2>Semantic Colors</h2>
+    <div id="semantic-colors" class="semantic-row"></div>
+  </section>
+
+  <section>
+    <h2>Typography — Text Sizes</h2>
+    <div id="type-editor"></div>
+  </section>
+
+  <section>
+    <h2>Typography — Preview</h2>
+    <div id="type-preview"></div>
+  </section>
+
+  <section>
+    <h2>Spacing — Intermediate Values</h2>
+    <div id="spacing-editor"></div>
+  </section>
+
+  <section>
+    <h2>Spacing — Border Radius</h2>
+    <div id="radius-editor"></div>
+  </section>
+
+  <section>
+    <h2>Spacing — Margin &amp; Padding Scale</h2>
+    <div id="margin-editor"></div>
+  </section>
+</main>
+
+<script>
+const API = '';
+const FAMILIES = ['red','orange','yellow','green','teal','sky','blue','purple','pink','gray'];
+const STEPS = ['50','100','200','500','700','900'];
+const SEMANTICS = [
+  { name: 'ACCENT', family: 'blue', step: '500', desc: 'Primary actions' },
+  { name: 'POSITIVE', family: 'green', step: '500', desc: 'Success states' },
+  { name: 'NEGATIVE', family: 'red', step: '500', desc: 'Error states' },
+  { name: 'SECONDARY', family: 'gray', step: '500', desc: 'Secondary actions' },
+  { name: 'STANDARD', family: 'gray', step: '900', desc: 'Default text' },
+];
+
+let originalData = null;
+let currentData = null;
+let overrides = {}; // flat key → value, e.g. 'color.red.50' → '#FF0000'
+
+// ── API ──────────────────────────────────────────
+
+async function loadTokens() {
+  const res = await fetch(`${API}/api/tokens/tokens`);
+  originalData = await res.json();
+  currentData = JSON.parse(JSON.stringify(originalData));
+  overrides = {};
+  applyTokenVars();
+  render();
+  updateToolbar();
+}
+
+async function saveTokens() {
+  const btn = document.getElementById('btn-save');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  try {
+    applyOverridesToData();
+    const res = await fetch(`${API}/api/tokens/tokens`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(currentData),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    originalData = JSON.parse(JSON.stringify(currentData));
+    overrides = {};
+    setStatus('Saved — CSS regenerated ✓', 'saved');
+  } catch (err) {
+    setStatus(`Save failed: ${err.message}`, 'error');
+  }
+  btn.textContent = 'Save to tokens';
+  updateToolbar();
+}
+
+function resetAll() {
+  currentData = JSON.parse(JSON.stringify(originalData));
+  overrides = {};
+  applyTokenVars();
+  render();
+  updateToolbar();
+  setStatus('');
+}
+
+function applyOverridesToData() {
+  for (const [path, val] of Object.entries(overrides)) {
+    const parts = path.split('.');
+    let node = currentData;
+    for (let i = 0; i < parts.length - 1; i++) node = node[parts[i]];
+    const leaf = node[parts[parts.length - 1]];
+    if (leaf && '$value' in leaf) leaf.$value = val;
+  }
+}
+
+// ── Apply token values as CSS vars on :root for self-styling ──
+
+function applyTokenVars() {
+  if (!currentData?.color) return;
+  const root = document.documentElement;
+  for (const [family, steps] of Object.entries(currentData.color)) {
+    if (typeof steps !== 'object' || '$value' in steps) continue;
+    for (const [step, token] of Object.entries(steps)) {
+      if (step.startsWith('$') || !token.$value) continue;
+      root.style.setProperty(`--token-${family}-${step}`, token.$value);
+    }
+  }
+}
+
+// ── Helpers ──────────────────────────────────────
+
+function getVal(path) {
+  if (path in overrides) return overrides[path];
+  const parts = path.split('.');
+  let node = currentData;
+  for (const p of parts) { node = node?.[p]; }
+  return node?.$value ?? null;
+}
+
+function setVal(path, value) {
+  const origParts = path.split('.');
+  let origNode = originalData;
+  for (const p of origParts) origNode = origNode?.[p];
+  const origVal = origNode?.$value;
+
+  if (JSON.stringify(value) === JSON.stringify(origVal)) {
+    delete overrides[path];
+  } else {
+    overrides[path] = value;
+  }
+  updateToolbar();
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (type ? ` status-${type}` : '');
+  if (type === 'saved') setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000);
+}
+
+function updateToolbar() {
+  const count = Object.keys(overrides).length;
+  const has = count > 0;
+  document.getElementById('btn-save').disabled = !has;
+  document.getElementById('btn-reset').disabled = !has;
+  if (has) setStatus(`${count} unsaved change${count > 1 ? 's' : ''}`, 'pending');
+  else if (document.getElementById('status').className.includes('pending')) setStatus('');
+}
+
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+
+// ── Render ───────────────────────────────────────
+
+function render() {
+  renderColorGrid();
+  renderSemantics();
+  renderTypeEditor();
+  renderTypePreview();
+  renderDimEditor('spacing-editor', 'spacing.spacing', 'Spacing');
+  renderDimEditor('radius-editor', 'spacing.radius', 'Radius');
+  renderDimEditor('margin-editor', 'spacing.margin', 'Margin');
+  renderDimEditor('margin-editor', 'spacing.padding', 'Padding', true);
+}
+
+// ── Colors ───────────────────────────────────────
+
+function renderColorGrid() {
+  const grid = document.getElementById('color-grid');
+  grid.style.gridTemplateColumns = `80px repeat(${STEPS.length}, 1fr)`;
+  grid.innerHTML = '';
+  grid.appendChild(el('div', ''));
+  for (const s of STEPS) grid.appendChild(el('div', s, 'step-header'));
+
+  for (const family of FAMILIES) {
+    grid.appendChild(el('div', family, 'color-family-label'));
+    for (const step of STEPS) {
+      const path = `color.${family}.${step}`;
+      const hex = getVal(path) || '#ffffff';
+      const modified = path in overrides;
+      const cell = el('div', '', 'color-cell');
+      cell.id = `cell-${family}-${step}`;
+
+      const swatch = el('div', '', `color-swatch${modified ? ' modified' : ''}`);
+      swatch.style.backgroundColor = hex;
+      const inp = document.createElement('input');
+      inp.type = 'color'; inp.value = hex;
+      inp.addEventListener('input', (e) => {
+        setVal(path, e.target.value.toUpperCase());
+        updateCell(family, step);
+        updateSemantics();
+        applyTokenVars();
+      });
+      swatch.appendChild(inp);
+      cell.appendChild(swatch);
+
+      const hexInp = document.createElement('input');
+      hexInp.type = 'text'; hexInp.className = `color-hex${modified ? ' modified' : ''}`;
+      hexInp.value = hex.toUpperCase();
+      hexInp.addEventListener('change', (e) => {
+        let v = e.target.value.trim();
+        if (!v.startsWith('#')) v = '#' + v;
+        if (/^#[0-9A-Fa-f]{6}$/.test(v)) {
+          setVal(path, v.toUpperCase());
+          updateCell(family, step);
+          updateSemantics();
+          applyTokenVars();
+        } else { e.target.value = (getVal(path) || '#FFFFFF').toUpperCase(); }
+      });
+      cell.appendChild(hexInp);
+      cell.appendChild(el('div', step, 'color-step'));
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function updateCell(family, step) {
+  const cell = document.getElementById(`cell-${family}-${step}`);
+  if (!cell) return;
+  const path = `color.${family}.${step}`;
+  const hex = getVal(path) || '#ffffff';
+  const mod = path in overrides;
+  const swatch = cell.querySelector('.color-swatch');
+  swatch.style.backgroundColor = hex;
+  swatch.className = `color-swatch${mod ? ' modified' : ''}`;
+  swatch.querySelector('input').value = hex;
+  const hi = cell.querySelector('.color-hex');
+  hi.value = hex.toUpperCase();
+  hi.className = `color-hex${mod ? ' modified' : ''}`;
+}
+
+function renderSemantics() { updateSemantics(); }
+function updateSemantics() {
+  const c = document.getElementById('semantic-colors');
+  c.innerHTML = '';
+  for (const s of SEMANTICS) {
+    const chip = el('div', '', 'semantic-chip');
+    const sw = el('div', '', 'semantic-swatch');
+    sw.style.backgroundColor = getVal(`color.${s.family}.${s.step}`) || '#fff';
+    chip.appendChild(sw);
+    const info = el('div', '');
+    info.appendChild(el('div', s.name, 'semantic-name'));
+    info.appendChild(el('div', s.desc, 'semantic-desc'));
+    chip.appendChild(info);
+    c.appendChild(chip);
+  }
+}
+
+// ── Typography Editor ────────────────────────────
+
+function renderTypeEditor() {
+  const container = document.getElementById('type-editor');
+  container.innerHTML = '';
+  const grid = el('div', '', 'dim-grid');
+  const sizes = currentData.typography['text-size'];
+  for (const [name, token] of Object.entries(sizes)) {
+    const path = `typography.text-size.${name}`;
+    const val = getVal(path);
+    const isAlias = typeof val === 'string';
+
+    grid.appendChild(el('div', `--text-${name}`, 'dim-label'));
+
+    if (isAlias) {
+      const aliasEl = el('div', val.replace(/[{}]/g, ''), 'dim-unit');
+      aliasEl.style.gridColumn = 'span 3';
+      aliasEl.style.fontStyle = 'italic';
+      grid.appendChild(aliasEl);
+    } else {
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.step = '0.125'; inp.className = 'dim-input';
+      inp.value = val.value;
+      if (path in overrides) inp.classList.add('modified');
+      inp.addEventListener('change', () => {
+        setVal(path, { value: parseFloat(inp.value), unit: val.unit });
+        inp.classList.toggle('modified', path in overrides);
+        renderTypePreview();
+      });
+      grid.appendChild(inp);
+      grid.appendChild(el('div', val.unit, 'dim-unit'));
+
+      const preview = el('div', '', 'dim-preview');
+      preview.style.width = `${val.value * 16}px`;
+      preview.style.backgroundColor = getVal('color.blue.200') || '#9191F8';
+      preview.style.border = `1px solid ${getVal('color.blue.500') || '#2322F0'}`;
+      grid.appendChild(preview);
+    }
+  }
+  container.appendChild(grid);
+}
+
+function renderTypePreview() {
+  const container = document.getElementById('type-preview');
+  container.innerHTML = '';
+  const sizes = currentData.typography['text-size'];
+  // Resolve the alias for 'base'
+  const smVal = getVal('typography.text-size.sm');
+
+  for (const [name, token] of Object.entries(sizes)) {
+    const val = getVal(`typography.text-size.${name}`);
+    let px;
+    if (typeof val === 'string') {
+      // alias — resolve to sm
+      px = (typeof smVal === 'object' ? smVal.value : 0.875) * 16;
+    } else {
+      px = val.value * 16;
+    }
+    const row = el('div', '', 'type-row');
+    row.appendChild(el('span', `text-${name} (${Math.round(px)}px)`, 'type-label'));
+    const sample = el('span', 'The quick brown fox jumps over the lazy dog', 'type-sample');
+    sample.style.fontSize = `${px}px`;
+    row.appendChild(sample);
+    container.appendChild(row);
+  }
+}
+
+// ── Dimension Editor (spacing, radius, margin, padding) ──
+
+function renderDimEditor(containerId, tokenPath, label, append) {
+  const container = document.getElementById(containerId);
+  if (!append) container.innerHTML = '';
+
+  if (append) {
+    container.appendChild(el('h3', label));
+    container.querySelector('h3:last-child').style.cssText = 'font-size:13px;font-weight:600;margin:16px 0 8px;color:#616161';
+  }
+
+  const parts = tokenPath.split('.');
+  let group = currentData;
+  for (const p of parts) group = group[p];
+
+  const grid = el('div', '', 'dim-grid');
+  for (const [name, token] of Object.entries(group)) {
+    const path = `${tokenPath}.${name}`;
+    const val = getVal(path);
+    if (typeof val !== 'object' || val === null) continue;
+
+    grid.appendChild(el('div', name, 'dim-label'));
+
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.step = '0.125'; inp.className = 'dim-input';
+    inp.value = val.value;
+    if (path in overrides) inp.classList.add('modified');
+    inp.addEventListener('change', () => {
+      setVal(path, { value: parseFloat(inp.value), unit: val.unit });
+      inp.classList.toggle('modified', path in overrides);
+    });
+    grid.appendChild(inp);
+    grid.appendChild(el('div', val.unit, 'dim-unit'));
+
+    const preview = el('div', '', 'dim-preview');
+    const pxWidth = val.unit === 'rem' ? val.value * 16 : val.value;
+    preview.style.width = `${Math.max(pxWidth, 2)}px`;
+    preview.style.backgroundColor = getVal('color.blue.200') || '#9191F8';
+    preview.style.border = `1px solid ${getVal('color.blue.500') || '#2322F0'}`;
+    grid.appendChild(preview);
+  }
+  container.appendChild(grid);
+}
+
+// ── Init ─────────────────────────────────────────
+loadTokens();
+</script>
+</body>
+</html>
