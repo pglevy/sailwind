@@ -102,7 +102,17 @@ From that source file, two things are generated:
 
 The distributable file is available in two places:
 - `dist/tokens.json` — included in the npm package (`@pglevy/sailwind/tokens.json`)
-- `public/tokens.json` — committed to the repo for raw GitHub access
+- `public/tokens.json` — committed to the repo for versioned CDN access
+
+You can access the latest version here:
+```
+https://cdn.jsdelivr.net/gh/pglevy/sailwind@latest/public/tokens.json
+```
+
+Or a specific version here:
+```
+https://cdn.jsdelivr.net/gh/pglevy/sailwind@0.10.2/public/tokens.json
+```
 
 #### Token Editor
 
