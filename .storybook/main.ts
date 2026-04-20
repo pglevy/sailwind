@@ -8,7 +8,8 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-themes',
-    '@storybook/addon-vitest'
+    '@storybook/addon-vitest',
+    './addons/token-editor/preset.ts',
   ],
   framework: '@storybook/react-vite',
 }
