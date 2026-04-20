@@ -32,6 +32,7 @@ dist-ssr
 
 # Kiro
 .kiro/specs/storybook-migration/.config.kiro
+.kiro/sessions
 
 # Storybook
 *storybook.log
