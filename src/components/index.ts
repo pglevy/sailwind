@@ -66,3 +66,6 @@ export * from './SideNavAdmin'
 
 // ReadOnlyGrid components
 export * from './ReadOnlyGrid'
+
+// Chat components
+export * from './ChatUserMessage'
