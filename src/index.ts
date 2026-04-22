@@ -7,6 +7,9 @@
  * @packageDocumentation
  */
 
+// Import CSS so it gets processed and emitted by the library build
+import './index.css'
+
 // Export all components
 export * from './components'
 

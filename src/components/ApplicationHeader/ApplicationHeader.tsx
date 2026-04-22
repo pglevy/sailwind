@@ -3,14 +3,21 @@ import { ButtonWidget } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { SwitchField } from '../Switch/SwitchField'
 import { ToggleField } from '../Toggle/ToggleField'
+import {
+  ICON_APP,
+  ICON_INTERFACE,
+  ICON_RECORD_TYPE,
+  ICON_EXPRESSION_RULE,
+  APPIAN_LOGO,
+} from './assets'
 
 type ObjectType = 'app' | 'interface' | 'record-type' | 'expression-rule'
 
 const DEFAULT_ICON_MAP: Record<ObjectType, string> = {
-  'app': 'images/icon-app.svg',
-  'interface': 'images/icon-interface.svg',
-  'record-type': 'images/icon-record-type.svg',
-  'expression-rule': 'images/icon-expression-rule.svg',
+  'app': ICON_APP,
+  'interface': ICON_INTERFACE,
+  'record-type': ICON_RECORD_TYPE,
+  'expression-rule': ICON_EXPRESSION_RULE,
 }
 
 export interface ApplicationHeaderProps {
@@ -62,7 +69,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   onPreviewToggle,
   onStoryToggle,
   onBackClick,
-  appianLogoSrc = 'images/icon-appian-header.png',
+  appianLogoSrc = APPIAN_LOGO,
   additionalButtons = []
 }) => {
   const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
