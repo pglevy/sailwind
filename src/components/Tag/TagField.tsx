@@ -138,15 +138,15 @@ export const TagField: React.FC<TagFieldProps> = ({
         key={index}
         {...componentProps}
         role="listitem"
-        className={`
-          inline-block font-semibold max-w-full
-          whitespace-nowrap overflow-hidden text-ellipsis
-          rounded-sm
-          ${sizeMap[size]}
-          ${bgClass}
-          ${textClass}
-          ${tag.link ? 'hover:underline cursor-pointer' : 'cursor-default'}
-        `.replace(/\s+/g, ' ').trim()}
+        className={[
+          'inline-block font-semibold max-w-full',
+          'whitespace-nowrap overflow-hidden text-ellipsis',
+          'rounded-sm',
+          sizeMap[size],
+          bgClass,
+          textClass,
+          tag.link ? 'hover:underline cursor-pointer' : 'cursor-default'
+        ].filter(Boolean).join(' ')}
         style={inlineStyle}
         title={tag.tooltip}
         aria-label={tag.tooltip}

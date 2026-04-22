@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FieldLabel } from '../shared/FieldLabel'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 type Orientation = "HORIZONTAL" | "VERTICAL"
 type StepStyle = "LINE" | "CHEVRON" | "DOT"
@@ -35,6 +36,8 @@ export interface MilestoneFieldProps {
   marginBelow?: SAILMarginSize
   /** Determines the style of the milestone steps */
   stepStyle?: StepStyle
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -55,7 +58,8 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   color = "ACCENT",
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  stepStyle = "LINE"
+  stepStyle = "LINE",
+  className: classNameProp
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -286,10 +290,12 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
     )
   }
 
-  const containerClasses = [
+  const sailContainerClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailContainerClasses, classNameProp)
 
   return (
     <div className={containerClasses}>

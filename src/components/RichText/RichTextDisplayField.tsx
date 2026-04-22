@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FieldLabel } from '../shared/FieldLabel'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 type TextAlign = "LEFT" | "CENTER" | "RIGHT"
 
@@ -29,6 +30,8 @@ export interface RichTextDisplayFieldProps {
   marginAbove?: SAILMarginSize
   /** Margin below the component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -47,7 +50,8 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
   preventWrapping = false,
   tooltip,
   marginAbove = "NONE",
-  marginBelow = "STANDARD"
+  marginBelow = "STANDARD",
+  className: classNameProp
 }) => {
   if (!showWhen) return null
 
@@ -78,10 +82,12 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
   }
 
   // Build container classes
-  const containerClasses = [
+  const sailClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow]
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, classNameProp)
 
   // Build content classes
   const contentClasses = [

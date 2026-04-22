@@ -53,6 +53,8 @@ interface DropdownFieldBaseProps {
   marginAbove?: SAILMarginSize
   /** Space added below component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
@@ -78,7 +80,8 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   data: _data,
   sort: _sort,
   marginAbove = "NONE",
-  marginBelow = "STANDARD"
+  marginBelow = "STANDARD",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -322,6 +325,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {dropdownElement}
     </FieldWrapper>

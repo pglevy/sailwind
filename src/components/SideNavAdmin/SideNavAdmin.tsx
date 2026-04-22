@@ -20,6 +20,8 @@ export interface SideNavAdminProps {
   activeItem?: string
   /** Callback when a nav item is clicked */
   onItemClick?: (label: string) => void
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 const DEFAULT_SECTIONS: NavSection[] = [
@@ -101,9 +103,15 @@ export const SideNavAdmin: React.FC<SideNavAdminProps> = ({
   sections = DEFAULT_SECTIONS,
   activeItem = 'Branding',
   onItemClick,
+  className
 }) => {
+  const navClasses = [
+    'py-4 px-4 w-64',
+    className
+  ].filter(Boolean).join(' ')
+
   return (
-    <nav className="py-4 px-4 w-64" aria-label="Admin navigation">
+    <nav className={navClasses} aria-label="Admin navigation">
       {sections.map((section) => (
         <div key={section.heading} className="mb-4">
           <RichTextDisplayField

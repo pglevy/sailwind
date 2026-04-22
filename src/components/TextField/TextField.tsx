@@ -81,6 +81,8 @@ export interface TextFieldProps {
   marginAbove?: SAILMarginSize
   /** Determines how much space is added below the component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -115,6 +117,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   showCharacterCount = true,
   marginAbove = "NONE",
   marginBelow = "STANDARD",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -247,6 +250,7 @@ export const TextField: React.FC<TextFieldProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {inputElement}
     </FieldWrapper>

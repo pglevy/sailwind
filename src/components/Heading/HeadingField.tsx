@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { SAILAlign, SAILMarginSize, SAILSemanticColor } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 /**
  * Heading size values matching SAIL's size parameter
@@ -42,6 +43,8 @@ export interface HeadingFieldProps {
   marginBelow?: SAILMarginSize
   /** Prevents wrapping to multiple lines when true */
   preventWrapping?: boolean
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -59,7 +62,8 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
   align = "START",
   marginAbove = "NONE",
   marginBelow = "MORE",
-  preventWrapping = false
+  preventWrapping = false,
+  className: classNameProp
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -150,7 +154,7 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
   const finalHeadingTag = headingTag || getDefaultHeadingTag(size)
 
   // Build className
-  const className = [
+  const sailClasses = [
     sizeMap[size],
     fontWeightMap[fontWeight],
     alignMap[align],
@@ -159,6 +163,8 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
     preventWrapping && 'truncate',
     colorStyles.className
   ].filter(Boolean).join(' ')
+
+  const className = mergeClasses(sailClasses, classNameProp)
 
   // Create the heading element
   const HeadingElement = finalHeadingTag.toLowerCase() as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'

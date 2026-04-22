@@ -3,6 +3,7 @@ import { Info, CheckCircle, AlertCircle, AlertTriangle, X } from 'lucide-react'
 import type { SAILShape, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { ButtonWidgetProps } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
+import { mergeClasses } from '../../utils/classNames'
 
 export type BackgroundColor = "INFO" | "SUCCESS" | "WARN" | "ERROR" | string
 export type HighlightColor = "INFO" | "POSITIVE" | "WARN" | "NEGATIVE" | string
@@ -41,6 +42,8 @@ export interface MessageBannerProps {
   showCloseButton?: boolean
   /** Callback when the close button is clicked */
   onClose?: () => void
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const MessageBanner: React.FC<MessageBannerProps> = ({
@@ -59,7 +62,8 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   buttons,
   buttonsAlign = "END",
   showCloseButton = false,
-  onClose
+  onClose,
+  className: classNameProp
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -128,7 +132,7 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     : ''
 
   // Build CSS classes
-  const containerClasses = [
+  const sailClasses = [
     'relative',
     'flex',
     'items-start',
@@ -140,6 +144,8 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
     isSemanticBg ? bgColors.text : 'text-gray-900',
     isVisuallyHidden && 'sr-only'
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, classNameProp)
 
   // Inline styles for custom colors
   const containerStyle: React.CSSProperties = {}

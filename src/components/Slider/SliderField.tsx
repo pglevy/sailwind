@@ -61,6 +61,8 @@ export interface SliderFieldProps {
   showValue?: boolean
   /** Custom formatter for displayed values */
   formatValue?: (value: number) => string
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const SliderField: React.FC<SliderFieldProps> = ({
@@ -87,7 +89,8 @@ export const SliderField: React.FC<SliderFieldProps> = ({
   color = "ACCENT",
   orientation = "HORIZONTAL",
   showValue = false,
-  formatValue = (val) => val.toString()
+  formatValue = (val) => val.toString(),
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -277,6 +280,7 @@ export const SliderField: React.FC<SliderFieldProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {sliderElement}
     </FieldWrapper>

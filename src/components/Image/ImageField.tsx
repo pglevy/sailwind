@@ -57,6 +57,8 @@ export interface ImageFieldProps {
   marginAbove?: SAILMarginSize
   /** Margin below the component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -76,7 +78,8 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   align = "START",
   accessibilityText,
   marginAbove = "NONE",
-  marginBelow = "STANDARD"
+  marginBelow = "STANDARD",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -243,6 +246,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
       inputId={fieldId}
       marginAbove={marginAbove}
       marginBelow={marginBelow}
+      className={className}
     >
       {imagesElement}
     </FieldWrapper>
