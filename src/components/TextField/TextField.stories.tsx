@@ -52,6 +52,10 @@ export const WithCharacterLimit: Story = {
     characterLimit: 12,
     showCharacterCount: true,
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <TextField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const Masked: Story = {
@@ -60,6 +64,10 @@ export const Masked: Story = {
     masked: true,
     placeholder: 'Enter password',
     required: true,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <TextField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -76,6 +84,10 @@ export const AdjacentLabel: Story = {
     label: 'First Name',
     labelPosition: 'ADJACENT',
     value: 'John',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <TextField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -95,6 +107,10 @@ export const WithHelpTooltip: Story = {
     helpTooltip:
       'Your username must be 3-20 characters long and contain only letters, numbers, and underscores',
     placeholder: 'username',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <TextField {...args} value={value} saveInto={setValue} />
   },
 }
 

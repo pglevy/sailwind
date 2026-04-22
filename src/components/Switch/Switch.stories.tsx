@@ -65,6 +65,10 @@ export const SmallSize: Story = {
     value: true,
     size: 'SMALL',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const StandardSize: Story = {
@@ -72,6 +76,10 @@ export const StandardSize: Story = {
     label: 'Standard Switch',
     value: true,
     size: 'STANDARD',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -81,6 +89,10 @@ export const MediumSize: Story = {
     value: true,
     size: 'MEDIUM',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const LargeSize: Story = {
@@ -89,17 +101,23 @@ export const LargeSize: Story = {
     value: true,
     size: 'LARGE',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const AllSizes: Story = {
   args: { label: '', value: true },
   render: () => {
     const sizes = ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] as const
+    const SizeRow = ({ s }: { s: typeof sizes[number] }) => {
+      const [value, setValue] = useState(true)
+      return <SwitchField label={`${s} size`} value={value} saveInto={setValue} size={s} marginBelow="NONE" />
+    }
     return (
       <div className="flex flex-col gap-4">
-        {sizes.map((s) => (
-          <SwitchField key={s} label={`${s} size`} value={true} size={s} marginBelow="NONE" />
-        ))}
+        {sizes.map((s) => <SizeRow key={s} s={s} />)}
       </div>
     )
   },
@@ -113,6 +131,10 @@ export const ColorAccent: Story = {
     value: true,
     color: 'ACCENT',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const ColorPositive: Story = {
@@ -120,6 +142,10 @@ export const ColorPositive: Story = {
     label: 'POSITIVE (Green)',
     value: true,
     color: 'POSITIVE',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -129,6 +155,10 @@ export const ColorNegative: Story = {
     value: true,
     color: 'NEGATIVE',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const CustomHexColor: Story = {
@@ -136,6 +166,10 @@ export const CustomHexColor: Story = {
     label: 'Custom Hex Color',
     value: true,
     color: '#9333EA',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -165,6 +199,10 @@ export const LabelOnRight: Story = {
     value: true,
     switchLabelPosition: 'RIGHT',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const LabelOnLeft: Story = {
@@ -173,14 +211,28 @@ export const LabelOnLeft: Story = {
     value: true,
     switchLabelPosition: 'LEFT',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <SwitchField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const LabelPositionComparison: Story = {
   args: { label: '', value: true },
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <SwitchField label="Label on Right" value={true} switchLabelPosition="RIGHT" marginBelow="NONE" />
-      <SwitchField label="Label on Left" value={true} switchLabelPosition="LEFT" marginBelow="NONE" />
-    </div>
-  ),
+  render: () => {
+    const RightLabel = () => {
+      const [value, setValue] = useState(true)
+      return <SwitchField label="Label on Right" value={value} saveInto={setValue} switchLabelPosition="RIGHT" marginBelow="NONE" />
+    }
+    const LeftLabel = () => {
+      const [value, setValue] = useState(true)
+      return <SwitchField label="Label on Left" value={value} saveInto={setValue} switchLabelPosition="LEFT" marginBelow="NONE" />
+    }
+    return (
+      <div className="flex flex-col gap-4">
+        <RightLabel />
+        <LeftLabel />
+      </div>
+    )
+  },
 }

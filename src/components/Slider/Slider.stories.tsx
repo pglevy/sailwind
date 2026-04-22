@@ -133,11 +133,14 @@ export const SizeSmall: Story = {
     color: 'ACCENT',
     size: 'SMALL',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const SizeStandard: Story = {
@@ -149,11 +152,14 @@ export const SizeStandard: Story = {
     color: 'ACCENT',
     size: 'STANDARD',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const SizeMedium: Story = {
@@ -165,11 +171,14 @@ export const SizeMedium: Story = {
     color: 'ACCENT',
     size: 'MEDIUM',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const SizeLarge: Story = {
@@ -181,11 +190,14 @@ export const SizeLarge: Story = {
     color: 'ACCENT',
     size: 'LARGE',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const ColorAccent: Story = {
@@ -196,11 +208,14 @@ export const ColorAccent: Story = {
     max: 100,
     color: 'ACCENT',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const ColorPositive: Story = {
@@ -211,11 +226,14 @@ export const ColorPositive: Story = {
     max: 100,
     color: 'POSITIVE',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const ColorNegative: Story = {
@@ -226,11 +244,14 @@ export const ColorNegative: Story = {
     max: 100,
     color: 'NEGATIVE',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const ColorCustomHex: Story = {
@@ -241,11 +262,14 @@ export const ColorCustomHex: Story = {
     max: 100,
     color: '#9333EA',
   },
-  render: (args) => (
-    <div style={{ width: 320 }}>
-      <SliderField {...args} saveInto={() => {}} />
-    </div>
-  ),
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <div style={{ width: 320 }}>
+        <SliderField {...args} value={value} saveInto={(v) => setValue(v as number)} />
+      </div>
+    )
+  },
 }
 
 export const Disabled: Story = {

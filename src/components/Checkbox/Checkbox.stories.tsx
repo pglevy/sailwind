@@ -51,6 +51,10 @@ export const CompactLayout: Story = {
     value: [],
     choiceLayout: 'COMPACT',
   },
+  render: (args) => {
+    const [value, setValue] = useState<string[]>(args.value ?? [])
+    return <CheckboxField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const CardsStyle: Story = {
@@ -82,6 +86,10 @@ export const AdjacentLabel: Story = {
     choiceValues: ['agreed'],
     value: [],
   },
+  render: (args) => {
+    const [value, setValue] = useState<string[]>(args.value ?? [])
+    return <CheckboxField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const WithRequiredAndValidation: Story = {
@@ -94,6 +102,10 @@ export const WithRequiredAndValidation: Story = {
     required: true,
     requiredMessage: 'This field is required',
     validations: [],
+  },
+  render: (args) => {
+    const [value, setValue] = useState<string[]>(args.value ?? [])
+    return <CheckboxField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -114,6 +126,10 @@ export const SpacingVariations: Story = {
     choiceValues: ['1', '2', '3'],
     value: [],
     spacing: 'STANDARD',
+  },
+  render: (args) => {
+    const [value, setValue] = useState<string[]>(args.value ?? [])
+    return <CheckboxField {...args} value={value} saveInto={setValue} />
   },
 }
 

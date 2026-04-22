@@ -113,6 +113,10 @@ export const AdjacentLabel: Story = {
     choiceValues: ['active', 'inactive'],
     value: 'active',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <RadioButtonField {...args} value={value} saveInto={setValue} />
+  },
 }
 
 export const WithRequiredAndInstructions: Story = {
