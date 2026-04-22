@@ -12,12 +12,10 @@
     },
     "./index.css": "./dist/index.css",
     "./tokens.json": "./dist/tokens.json",
-    "./images/*": "./public/images/*",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "public/images",
     "README.md",
     "LICENSE"
   ],

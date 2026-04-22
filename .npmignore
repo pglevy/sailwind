@@ -1,6 +1,5 @@
 # Source files (only publish dist/)
 src/
-public/
 
 # Development files
 *.test.ts
@@ -42,6 +41,7 @@ TAILWIND-SAIL-MAPPING.md
 demos/
 pages/
 vibes/
+public/
 index.html
 App.tsx
 App.css

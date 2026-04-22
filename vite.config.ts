@@ -39,6 +39,7 @@ export default defineConfig(({ mode }) => {
         },
         outDir: 'dist',
         copyPublicDir: false,
+        cssMinify: false,
       },
     }
   }

@@ -44,23 +44,18 @@ Import the CSS in your main entry file (e.g., `main.tsx` or `App.tsx`):
 import '@pglevy/sailwind/index.css'
 ```
 
-### Using Images
+If you're using Tailwind CSS in your project and want Tailwind to detect utility classes used by Sailwind components, add a `@source` directive to your CSS:
 
-If your components need the included icons, reference them like this:
-
-```tsx
-import iconApp from '@pglevy/sailwind/images/icon-app.svg'
-import iconInterface from '@pglevy/sailwind/images/icon-interface.svg'
-
-<img src={iconApp} alt="App icon" />
+```css
+@import "@pglevy/sailwind/index.css";
+@source "../node_modules/@pglevy/sailwind/dist";
 ```
 
-Available images:
-- `icon-app.svg`
-- `icon-appian-header.png`
-- `icon-expression-rule.svg`
-- `icon-interface.svg`
-- `icon-record-type.svg`
+This ensures Tailwind scans Sailwind's compiled output for class names. The `@import` brings in the theme tokens, base styles, and pre-built utility classes, while `@source` lets your project's Tailwind build include any additional classes it discovers.
+
+### Using Images
+
+The `ApplicationHeader` component includes all its icon assets as embedded data URIs — no image copying or configuration needed. Icons render automatically based on the `objectType` prop, and you can override them via `iconSrc` and `appianLogoSrc` if needed.
 
 ## For Contributors
 
