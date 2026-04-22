@@ -132,6 +132,16 @@ export const AdjacentLabel: Story = {
     choiceValues: ['low', 'med', 'high', 'crit'],
     value: 'med',
   },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return (
+      <DropdownField
+        {...args}
+        value={value}
+        saveInto={setValue}
+      />
+    )
+  },
 }
 
 export const MultipleDefault: Story = {
