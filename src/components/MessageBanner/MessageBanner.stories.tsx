@@ -105,9 +105,9 @@ export const CustomColors: Story = {
   args: {
     primaryText: 'Custom Colors',
     secondaryText: 'This banner uses custom hex colors with transparency.',
-    backgroundColor: '#FED7DE80',
-    highlightColor: '#9F0019',
-    shape: 'ROUNDED',
+    backgroundColor: '#F5B3C380',
+    highlightColor: '#DE0037',
+    shape: 'SQUARED',
   },
 }
 
