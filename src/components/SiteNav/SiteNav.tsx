@@ -73,7 +73,7 @@ export const SiteNav: React.FC<SiteNavProps> = ({
 
   const isCollapsed = controlledCollapsed ?? internalCollapsed
 
-  // Resolve highlight color: semantic → Tailwind class, hex → inline style
+  // Highlight color mappings
   const semanticHighlightMap: Record<SAILSemanticColor, string> = {
     ACCENT: 'bg-blue-100',
     POSITIVE: 'bg-green-100',
@@ -104,7 +104,7 @@ export const SiteNav: React.FC<SiteNavProps> = ({
         }`}
         aria-label="Site navigation"
       >
-        {/* Top: Appian logo + waffle menu (expanded) or just Appian logo (collapsed) */}
+        {/* Logo + waffle menu */}
         {!isCollapsed ? (
           <div className="flex items-center justify-between px-4 pt-4 pb-6 shrink-0">
             <img
@@ -112,7 +112,7 @@ export const SiteNav: React.FC<SiteNavProps> = ({
               alt="Appian"
               className="h-8 w-auto -mb-0.5"
             />
-            {/* Waffle menu — decorative in prototype */}
+            {/* Waffle menu (decorative) */}
             <button
               className="flex items-center justify-center w-8 h-8 text-gray-700 hover:bg-gray-100 rounded-sm transition-colors"
               aria-label="Navigation menu"
@@ -156,9 +156,8 @@ export const SiteNav: React.FC<SiteNavProps> = ({
         {/* Bottom section */}
         <div className="flex flex-col shrink-0">
           {isCollapsed ? (
-            /* Collapsed: stacked vertically — waffle, avatar, collapse toggle */
             <div className="flex flex-col items-center gap-3 py-4">
-              {/* Waffle menu — decorative in prototype */}
+              {/* Waffle menu (decorative) */}
               <button
                 className="flex items-center justify-center w-8 h-8 text-gray-700 hover:bg-gray-100 rounded-sm transition-colors"
                 aria-label="Navigation menu"

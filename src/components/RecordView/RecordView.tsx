@@ -8,12 +8,11 @@ import { ButtonWidget } from '../Button/ButtonWidget'
 import { TabsField } from '../Tabs'
 import { HeadingField } from '../Heading/HeadingField'
 
-/** Semantic color for active tab styling — maps to Appian's primary brand color */
+/** Active tab color */
 const ACTIVE_TAB_COLOR = 'ACCENT'
 
 /**
  * Record action button configuration.
- * Maps to SAIL's related action buttons shown in the record header.
  */
 export interface RecordAction {
   /** Button label */
@@ -24,7 +23,6 @@ export interface RecordAction {
 
 /**
  * Record view tab configuration.
- * Maps to SAIL's record view tabs (Summary, Addresses, etc.)
  */
 export interface RecordViewTab {
   /** Tab label */
@@ -78,10 +76,7 @@ export interface RecordViewProps {
 /** Maximum number of action buttons shown before overflow */
 const MAX_VISIBLE_ACTIONS = 3
 
-/**
- * RecordActions — renders visible action buttons with an overflow dropdown
- * when there are more than MAX_VISIBLE_ACTIONS.
- */
+/** Renders record action buttons with overflow dropdown. */
 const RecordActions: React.FC<{ actions: RecordAction[] }> = ({ actions }) => {
   const visibleActions = actions.slice(0, MAX_VISIBLE_ACTIONS)
   const overflowActions = actions.slice(MAX_VISIBLE_ACTIONS)
@@ -137,14 +132,7 @@ const RecordActions: React.FC<{ actions: RecordAction[] }> = ({ actions }) => {
 
 /**
  * RecordView Template
- *
- * A page-level template for prototyping Appian record views.
- * Provides the full page shell: site sidebar nav on the left,
- * record header (title + actions + view tabs) on the right,
- * and a content slot for UXDs to fill in with their specific view content.
- *
- * Maps to SAIL's a!navigationLayout (SIDEBAR) wrapping a!headerContentLayout
- * with record views and related actions.
+ * Maps to SAIL's a!navigationLayout (SIDEBAR) wrapping a!headerContentLayout.
  */
 export const RecordView: React.FC<RecordViewProps> = ({
   // Site nav
@@ -217,7 +205,7 @@ export const RecordView: React.FC<RecordViewProps> = ({
           </div>
         )}
 
-        {/* Content slot — used when views don't provide their own content */}
+        {/* Content slot */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
           {children || (
             <div className="p-6 text-gray-400 text-sm">

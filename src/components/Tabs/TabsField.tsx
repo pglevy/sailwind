@@ -77,7 +77,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Track active tab for pill variant styling (works for both controlled and uncontrolled)
+  // Track active tab
   const [internalValue, setInternalValue] = React.useState(value || defaultValue || tabs[0]?.value)
   const activeValue = value ?? internalValue
 
@@ -119,7 +119,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
     marginBottomMap[marginBelow]
   ].filter(Boolean).join(' ')
 
-  // Semantic color → Tailwind class mappings (follows ButtonWidget pattern)
+  // Color mappings
   const semanticBgMap: Record<SAILSemanticColor, string> = {
     ACCENT: 'bg-blue-500',
     POSITIVE: 'bg-green-700',
@@ -196,14 +196,16 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                   {tab.label}
                   {activeValue === tab.value && (
                     <svg
-                      className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-1.5"
+                      className={[
+                        'absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-1.5',
+                        !isHexColor ? (semanticTextMap[color as SAILSemanticColor] || semanticTextMap.ACCENT) : ''
+                      ].filter(Boolean).join(' ')}
                       viewBox="0 0 12 6"
                       aria-hidden="true"
                     >
                       <polygon
                         points="6,6 0,0 12,0"
-                        className={isHexColor ? undefined : (semanticBgMap[color as SAILSemanticColor] || semanticBgMap.ACCENT).replace('bg-', 'fill-')}
-                        fill={isHexColor ? color : undefined}
+                        fill={isHexColor ? color : 'currentColor'}
                       />
                     </svg>
                   )}
