@@ -229,7 +229,7 @@
     -moz-osx-font-smoothing: grayscale;
 
     /* ApplicationHeader Gradients */
-    --gradient-header-bg: linear-gradient(90deg, #2322F0 0%, #E21496 57%, #FFC008 83%, #FFD948 100%);
+    --gradient-header-bg: linear-gradient(90deg, var(--color-blue-500) 0%, var(--color-pink-500) 57%, var(--color-amber-500) 83%, var(--color-yellow-500) 100%);
     --gradient-header-overlay: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0.95) 75%);
   }
 
