@@ -89,15 +89,15 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
     },
     STANDARD: {
       root: 'h-6 w-11',
-      thumb: 'h-4 w-4 data-[state=checked]:translate-x-5'
+      thumb: 'h-4 w-4 data-[state=checked]:translate-x-5.5'
     },
     MEDIUM: {
       root: 'h-7 w-14',
-      thumb: 'h-5 w-5 data-[state=checked]:translate-x-7'
+      thumb: 'h-5 w-5 data-[state=checked]:translate-x-7.5'
     },
     LARGE: {
       root: 'h-9 w-18',
-      thumb: 'h-7 w-7 data-[state=checked]:translate-x-9'
+      thumb: 'h-7 w-7 data-[state=checked]:translate-x-9.5'
     }
   }
 

@@ -85,7 +85,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   marginBelow = "STANDARD",
   size = "STANDARD",
   color = "ACCENT",
-  style = "OUTLINE",
+  style = "SOLID",
   icon,
   iconPosition = "START",
   className
@@ -111,33 +111,33 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
     if (style === "SOLID") {
       const solidColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-transparent bg-blue-500 text-white hover:bg-blue-700 data-[state=on]:bg-blue-700',
-        POSITIVE:  'border border-transparent bg-green-700 text-white hover:bg-green-900 data-[state=on]:bg-green-900',
-        NEGATIVE:  'border border-transparent bg-red-700 text-white hover:bg-red-900 data-[state=on]:bg-red-900',
-        SECONDARY: 'border border-transparent bg-gray-700 text-white hover:bg-gray-900 data-[state=on]:bg-gray-900',
-        STANDARD:  'border border-transparent bg-gray-900 text-white hover:bg-gray-700 data-[state=on]:bg-gray-700'
+        ACCENT:    'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100 data-[state=on]:bg-blue-500 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-blue-500',
+        POSITIVE:  'border border-green-700 text-green-700 bg-white hover:bg-green-100 data-[state=on]:bg-green-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-green-700',
+        NEGATIVE:  'border border-red-700 text-red-700 bg-white hover:bg-red-100 data-[state=on]:bg-red-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-red-700',
+        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-gray-700',
+        STANDARD:  'border border-gray-900 text-gray-900 bg-white hover:bg-gray-200 data-[state=on]:bg-gray-900 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-gray-900'
       }
       return solidColors[semanticColor]
     }
 
     if (style === "OUTLINE") {
       const outlineColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100 data-[state=on]:bg-blue-100 data-[state=on]:border-blue-700 data-[state=on]:text-blue-700',
-        POSITIVE:  'border border-green-700 text-green-700 bg-white hover:bg-green-100 data-[state=on]:bg-green-100 data-[state=on]:border-green-900 data-[state=on]:text-green-900',
-        NEGATIVE:  'border border-red-700 text-red-700 bg-white hover:bg-red-100 data-[state=on]:bg-red-100 data-[state=on]:border-red-900 data-[state=on]:text-red-900',
-        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-100 data-[state=on]:border-gray-900 data-[state=on]:text-gray-900',
-        STANDARD:  'border border-gray-900 text-gray-900 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-100'
+        ACCENT:    'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100 data-[state=on]:bg-blue-50',
+        POSITIVE:  'border border-green-700 text-green-700 bg-white hover:bg-green-100 data-[state=on]:bg-green-50',
+        NEGATIVE:  'border border-red-700 text-red-700 bg-white hover:bg-red-100 data-[state=on]:bg-red-50',
+        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-50',
+        STANDARD:  'border border-gray-900 text-gray-900 bg-white hover:bg-gray-200 data-[state=on]:bg-gray-50'
       }
       return outlineColors[semanticColor]
     }
 
     if (style === "GHOST") {
       const ghostColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-transparent text-blue-500 hover:bg-blue-100 data-[state=on]:bg-blue-100 data-[state=on]:border-blue-200',
-        POSITIVE:  'border border-transparent text-green-700 hover:bg-green-100 data-[state=on]:bg-green-100 data-[state=on]:border-green-200',
-        NEGATIVE:  'border border-transparent text-red-700 hover:bg-red-100 data-[state=on]:bg-red-100 data-[state=on]:border-red-200',
-        SECONDARY: 'border border-transparent text-gray-700 hover:bg-gray-100 data-[state=on]:bg-gray-100 data-[state=on]:border-gray-200',
-        STANDARD:  'border border-transparent text-gray-900 hover:bg-gray-100 data-[state=on]:bg-gray-100 data-[state=on]:border-gray-200'
+        ACCENT:    'border border-transparent text-blue-500 hover:bg-blue-100 data-[state=on]:bg-blue-50',
+        POSITIVE:  'border border-transparent text-green-700 hover:bg-green-100 data-[state=on]:bg-green-50',
+        NEGATIVE:  'border border-transparent text-red-700 hover:bg-red-100 data-[state=on]:bg-red-50',
+        SECONDARY: 'border border-transparent text-gray-700 hover:bg-gray-100 data-[state=on]:bg-gray-50',
+        STANDARD:  'border border-transparent text-gray-900 hover:bg-gray-200 data-[state=on]:bg-gray-50'
       }
       return ghostColors[semanticColor]
     }
@@ -208,7 +208,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       className={[
         'inline-flex items-center justify-center gap-1',
         'font-medium transition-colors h-auto rounded-sm',
-        'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         sizeMap[size],
         getColorClasses(),
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'

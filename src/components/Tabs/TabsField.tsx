@@ -129,12 +129,12 @@ export const TabsField: React.FC<TabsFieldProps> = ({
 
   // Active indicator color
   const indicatorColor = color.startsWith('#') ? color : {
-    ACCENT: 'var(--color-blue-500, #2322F0)',
-    POSITIVE: 'var(--color-green-700, #357A38)',
-    NEGATIVE: 'var(--color-red-700, #9B0027)',
-    SECONDARY: 'var(--color-gray-700, #616161)',
-    STANDARD: 'var(--color-gray-900, #212121)',
-  }[color] ?? 'var(--color-blue-500, #2322F0)'
+    ACCENT:    'var(--color-blue-500)',
+    POSITIVE:  'var(--color-green-700)',
+    NEGATIVE:  'var(--color-red-700)',
+    SECONDARY: 'var(--color-gray-700)',
+    STANDARD:  'var(--color-gray-900)',
+  }[color] ?? 'var(--color-blue-500)'
 
   // Container classes
   const sailClasses = [marginMap[marginAbove], marginBottomMap[marginBelow]].filter(Boolean).join(' ')
