@@ -57,7 +57,9 @@ export const SemanticColors: Story = {
 export const CustomHexColor: Story = {
   args: {
     text: 'Custom Hex Color',
-    color: '#0a578a',
+    color: '#00695F',
+    fontWeight: 'BOLD',
+    size: 'LARGE_PLUS',
   },
 }
 

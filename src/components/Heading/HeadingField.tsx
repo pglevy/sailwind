@@ -180,7 +180,7 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
       <HeadingElement {...headingProps}>
         <button
           onClick={link}
-          className="text-inherit underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="text-inherit border-b-2 border-blue-500/0 hover:border-blue-500 hover:cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-2 transition-all ease-in-out"
         >
           {text}
         </button>
