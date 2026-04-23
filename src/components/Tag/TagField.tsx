@@ -98,9 +98,9 @@ export const TagField: React.FC<TagFieldProps> = ({
 
   // Semantic color mappings
   const bgColorMap: Record<SAILSemanticColor, string> = {
-    ACCENT: 'bg-blue-100',
-    POSITIVE: 'bg-green-100',
-    NEGATIVE: 'bg-red-100',
+    ACCENT: 'bg-blue-50',
+    POSITIVE: 'bg-green-50',
+    NEGATIVE: 'bg-red-50',
     SECONDARY: 'bg-gray-200',
     STANDARD: 'bg-gray-100'
   }
@@ -116,13 +116,15 @@ export const TagField: React.FC<TagFieldProps> = ({
   // Render individual tag
   const renderTag = (tag: TagItemProps, index: number) => {
     // Determine background color classes or inline styles
+    const semanticBg = (tag.backgroundColor as SAILSemanticColor) || 'ACCENT'
+
     const bgClass = tag.backgroundColor?.startsWith('#')
       ? ''
-      : bgColorMap[(tag.backgroundColor as SAILSemanticColor) || 'ACCENT']
+      : bgColorMap[semanticBg]
 
     const textClass = tag.textColor?.startsWith('#')
       ? ''
-      : textColorMap[(tag.textColor as SAILSemanticColor) || 'STANDARD']
+      : textColorMap[(tag.textColor as SAILSemanticColor) || semanticBg]
 
     const inlineStyle: React.CSSProperties = {
       ...(tag.backgroundColor?.startsWith('#') && { backgroundColor: tag.backgroundColor }),
