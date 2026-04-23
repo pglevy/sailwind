@@ -5,7 +5,7 @@ const meta = {
   title: 'Components/Milestone',
   component: MilestoneField,
   tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  parameters: { layout: 'padded' },
   argTypes: {
     stepStyle: { control: 'select', options: ['DOT', 'BAR', 'CHEVRON'] },
     orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
