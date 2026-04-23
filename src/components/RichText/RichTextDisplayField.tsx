@@ -125,7 +125,7 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
           ))
         ) : (
           // Show empty state if no content
-          <span className="text-gray-500 italic">No content</span>
+          <span className="text-gray-700 italic">No content</span>
         )}
       </div>
     </div>
