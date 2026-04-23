@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as Progress from '@radix-ui/react-progress'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { FieldLabel } from '../shared/FieldLabel'
+import { mergeClasses } from '../../utils/classNames'
 
 export type ProgressBarColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | string
 export type ProgressBarStyle = "THIN" | "THICK"
@@ -31,6 +32,8 @@ export interface ProgressBarProps {
   marginAbove?: SAILMarginSize
   /** Space below the component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -45,7 +48,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   style = "THIN",
   showPercentage = true,
   marginAbove = "NONE",
-  marginBelow = "STANDARD"
+  marginBelow = "STANDARD",
+  className: classNameProp
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -94,10 +98,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const progressColor = isSemanticColor ? colorMap[color] : ''
 
   // Build CSS classes
-  const containerClasses = [
+  const sailClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow]
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, classNameProp)
 
   const progressBarClasses = [
     'relative',

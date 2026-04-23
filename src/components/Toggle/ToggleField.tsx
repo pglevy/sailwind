@@ -61,6 +61,8 @@ export interface ToggleFieldProps {
   icon?: string
   /** Position of icon relative to text */
   iconPosition?: "START" | "END"
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const ToggleField: React.FC<ToggleFieldProps> = ({
@@ -85,7 +87,8 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   color = "ACCENT",
   style = "OUTLINE",
   icon,
-  iconPosition = "START"
+  iconPosition = "START",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -259,6 +262,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {toggleElement}
     </FieldWrapper>

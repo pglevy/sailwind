@@ -51,6 +51,8 @@ export interface ApplicationHeaderProps {
     color?: string
     onClick?: () => void
   }>
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -70,12 +72,18 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   onStoryToggle,
   onBackClick,
   appianLogoSrc = APPIAN_LOGO,
-  additionalButtons = []
+  additionalButtons = [],
+  className
 }) => {
   const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
 
+  const headerClasses = [
+    'application-header-gradient border-b border-gray-200',
+    className
+  ].filter(Boolean).join(' ')
+
   return (
-    <div className="application-header-gradient border-b border-gray-200">
+    <div className={headerClasses}>
       <div className="flex items-center justify-between px-6 pt-4 pb-3 min-w-0 overflow-x-auto">
         {/* Left section */}
         <div className="flex items-center gap-3 shrink-0">

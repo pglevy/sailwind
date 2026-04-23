@@ -56,6 +56,8 @@ export interface ReadOnlyGridProps {
   marginAbove?: SAILMarginSize;
   /** Space below component */
   marginBelow?: SAILMarginSize;
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string;
 }
 
 /** Extract column definitions from GridColumn children */
@@ -182,6 +184,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   accessibilityText,
   marginAbove,
   marginBelow,
+  className
 }) => {
   const gridId = React.useId();
 
@@ -462,6 +465,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footer}
+      className={className}
     >
       {rows.length === 0 ? (
         <div className="text-gray-500 py-4 text-center">{emptyGridMessage}</div>

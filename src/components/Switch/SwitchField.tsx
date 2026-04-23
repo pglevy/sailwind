@@ -49,6 +49,8 @@ export interface SwitchFieldProps {
   color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | string
   /** Position of the inline label relative to the switch control: LEFT or RIGHT */
   switchLabelPosition?: "LEFT" | "RIGHT"
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const SwitchField: React.FC<SwitchFieldProps> = ({
@@ -70,7 +72,8 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   marginBelow = "STANDARD",
   size = "STANDARD",
   color = "ACCENT",
-  switchLabelPosition = "RIGHT"
+  switchLabelPosition = "RIGHT",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -244,6 +247,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
       marginBelow={marginBelow}
       instructions={instructions}
       footer={footerContent}
+      className={className}
     >
       {switchElement}
     </FieldWrapper>

@@ -2,6 +2,7 @@ import * as React from 'react'
 import type { ButtonWidgetProps } from './ButtonWidget'
 import { ButtonWidget } from './ButtonWidget'
 import type { SAILAlign, SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 /**
  * Props for the ButtonArrayLayout component
@@ -18,6 +19,8 @@ export interface ButtonArrayLayoutProps {
   marginBelow?: SAILMarginSize
   /** Additional text for screen readers */
   accessibilityText?: string
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -33,7 +36,8 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
   showWhen = true,
   align = "START",
   marginBelow = "STANDARD",
-  accessibilityText
+  accessibilityText,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -62,9 +66,17 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
   const defaultAlign = visibleButtons.length === 1 ? 'END' : 'START'
   const effectiveAlign = align || defaultAlign
 
+  const sailClasses = [
+    'flex flex-wrap gap-1 items-start',
+    alignMap[effectiveAlign],
+    marginBelowMap[marginBelow]
+  ].filter(Boolean).join(' ')
+
+  const finalClasses = mergeClasses(sailClasses, className)
+
   return (
     <div
-      className={`flex flex-wrap gap-1 items-start ${alignMap[effectiveAlign]} ${marginBelowMap[marginBelow]}`}
+      className={finalClasses}
       role="group"
       aria-label={accessibilityText}
     >

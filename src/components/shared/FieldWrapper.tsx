@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FieldLabel } from './FieldLabel'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 export interface FieldWrapperProps {
   /** The label text to display */
@@ -25,6 +26,8 @@ export interface FieldWrapperProps {
   children: React.ReactNode
   /** Optional additional content below instructions (validation errors, etc.) */
   footer?: React.ReactNode
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -45,7 +48,8 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   marginAbove = "NONE",
   marginBelow = "STANDARD",
   children,
-  footer
+  footer,
+  className
 }) => {
   // Map SAIL margin values to Tailwind classes
   const marginAboveMap: Record<SAILMarginSize, string> = {
@@ -66,10 +70,12 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
     EVEN_MORE: 'mb-8'
   }
 
-  const containerClasses = [
+  const sailClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, className)
 
   // ADJACENT layout: label and input side-by-side
   if (labelPosition === "ADJACENT") {

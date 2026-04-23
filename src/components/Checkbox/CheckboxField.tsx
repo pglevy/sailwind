@@ -62,6 +62,8 @@ export interface CheckboxFieldProps {
   marginBelow?: SAILMarginSize
   /** Determines whether checkboxes appear on left or right */
   choicePosition?: ChoicePosition
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const CheckboxField: React.FC<CheckboxFieldProps> = ({
@@ -89,7 +91,8 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
   sort: _sort,
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  choicePosition
+  choicePosition,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -240,6 +243,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {checkboxesElement}
     </FieldWrapper>

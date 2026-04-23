@@ -60,6 +60,8 @@ export interface RadioButtonFieldProps {
   marginBelow?: SAILMarginSize
   /** Determines whether radio buttons appear on left or right */
   choicePosition?: ChoicePosition
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
@@ -86,7 +88,8 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
   sort: _sort,
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  choicePosition
+  choicePosition,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -224,6 +227,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
       marginAbove={marginAbove}
       marginBelow={marginBelow}
       footer={footerContent}
+      className={className}
     >
       {radioButtonsElement}
     </FieldWrapper>

@@ -53,6 +53,8 @@ export interface MultipleDropdownFieldProps {
   marginAbove?: SAILMarginSize
   /** Space added below component */
   marginBelow?: SAILMarginSize
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**

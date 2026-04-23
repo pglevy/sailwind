@@ -191,17 +191,17 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   const barProps = getDecorativeBarClasses()
 
   // Build SAIL-computed classes
-  const sailClasses = `
-    ${bgProps.className || ''}
-    ${heightMap[height]}
-    ${shapeMap[shape]}
-    ${paddingMap[padding]}
-    ${marginAboveMap[marginAbove]}
-    ${marginBelowMap[marginBelow]}
-    ${showBorder ? `border-2 ${borderProps.className || ''}` : ''}
-    ${showShadow ? 'shadow-md' : ''}
-    relative
-  `.replace(/\s+/g, ' ').trim()
+  const sailClasses = [
+    bgProps.className || '',
+    heightMap[height],
+    shapeMap[shape],
+    paddingMap[padding],
+    marginAboveMap[marginAbove],
+    marginBelowMap[marginBelow],
+    showBorder ? `border-2 ${borderProps.className || ''}` : '',
+    showShadow ? 'shadow-md' : '',
+    'relative'
+  ].filter(Boolean).join(' ')
 
   // Merge with optional className override
   const finalClasses = mergeClasses(sailClasses, className)

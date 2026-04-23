@@ -217,16 +217,16 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   }
 
   // Build SAIL-computed classes
-  const sailClasses = `
-    inline-flex items-center justify-center gap-1
-    font-medium transition-colors h-auto rounded-sm
-    focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2
-    ${effectiveSizeClasses}
-    ${widthClass}
-    ${getBorderClasses()}
-    ${getColorClasses()}
-    ${disabled || loadingIndicator ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-  `.replace(/\s+/g, ' ').trim()
+  const sailClasses = [
+    'inline-flex items-center justify-center gap-1',
+    'font-medium transition-colors h-auto rounded-sm',
+    'focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2',
+    effectiveSizeClasses,
+    widthClass,
+    getBorderClasses(),
+    getColorClasses(),
+    (disabled || loadingIndicator) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+  ].filter(Boolean).join(' ')
 
   // Merge with optional className override
   const finalClasses = mergeClasses(sailClasses, className)

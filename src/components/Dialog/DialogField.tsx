@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { SAILMarginSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 /**
  * Width options for dialog sizing
@@ -51,6 +52,8 @@ export interface DialogFieldProps {
   marginBelow?: SAILMarginSize
   /** Callback when dialog is closed */
   onClose?: () => void
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const DialogField: React.FC<DialogFieldProps> = ({
@@ -68,7 +71,8 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   showWhen = true,
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  onClose
+  onClose,
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -112,10 +116,12 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   }
 
   // Container classes
-  const containerClasses = [
+  const sailClasses = [
     marginMap[marginAbove],
     marginBottomMap[marginBelow]
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, className)
 
   // Handle close events
   const handleOpenChange = (newOpen: boolean) => {

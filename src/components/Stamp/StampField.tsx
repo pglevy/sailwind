@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
 import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILSemanticColor } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
 type StampBackgroundColor = SAILSemanticColor | "TRANSPARENT" | string
@@ -41,6 +42,8 @@ export interface StampFieldProps {
   marginBelow?: SAILMarginSize
   /** Determines the stamp shape */
   shape?: SAILShape
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 /**
@@ -64,7 +67,8 @@ export const StampField: React.FC<StampFieldProps> = ({
   link,
   marginAbove = "NONE",
   marginBelow = "NONE",
-  shape = "ROUNDED"
+  shape = "ROUNDED",
+  className: classNameProp
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -191,10 +195,12 @@ export const StampField: React.FC<StampFieldProps> = ({
     link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''
   ].filter(Boolean).join(' ')
 
-  const containerClasses = [
+  const sailContainerClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow]
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailContainerClasses, classNameProp)
 
   const stampStyle = {
     ...backgroundStyles.style,

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import type { SAILMarginSize, SAILSize } from '../../types/sail'
+import { mergeClasses } from '../../utils/classNames'
 
 /**
  * Individual tab configuration
@@ -48,6 +49,8 @@ export interface TabsFieldProps {
   color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | string
   /** Activation mode - whether tabs activate on focus or click */
   activationMode?: "AUTOMATIC" | "MANUAL"
+  /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
+  className?: string
 }
 
 export const TabsField: React.FC<TabsFieldProps> = ({
@@ -62,7 +65,8 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   marginAbove = "NONE",
   marginBelow = "STANDARD",
   color = "ACCENT",
-  activationMode = "AUTOMATIC"
+  activationMode = "AUTOMATIC",
+  className
 }) => {
   // Visibility control
   if (!showWhen) return null
@@ -95,10 +99,12 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   }
 
   // Container classes
-  const containerClasses = [
+  const sailClasses = [
     marginMap[marginAbove],
     marginBottomMap[marginBelow]
   ].filter(Boolean).join(' ')
+
+  const containerClasses = mergeClasses(sailClasses, className)
 
   // List classes based on orientation
   const listClasses = orientation === "VERTICAL" 
