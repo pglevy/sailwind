@@ -143,7 +143,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
 
   // Border color mappings for semantic values
   const borderColorMap: Record<string, string> = {
-    STANDARD: 'border-gray-200',
+    STANDARD: 'border-gray-300',
     ACCENT: 'border-blue-500',
     POSITIVE: 'border-green-700',
     WARN: 'border-orange-500',
@@ -153,7 +153,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
   // Get border color - either from map or use hex value
   const getBorderColor = (): { className?: string; style?: React.CSSProperties } => {
     if (!borderColor) {
-      return { className: 'border-gray-200' }
+      return { className: 'border-gray-300' }
     }
 
     // Check if it's a hex color
@@ -162,7 +162,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     }
 
     // Use semantic color mapping
-    return { className: borderColorMap[borderColor] || 'border-gray-200' }
+    return { className: borderColorMap[borderColor] || 'border-gray-300' }
   }
 
   const borderProps = getBorderColor()
@@ -198,7 +198,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     paddingMap[padding],
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
-    showBorder ? `border-2 ${borderProps.className || ''}` : '',
+    showBorder ? `border ${borderProps.className || ''}` : '',
     showShadow ? 'shadow-md' : '',
     'relative'
   ].filter(Boolean).join(' ')
@@ -216,14 +216,14 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     <div className={finalClasses} style={Object.keys(inlineStyles).length > 0 ? inlineStyles : undefined}>
       {decorativeBarPosition === "TOP" && (
         <div
-          className={`absolute top-0 left-0 right-0 h-1 ${barProps.className || ''}`}
+          className={`absolute -top-0.25 -left-0.25 -right-0.25 h-1 ${barProps.className || ''}`}
           style={barProps.style}
           aria-hidden="true"
         />
       )}
       {decorativeBarPosition === "START" && (
         <div
-          className={`absolute top-0 left-0 bottom-0 w-1 ${barProps.className || ''}`}
+          className={`absolute -top-0.25 -left-0.25 -bottom-0.25 w-1 ${barProps.className || ''}`}
           style={barProps.style}
           aria-hidden="true"
         />
