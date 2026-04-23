@@ -263,7 +263,7 @@ export const ManualActivation: Story = {
   },
 }
 
-export const PillVariant: Story = {
+export const Pill: Story = {
   args: {
     tabs: [
       { value: 'summary', label: 'Summary', content: <p className="text-base text-gray-700">Summary view content.</p> },
@@ -278,7 +278,7 @@ export const PillVariant: Story = {
   },
 }
 
-export const PillVariantCustomColor: Story = {
+export const PillCustomColor: Story = {
   args: {
     tabs: [
       { value: 'tab1', label: 'Tab One', content: <p className="text-base text-gray-700">Custom color pill tab.</p> },

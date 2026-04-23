@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
-import type { SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILMarginSize, SAILSize, SAILSemanticColor } from '../../types/sail'
 
 /**
  * Individual tab configuration
@@ -54,7 +54,7 @@ export interface TabsFieldProps {
   /** Space added below component */
   marginBelow?: SAILMarginSize
   /** Color scheme for active tabs (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | string
+  color?: SAILSemanticColor | string
   /** Activation mode - whether tabs activate on focus or click */
   activationMode?: "AUTOMATIC" | "MANUAL"
 }
@@ -119,14 +119,22 @@ export const TabsField: React.FC<TabsFieldProps> = ({
     marginBottomMap[marginBelow]
   ].filter(Boolean).join(' ')
 
-  // Resolve active color to a CSS value
-  const semanticColorMap: Record<string, string> = {
-    ACCENT: '#2322F0',
-    POSITIVE: '#117C00',
-    NEGATIVE: '#9F0019',
-    SECONDARY: '#374151',
+  // Semantic color → Tailwind class mappings (follows ButtonWidget pattern)
+  const semanticBgMap: Record<SAILSemanticColor, string> = {
+    ACCENT: 'bg-blue-500',
+    POSITIVE: 'bg-green-700',
+    NEGATIVE: 'bg-red-700',
+    SECONDARY: 'bg-gray-700',
+    STANDARD: 'bg-gray-900',
   }
-  const activeColor = color.startsWith('#') ? color : (semanticColorMap[color] || semanticColorMap.ACCENT)
+  const semanticTextMap: Record<SAILSemanticColor, string> = {
+    ACCENT: 'text-blue-500',
+    POSITIVE: 'text-green-700',
+    NEGATIVE: 'text-red-700',
+    SECONDARY: 'text-gray-700',
+    STANDARD: 'text-gray-900',
+  }
+  const isHexColor = color.startsWith('#')
 
   // List classes based on orientation and variant
   const listClasses = variant === "PILL"
@@ -170,14 +178,19 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                     'group relative',
                     sizeMap[size],
                     'rounded-sm transition-colors whitespace-nowrap cursor-pointer select-none outline-none border-0',
-                    activeValue === tab.value ? 'font-medium' : 'hover:bg-gray-100',
+                    activeValue === tab.value
+                      ? (isHexColor ? '' : `${semanticBgMap[color as SAILSemanticColor] || semanticBgMap.ACCENT} text-white`)
+                      : (isHexColor ? '' : `${semanticTextMap[color as SAILSemanticColor] || semanticTextMap.ACCENT}`),
+                    activeValue !== tab.value ? 'hover:bg-gray-100' : '',
                     'disabled:opacity-50 disabled:cursor-not-allowed',
                     'focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2'
-                  ].join(' ')}
+                  ].filter(Boolean).join(' ')}
                   style={
-                    activeValue === tab.value
-                      ? { backgroundColor: activeColor, color: '#ffffff' }
-                      : { color: activeColor }
+                    isHexColor
+                      ? activeValue === tab.value
+                        ? { backgroundColor: color, color: '#ffffff' }
+                        : { color: color }
+                      : undefined
                   }
                 >
                   {tab.label}
@@ -187,7 +200,11 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                       viewBox="0 0 12 6"
                       aria-hidden="true"
                     >
-                      <polygon points="6,6 0,0 12,0" fill={activeColor} />
+                      <polygon
+                        points="6,6 0,0 12,0"
+                        className={isHexColor ? undefined : (semanticBgMap[color as SAILSemanticColor] || semanticBgMap.ACCENT).replace('bg-', 'fill-')}
+                        fill={isHexColor ? color : undefined}
+                      />
                     </svg>
                   )}
                 </Tabs.Trigger>

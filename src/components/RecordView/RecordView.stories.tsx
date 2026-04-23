@@ -12,6 +12,10 @@ import {
   MessagesSquare,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { CardLayout } from '../Card/CardLayout'
+import { HeadingField } from '../Heading/HeadingField'
+import { RichTextDisplayField } from '../RichText/RichTextDisplayField'
+import { TextItem } from '../RichText/TextItem'
 
 /** Shared render function that wires up stateful view switching */
 const InteractiveRender = (args: RecordViewProps) => {
@@ -66,23 +70,23 @@ const recordActions: RecordAction[] = [
 const recordViews = [
   { label: 'Summary', content: (
     <div className="p-6">
-      <div className="bg-white border border-gray-200 rounded-sm p-4 mb-4">
-        <h2 className="text-base font-semibold text-gray-900 mb-2">Overview</h2>
-        <p className="text-sm text-gray-600">This is the summary view content.</p>
-      </div>
+      <CardLayout padding="STANDARD">
+        <HeadingField text="Overview" size="MEDIUM" marginBelow="LESS" fontWeight="SEMI_BOLD" />
+        <RichTextDisplayField value={["This is the summary view content."]} />
+      </CardLayout>
     </div>
   )},
   { label: 'Details', content: (
     <div className="p-6">
-      <div className="bg-white border border-gray-200 rounded-sm p-4">
-        <h2 className="text-base font-semibold text-gray-900 mb-2">Record Details</h2>
-        <p className="text-sm text-gray-600">This is the details view content.</p>
-      </div>
+      <CardLayout padding="STANDARD">
+        <HeadingField text="Record Details" size="MEDIUM" marginBelow="LESS" fontWeight="SEMI_BOLD" />
+        <RichTextDisplayField value={["This is the details view content."]} />
+      </CardLayout>
     </div>
   )},
   { label: 'Activity', content: (
     <div className="p-6">
-      <p className="text-sm text-gray-400">No recent activity.</p>
+      <RichTextDisplayField value={[<TextItem key="activity" text="No recent activity." color="SECONDARY" />]} />
     </div>
   )},
   { label: 'Documents' },

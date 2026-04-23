@@ -5,6 +5,8 @@ import {
   LayoutGrid,
   type LucideIcon,
 } from 'lucide-react'
+import { ImageField } from '../Image/ImageField'
+import type { SAILSemanticColor } from '../../types/sail'
 
 /**
  * Represents a single page/tab in the site navigation.
@@ -46,8 +48,8 @@ export interface SiteNavProps {
   userName?: string
   /** Path to Appian logo image */
   appianLogoSrc?: string
-  /** Background color for the selected/highlighted page. Accepts hex color string. Default: "#DFFCD2" (light green) */
-  highlightColor?: string
+  /** Background color for the selected/highlighted page. Accepts hex or semantic color. Default: "POSITIVE" */
+  highlightColor?: SAILSemanticColor | string
 }
 
 
@@ -65,11 +67,23 @@ export const SiteNav: React.FC<SiteNavProps> = ({
   showNavigation = true,
   userName,
   appianLogoSrc = 'images/icon-appian-header.png',
-  highlightColor = '#DFFCD2',
+  highlightColor = 'POSITIVE',
 }) => {
   const [internalCollapsed, setInternalCollapsed] = React.useState(false)
 
   const isCollapsed = controlledCollapsed ?? internalCollapsed
+
+  // Resolve highlight color: semantic → Tailwind class, hex → inline style
+  const semanticHighlightMap: Record<SAILSemanticColor, string> = {
+    ACCENT: 'bg-blue-100',
+    POSITIVE: 'bg-green-100',
+    NEGATIVE: 'bg-red-100',
+    SECONDARY: 'bg-gray-100',
+    STANDARD: 'bg-gray-200',
+  }
+  const isHexHighlight = highlightColor.startsWith('#')
+  const highlightClass = !isHexHighlight ? (semanticHighlightMap[highlightColor as SAILSemanticColor] || semanticHighlightMap.POSITIVE) : ''
+  const highlightStyle = isHexHighlight ? { backgroundColor: highlightColor } : undefined
 
   const userInitials = userName
     ? userName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
@@ -96,7 +110,7 @@ export const SiteNav: React.FC<SiteNavProps> = ({
             <img
               src={appianLogoSrc}
               alt="Appian"
-              className="h-8 w-auto"
+              className="h-8 w-auto -mb-0.5"
             />
             {/* Waffle menu — decorative in prototype */}
             <button
@@ -133,7 +147,8 @@ export const SiteNav: React.FC<SiteNavProps> = ({
               key={page.label}
               page={page}
               isCollapsed={isCollapsed}
-              highlightColor={highlightColor}
+              highlightClass={highlightClass}
+              highlightStyle={highlightStyle}
             />
           ))}
         </ul>
@@ -152,12 +167,16 @@ export const SiteNav: React.FC<SiteNavProps> = ({
                 <LayoutGrid className="w-5 h-5" />
               </button>
 
-              <div
-                className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-700 text-sm font-medium"
-                title={userName || userInitials}
-              >
-                {userInitials}
-              </div>
+              <ImageField
+                images={[{
+                  imageType: 'user' as const,
+                  user: { name: userName || userInitials, initials: userInitials },
+                  altText: userName || userInitials,
+                }]}
+                style="AVATAR"
+                size="ICON_PLUS"
+                marginBelow="NONE"
+              />
 
               <button
                 onClick={toggleCollapse}
@@ -170,12 +189,16 @@ export const SiteNav: React.FC<SiteNavProps> = ({
             </div>
           ) : (
               <div className="flex items-center pl-4 py-4">
-                <div
-                  className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-700 text-sm font-medium shrink-0"
-                  title={userName || userInitials}
-                >
-                  {userInitials}
-                </div>
+                <ImageField
+                  images={[{
+                    imageType: 'user' as const,
+                    user: { name: userName || userInitials, initials: userInitials },
+                    altText: userName || userInitials,
+                  }]}
+                  style="AVATAR"
+                  size="ICON_PLUS"
+                  marginBelow="NONE"
+                />
                 <span className="ml-3 text-sm font-medium text-gray-800 truncate flex-1">
                   {userName || userInitials}
                 </span>
@@ -196,14 +219,14 @@ export const SiteNav: React.FC<SiteNavProps> = ({
 
 /**
  * SiteNavItem — renders a single navigation item (page or group).
- * Uses HighlightColorContext for the selected background color.
  */
 const SiteNavItem: React.FC<{
   page: SiteNavPage
   isCollapsed: boolean
-  highlightColor: string
+  highlightClass: string
+  highlightStyle?: React.CSSProperties
   depth?: number
-}> = ({ page, isCollapsed, highlightColor, depth = 0 }) => {
+}> = ({ page, isCollapsed, highlightClass, highlightStyle, depth = 0 }) => {
   const [expanded, setExpanded] = React.useState(
     // Auto-expand if any child is selected
     page.children?.some((c) => c.isSelected) ?? false
@@ -229,12 +252,12 @@ const SiteNavItem: React.FC<{
           ${isCollapsed ? 'justify-center px-2' : 'px-3'}
           ${depth > 0 ? 'py-2' : 'py-3'}
           rounded-sm
-          ${page.isSelected ? 'font-bold' : 'font-normal'}
+          ${page.isSelected ? `font-bold ${highlightClass}` : 'font-normal'}
           text-gray-800 hover:bg-gray-100
         `}
         style={
           page.isSelected
-            ? { backgroundColor: highlightColor }
+            ? highlightStyle
             : undefined
         }
         aria-current={page.isSelected ? 'page' : undefined}
@@ -279,7 +302,8 @@ const SiteNavItem: React.FC<{
               key={child.label}
               page={child}
               isCollapsed={isCollapsed}
-              highlightColor={highlightColor}
+              highlightClass={highlightClass}
+              highlightStyle={highlightStyle}
               depth={depth + 1}
             />
           ))}
