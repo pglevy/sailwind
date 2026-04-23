@@ -348,12 +348,21 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       <thead className={needsScrollContainer ? "sticky top-0 bg-white z-10" : undefined}>
         <tr className={headerRowBorderClass}>
           {selectable && selectionStyle === "CHECKBOX" && (
-            <th className={`${cellPaddingClass} w-10${colDividerClass ? ` ${colDividerClass}` : ""}`}>
+            <th className={`${cellPaddingClass} w-10 align-middle text-center${colDividerClass ? ` ${colDividerClass}` : ""}`}>
               <input
                 type="checkbox"
                 checked={allPageRowsSelected}
                 onChange={handleSelectAll}
                 aria-label="Select all rows"
+                className={[
+                  'appearance-none h-3 w-3 mt-1.5 shrink-0 rounded-xs border',
+                  allPageRowsSelected
+                    ? 'border-blue-500 bg-blue-500'
+                    : 'border-gray-400 bg-white',
+                  'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                  'transition-colors duration-150 ease-in-out cursor-pointer',
+                  'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
+                ].join(' ')}
               />
             </th>
           )}
@@ -422,12 +431,21 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
               }
             >
               {selectable && selectionStyle === "CHECKBOX" && (
-                <td className={`${cellPaddingClass} w-10${colDividerClass ? ` ${colDividerClass}` : ""}`}>
+                <td className={`${cellPaddingClass} w-10 align-middle text-center${colDividerClass ? ` ${colDividerClass}` : ""}`}>
                   <input
                     type="checkbox"
                     checked={isRowSelected || false}
                     onChange={() => handleRowSelect(rowId)}
                     aria-label={`Select row ${rowIndex + 1}`}
+                    className={[
+                      'appearance-none h-3 w-3 mt-1.5 shrink-0 rounded-xs border',
+                      isRowSelected
+                        ? 'border-blue-500 bg-blue-500'
+                        : 'border-gray-400 bg-white',
+                      'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                      'transition-colors duration-150 ease-in-out cursor-pointer',
+                      'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
+                    ].join(' ')}
                   />
                 </td>
               )}
@@ -468,7 +486,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       className={className}
     >
       {rows.length === 0 ? (
-        <div className="text-gray-500 py-4 text-center">{emptyGridMessage}</div>
+        <div className="text-gray-700 py-4 text-center">{emptyGridMessage}</div>
       ) : (
         <>
           {needsScrollContainer ? (
@@ -485,7 +503,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 disabled={!hasPreviousPage}
                 aria-label="First page"
                 title="First page"
-                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
               >
                 <ChevronsLeft size={18} />
               </button>
@@ -494,7 +512,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 disabled={!hasPreviousPage}
                 aria-label="Previous page"
                 title="Previous page"
-                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -507,7 +525,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 disabled={!hasNextPage}
                 aria-label="Next page"
                 title="Next page"
-                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
               >
                 <ChevronRight size={18} />
               </button>
@@ -516,7 +534,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 disabled={!hasNextPage}
                 aria-label="Last page"
                 title="Last page"
-                className="px-1 py-1 disabled:text-gray-300 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
               >
                 <ChevronsRight size={18} />
               </button>
