@@ -69,7 +69,7 @@ export const CustomHexColor: Story = {
   args: {
     label: 'Custom Hex Color',
     percentage: 85,
-    color: '#9333EA',
+    color: '#7C4DFF',
   },
 }
 
