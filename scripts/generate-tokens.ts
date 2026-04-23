@@ -65,11 +65,11 @@ function main(): void {
   // Deep clone for output
   const output = JSON.parse(JSON.stringify(tokens));
 
-  // Add color.black alias
+  // Add color.black (sourced from studio grey-1000)
   output.color.black = {
-    $value: '{color.gray.900}',
+    $value: '#171717',
     $type: 'color',
-    $description: 'Use Gray 900 for text-black',
+    $description: 'Black — sourced from studio grey-1000',
   };
 
   // Add semantic color tokens
