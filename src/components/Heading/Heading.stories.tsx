@@ -54,10 +54,10 @@ export const SemanticColors: Story = {
   ),
 }
 
-export const CustomHexColor: Story = {
+export const CustomPaletteColor: Story = {
   args: {
-    text: 'Custom Hex Color',
-    color: 'RED_500',
+    text: 'Custom Palette Color',
+    color: 'TEAL_700',
     fontWeight: 'BOLD',
     size: 'LARGE_PLUS',
   },
