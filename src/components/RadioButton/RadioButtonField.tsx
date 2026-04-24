@@ -146,8 +146,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
           'items-center',
           radioLabelGapMap[spacing],
           effectiveChoicePosition === "END" && 'flex-row-reverse',
-          choiceStyle === "CARDS" && 'border border-gray-200 rounded-sm p-4 hover:border-blue-500 transition-colors cursor-pointer',
-          choiceStyle === "CARDS" && isChecked && 'border-blue-500 bg-blue-50',
+          choiceStyle === "CARDS" && `border rounded-sm p-4 hover:border-blue-500 transition-colors cursor-pointer ${isChecked ? 'border-blue-500' : 'border-gray-300'}`,
           disabled && 'opacity-50 cursor-not-allowed'
         ].filter(Boolean).join(' ')
 
@@ -174,8 +173,14 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
               disabled={disabled}
               onChange={() => handleChange(choiceValue)}
               className={[
-                'h-4 w-4 border-gray-200 accent-blue-500 focus:ring-blue-500',
-                disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                'appearance-none h-4 w-4 shrink-0 rounded-full border',
+                isChecked
+                  ? 'border-blue-500 bg-blue-500'
+                  : 'border-gray-400 bg-white',
+                'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                'transition-colors duration-150 ease-in-out',
+                'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9IndoaXRlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjgiIGN5PSI4IiByPSI0Ii8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
               ].filter(Boolean).join(' ')}
               aria-invalid={showValidations}
               aria-errormessage={showValidations ? `${inputId}-error` : undefined}

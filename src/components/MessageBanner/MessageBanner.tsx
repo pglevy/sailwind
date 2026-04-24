@@ -98,17 +98,17 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
 
   // Semantic color mappings with dark semantic text
   const backgroundColorMap: Record<string, { bg: string; text: string }> = {
-    INFO: { bg: 'bg-blue-100', text: 'text-blue-900' },
-    SUCCESS: { bg: 'bg-green-100', text: 'text-gray-900' },
-    WARN: { bg: 'bg-yellow-100', text: 'text-gray-900' },
-    ERROR: { bg: 'bg-red-100', text: 'text-gray-900' }
+    INFO: { bg: 'bg-sky-50', text: 'text-sky-900' },
+    SUCCESS: { bg: 'bg-green-50', text: 'text-green-900' },
+    WARN: { bg: 'bg-yellow-50', text: 'text-yellow-900' },
+    ERROR: { bg: 'bg-red-50', text: 'text-red-900' }
   }
 
   const highlightColorMap: Record<string, string> = {
-    INFO: 'bg-blue-500',
-    POSITIVE: 'bg-green-700',
+    INFO: 'bg-sky-500',
+    POSITIVE: 'bg-green-500',
     WARN: 'bg-yellow-500',
-    NEGATIVE: 'bg-red-700'
+    NEGATIVE: 'bg-red-500'
   }
 
   // Icon mapping

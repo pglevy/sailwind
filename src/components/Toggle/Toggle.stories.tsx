@@ -18,7 +18,7 @@ export const Default: Story = {
     label: 'Text Formatting',
     text: 'Bold',
     value: false,
-    style: 'OUTLINE',
+    style: 'SOLID',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)

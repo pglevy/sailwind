@@ -5,6 +5,7 @@ import { ButtonArrayLayout } from '../../components/Button/ButtonArrayLayout'
 import { MessageBanner } from '../../components/MessageBanner/MessageBanner'
 import { RichTextDisplayField } from '../../components/RichText/RichTextDisplayField'
 import { TextItem } from '../../components/RichText/TextItem'
+import { StampField } from '../../components/Stamp'
 
 /**
  * Application Status Page
@@ -12,7 +13,8 @@ import { TextItem } from '../../components/RichText/TextItem'
  */
 export const ApplicationStatus = () => {
   return (
-    <div className="p-6 bg-gray-50 min-h-screen max-w-6xl mx-auto">
+    <div className='bg-gray-50 '>
+      <div className="p-6 min-h-screen max-w-6xl mx-auto">
       <HeadingField
         text="Application #2024-0891"
         size="LARGE_PLUS"
@@ -43,7 +45,6 @@ export const ApplicationStatus = () => {
           shape="SEMI_ROUNDED"
           padding="STANDARD"
           showBorder={true}
-          borderColor="#EDEEFA"
         >
           <HeadingField
             text="Status"
@@ -60,7 +61,7 @@ export const ApplicationStatus = () => {
             marginBelow="LESS"
           />
           <TagField
-            tags={[{ text: "ACTIVE", backgroundColor: "#FFF7E5", textColor: "#222" }]}
+            tags={[{ text: "ACTIVE", backgroundColor: "POSITIVE" }]}
             size="SMALL"
           />
         </CardLayout>
@@ -69,7 +70,6 @@ export const ApplicationStatus = () => {
           shape="SEMI_ROUNDED"
           padding="STANDARD"
           showBorder={true}
-          borderColor="#EDEEFA"
         >
           <HeadingField
             text="Department"
@@ -95,7 +95,6 @@ export const ApplicationStatus = () => {
           shape="SEMI_ROUNDED"
           padding="STANDARD"
           showBorder={true}
-          borderColor="#EDEEFA"
         >
           <HeadingField
             text="Assigned To"
@@ -174,9 +173,9 @@ export const ApplicationStatus = () => {
           label="Related Categories"
           labelPosition="ABOVE"
           tags={[
-            { text: "Infrastructure", backgroundColor: "#EDEEFA", textColor: "#2322F0" },
-            { text: "Security", backgroundColor: "#FED7DE", textColor: "#9F0019" },
-            { text: "Cost Optimization", backgroundColor: "#E8F7F0", textColor: "#117C00" }
+            { text: "Infrastructure", backgroundColor: "ACCENT" },
+            { text: "Security", backgroundColor: "NEGATIVE" },
+            { text: "Cost Optimization", backgroundColor: "POSITIVE" }
           ]}
           size="SMALL"
           marginBelow="MORE"
@@ -208,9 +207,7 @@ export const ApplicationStatus = () => {
 
         <div className="space-y-4">
           <div className="flex items-start gap-3 pb-4 border-b border-gray-200">
-            <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-sm font-bold">✓</span>
-            </div>
+            <StampField backgroundColor="POSITIVE" icon="check" contentColor="STANDARD" size='SMALL' />
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
@@ -231,9 +228,7 @@ export const ApplicationStatus = () => {
           </div>
 
           <div className="flex items-start gap-3 pb-4 border-b border-gray-200">
-            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-sm font-bold">2</span>
-            </div>
+            <StampField backgroundColor="ACCENT" text="2" contentColor="STANDARD" size='SMALL' />
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
@@ -248,21 +243,19 @@ export const ApplicationStatus = () => {
               />
             </div>
             <TagField
-              tags={[{ text: "In Progress", backgroundColor: "#FFF7E5", textColor: "#222" }]}
+              tags={[{ text: "In Progress", backgroundColor: "ACCENT" }]}
               size="SMALL"
             />
           </div>
 
           <div className="flex items-start gap-3 pb-4">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-              <span className="text-gray-700 text-sm font-bold">3</span>
-            </div>
+            <StampField backgroundColor="SECONDARY" text="3" contentColor="STANDARD" size='SMALL' />
             <div className="flex-1">
               <RichTextDisplayField
                 value={[
                   <TextItem key="1" text="Final Approval" style="STRONG" />
                 ]}
-                marginBelow="EVEN_LESS"
+                marginBelow="NONE"
               />
               <RichTextDisplayField
                 value={[
@@ -287,6 +280,7 @@ export const ApplicationStatus = () => {
         align="START"
       />
     </div>
+    </div> 
   )
 }
 export default ApplicationStatus

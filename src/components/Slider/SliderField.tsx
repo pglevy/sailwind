@@ -194,7 +194,7 @@ export const SliderField: React.FC<SliderFieldProps> = ({
         orientation={orientation.toLowerCase() as "horizontal" | "vertical"}
         className={[
           'relative flex items-center select-none touch-none',
-          orientation === "HORIZONTAL" ? 'w-full' : sizeMap[size].height,
+          orientation === "HORIZONTAL" ? 'w-full' : `${sizeMap[size].height} ${sizeMap[size].thumb.split(' ')[1]}`,
           disabled && 'opacity-50 cursor-not-allowed'
         ].filter(Boolean).join(' ')}
         aria-label={accessibilityText || label}
@@ -204,8 +204,10 @@ export const SliderField: React.FC<SliderFieldProps> = ({
       >
         <Slider.Track
           className={[
-            'relative grow rounded-full bg-gray-200',
-            sizeMap[size].track
+            'relative rounded-full bg-gray-300',
+            orientation === "VERTICAL" ? 'mx-auto' : 'grow',
+            sizeMap[size].track,
+            orientation === "VERTICAL" ? 'h-full' : 'w-full'
           ].join(' ')}
         >
           <Slider.Range
@@ -224,7 +226,8 @@ export const SliderField: React.FC<SliderFieldProps> = ({
               'block rounded-full transition-colors',
               sizeMap[size].thumb,
               colorClasses.thumb,
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+              orientation === "VERTICAL" ? '' : ''
             ].join(' ')}
             style={color.startsWith('#') ? { backgroundColor: color } : undefined}
             aria-label={

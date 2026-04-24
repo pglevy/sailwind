@@ -197,12 +197,12 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
           'w-full',
           'flex items-center justify-between',
           'px-3 py-2',
-          'border border-gray-200 rounded-sm',
+          'border border-gray-300 rounded-sm',
           'bg-white',
           'text-base text-left',
           disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'cursor-pointer hover:border-gray-500',
           showValidations && 'border-red-700',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+          'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
         ].filter(Boolean).join(' ')}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -233,10 +233,10 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-sm shadow-lg max-h-60 overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-sm shadow-lg max-h-60 overflow-hidden">
           {/* Search input */}
           {shouldShowSearch && (
-            <div className="p-2 border-b border-gray-200">
+            <div className="p-2 border-b border-gray-300">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <input
@@ -245,7 +245,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search..."
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-200 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
@@ -280,7 +280,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
                         type="checkbox"
                         checked={isSelected}
                         readOnly
-                        className="mr-2 h-4 w-4 rounded border-gray-200 accent-blue-500"
+                        className="mr-2 h-4 w-4 rounded border-gray-300 accent-blue-500"
                       />
                     )}
                     {choiceLabel}

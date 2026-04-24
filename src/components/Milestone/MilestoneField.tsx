@@ -87,11 +87,11 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
 
   // Map semantic colors to Tailwind classes
   const getColorClasses = (colorValue: Color) => {
-    const semanticColorMap: Record<string, { bg: string; text: string; border: string }> = {
-      ACCENT: { bg: 'bg-blue-500', text: 'text-blue-500', border: 'border-blue-500' },
-      POSITIVE: { bg: 'bg-green-700', text: 'text-green-700', border: 'border-green-700' },
-      NEGATIVE: { bg: 'bg-red-700', text: 'text-red-700', border: 'border-red-700' },
-      WARN: { bg: 'bg-yellow-500', text: 'text-yellow-900', border: 'border-yellow-500' }
+    const semanticColorMap: Record<string, { bg: string; text: string; border: string; chevronL: string; chevronT: string; }> = {
+      ACCENT: { bg: 'bg-blue-50', text: 'text-blue-500', border: 'border-blue-200', chevronL: 'border-l-blue-50', chevronT: 'border-t-blue-50' },
+      POSITIVE: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', chevronL: 'border-l-green-50', chevronT: 'border-t-green-50' },
+      NEGATIVE: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', chevronL: 'border-l-red-50', chevronT: 'border-t-red-50' },
+      WARN: { bg: 'bg-yellow-50', text: 'text-yellow-800', border: 'border-yellow-300', chevronL: 'border-l-yellow-50', chevronT: 'border-t-yellow-50' }
     }
 
     if (semanticColorMap[colorValue]) {
@@ -106,6 +106,8 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
       bg: '',
       text: '',
       border: '',
+      chevronL: '',
+      chevronT: '',
       style: { backgroundColor: colorValue, borderColor: colorValue, color: colorValue }
     }
   }
@@ -176,7 +178,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
             <div
               className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-semibold relative z-10 ${
                 state === 'completed' || state === 'current'
-                  ? `${colorClasses.bg} ${colorClasses.border} text-white`
+                  ? `${colorClasses.bg} ${colorClasses.border} text-gray-900`
                   : 'bg-gray-200 border-gray-300 text-gray-600'
               }`}
               style={colorClasses.style ? {
@@ -194,7 +196,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
               <div
                 className={`px-4 py-2 text-base font-medium relative ${
                   state === 'completed' || state === 'current'
-                    ? `${colorClasses.bg} text-white`
+                    ? `${colorClasses.bg} text-gray-900`
                     : 'bg-gray-200 text-gray-600'
                 }`}
                 style={colorClasses.style && (state === 'completed' || state === 'current') ? {
@@ -209,7 +211,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
                 <div
                   className={`w-0 h-0 border-l-[16px] border-y-[20px] border-y-transparent relative z-10 ${
                     state === 'completed' || state === 'current'
-                      ? colorClasses.border
+                      ? colorClasses.chevronL
                       : 'border-l-gray-200'
                   }`}
                   style={colorClasses.style && (state === 'completed' || state === 'current') ? {
@@ -222,7 +224,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
                 <div
                   className={`absolute -bottom-2 left-4 w-0 h-0 border-t-[16px] border-x-[20px] border-x-transparent ${
                     state === 'completed' || state === 'current'
-                      ? colorClasses.border
+                      ? colorClasses.chevronT
                       : 'border-t-gray-200'
                   }`}
                   style={colorClasses.style && (state === 'completed' || state === 'current') ? {

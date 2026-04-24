@@ -88,18 +88,18 @@ export const ImageField: React.FC<ImageFieldProps> = ({
 
   // Map SAIL size values to CSS dimensions for standard (rectangular) images
   const sizeMap: Record<ImageSize, string> = {
-    ICON: 'w-5 h-5', // 20x20px
-    ICON_PLUS: 'w-10 h-10', // 40x40px
-    TINY: 'w-16 h-32', // ~60x120px
-    EXTRA_SMALL: 'w-20 h-40', // ~80x160px
-    SMALL: 'w-24 h-48', // ~100x200px
-    SMALL_PLUS: 'w-36 h-72', // ~150x300px
-    MEDIUM: 'w-48 h-96', // ~200x400px
-    MEDIUM_PLUS: 'w-72 h-96', // ~300x500px (limited by h-96)
-    LARGE: 'w-96 h-96', // ~400x600px (limited by available classes)
-    LARGE_PLUS: 'w-96 h-96', // ~600x800px (limited by available classes)
-    EXTRA_LARGE: 'w-96 h-96', // ~800x1000px (limited by available classes)
-    GALLERY: 'w-60 h-20', // 240x80px
+    ICON: 'w-5 h-5', // 20x20px — square for icons
+    ICON_PLUS: 'w-10 h-10', // 40x40px — square for icons
+    TINY: 'w-16 h-auto', // ~64px wide
+    EXTRA_SMALL: 'w-20 h-auto', // ~80px wide
+    SMALL: 'w-24 h-auto', // ~96px wide
+    SMALL_PLUS: 'w-36 h-auto', // ~144px wide
+    MEDIUM: 'w-48 h-auto', // ~192px wide
+    MEDIUM_PLUS: 'w-72 h-auto', // ~288px wide
+    LARGE: 'w-96 h-auto', // ~384px wide
+    LARGE_PLUS: 'w-[32rem] h-auto', // ~512px wide
+    EXTRA_LARGE: 'w-[40rem] h-auto', // ~640px wide
+    GALLERY: 'w-60 h-40', // 240x160px — fixed for gallery grid
     FIT: 'max-w-full h-auto' // Natural dimensions
   }
 
@@ -170,7 +170,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
             <span className="font-medium text-gray-700">{user.initials}</span>
           ) : (
             // Default user icon SVG
-            <svg className="w-3/5 h-3/5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-3/5 h-3/5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
             </svg>
           )
@@ -178,7 +178,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           return (
             <Avatar.Root
               key={index}
-              className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-gray-100 ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-gray-200 ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
               title={caption}
               onClick={link}
             >
@@ -188,7 +188,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
                 alt={imageAlt}
               />
               <Avatar.Fallback
-                className="w-full h-full flex items-center justify-center bg-gray-100"
+                className="w-full h-full flex items-center justify-center bg-gray-200"
                 delayMs={600}
               >
                 {fallbackContent}

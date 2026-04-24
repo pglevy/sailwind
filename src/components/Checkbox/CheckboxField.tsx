@@ -163,8 +163,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
           'items-center',
           checkboxLabelGapMap[spacing],
           effectiveChoicePosition === "END" && 'flex-row-reverse',
-          choiceStyle === "CARDS" && 'border border-gray-200 rounded-sm p-4 hover:border-blue-500 transition-colors cursor-pointer',
-          choiceStyle === "CARDS" && isChecked && 'border-blue-500 bg-blue-50',
+          choiceStyle === "CARDS" && `border rounded-sm p-4 hover:border-blue-500 transition-colors cursor-pointer ${isChecked ? 'border-blue-500' : 'border-gray-300'}`,
           disabled && 'opacity-50 cursor-not-allowed'
         ].filter(Boolean).join(' ')
 
@@ -190,8 +189,14 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
               disabled={disabled}
               onChange={(e) => handleChange(choiceValue, e.target.checked)}
               className={[
-                'h-4 w-4 rounded border-gray-200 accent-blue-500 focus:ring-blue-500',
-                disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+                'appearance-none h-4 w-4 shrink-0 rounded-xs border',
+                isChecked
+                  ? 'border-blue-500 bg-blue-500 text-white'
+                  : 'border-gray-400 bg-white',
+                'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                'transition-colors duration-150 ease-in-out',
+                'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
+                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
               ].filter(Boolean).join(' ')}
               aria-invalid={showValidations}
               aria-errormessage={showValidations ? `${inputId}-error` : undefined}

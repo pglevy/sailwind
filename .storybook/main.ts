@@ -11,6 +11,9 @@ const config: StorybookConfig = {
     '@storybook/addon-vitest'
   ],
   framework: '@storybook/react-vite',
+  core: {
+    disableTelemetry: true, // 👈 Disables telemetry
+  },
 }
 
 export default config

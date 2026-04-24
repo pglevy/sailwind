@@ -90,7 +90,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     ACCENT: 'bg-blue-500',
     POSITIVE: 'bg-green-700',
     NEGATIVE: 'bg-red-700',
-    WARN: 'bg-yellow-500'
+    WARN: 'bg-yellow-600'
   }
 
   // Determine progress bar color
@@ -171,7 +171,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         {/* Fallback for very low percentages */}
         {showPercentage && style === "THICK" && clampedPercentage <= 15 && (
           <div className="absolute inset-0 flex items-center justify-start pl-3">
-            <span className={`${styleMap[style].textSize} font-semibold text-black`}>
+            <span className={`${styleMap[style].textSize} font-semibold text-gray-900`}>
               {displayPercentage}%
             </span>
           </div>
@@ -187,7 +187,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             )}
           </div>
           {showPercentage && style === "THIN" && (
-            <span className={`${styleMap[style].textSize} font-semibold text-black ml-4`}>
+            <span className={`${styleMap[style].textSize} font-semibold text-gray-900 ml-4`}>
               {displayPercentage}%
             </span>
           )}

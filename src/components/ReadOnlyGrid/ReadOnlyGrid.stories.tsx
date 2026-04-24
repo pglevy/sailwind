@@ -217,8 +217,8 @@ export const ColumnWidthsAndAlignment: Story = {
   ),
 }
 
-/** 11. FunctionAccessor — Using function value accessors for computed columns */
-export const FunctionAccessor: Story = {
+/** 11. ComputedColumns — Using function value accessors for computed columns */
+export const ComputedColumns: Story = {
   args: {
     data: employees.slice(0, 6),
   },

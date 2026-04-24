@@ -1,168 +1,244 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
-import { CardLayout } from './CardLayout'
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { CardLayout } from "./CardLayout";
 
 const meta = {
-  title: 'Components/Card',
+  title: "Components/Card",
   component: CardLayout,
-  tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  tags: ["autodocs"],
+  parameters: { layout: "centered" },
   argTypes: {
-    shape: { control: 'select', options: ['SQUARED', 'SEMI_ROUNDED', 'ROUNDED'] },
-    padding: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
-    style: { control: 'select', options: ['NONE', 'ACCENT', 'SUCCESS', 'WARN', 'ERROR', 'INFO', 'CHARCOAL_SCHEME'] },
-    decorativeBarPosition: { control: 'select', options: ['TOP', 'START'] },
-    decorativeBarColor: { control: 'select', options: ['ACCENT', 'SUCCESS', 'WARN', 'ERROR', 'INFO'] },
-    marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
-    marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
+    shape: {
+      control: "select",
+      options: ["SQUARED", "SEMI_ROUNDED", "ROUNDED"],
+    },
+    padding: {
+      control: "select",
+      options: ["NONE", "EVEN_LESS", "LESS", "STANDARD", "MORE", "EVEN_MORE"],
+    },
+    style: {
+      control: "select",
+      options: [
+        "NONE",
+        "ACCENT",
+        "SUCCESS",
+        "WARN",
+        "ERROR",
+        "INFO",
+        "CHARCOAL_SCHEME",
+      ],
+    },
+    decorativeBarPosition: { control: "select", options: ["TOP", "START"] },
+    decorativeBarColor: {
+      control: "select",
+      options: ["ACCENT", "SUCCESS", "WARN", "ERROR", "INFO"],
+    },
+    marginAbove: {
+      control: "select",
+      options: ["NONE", "EVEN_LESS", "LESS", "STANDARD", "MORE", "EVEN_MORE"],
+    },
+    marginBelow: {
+      control: "select",
+      options: ["NONE", "EVEN_LESS", "LESS", "STANDARD", "MORE", "EVEN_MORE"],
+    },
   },
-} satisfies Meta<typeof CardLayout>
+} satisfies Meta<typeof CardLayout>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SEMI_ROUNDED",
+    padding: "STANDARD",
     showBorder: true,
-    borderColor: '#EDEEFA',
     children: (
       <div>
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Default Card</h4>
-        <p className="text-sm text-gray-700">A standard card with border and semi-rounded corners.</p>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Default Card
+        </h4>
+        <p className="text-sm text-gray-700">
+          A standard card with border and semi-rounded corners.
+        </p>
       </div>
     ),
   },
-}
+};
 
 export const DecorativeBarTop: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SQUARED",
+    padding: "STANDARD",
     showBorder: true,
-    borderColor: '#EDEEFA',
-    decorativeBarPosition: 'TOP',
-    decorativeBarColor: 'ACCENT',
+    decorativeBarPosition: "TOP",
+    decorativeBarColor: "ACCENT",
+    borderColor: "#9191F8",
     children: (
       <div>
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Reference Information</h4>
-        <p className="text-sm text-gray-700">This card uses a top decorative bar to indicate reference content.</p>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Reference Information
+        </h4>
+        <p className="text-sm text-gray-700">
+          This card uses a top decorative bar to indicate reference content.
+        </p>
       </div>
     ),
   },
-}
+};
 
 export const DecorativeBarStart: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SQUARED",
+    padding: "STANDARD",
     showBorder: true,
-    borderColor: '#EDEEFA',
-    decorativeBarPosition: 'START',
-    decorativeBarColor: 'WARN',
+    decorativeBarPosition: "START",
+    decorativeBarColor: "WARN",
+    borderColor: "#FFE47F",
     children: (
       <div>
         <h4 className="text-base font-semibold text-gray-900 mb-1">Warning</h4>
-        <p className="text-sm text-gray-700">This card uses a start decorative bar.</p>
+        <p className="text-sm text-gray-700">
+          This card uses a start decorative bar.
+        </p>
       </div>
     ),
   },
-}
+};
 
 export const DecorativeBarColors: Story = {
   args: { children: null },
   render: () => (
     <div className="flex flex-col gap-4 w-80">
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA" decorativeBarPosition="TOP" decorativeBarColor="ACCENT">
+      <CardLayout
+        shape="SQUARED"
+        padding="STANDARD"
+        showBorder={true}
+        decorativeBarPosition="TOP"
+        decorativeBarColor="ACCENT"
+        borderColor="#9191F8"
+      >
         <p className="text-sm text-gray-700">Accent bar</p>
       </CardLayout>
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA" decorativeBarPosition="TOP" decorativeBarColor="SUCCESS">
+      <CardLayout
+        shape="SQUARED"
+        padding="STANDARD"
+        showBorder={true}
+        decorativeBarPosition="TOP"
+        decorativeBarColor="SUCCESS"
+        borderColor="#A6D7A8"
+      >
         <p className="text-sm text-gray-700">Success bar</p>
       </CardLayout>
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA" decorativeBarPosition="TOP" decorativeBarColor="WARN">
+      <CardLayout
+        shape="SQUARED"
+        padding="STANDARD"
+        showBorder={true}
+        decorativeBarPosition="TOP"
+        decorativeBarColor="WARN"
+        borderColor="#FFE47F"
+      >
         <p className="text-sm text-gray-700">Warn bar</p>
       </CardLayout>
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA" decorativeBarPosition="TOP" decorativeBarColor="ERROR">
+      <CardLayout
+        shape="SQUARED"
+        padding="STANDARD"
+        showBorder={true}
+        decorativeBarPosition="TOP"
+        decorativeBarColor="ERROR"
+        borderColor="#EF809B"
+      >
         <p className="text-sm text-gray-700">Error bar</p>
       </CardLayout>
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA" decorativeBarPosition="TOP" decorativeBarColor="INFO">
+      <CardLayout
+        shape="SQUARED"
+        padding="STANDARD"
+        showBorder={true}
+        decorativeBarPosition="TOP"
+        decorativeBarColor="INFO"
+        borderColor="#81D4FA"
+      >
         <p className="text-sm text-gray-700">Info bar</p>
       </CardLayout>
     </div>
   ),
-}
+};
 
 export const Shapes: Story = {
   args: { children: null },
   render: () => (
     <div className="grid grid-cols-3 gap-4">
-      <CardLayout shape="SQUARED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA">
+      <CardLayout shape="SQUARED" padding="STANDARD" showBorder={true}>
         <h4 className="text-base font-semibold text-gray-900 mb-1">Squared</h4>
         <p className="text-xs text-gray-700">0 radius</p>
       </CardLayout>
-      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA">
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Semi Rounded</h4>
+      <CardLayout shape="SEMI_ROUNDED" padding="STANDARD" showBorder={true}>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Semi Rounded
+        </h4>
         <p className="text-xs text-gray-700">4px radius</p>
       </CardLayout>
-      <CardLayout shape="ROUNDED" padding="STANDARD" showBorder={true} borderColor="#EDEEFA">
+      <CardLayout shape="ROUNDED" padding="STANDARD" showBorder={true}>
         <h4 className="text-base font-semibold text-gray-900 mb-1">Rounded</h4>
         <p className="text-xs text-gray-700">8px radius</p>
       </CardLayout>
     </div>
   ),
-}
+};
 
 export const BorderOnly: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SEMI_ROUNDED",
+    padding: "STANDARD",
     showBorder: true,
     showShadow: false,
-    borderColor: '#EDEEFA',
     children: (
       <div>
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Border Only</h4>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Border Only
+        </h4>
         <p className="text-xs text-gray-700">No shadow</p>
       </div>
     ),
   },
-}
+};
 
 export const ShadowOnly: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SEMI_ROUNDED",
+    padding: "STANDARD",
     showBorder: false,
     showShadow: true,
     children: (
       <div>
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Shadow Only</h4>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Shadow Only
+        </h4>
         <p className="text-xs text-gray-700">No border</p>
       </div>
     ),
   },
-}
+};
 
 export const BorderAndShadow: Story = {
   args: {
-    shape: 'SEMI_ROUNDED',
-    padding: 'STANDARD',
+    shape: "SEMI_ROUNDED",
+    padding: "STANDARD",
     showBorder: true,
     showShadow: true,
-    borderColor: '#EDEEFA',
     children: (
       <div>
-        <h4 className="text-base font-semibold text-gray-900 mb-1">Border and Shadow</h4>
+        <h4 className="text-base font-semibold text-gray-900 mb-1">
+          Border and Shadow
+        </h4>
         <p className="text-xs text-gray-700">Both border and shadow</p>
       </div>
     ),
   },
-}
+};
 
 export const CardStyles: Story = {
   args: { children: null },
   render: () => (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-4 gap-4">
       <CardLayout style="ACCENT" padding="STANDARD" showBorder={false}>
         <p className="text-sm font-semibold text-gray-900">Accent</p>
       </CardLayout>
@@ -181,6 +257,12 @@ export const CardStyles: Story = {
       <CardLayout style="CHARCOAL_SCHEME" padding="STANDARD" showBorder={false}>
         <p className="text-sm font-semibold text-white">Charcoal</p>
       </CardLayout>
+      <CardLayout style="NAVY_SCHEME" padding="STANDARD" showBorder={false}>
+        <p className="text-sm font-semibold text-white">Navy</p>
+      </CardLayout>
+      <CardLayout style="PLUM_SCHEME" padding="STANDARD" showBorder={false}>
+        <p className="text-sm font-semibold text-white">Plum</p>
+      </CardLayout>
     </div>
   ),
-}
+};

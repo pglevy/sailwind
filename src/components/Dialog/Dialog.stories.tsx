@@ -19,10 +19,16 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+// Shared button classes matching ButtonWidget styles
+const btnBase = 'inline-flex items-center justify-center font-medium rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer'
+const btnSolid = `${btnBase} px-4 py-3 text-base leading-none border border-transparent`
+const btnOutline = `${btnBase} px-4 py-3 text-base leading-none border`
+const btnSmOutline = `${btnBase} px-3 py-2 text-sm leading-none border`
+
 export const Default: Story = {
   args: {
     trigger: (
-      <button className="px-4 py-2.5 text-base bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button className={`${btnSolid} bg-blue-500 text-white hover:bg-blue-700`}>
         Open Basic Dialog
       </button>
     ),
@@ -39,16 +45,10 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-
-    // Open the dialog
     await userEvent.click(canvas.getByRole('button', { name: /open basic dialog/i }))
-
-    // Dialog content renders in a portal — query from document.body
     const body = within(document.body)
     await expect(body.getByText('Welcome to Sailwind')).toBeVisible()
     await expect(body.getByText(/basic dialog example/i)).toBeVisible()
-
-    // Close via the X button
     await userEvent.click(body.getByRole('button', { name: /close dialog/i }))
     await expect(body.queryByText('Welcome to Sailwind')).not.toBeInTheDocument()
   },
@@ -69,7 +69,7 @@ export const FormDialog: Story = {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <button className="px-4 py-2.5 text-base border-2 border-blue-500 text-blue-500 bg-white rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button className={`${btnOutline} border-blue-500 text-blue-500 bg-white hover:bg-blue-100`}>
             Edit Profile
           </button>
         }
@@ -111,17 +111,11 @@ export const FormDialog: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-
-    // Open the dialog
     await userEvent.click(canvas.getByRole('button', { name: /edit profile/i }))
-
-    // Dialog content renders in a portal — query from document.body
     const body = within(document.body)
     await expect(body.getByRole('dialog')).toBeVisible()
     await expect(body.getByLabelText(/full name/i)).toBeVisible()
     await expect(body.getByLabelText(/email address/i)).toBeVisible()
-
-    // Close via Cancel
     await userEvent.click(body.getByRole('button', { name: /cancel/i }))
     await expect(body.queryByRole('dialog')).not.toBeInTheDocument()
   },
@@ -140,7 +134,7 @@ export const ConfirmationDialog: Story = {
         open={open}
         onOpenChange={setOpen}
         trigger={
-          <button className="px-4 py-2.5 text-base bg-red-700 text-white rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+          <button className={`${btnSolid} bg-red-700 text-white hover:bg-red-900`}>
             Delete Item
           </button>
         }
@@ -174,16 +168,10 @@ export const ConfirmationDialog: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-
-    // Open the dialog
     await userEvent.click(canvas.getByRole('button', { name: /delete item/i }))
-
-    // Dialog content renders in a portal — query from document.body
     const body = within(document.body)
     await expect(body.getByText('Confirm Deletion')).toBeVisible()
     await expect(body.getByText(/cannot be undone/i)).toBeVisible()
-
-    // Confirm deletion closes the dialog
     await userEvent.click(body.getByRole('button', { name: /^delete$/i }))
     await expect(body.queryByText('Confirm Deletion')).not.toBeInTheDocument()
   },
@@ -192,7 +180,7 @@ export const ConfirmationDialog: Story = {
 export const WideDialog: Story = {
   args: {
     trigger: (
-      <button className="px-3 py-1.5 text-sm border-2 border-gray-700 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <button className={`${btnSmOutline} border-gray-700 text-gray-700 bg-white hover:bg-gray-100`}>
         Wide Dialog
       </button>
     ),
@@ -211,7 +199,7 @@ export const WideDialog: Story = {
 export const TallDialog: Story = {
   args: {
     trigger: (
-      <button className="px-3 py-1.5 text-sm border-2 border-gray-700 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <button className={`${btnSmOutline} border-gray-700 text-gray-700 bg-white hover:bg-gray-100`}>
         Tall Dialog
       </button>
     ),
@@ -234,7 +222,7 @@ export const TallDialog: Story = {
 export const FullWidthFit: Story = {
   args: {
     trigger: (
-      <button className="px-3 py-1.5 text-sm border-2 border-gray-700 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500">
+      <button className={`${btnSmOutline} border-gray-700 text-gray-700 bg-white hover:bg-gray-100`}>
         Full Width (FIT)
       </button>
     ),

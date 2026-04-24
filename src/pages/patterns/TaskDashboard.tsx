@@ -1,9 +1,11 @@
-import { CardLayout } from '../../components/Card/CardLayout'
-import { HeadingField } from '../../components/Heading/HeadingField'
-import { TagField } from '../../components/Tag/TagField'
-import { ButtonArrayLayout } from '../../components/Button/ButtonArrayLayout'
-import { ProgressBar } from '../../components/ProgressBar/ProgressBar'
-import { MessageBanner } from '../../components/MessageBanner/MessageBanner'
+import { CardLayout } from "../../components/Card/CardLayout";
+import { HeadingField } from "../../components/Heading/HeadingField";
+import { TagField } from "../../components/Tag/TagField";
+import { ButtonArrayLayout } from "../../components/Button/ButtonArrayLayout";
+import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
+import { MessageBanner } from "../../components/MessageBanner/MessageBanner";
+import { RichTextDisplayField } from "../../components/RichText/RichTextDisplayField";
+import { TextItem } from "../../components/RichText/TextItem";
 
 /**
  * Task Management Dashboard
@@ -33,8 +35,6 @@ export const TaskDashboard = () => {
         shape="SEMI_ROUNDED"
         padding="STANDARD"
         showBorder={true}
-        decorativeBarPosition="START"
-        decorativeBarColor="NEGATIVE"
         marginBelow="STANDARD"
       >
         <div className="flex justify-between items-start mb-3">
@@ -50,10 +50,16 @@ export const TaskDashboard = () => {
           />
         </div>
 
-        <p className="text-gray-700 text-base mb-4">
-          Complete financial analysis and provide recommendations for Q3 budget allocation.
-          Requires approval from finance team.
-        </p>
+        <RichTextDisplayField
+          labelPosition="COLLAPSED"
+          value={[
+            <TextItem
+              style="PLAIN"
+              text="Complete financial analysis and provide recommendations for Q3 budget allocation.
+          Requires approval from finance team."
+            />,
+          ]}
+        />
 
         <ProgressBar
           percentage={65}
@@ -65,8 +71,8 @@ export const TaskDashboard = () => {
 
         <TagField
           tags={[
-            { text: "Finance", backgroundColor: "#EDEEFA", textColor: "#2322F0" },
-            { text: "Due: Today", backgroundColor: "#FED7DE", textColor: "#9F0019" }
+            { text: "Finance" },
+            { text: "Due: Today", backgroundColor: "NEGATIVE" },
           ]}
           size="SMALL"
           marginBelow="STANDARD"
@@ -74,10 +80,21 @@ export const TaskDashboard = () => {
 
         <ButtonArrayLayout
           buttons={[
-            { label: "Continue", style: "SOLID", color: "ACCENT", size: "STANDARD" },
-            { label: "Reassign", style: "OUTLINE", color: "SECONDARY", size: "STANDARD" }
+            {
+              label: "Continue",
+              style: "SOLID",
+              color: "ACCENT",
+              size: "STANDARD",
+            },
+            {
+              label: "Reassign",
+              style: "OUTLINE",
+              color: "SECONDARY",
+              size: "STANDARD",
+            },
           ]}
           align="START"
+          marginBelow="NONE"
         />
       </CardLayout>
 
@@ -86,8 +103,6 @@ export const TaskDashboard = () => {
         shape="SEMI_ROUNDED"
         padding="STANDARD"
         showBorder={true}
-        decorativeBarPosition="START"
-        decorativeBarColor="WARN"
         marginBelow="STANDARD"
       >
         <div className="flex justify-between items-start mb-3">
@@ -98,15 +113,21 @@ export const TaskDashboard = () => {
             marginBelow="LESS"
           />
           <TagField
-            tags={[{ text: "IN PROGRESS", backgroundColor: "#FFF7E5", textColor: "#222" }]}
+            tags={[{ text: "IN PROGRESS", backgroundColor: "STANDARD" }]}
             size="SMALL"
           />
         </div>
 
-        <p className="text-gray-700 text-base mb-4">
-          Revise sections 4-7 to reflect new remote work policies.
-          Coordinate with legal and HR teams for final approval.
-        </p>
+        <RichTextDisplayField
+          labelPosition="COLLAPSED"
+          value={[
+            <TextItem
+              style="PLAIN"
+              text="Revise sections 4-7 to reflect new remote work policies. Coordinate
+          with legal and HR teams for final approval."
+            />,
+          ]}
+        />
 
         <ProgressBar
           percentage={40}
@@ -118,8 +139,8 @@ export const TaskDashboard = () => {
 
         <TagField
           tags={[
-            { text: "HR", backgroundColor: "#E8F7F0", textColor: "#117C00" },
-            { text: "Due: Friday", backgroundColor: "SECONDARY" }
+            { text: "HR" },
+            { text: "Due: Friday", backgroundColor: "NEGATIVE" },
           ]}
           size="SMALL"
           marginBelow="STANDARD"
@@ -127,10 +148,21 @@ export const TaskDashboard = () => {
 
         <ButtonArrayLayout
           buttons={[
-            { label: "Continue", style: "SOLID", color: "ACCENT", size: "STANDARD" },
-            { label: "View Details", style: "GHOST", color: "SECONDARY", size: "STANDARD" }
+            {
+              label: "Continue",
+              style: "SOLID",
+              color: "ACCENT",
+              size: "STANDARD",
+            },
+            {
+              label: "View Details",
+              style: "GHOST",
+              color: "SECONDARY",
+              size: "STANDARD",
+            },
           ]}
           align="START"
+          marginBelow="NONE"
         />
       </CardLayout>
 
@@ -139,8 +171,6 @@ export const TaskDashboard = () => {
         shape="SEMI_ROUNDED"
         padding="STANDARD"
         showBorder={true}
-        decorativeBarPosition="START"
-        decorativeBarColor="POSITIVE"
         marginBelow="STANDARD"
       >
         <div className="flex justify-between items-start mb-3">
@@ -156,9 +186,16 @@ export const TaskDashboard = () => {
           />
         </div>
 
-        <p className="text-gray-700 text-base mb-4">
-          Set up accounts, schedule training sessions, and assign mentors for 3 new hires.
-        </p>
+        <RichTextDisplayField
+          labelPosition="COLLAPSED"
+          value={[
+            <TextItem
+              style="PLAIN"
+              text="Set up accounts, schedule training sessions, and assign mentors for 3
+          new hires."
+            />,
+          ]}
+        />
 
         <ProgressBar
           percentage={100}
@@ -170,8 +207,11 @@ export const TaskDashboard = () => {
 
         <TagField
           tags={[
-            { text: "Operations", backgroundColor: "#FAF0FA", textColor: "#7D007D" },
-            { text: "Completed: Yesterday", backgroundColor: "SECONDARY" }
+            {
+              text: "Operations",
+              backgroundColor: "SECONDARY",
+            },
+            { text: "Completed: Yesterday", backgroundColor: "SECONDARY" },
           ]}
           size="SMALL"
           marginBelow="STANDARD"
@@ -179,13 +219,19 @@ export const TaskDashboard = () => {
 
         <ButtonArrayLayout
           buttons={[
-            { label: "View Summary", style: "OUTLINE", color: "SECONDARY", size: "STANDARD" }
+            {
+              label: "View Summary",
+              style: "OUTLINE",
+              color: "SECONDARY",
+              size: "STANDARD",
+            },
           ]}
           align="START"
+          marginBelow="NONE"
         />
       </CardLayout>
     </div>
-  )
-}
+  );
+};
 
-export default TaskDashboard
+export default TaskDashboard;

@@ -93,8 +93,8 @@ function generateColorCSS(colors: TokenFile['color']): string {
     lines.push('');
   }
 
-  // Black alias
-  lines.push(`  --color-black: var(--color-gray-900); /* Alias of gray-900 */`);
+  // Black — sourced from studio grey-1000
+  lines.push(`  --color-black: #171717;`);
 
   return lines.join('\n');
 }

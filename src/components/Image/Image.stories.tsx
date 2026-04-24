@@ -16,20 +16,20 @@ export const Default: Story = {
     label: 'Project Screenshots',
     instructions: 'Sample images from the project',
     images: [
-      { document: 'vite.svg', altText: 'Vite logo', caption: 'Vite build tool logo' },
-      { document: 'vite.svg', altText: 'Another Vite logo', caption: 'Second image example' },
+      { document: 'images/case-management-studio.webp', altText: 'Case management studio', caption: 'Case Management Studio' },
+      { document: 'images/process-modeler.webp', altText: 'Process modeler', caption: 'Process Modeler' },
     ],
-    size: 'MEDIUM',
+    size: 'LARGE_PLUS',
   },
 }
 
 export const SmallIcons: Story = {
   args: {
-    label: 'Status Icons',
+    label: 'Design Object Icons',
     images: [
-      { document: 'vite.svg', altText: 'Status icon 1' },
-      { document: 'vite.svg', altText: 'Status icon 2' },
-      { document: 'vite.svg', altText: 'Status icon 3' },
+      { document: 'images/icon-interface.svg', altText: 'Interface icon' },
+      { document: 'images/icon-expression-rule.svg', altText: 'Expression rule icon' },
+      { document: 'images/icon-record-type.svg', altText: 'Record type icon' },
     ],
     size: 'ICON_PLUS',
     align: 'START',
@@ -40,9 +40,9 @@ export const AvatarStyle: Story = {
   args: {
     label: 'Team Members',
     images: [
-      { document: 'vite.svg', altText: 'Team member 1', caption: 'John Doe' },
-      { document: 'vite.svg', altText: 'Team member 2', caption: 'Jane Smith' },
-      { document: 'vite.svg', altText: 'Team member 3', caption: 'Bob Johnson' },
+      { document: 'images/uifaces-human-avatar.jpg', altText: 'Team member 1', caption: 'John Doe' },
+      { document: 'images/uifaces-popular-avatar1.jpg', altText: 'Team member 2', caption: 'Jane Smith' },
+      { document: 'images/uifaces-popular-avatar2.jpg', altText: 'Team member 3', caption: 'Bob Johnson' },
     ],
     size: 'SMALL_PLUS',
     style: 'AVATAR',
@@ -55,10 +55,10 @@ export const GalleryLayout: Story = {
     label: 'Image Gallery',
     instructions: 'Horizontal gallery layout',
     images: [
-      { document: 'vite.svg', altText: 'Gallery image 1' },
-      { document: 'vite.svg', altText: 'Gallery image 2' },
-      { document: 'vite.svg', altText: 'Gallery image 3' },
-      { document: 'vite.svg', altText: 'Gallery image 4' },
+      { document: 'images/case-management-studio.webp', altText: 'Case management' },
+      { document: 'images/data-fabric.webp', altText: 'Data fabric' },
+      { document: 'images/process-modeler.webp', altText: 'Process modeler' },
+      { document: 'images/university_student_dashboard.png', altText: 'Student dashboard' },
     ],
     size: 'GALLERY',
     align: 'CENTER',
@@ -67,9 +67,9 @@ export const GalleryLayout: Story = {
 
 export const FitSize: Story = {
   args: {
-    label: 'Hero Images',
+    label: 'Hero Image',
     images: [
-      { document: 'vite.svg', altText: 'Hero image', caption: 'Main banner image' },
+      { document: 'images/my-health-site.png', altText: 'My Health site', caption: 'My Health portal' },
     ],
     size: 'FIT',
     align: 'CENTER',
@@ -81,7 +81,7 @@ export const AdjacentLabel: Story = {
     label: 'Profile Picture',
     labelPosition: 'ADJACENT',
     images: [
-      { document: 'uifaces-human-avatar.jpg', altText: 'Profile picture', caption: 'User avatar' },
+      { document: 'images/uifaces-popular-avatar3.jpg', altText: 'Profile picture', caption: 'User avatar' },
     ],
     size: 'MEDIUM',
     style: 'AVATAR',
@@ -94,7 +94,7 @@ export const UserWithPhoto: Story = {
     images: [
       {
         imageType: 'user' as const,
-        user: { name: 'Jane Smith', photoUrl: 'uifaces-human-avatar.jpg', initials: 'JS' },
+        user: { name: 'Jane Smith', photoUrl: 'images/uifaces-popular-avatar1.jpg', initials: 'JS' },
         altText: 'Jane Smith profile photo',
         caption: 'Click to view profile',
       },
