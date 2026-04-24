@@ -12,7 +12,8 @@ import { TextItem } from '../../components/RichText/TextItem'
  */
 export const DocumentReview = () => {
   return (
-    <div className="p-6 bg-gray-50 min-h-screen max-w-6xl mx-auto">
+    <div className='bg-gray-50'>
+      <div className="p-6 min-h-screen max-w-6xl mx-auto">
       <div className="flex justify-between items-start mb-6">
         <div>
           <HeadingField
@@ -30,7 +31,7 @@ export const DocumentReview = () => {
         </div>
         <TagField
           tags={[{ text: "REQUIRES APPROVAL", backgroundColor: "NEGATIVE" }]}
-          size="STANDARD"
+          size="SMALL"
         />
       </div>
 
@@ -39,7 +40,7 @@ export const DocumentReview = () => {
         secondaryText="This document requires your review and approval by March 20, 2024"
         backgroundColor="ERROR"
         highlightColor="NEGATIVE"
-        icon="warning"
+        icon="error"
         marginBelow="MORE"
       />
 
@@ -127,9 +128,9 @@ export const DocumentReview = () => {
           label="Categories"
           labelPosition="ABOVE"
           tags={[
-            { text: "Procurement", backgroundColor: "#EDEEFA", textColor: "#2322F0" },
-            { text: "Legal Review", backgroundColor: "#FED7DE", textColor: "#9F0019" },
-            { text: "High Value", backgroundColor: "#FFF7E5", textColor: "#222" }
+            { text: "Procurement", backgroundColor: "ACCENT" },
+            { text: "Legal Review", backgroundColor: "NEGATIVE" },
+            { text: "High Value", backgroundColor: "POSITIVE" }
           ]}
           size="SMALL"
         />
@@ -163,7 +164,12 @@ export const DocumentReview = () => {
         />
 
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="p-4 bg-green-100 rounded-sm">
+          <CardLayout
+            style='#EDF7EE'
+            showBorder={false}
+            height='AUTO'
+            marginBelow='NONE'
+          >
             <HeadingField
               text="8"
               size="LARGE"
@@ -178,9 +184,14 @@ export const DocumentReview = () => {
               ]}
               align="CENTER"
             />
-          </div>
+          </CardLayout>
 
-          <div className="p-4 bg-yellow-100 rounded-sm">
+          <CardLayout
+            style='#FFFBED'
+            showBorder={false}
+            height='AUTO'
+            marginBelow='NONE'
+          >
             <HeadingField
               text="3"
               size="LARGE"
@@ -194,9 +205,14 @@ export const DocumentReview = () => {
               ]}
               align="CENTER"
             />
-          </div>
+          </CardLayout>
 
-          <div className="p-4 bg-red-100 rounded-sm">
+          <CardLayout
+            style='#FCE6EB'
+            showBorder={false}
+            height='AUTO'
+            marginBelow='NONE'
+          >
             <HeadingField
               text="1"
               size="LARGE"
@@ -211,7 +227,7 @@ export const DocumentReview = () => {
               ]}
               align="CENTER"
             />
-          </div>
+          </CardLayout>
         </div>
       </CardLayout>
 
@@ -232,7 +248,10 @@ export const DocumentReview = () => {
 
         <div className="space-y-4">
           {/* Review 1 */}
-          <div className="p-4 bg-gray-50 rounded-sm">
+          <CardLayout 
+            showBorder={false}
+            style='#FAFAFA'
+          >
             <div className="flex justify-between items-start mb-2">
               <div>
                 <RichTextDisplayField
@@ -249,7 +268,7 @@ export const DocumentReview = () => {
                 />
               </div>
               <TagField
-                tags={[{ text: "Approved with Comments", backgroundColor: "#FFF7E5", textColor: "#222" }]}
+                tags={[{ text: "Approved with Comments" }]}
                 size="SMALL"
               />
             </div>
@@ -261,10 +280,13 @@ export const DocumentReview = () => {
                 />
               ]}
             />
-          </div>
+          </CardLayout>
 
           {/* Review 2 */}
-          <div className="p-4 bg-gray-50 rounded-sm">
+          <CardLayout 
+            showBorder={false}
+            style='#FAFAFA'
+          >
             <div className="flex justify-between items-start mb-2">
               <div>
                 <RichTextDisplayField
@@ -293,7 +315,7 @@ export const DocumentReview = () => {
                 />
               ]}
             />
-          </div>
+          </CardLayout>
         </div>
       </CardLayout>
 
@@ -302,7 +324,6 @@ export const DocumentReview = () => {
         shape="SEMI_ROUNDED"
         padding="STANDARD"
         showBorder={true}
-        borderColor="#EDEEFA"
       >
         <HeadingField
           text="Your Review"
@@ -329,6 +350,7 @@ export const DocumentReview = () => {
           align="START"
         />
       </CardLayout>
+    </div>
     </div>
   )
 }
