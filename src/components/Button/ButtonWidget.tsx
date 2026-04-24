@@ -1,7 +1,8 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSize, SAILSemanticColor } from '../../types/sail'
+import type { SAILSize, SAILColor } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
 type ButtonWidth = "MINIMIZE" | "FILL"
@@ -16,9 +17,9 @@ export interface ButtonWidgetProps {
   label?: string
   /** Determines the button's appearance */
   style?: ButtonStyle
-  /** Determines button color (hex or semantic) */
+  /** Determines button color (hex, semantic, or palette token e.g. TEAL_700) */
   /** Enhancement to SAIL */
-  color?: SAILSemanticColor | string
+  color?: SAILColor | string
   /** Determines size of the button */
   size?: SAILSize
   /** Determines button width */
@@ -161,50 +162,72 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       return 'border' // Border color set via inline styles
     }
 
-    const semanticColor = color as SAILSemanticColor
+    // Handle palette colors — mechanical Tailwind class generation
+    if (isPaletteColor(color)) {
+      const bg = resolveColorClass(color, 'bg')
+      const text = resolveColorClass(color, 'text')
+      const border = resolveColorClass(color, 'border')
+
+      if (style === "SOLID") {
+        return `border border-transparent ${bg} text-white`
+      }
+      if (style === "OUTLINE") {
+        return `border ${border} ${text} bg-white`
+      }
+      if (style === "GHOST") {
+        return `border border-transparent ${text}`
+      }
+      if (style === "LINK") {
+        return `border border-transparent ${text} hover:underline`
+      }
+      return ''
+    }
+
+    // Handle semantic colors — curated combos
+    if (!isSemanticColor(color)) return ''
 
     if (style === "SOLID") {
-      const solidColors: Record<SAILSemanticColor, string> = {
+      const solidColors: Record<string, string> = {
         ACCENT: 'border border-transparent bg-blue-500 text-white hover:bg-blue-700',
         POSITIVE: 'border border-transparent bg-green-700 text-white hover:bg-green-900',
         NEGATIVE: 'border border-transparent bg-red-700 text-white hover:bg-red-900',
         SECONDARY: 'border border-transparent bg-gray-700 text-white hover:bg-gray-900',
         STANDARD: 'border border-transparent bg-gray-900 text-white hover:bg-gray-700'
       }
-      return solidColors[semanticColor]
+      return solidColors[color]
     }
 
     if (style === "OUTLINE") {
-      const outlineColors: Record<SAILSemanticColor, string> = {
+      const outlineColors: Record<string, string> = {
         ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-50',
         POSITIVE: 'border border-green-700 text-green-700 bg-white hover:bg-green-50',
         NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-50',
         SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100',
         STANDARD: 'border border-gray-900 text-gray-900 bg-white hover:bg-gray-100'
       }
-      return outlineColors[semanticColor]
+      return outlineColors[color]
     }
 
     if (style === "GHOST") {
-      const ghostColors: Record<SAILSemanticColor, string> = {
+      const ghostColors: Record<string, string> = {
         ACCENT: 'border border-transparent text-blue-500 hover:bg-blue-100',
         POSITIVE: 'border border-transparent text-green-700 hover:bg-green-100',
         NEGATIVE: 'border border-transparent text-red-700 hover:bg-red-100',
         SECONDARY: 'border border-transparent text-gray-700 hover:bg-gray-100',
         STANDARD: 'border border-transparent text-gray-900 hover:bg-gray-100'
       }
-      return ghostColors[semanticColor]
+      return ghostColors[color]
     }
 
     if (style === "LINK") {
-      const linkColors: Record<SAILSemanticColor, string> = {
+      const linkColors: Record<string, string> = {
         ACCENT: 'border border-transparent text-blue-500 hover:underline',
         POSITIVE: 'border border-transparent text-green-700 hover:underline',
         NEGATIVE: 'border border-transparent text-red-700 hover:underline',
         SECONDARY: 'border border-transparent text-gray-700 hover:underline',
         STANDARD: 'border border-transparent text-gray-900 hover:underline'
       }
-      return linkColors[semanticColor]
+      return linkColors[color]
     }
 
     return ''

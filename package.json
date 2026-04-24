@@ -42,7 +42,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:lib": "vite build --mode library && pnpm run build:tokens",
-    "build:tokens": "tsx scripts/generate-tokens.ts && tsx scripts/validate-tokens.ts",
+    "build:tokens": "tsx scripts/generate-palette-types.ts && tsx scripts/generate-tokens.ts && tsx scripts/validate-tokens.ts",
     "generate:css": "tsx scripts/generate-css.ts",
     "token-server": "tsx scripts/token-server.ts",
     "lint": "eslint .",

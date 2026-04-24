@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSizeExtended, SAILSemanticColor } from '../../types/sail'
+import type { SAILSizeExtended, SAILColor } from '../../types/sail'
+import { resolveColorClass } from '../../utils/colorResolver'
 
 type LinkStyle = "INLINE" | "STANDALONE"
 
@@ -13,8 +14,8 @@ export interface IconProps {
   caption?: string
   /** Icon size */
   size?: SAILSizeExtended
-  /** Icon color - semantic color or hex value */
-  color?: SAILSemanticColor | string
+  /** Icon color - semantic color, palette token (e.g. TEAL_700), or hex value */
+  color?: SAILColor | string
   /** Link behavior when icon is clicked */
   link?: () => void
   /** How the link is underlined */
@@ -53,19 +54,12 @@ export const Icon: React.FC<IconProps> = ({
   }
 
   // Color mappings
-  const colorMap: Record<SAILSemanticColor, string> = {
-    STANDARD: 'text-gray-900',
-    ACCENT: 'text-blue-500',
-    POSITIVE: 'text-green-700',
-    NEGATIVE: 'text-red-700',
-    SECONDARY: 'text-gray-700'
-  }
+  const colorClass = color.startsWith('#') ? '' : (resolveColorClass(color, 'text') || 'text-gray-900')
 
   // Build classes array
   const classes = [
     'inline-block',
-    // Handle color - use semantic mapping or inline style for hex
-    color.startsWith('#') ? '' : colorMap[color as SAILSemanticColor] || 'text-gray-900',
+    colorClass,
     // Link styles
     link && 'cursor-pointer',
     link && 'hover:opacity-75'

@@ -44,6 +44,18 @@ export type SAILLabelPosition = "ABOVE" | "ADJACENT" | "COLLAPSED" | "JUSTIFIED"
 export type SAILSemanticColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD"
 
 /**
+ * Re-export palette colors generated from tokens/tokens.json
+ */
+export type { SAILPaletteColor } from './palette-colors.generated'
+
+/**
+ * Combined color type: semantic names OR palette tokens (e.g. TEAL_700)
+ * Components that accept arbitrary colors should use this type.
+ */
+import type { SAILPaletteColor as _PaletteColor } from './palette-colors.generated'
+export type SAILColor = SAILSemanticColor | _PaletteColor
+
+/**
  * Sort configuration for grid columns
  */
 export interface SortInfo {
