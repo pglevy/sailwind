@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as Switch from '@radix-ui/react-switch'
+import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
 
@@ -46,7 +47,7 @@ export interface SwitchFieldProps {
   /** Size of the switch and its label */
   size?: SAILSize
   /** Color when switch is on (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | string
   /** Position of the inline label relative to the switch control: LEFT or RIGHT */
   switchLabelPosition?: "LEFT" | "RIGHT"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -84,19 +85,19 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   const sizeMap: Record<SAILSize, { root: string; thumb: string }> = {
     SMALL: {
       root: 'h-5 w-9',
-      thumb: 'h-4 w-4 data-[state=checked]:translate-x-4'
+      thumb: 'h-3.5 w-3.5 data-[state=checked]:translate-x-4'
     },
     STANDARD: {
       root: 'h-6 w-11',
-      thumb: 'h-5 w-5 data-[state=checked]:translate-x-5'
+      thumb: 'h-4 w-4 data-[state=checked]:translate-x-5.5'
     },
     MEDIUM: {
       root: 'h-7 w-14',
-      thumb: 'h-6 w-6 data-[state=checked]:translate-x-7'
+      thumb: 'h-5 w-5 data-[state=checked]:translate-x-7.5'
     },
     LARGE: {
       root: 'h-9 w-18',
-      thumb: 'h-8 w-8 data-[state=checked]:translate-x-9'
+      thumb: 'h-7 w-7 data-[state=checked]:translate-x-9.5'
     }
   }
 
@@ -118,14 +119,14 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
 
   // Color mapping for checked state
   const getCheckedBgClass = (): string => {
-    if (color.startsWith('#')) {
-      return '' // Use inline style instead
-    }
+    if (color.startsWith('#')) return ''
 
     const colorMap: Record<string, string> = {
-      ACCENT: 'data-[state=checked]:bg-blue-500',
-      POSITIVE: 'data-[state=checked]:bg-green-700',
-      NEGATIVE: 'data-[state=checked]:bg-red-700'
+      ACCENT:    'data-[state=checked]:bg-blue-500',
+      POSITIVE:  'data-[state=checked]:bg-green-700',
+      NEGATIVE:  'data-[state=checked]:bg-red-700',
+      SECONDARY: 'data-[state=checked]:bg-gray-700',
+      STANDARD:  'data-[state=checked]:bg-gray-900'
     }
 
     return colorMap[color] || 'data-[state=checked]:bg-blue-500'
@@ -155,7 +156,8 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
       className={[
         sizeMap[size].root,
         'shrink-0 relative rounded-full transition-colors border-2',
-        'data-[state=unchecked]:bg-gray-500 data-[state=unchecked]:border-gray-700',
+        'data-[state=unchecked]:bg-white data-[state=unchecked]:border-gray-300',
+        'hover:data-[state=unchecked]:bg-gray-100',
         getCheckedBgClass(),
         'data-[state=checked]:border-transparent',
         'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -170,10 +172,23 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
       <Switch.Thumb
         className={[
           sizeMap[size].thumb,
-          'block rounded-full bg-white shadow-lg transition-transform',
-          'translate-x-0.5'
+          'block rounded-full bg-white shadow-lg transition-transform border border-gray-500 data-[state=checked]:border-transparent',
+          'translate-x-0.5',
+          'flex items-center justify-center'
         ].filter(Boolean).join(' ')}
-      />
+      >
+        {value && (
+          <svg viewBox="0 0 12 12" fill="none" className="w-2/3 h-2/3" aria-hidden="true">
+            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className={color.startsWith('#') ? '' : {
+                ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
+                SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900'
+              }[color] ?? 'text-blue-500'}
+              style={color.startsWith('#') ? { color } : undefined}
+            />
+          </svg>
+        )}
+      </Switch.Thumb>
     </Switch.Root>
   )
 
@@ -183,19 +198,15 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
       htmlFor={inputId}
       className={[
         labelSizeMap[size],
-        'font-medium text-gray-900 select-none',
+        'inline-flex items-center gap-1 font-medium text-gray-900 select-none',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       ].join(' ')}
     >
       {label}
-      {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
+      {required && <span className="text-red-700" aria-label="required">*</span>}
       {helpTooltip && (
-        <span
-          className="ml-2 text-gray-700 cursor-help"
-          title={helpTooltip}
-          aria-label="help"
-        >
-          ℹ️
+        <span className="text-gray-700 cursor-help inline-flex items-center" title={helpTooltip} aria-label="help">
+          <Info size={14} />
         </span>
       )}
     </label>
