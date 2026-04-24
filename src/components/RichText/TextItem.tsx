@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { SAILSizeExtended, SAILColor } from '../../types/sail'
+import type { SAILSizeExtended, SAILColorInput } from '../../types/sail'
 import { resolveColorClass } from '../../utils/colorResolver'
 
 type TextStyle = "PLAIN" | "EMPHASIS" | "STRONG" | "UNDERLINE" | "STRIKETHROUGH"
@@ -13,7 +13,7 @@ export interface TextItemProps {
   /** Text size */
   size?: SAILSizeExtended
   /** Text color - semantic color, palette token (e.g. TEAL_700), or hex value */
-  color?: SAILColor | string
+  color?: SAILColorInput
   /** Link to apply to the text */
   link?: () => void
   /** How the link is underlined */

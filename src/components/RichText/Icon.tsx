@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSizeExtended, SAILColor } from '../../types/sail'
+import type { SAILSizeExtended, SAILColorInput } from '../../types/sail'
 import { resolveColorClass } from '../../utils/colorResolver'
 
 type LinkStyle = "INLINE" | "STANDALONE"
@@ -15,7 +15,7 @@ export interface IconProps {
   /** Icon size */
   size?: SAILSizeExtended
   /** Icon color - semantic color, palette token (e.g. TEAL_700), or hex value */
-  color?: SAILColor | string
+  color?: SAILColorInput
   /** Link behavior when icon is clicked */
   link?: () => void
   /** How the link is underlined */

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { SAILAlign, SAILMarginSize, SAILColor } from '../../types/sail'
+import type { SAILAlign, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
@@ -29,7 +29,7 @@ export interface HeadingFieldProps {
   /** Determines the heading tag for screen readers */
   headingTag?: HeadingTag
   /** Determines the label color - hex color, semantic color, or palette token (e.g. TEAL_700) */
-  color?: SAILColor | string
+  color?: SAILColorInput
   /** Determines the thickness of the text */
   fontWeight?: FontWeight
   /** Link to apply to the text (simplified - accepts onClick handler) */

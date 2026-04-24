@@ -1,4 +1,4 @@
-import type { SAILColor } from '../../types/sail'
+import type { SAILColorInput } from '../../types/sail'
 
 /**
  * Props for individual tag items
@@ -8,9 +8,9 @@ export interface TagItemProps {
   /** Text to display within the tag (max 40 characters in SAIL) */
   text: string
   /** Background color - hex value, semantic color, or palette token (e.g. TEAL_700) */
-  backgroundColor?: SAILColor | string
+  backgroundColor?: SAILColorInput
   /** Text color - hex value, semantic color, palette token, or "STANDARD" */
-  textColor?: SAILColor | string
+  textColor?: SAILColorInput
   /** Tooltip text to display on hover */
   tooltip?: string
   /** Controls tag visibility */

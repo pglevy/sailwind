@@ -56,6 +56,14 @@ import type { SAILPaletteColor as _PaletteColor } from './palette-colors.generat
 export type SAILColor = SAILSemanticColor | _PaletteColor
 
 /**
+ * Color prop type that preserves IntelliSense autocomplete for known tokens
+ * while still accepting arbitrary hex strings.
+ *
+ * Uses the `string & {}` trick so TypeScript doesn't collapse the union to `string`.
+ */
+export type SAILColorInput = SAILColor | (string & {})
+
+/**
  * Sort configuration for grid columns
  */
 export interface SortInfo {

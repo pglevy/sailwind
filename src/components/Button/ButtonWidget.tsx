@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSize, SAILColor } from '../../types/sail'
+import type { SAILSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
@@ -19,7 +19,7 @@ export interface ButtonWidgetProps {
   style?: ButtonStyle
   /** Determines button color (hex, semantic, or palette token e.g. TEAL_700) */
   /** Enhancement to SAIL */
-  color?: SAILColor | string
+  color?: SAILColorInput
   /** Determines size of the button */
   size?: SAILSize
   /** Determines button width */

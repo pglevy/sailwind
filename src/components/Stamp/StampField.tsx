@@ -1,12 +1,12 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColor } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
-type StampBackgroundColor = SAILColor | "TRANSPARENT" | string
-type StampContentColor = SAILColor | string
+type StampBackgroundColor = SAILColorInput | "TRANSPARENT"
+type StampContentColor = SAILColorInput
 
 export interface StampFieldProps {
   /** Text to display as the field label */
