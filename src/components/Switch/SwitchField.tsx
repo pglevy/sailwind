@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 
 /**
  * Displays a switch (toggle) for boolean input
@@ -47,7 +47,7 @@ export interface SwitchFieldProps {
   /** Size of the switch and its label */
   size?: SAILSize
   /** Color when switch is on (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
   /** Position of the inline label relative to the switch control: LEFT or RIGHT */
   switchLabelPosition?: "LEFT" | "RIGHT"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -180,10 +180,10 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
         {value && (
           <svg viewBox="0 0 12 12" fill="none" className="w-2/3 h-2/3" aria-hidden="true">
             <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              className={color.startsWith('#') ? '' : {
+              className={color.startsWith('#') ? '' : ({
                 ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
                 SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900'
-              }[color] ?? 'text-blue-500'}
+              } as Record<string, string>)[color] ?? 'text-blue-500'}
               style={color.startsWith('#') ? { color } : undefined}
             />
           </svg>

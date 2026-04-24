@@ -3,6 +3,7 @@ import { ButtonWidget } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { SwitchField } from '../Switch/SwitchField'
 import { ToggleField } from '../Toggle/ToggleField'
+import type { SAILColorInput } from '../../types/sail'
 import {
   ICON_APP,
   ICON_INTERFACE,
@@ -48,7 +49,7 @@ export interface ApplicationHeaderProps {
     label: string
     style?: "SOLID" | "OUTLINE" | "GHOST" | "LINK"
     size?: "SMALL" | "STANDARD" | "MEDIUM" | "LARGE"
-    color?: string
+    color?: SAILColorInput
     onClick?: () => void
   }>
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */

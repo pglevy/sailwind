@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Toggle from '@radix-ui/react-toggle'
 import * as LucideIcons from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 
 type ToggleStyle = "SOLID" | "OUTLINE" | "GHOST"
 
@@ -54,7 +54,7 @@ export interface ToggleFieldProps {
   /** Size of the toggle button */
   size?: SAILSize
   /** Color when toggle is pressed (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
   /** Determines the button's appearance */
   style?: ToggleStyle
   /** Icon to display in the button */
