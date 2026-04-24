@@ -176,9 +176,9 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
 
     if (style === "OUTLINE") {
       const outlineColors: Record<SAILSemanticColor, string> = {
-        ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100',
-        POSITIVE: 'border border-green-700 text-green-700 bg-white hover:bg-green-100',
-        NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-100',
+        ACCENT: 'border border-blue-500 text-blue-500 bg-white hover:bg-blue-50',
+        POSITIVE: 'border border-green-700 text-green-700 bg-white hover:bg-green-50',
+        NEGATIVE: 'border border-red-700 text-red-700 bg-white hover:bg-red-50',
         SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100',
         STANDARD: 'border border-gray-900 text-gray-900 bg-white hover:bg-gray-100'
       }
