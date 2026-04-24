@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
   // Development/demo app configuration
   return {
     plugins: [react()],
-    base: './',
+    base: mode === 'production' ? '/sailwind/' : '/',
     build: {
       chunkSizeWarningLimit: 1500, // Increase from default 500 KB
     },

@@ -14,8 +14,10 @@ const config: StorybookConfig = {
   core: {
     disableTelemetry: true, // 👈 Disables telemetry
   },
-  viteFinal: async (config, { configType }) => {
-    config.base = configType === 'PRODUCTION' ? '/sailwind/' : '/'
+  async viteFinal(config) {
+    if (process.env.NODE_ENV === 'production') {
+      config.base = '/sailwind/'
+    }
     return config
   },
 }
