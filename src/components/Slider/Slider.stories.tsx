@@ -260,7 +260,7 @@ export const ColorCustomHex: Story = {
     value: 50,
     min: 0,
     max: 100,
-    color: '#7C4DFF',
+    color: 'VIOLET_500',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)
