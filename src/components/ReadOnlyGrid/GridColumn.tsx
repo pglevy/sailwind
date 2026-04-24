@@ -1,5 +1,5 @@
 import React from "react";
-import type { SAILAlign, SAILGridColumnWidth } from "../../types/sail";
+import type { SAILAlign, SAILGridColumnWidth, SAILColorInput } from "../../types/sail";
 
 /**
  * Props for the GridColumn component.
@@ -22,7 +22,7 @@ export interface GridColumnProps {
   /** Column width */
   width?: SAILGridColumnWidth;
   /** Background color for cells — hex color or semantic name */
-  backgroundColor?: string | ((row: any) => string);
+  backgroundColor?: SAILColorInput | ((row: any) => string);
   /** Whether this column is visible. Defaults to true. */
   showWhen?: boolean;
   /** Additional text for screen readers */

@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
-import type { SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor } from '../../utils/colorResolver'
+import { paletteColorMap } from '../../types/palette-colors.generated'
 import { mergeClasses } from '../../utils/classNames'
 
 /**
@@ -46,7 +48,7 @@ export interface TabsFieldProps {
   /** Space added below component */
   marginBelow?: SAILMarginSize
   /** Color scheme for active tabs (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | SAILColorInput
   /** Activation mode - whether tabs activate on focus or click */
   activationMode?: "AUTOMATIC" | "MANUAL"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -128,13 +130,22 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   }
 
   // Active indicator color
-  const indicatorColor = color.startsWith('#') ? color : {
-    ACCENT:    'var(--color-blue-500)',
-    POSITIVE:  'var(--color-green-700)',
-    NEGATIVE:  'var(--color-red-700)',
-    SECONDARY: 'var(--color-gray-700)',
-    STANDARD:  'var(--color-gray-900)',
-  }[color] ?? 'var(--color-blue-500)'
+  const getIndicatorColor = (): string => {
+    const semanticMap: Record<string, string> = {
+      ACCENT:    'var(--color-blue-500)',
+      POSITIVE:  'var(--color-green-700)',
+      NEGATIVE:  'var(--color-red-700)',
+      SECONDARY: 'var(--color-gray-700)',
+      STANDARD:  'var(--color-gray-900)',
+    }
+    if (semanticMap[color]) return semanticMap[color]
+    if (isPaletteColor(color)) {
+      const segment = paletteColorMap[color].bg.replace('bg-', '')
+      return `var(--color-${segment})`
+    }
+    return color // hex fallback
+  }
+  const indicatorColor = getIndicatorColor()
 
   // Container classes
   const sailClasses = [marginMap[marginAbove], marginBottomMap[marginBelow]].filter(Boolean).join(' ')

@@ -165,7 +165,7 @@ export const CustomHexColor: Story = {
   args: {
     label: 'Custom Hex Color',
     value: true,
-    color: '#9333EA',
+    color: 'VIOLET_500',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)

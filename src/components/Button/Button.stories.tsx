@@ -93,9 +93,9 @@ export const HexColorsSolid: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: 'Custom Violet', style: 'SOLID', color: '#A382FF' },
-        { label: 'Custom Orange', style: 'SOLID', color: '#FFB74D' },
-        { label: 'Custom Pink', style: 'SOLID', color: '#EB5BB6' },
+        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_300' },
+        { label: 'Custom Orange', style: 'SOLID', color: 'ORANGE_300' },
+        { label: 'Custom Pink', style: 'SOLID', color: 'PINK_300' },
       ]}
     />
   ),
@@ -105,9 +105,9 @@ export const HexColorsOutline: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: 'Custom Violet', style: 'OUTLINE', color: '#5736B3' },
-        { label: 'Custom Orange', style: 'OUTLINE', color: '#B36A00' },
-        { label: 'Custom Pink', style: 'OUTLINE', color: '#9E0E69' },
+        { label: 'Custom Violet', style: 'OUTLINE', color: 'VIOLET_700' },
+        { label: 'Custom Orange', style: 'OUTLINE', color: 'ORANGE_700' },
+        { label: 'Custom Pink', style: 'OUTLINE', color: 'PINK_700' },
       ]}
     />
   ),

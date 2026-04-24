@@ -1,8 +1,9 @@
 import * as React from 'react'
 import type { TagItemProps } from './TagItem'
-import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize, SAILSemanticColor } from '../../types/sail'
+import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
+import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
 /**
  * Tag size - only SMALL and STANDARD are supported per SAIL docs
@@ -96,8 +97,8 @@ export const TagField: React.FC<TagFieldProps> = ({
     EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
-  // Semantic color mappings
-  const bgColorMap: Record<SAILSemanticColor, string> = {
+  // Semantic color mappings — tags use light tints for backgrounds
+  const bgColorMap: Record<string, string> = {
     ACCENT: 'bg-blue-50',
     POSITIVE: 'bg-green-50',
     NEGATIVE: 'bg-red-50',
@@ -105,7 +106,7 @@ export const TagField: React.FC<TagFieldProps> = ({
     STANDARD: 'bg-gray-100'
   }
 
-  const textColorMap: Record<SAILSemanticColor | "STANDARD", string> = {
+  const textColorMap: Record<string, string> = {
     ACCENT: 'text-blue-700',
     POSITIVE: 'text-green-700',
     NEGATIVE: 'text-red-700',
@@ -115,20 +116,34 @@ export const TagField: React.FC<TagFieldProps> = ({
 
   // Render individual tag
   const renderTag = (tag: TagItemProps, index: number) => {
-    // Determine background color classes or inline styles
-    const semanticBg = (tag.backgroundColor as SAILSemanticColor) || 'ACCENT'
+    const colorKey = tag.backgroundColor || 'ACCENT'
 
-    const bgClass = tag.backgroundColor?.startsWith('#')
-      ? ''
-      : bgColorMap[semanticBg]
+    // Determine background: semantic → curated tint, palette → mechanical, hex → inline
+    let bgClass = ''
+    const inlineStyle: React.CSSProperties = {}
 
-    const textClass = tag.textColor?.startsWith('#')
-      ? ''
-      : textColorMap[(tag.textColor as SAILSemanticColor) || semanticBg]
+    if (typeof colorKey === 'string' && colorKey.startsWith('#')) {
+      inlineStyle.backgroundColor = colorKey
+    } else if (isSemanticColor(colorKey)) {
+      bgClass = bgColorMap[colorKey]
+    } else if (isPaletteColor(colorKey)) {
+      bgClass = resolveColorClass(colorKey, 'bg')
+    } else {
+      bgClass = bgColorMap['ACCENT']
+    }
 
-    const inlineStyle: React.CSSProperties = {
-      ...(tag.backgroundColor?.startsWith('#') && { backgroundColor: tag.backgroundColor }),
-      ...(tag.textColor?.startsWith('#') && { color: tag.textColor })
+    // Determine text color
+    const textKey = tag.textColor || (isSemanticColor(colorKey) ? colorKey : 'STANDARD')
+    let textClass = ''
+
+    if (typeof textKey === 'string' && textKey.startsWith('#')) {
+      inlineStyle.color = textKey
+    } else if (isSemanticColor(textKey)) {
+      textClass = textColorMap[textKey]
+    } else if (isPaletteColor(textKey)) {
+      textClass = resolveColorClass(textKey, 'text')
+    } else {
+      textClass = textColorMap['STANDARD']
     }
 
     // Use anchor tag if link is provided, otherwise span

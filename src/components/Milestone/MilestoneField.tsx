@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { FieldLabel } from '../shared/FieldLabel'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 
 type Orientation = "HORIZONTAL" | "VERTICAL"
 type StepStyle = "LINE" | "CHEVRON" | "DOT"
-type Color = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | string
+type Color = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | SAILColorInput
 
 export interface MilestoneFieldProps {
   /** Text to display as the field label */
@@ -97,6 +98,18 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
     if (semanticColorMap[colorValue]) {
       return {
         ...semanticColorMap[colorValue],
+        style: undefined
+      }
+    }
+
+    // Handle palette colors
+    if (isPaletteColor(colorValue)) {
+      return {
+        bg: resolveColorClass(colorValue, 'bg'),
+        text: resolveColorClass(colorValue, 'text'),
+        border: resolveColorClass(colorValue, 'border'),
+        chevronL: '',
+        chevronT: '',
         style: undefined
       }
     }

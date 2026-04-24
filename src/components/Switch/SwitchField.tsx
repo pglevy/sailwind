@@ -2,7 +2,9 @@ import * as React from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor } from '../../utils/colorResolver'
+import { paletteColorMap } from '../../types/palette-colors.generated'
 
 /**
  * Displays a switch (toggle) for boolean input
@@ -47,7 +49,7 @@ export interface SwitchFieldProps {
   /** Size of the switch and its label */
   size?: SAILSize
   /** Color when switch is on (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
   /** Position of the inline label relative to the switch control: LEFT or RIGHT */
   switchLabelPosition?: "LEFT" | "RIGHT"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -120,6 +122,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
   // Color mapping for checked state
   const getCheckedBgClass = (): string => {
     if (color.startsWith('#')) return ''
+    if (isPaletteColor(color)) return '' // handled via inline style
 
     const colorMap: Record<string, string> = {
       ACCENT:    'data-[state=checked]:bg-blue-500',
@@ -131,6 +134,19 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
 
     return colorMap[color] || 'data-[state=checked]:bg-blue-500'
   }
+
+  // Resolve a non-semantic color to a CSS value for inline styles
+  const resolveInlineColor = (): string | undefined => {
+    if (color.startsWith('#')) return color
+    if (isPaletteColor(color)) {
+      // 'bg-teal-700' → 'teal-700' → 'var(--color-teal-700)'
+      const segment = paletteColorMap[color].bg.replace('bg-', '')
+      return `var(--color-${segment})`
+    }
+    return undefined
+  }
+
+  const inlineColor = resolveInlineColor()
 
   const handleChange = (checked: boolean) => {
     const handler = onChange || saveInto
@@ -163,7 +179,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
         'disabled:opacity-50 disabled:cursor-not-allowed',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
       ].filter(Boolean).join(' ')}
-      style={color.startsWith('#') && value ? { backgroundColor: color } : undefined}
+      style={inlineColor && value ? { backgroundColor: inlineColor } : undefined}
       aria-label={accessibilityText || label}
       aria-describedby={instructions ? `${inputId}-instructions` : undefined}
       aria-invalid={showValidations}
@@ -180,11 +196,11 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
         {value && (
           <svg viewBox="0 0 12 12" fill="none" className="w-2/3 h-2/3" aria-hidden="true">
             <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              className={color.startsWith('#') ? '' : {
+              className={inlineColor ? '' : ({
                 ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
                 SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900'
-              }[color] ?? 'text-blue-500'}
-              style={color.startsWith('#') ? { color } : undefined}
+              } as Record<string, string>)[color] ?? 'text-blue-500'}
+              style={inlineColor ? { color: inlineColor } : undefined}
             />
           </svg>
         )}

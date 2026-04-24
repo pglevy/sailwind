@@ -1,5 +1,6 @@
 import * as React from 'react'
-import type { SAILSizeExtended, SAILSemanticColor } from '../../types/sail'
+import type { SAILSizeExtended, SAILColorInput } from '../../types/sail'
+import { resolveColorClass } from '../../utils/colorResolver'
 
 type TextStyle = "PLAIN" | "EMPHASIS" | "STRONG" | "UNDERLINE" | "STRIKETHROUGH"
 type LinkStyle = "INLINE" | "STANDALONE"
@@ -11,8 +12,8 @@ export interface TextItemProps {
   style?: TextStyle | TextStyle[]
   /** Text size */
   size?: SAILSizeExtended
-  /** Text color - semantic color or hex value */
-  color?: SAILSemanticColor | string
+  /** Text color - semantic color, palette token (e.g. TEAL_700), or hex value */
+  color?: SAILColorInput
   /** Link to apply to the text */
   link?: () => void
   /** How the link is underlined */
@@ -51,19 +52,12 @@ export const TextItem: React.FC<TextItemProps> = ({
   }
 
   // Color mappings
-  const colorMap: Record<SAILSemanticColor, string> = {
-    STANDARD: 'text-gray-900',
-    ACCENT: 'text-blue-500',
-    POSITIVE: 'text-green-700',
-    NEGATIVE: 'text-red-700',
-    SECONDARY: 'text-gray-700'
-  }
+  const colorClass = color.startsWith('#') ? '' : (resolveColorClass(color, 'text') || 'text-gray-900')
 
   // Build classes array
   const classes = [
     sizeMap[size],
-    // Handle color - use semantic mapping or inline style for hex
-    color.startsWith('#') ? '' : colorMap[color as SAILSemanticColor] || 'text-gray-900',
+    colorClass,
     // Apply text styles
     styles.includes('STRONG') && 'font-bold',
     styles.includes('EMPHASIS') && 'italic',

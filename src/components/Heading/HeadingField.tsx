@@ -1,6 +1,7 @@
 import * as React from 'react'
-import type { SAILAlign, SAILMarginSize, SAILSemanticColor } from '../../types/sail'
+import type { SAILAlign, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
 /**
  * Heading size values matching SAIL's size parameter
@@ -27,8 +28,8 @@ export interface HeadingFieldProps {
   size?: HeadingSize
   /** Determines the heading tag for screen readers */
   headingTag?: HeadingTag
-  /** Determines the label color - hex color or semantic color */
-  color?: string | SAILSemanticColor
+  /** Determines the label color - hex color, semantic color, or palette token (e.g. TEAL_700) */
+  color?: SAILColorInput
   /** Determines the thickness of the text */
   fontWeight?: FontWeight
   /** Link to apply to the text (simplified - accepts onClick handler) */
@@ -112,24 +113,12 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
     EVEN_MORE: 'mb-8'
   }
 
-  // Semantic color mappings with proper contrast
-  const semanticColorMap: Record<SAILSemanticColor, string> = {
-    ACCENT: 'text-blue-500',
-    POSITIVE: 'text-green-700',
-    NEGATIVE: 'text-red-700',
-    SECONDARY: 'text-gray-700',
-    STANDARD: 'text-gray-900'
-  }
-
-  // Determine if color is semantic or hex
-  const isSemanticColor = (color: string): color is SAILSemanticColor => {
-    return ['ACCENT', 'POSITIVE', 'NEGATIVE', 'SECONDARY', 'STANDARD'].includes(color)
-  }
-
-  // Build color styles
-  const colorStyles = isSemanticColor(color) 
-    ? { className: semanticColorMap[color] }
-    : { style: { color } }
+  // Build color styles — semantic, palette, or hex
+  const colorStyles = isSemanticColor(color)
+    ? { className: resolveColorClass(color, 'text') }
+    : isPaletteColor(color)
+      ? { className: resolveColorClass(color, 'text') }
+      : { style: { color } }
 
   // Default heading tag based on size if not specified
   const getDefaultHeadingTag = (size: HeadingSize): HeadingTag => {

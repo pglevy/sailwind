@@ -1,11 +1,12 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILSemanticColor } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
-type StampBackgroundColor = SAILSemanticColor | "TRANSPARENT" | string
-type StampContentColor = SAILSemanticColor | string
+type StampBackgroundColor = SAILColorInput | "TRANSPARENT"
+type StampContentColor = SAILColorInput
 
 export interface StampFieldProps {
   /** Text to display as the field label */
@@ -117,16 +118,14 @@ export const StampField: React.FC<StampFieldProps> = ({
       return { className: 'bg-transparent' }
     }
 
-    const semanticColorMap: Record<string, string> = {
-      ACCENT: 'bg-blue-500',
-      POSITIVE: 'bg-green-700',
-      NEGATIVE: 'bg-red-700',
-      SECONDARY: 'bg-gray-700',
-      STANDARD: 'bg-gray-900'
+    // Semantic colors — curated mappings
+    if (isSemanticColor(backgroundColor)) {
+      return { className: resolveColorClass(backgroundColor, 'bg') }
     }
 
-    if (semanticColorMap[backgroundColor]) {
-      return { className: semanticColorMap[backgroundColor] }
+    // Palette colors — mechanical mapping
+    if (isPaletteColor(backgroundColor)) {
+      return { className: resolveColorClass(backgroundColor, 'bg') }
     }
 
     // Hex color - use inline style
@@ -140,16 +139,17 @@ export const StampField: React.FC<StampFieldProps> = ({
 
   // Content color mapping
   const getContentColor = (): { className?: string; style?: React.CSSProperties } => {
-    const semanticColorMap: Record<string, string> = {
-      STANDARD: backgroundColor === "TRANSPARENT" ? 'text-gray-900' : 'text-white',
-      ACCENT: 'text-blue-500',
-      POSITIVE: 'text-green-700',
-      NEGATIVE: 'text-red-700',
-      SECONDARY: 'text-gray-700'
+    // Semantic colors
+    if (isSemanticColor(contentColor)) {
+      if (contentColor === 'STANDARD') {
+        return { className: backgroundColor === "TRANSPARENT" ? 'text-gray-900' : 'text-white' }
+      }
+      return { className: resolveColorClass(contentColor, 'text') }
     }
 
-    if (semanticColorMap[contentColor]) {
-      return { className: semanticColorMap[contentColor] }
+    // Palette colors
+    if (isPaletteColor(contentColor)) {
+      return { className: resolveColorClass(contentColor, 'text') }
     }
 
     // Hex color - use inline style
@@ -165,15 +165,14 @@ export const StampField: React.FC<StampFieldProps> = ({
   const getBorderColor = (): string => {
     if (backgroundColor !== "TRANSPARENT") return ''
 
-    const semanticColorMap: Record<string, string> = {
-      STANDARD: 'border-gray-900',
-      ACCENT: 'border-blue-500',
-      POSITIVE: 'border-green-700',
-      NEGATIVE: 'border-red-700',
-      SECONDARY: 'border-gray-700'
+    if (isSemanticColor(contentColor)) {
+      return resolveColorClass(contentColor, 'border')
+    }
+    if (isPaletteColor(contentColor)) {
+      return resolveColorClass(contentColor, 'border')
     }
 
-    return semanticColorMap[contentColor] || 'border-gray-900'
+    return 'border-gray-900'
   }
 
   const backgroundStyles = getBackgroundColor()

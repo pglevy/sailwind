@@ -1,5 +1,6 @@
 import * as React from 'react'
-import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
+import type { SAILShape, SAILPadding, SAILMarginSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { mergeClasses } from '../../utils/classNames'
 
 type CardHeight = "AUTO" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
@@ -30,11 +31,11 @@ export interface CardLayoutProps {
   /** Whether to show card shadow */
   showShadow?: boolean
   /** Determines the border color. Valid values: Any hex color (including transparency), or "STANDARD" (default), "ACCENT", "POSITIVE", "WARN", "NEGATIVE" */
-  borderColor?: string
+  borderColor?: SAILColorInput
   /** Position of decorative bar */
   decorativeBarPosition?: DecorativeBarPosition
   /** Color of decorative bar (hex or semantic) */
-  decorativeBarColor?: string
+  decorativeBarColor?: SAILColorInput
   /** Controls card visibility */
   showWhen?: boolean
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -161,6 +162,11 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
       return { style: { borderColor } }
     }
 
+    // Palette color
+    if (isPaletteColor(borderColor)) {
+      return { className: resolveColorClass(borderColor, 'border') }
+    }
+
     // Use semantic color mapping
     return { className: borderColorMap[borderColor] || 'border-gray-300' }
   }
@@ -181,6 +187,9 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
       if (decorativeBarColor.startsWith('#')) {
         // Custom hex color - use inline style
         return { style: { backgroundColor: decorativeBarColor } }
+      }
+      if (isPaletteColor(decorativeBarColor)) {
+        return { className: resolveColorClass(decorativeBarColor, 'bg') }
       }
       // Semantic color - use Tailwind class
       return { className: decorativeBarColorMap[decorativeBarColor] || decorativeBarColorMap.ACCENT }

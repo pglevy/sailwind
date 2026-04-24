@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoveUp, MoveDown } from "lucide-react";
+import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
 import type {
@@ -105,6 +106,9 @@ function resolveBgColor(
   if (!colorValue || colorValue === "NONE") return {};
   if (bgColorMap[colorValue] !== undefined) {
     return bgColorMap[colorValue] ? { className: bgColorMap[colorValue] } : {};
+  }
+  if (isPaletteColor(colorValue)) {
+    return { className: resolveColorClass(colorValue, 'bg') };
   }
   if (colorValue.startsWith("#")) {
     return { style: { backgroundColor: colorValue } };

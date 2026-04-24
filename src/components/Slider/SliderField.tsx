@@ -1,7 +1,8 @@
 import * as React from 'react'
 import * as Slider from '@radix-ui/react-slider'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 
 type SliderOrientation = "HORIZONTAL" | "VERTICAL"
 
@@ -54,7 +55,7 @@ export interface SliderFieldProps {
   /** Size of the slider */
   size?: SAILSize
   /** Color of the slider track and thumb (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | SAILColorInput
   /** Orientation of the slider */
   orientation?: SliderOrientation
   /** Show current value(s) as text */
@@ -132,6 +133,15 @@ export const SliderField: React.FC<SliderFieldProps> = ({
       return {
         range: '',
         thumb: 'border-2 border-white shadow-lg'
+      }
+    }
+
+    // Palette colors — resolve to Tailwind classes
+    if (isPaletteColor(color)) {
+      const bg = resolveColorClass(color, 'bg')
+      return {
+        range: bg,
+        thumb: `${bg} border-2 border-white shadow-lg`
       }
     }
 

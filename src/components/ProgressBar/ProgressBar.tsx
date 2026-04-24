@@ -1,10 +1,11 @@
 import * as React from 'react'
 import * as Progress from '@radix-ui/react-progress'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
 
-export type ProgressBarColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | string
+export type ProgressBarColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | SAILColorInput
 export type ProgressBarStyle = "THIN" | "THICK"
 
 export interface ProgressBarProps {
@@ -95,7 +96,8 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   // Determine progress bar color
   const isSemanticColor = color in colorMap
-  const progressColor = isSemanticColor ? colorMap[color] : ''
+  const isPalette = !isSemanticColor && isPaletteColor(color)
+  const progressColor = isSemanticColor ? colorMap[color] : isPalette ? resolveColorClass(color, 'bg') : ''
 
   // Build CSS classes
   const sailClasses = [
@@ -118,12 +120,12 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     'transition-transform',
     'duration-300',
     'ease-in-out',
-    isSemanticColor ? progressColor : 'bg-gray-500'
+    (isSemanticColor || isPalette) ? progressColor : 'bg-gray-500'
   ].join(' ')
 
   // Inline styles for custom colors
   const indicatorStyle: React.CSSProperties = {}
-  if (!isSemanticColor && color) {
+  if (!isSemanticColor && !isPalette && color) {
     indicatorStyle.backgroundColor = color
   }
 

@@ -2,7 +2,9 @@ import * as React from 'react'
 import * as Toggle from '@radix-ui/react-toggle'
 import * as LucideIcons from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
+import { isPaletteColor } from '../../utils/colorResolver'
+import { paletteColorMap } from '../../types/palette-colors.generated'
 
 type ToggleStyle = "SOLID" | "OUTLINE" | "GHOST"
 
@@ -54,7 +56,7 @@ export interface ToggleFieldProps {
   /** Size of the toggle button */
   size?: SAILSize
   /** Color when toggle is pressed (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | string
+  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
   /** Determines the button's appearance */
   style?: ToggleStyle
   /** Icon to display in the button */
@@ -105,7 +107,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
   // Get color classes based on style and pressed state
   const getColorClasses = (): string => {
-    if (color.startsWith('#')) return 'border'
+    if (color.startsWith('#') || isPaletteColor(color)) return 'border'
 
     const semanticColor = color as "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD"
 
@@ -144,6 +146,18 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
     return ''
   }
+
+  // Resolve a non-semantic color to a CSS value for inline styles
+  const resolveInlineColor = (): string | undefined => {
+    if (color.startsWith('#')) return color
+    if (isPaletteColor(color)) {
+      const segment = paletteColorMap[color].bg.replace('bg-', '')
+      return `var(--color-${segment})`
+    }
+    return undefined
+  }
+
+  const inlineColor = resolveInlineColor()
 
   const handleChange = (pressed: boolean) => {
     const handler = onChange || saveInto
@@ -217,6 +231,11 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       aria-describedby={instructions ? `${inputId}-instructions` : undefined}
       aria-invalid={showValidations}
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}
+      style={inlineColor ? {
+        borderColor: value ? 'transparent' : inlineColor,
+        color: value ? '#ffffff' : inlineColor,
+        backgroundColor: value ? inlineColor : undefined,
+      } : undefined}
     >
       {icon && iconPosition === "START" && (
         <span aria-hidden="true">
