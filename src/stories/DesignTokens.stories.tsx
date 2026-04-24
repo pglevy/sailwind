@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import tokens from '../../dist/tokens.json'
+import tokens from '../../public/tokens.json'
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
