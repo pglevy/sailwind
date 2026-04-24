@@ -36,7 +36,7 @@ export const UserProfile = () => {
                   user: {
                     name: "Sarah Johnson",
                     initials: "SJ",
-                    photoUrl: "/images/uifaces-human-avatar.jpg",
+                    photoUrl: "images/uifaces-human-avatar.jpg",
                   },
                   altText: "Sarah Johnson profile photo",
                 },

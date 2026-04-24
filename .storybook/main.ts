@@ -14,6 +14,10 @@ const config: StorybookConfig = {
   core: {
     disableTelemetry: true, // 👈 Disables telemetry
   },
+  viteFinal: async (config) => {
+    config.base = './'
+    return config
+  },
 }
 
 export default config
