@@ -198,9 +198,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
         }
 
         // Render document image (standard approach)
-        const imageSrc = imageProps.document.startsWith('/')
-          ? imageProps.document
-          : `/${imageProps.document}`
+        const imageSrc = imageProps.document
 
         const imageClasses = getImageClasses()
 
