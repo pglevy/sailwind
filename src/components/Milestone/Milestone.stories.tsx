@@ -40,7 +40,7 @@ export const VerticalDotStyle: Story = {
     stepStyle: 'DOT',
     active: 1,
     orientation: 'VERTICAL',
-    color: '#674ea7',
+    color: 'VIOLET_700',
   },
 }
 

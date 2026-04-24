@@ -38,9 +38,9 @@ export const CustomHexColors: Story = {
   args: {
     size: 'STANDARD',
     tags: [
-      { text: 'URGENT', backgroundColor: '#FED7DE', textColor: '#9F0019' },
-      { text: 'CUSTOMER FACING', backgroundColor: '#DBECFF', textColor: '#0C4283' },
-      { text: 'IN PROGRESS', backgroundColor: '#FFF6C9', textColor: '#856C00' },
+      { text: 'URGENT', backgroundColor: 'PINK_50', textColor: 'RED_700' },
+      { text: 'CUSTOMER FACING', backgroundColor: 'BLUE_50', textColor: 'BLUE_800' },
+      { text: 'IN PROGRESS', backgroundColor: 'YELLOW_100', textColor: 'YELLOW_800' },
     ],
   },
 }

@@ -49,7 +49,7 @@ export const TransparentBackground: Story = {
 
 export const TextStamps: Story = {
   args: {
-    backgroundColor: '#cc0000',
+    backgroundColor: 'RED_500',
     text: '1',
     align: 'CENTER',
   },
