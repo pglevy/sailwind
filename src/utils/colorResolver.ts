@@ -36,7 +36,7 @@ type TailwindPrefix = 'bg' | 'text' | 'border'
  * Resolve a SAILColor (semantic, palette, or hex) to a Tailwind class string.
  *
  * - Semantic colors return the curated class for the given prefix.
- * - Palette colors return a mechanical class (e.g. TEAL_700 → "bg-teal-700").
+ * - Palette colors return a static class from the generated map.
  * - Hex strings (starting with #) return '' — caller should use inline style.
  */
 export function resolveColorClass(color: string, prefix: TailwindPrefix = 'bg'): string {
@@ -44,7 +44,7 @@ export function resolveColorClass(color: string, prefix: TailwindPrefix = 'bg'):
     return semanticColorClasses[color][prefix]
   }
   if (isPaletteColor(color)) {
-    return `${prefix}-${paletteColorMap[color]}`
+    return paletteColorMap[color][prefix]
   }
   // Hex or unknown — caller handles via inline style
   return ''

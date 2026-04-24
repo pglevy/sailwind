@@ -14,7 +14,11 @@
  *
  * The generated file exports:
  *   - SAILPaletteColor union type
- *   - paletteToTailwind() — converts a palette token to a Tailwind class segment
+ *   - paletteColorMap with full Tailwind class strings (bg, text, border)
+ *
+ * IMPORTANT: The map contains complete class strings (e.g. "bg-teal-700")
+ * so Tailwind's JIT scanner can discover them statically. Do NOT switch
+ * to dynamic string concatenation — the classes won't be generated.
  *
  * Run standalone:  npx tsx scripts/generate-palette-types.ts
  * Or via build:    pnpm run build:tokens
@@ -33,7 +37,7 @@ function main(): void {
 
   const colors: Record<string, Record<string, DTCGToken>> = tokens.color;
 
-  // Collect all palette entries: { sailName: "TEAL_700", tailwindSegment: "teal-700" }
+  // Collect all palette entries
   const entries: { sailName: string; tailwindSegment: string }[] = [];
 
   for (const [family, steps] of Object.entries(colors)) {
@@ -42,9 +46,7 @@ function main(): void {
       .sort((a, b) => parseInt(a) - parseInt(b));
 
     for (const step of stepKeys) {
-      // "burnt-orange" → "BURNT_ORANGE", "teal" → "TEAL"
       const sailName = `${family.toUpperCase().replace(/-/g, '_')}_${step}`;
-      // Tailwind segment keeps the original family name: "burnt-orange-700"
       const tailwindSegment = `${family}-${step}`;
       entries.push({ sailName, tailwindSegment });
     }
@@ -55,6 +57,9 @@ function main(): void {
     '// AUTO-GENERATED — do not edit by hand.',
     '// Source: tokens/tokens.json',
     '// Generator: scripts/generate-palette-types.ts',
+    '//',
+    '// Full Tailwind class strings are written out so the JIT scanner',
+    '// can discover them statically. Do NOT refactor to string concatenation.',
     '',
     '/**',
     ' * Union of every palette color token derived from the design token file.',
@@ -63,7 +68,6 @@ function main(): void {
     'export type SAILPaletteColor =',
   ];
 
-  // Write the union members
   for (let i = 0; i < entries.length; i++) {
     const sep = i === entries.length - 1 ? ';' : '';
     lines.push(`  | '${entries[i].sailName}'${sep}`);
@@ -71,13 +75,14 @@ function main(): void {
 
   lines.push('');
   lines.push('/**');
-  lines.push(' * Map from palette token to its Tailwind class segment.');
-  lines.push(' * Usage: `bg-${paletteColorMap[token]}` → `bg-teal-700`');
+  lines.push(' * Map from palette token to its Tailwind utility classes.');
+  lines.push(' * Each entry contains the full class string for bg, text, and border.');
   lines.push(' */');
-  lines.push('export const paletteColorMap: Record<SAILPaletteColor, string> = {');
+  lines.push('export const paletteColorMap: Record<SAILPaletteColor, { bg: string; text: string; border: string }> = {');
 
   for (const entry of entries) {
-    lines.push(`  '${entry.sailName}': '${entry.tailwindSegment}',`);
+    const seg = entry.tailwindSegment;
+    lines.push(`  '${entry.sailName}': { bg: 'bg-${seg}', text: 'text-${seg}', border: 'border-${seg}' },`);
   }
 
   lines.push('};');
