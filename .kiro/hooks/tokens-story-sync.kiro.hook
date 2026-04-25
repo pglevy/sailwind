@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Sync Design Tokens Story",
+  "description": "When public/tokens.json is edited, reminds the agent to verify the DesignTokens story still renders correctly and covers any new token categories.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "public/tokens.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "public/tokens.json was just modified. Check if src/stories/DesignTokens.stories.tsx needs updates to reflect new or removed token categories (e.g. new color families, new gradient entries, new spacing groups). The story derives most data dynamically, but verify that any new top-level token groups are represented and that the page still compiles cleanly."
+  }
+}

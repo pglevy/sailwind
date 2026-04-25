@@ -42,14 +42,18 @@ function SubTitle({ children }: { children: React.ReactNode }) {
 
 // ─── Color palette ───────────────────────────────────────────────────────────
 
-const COLOR_FAMILIES = ['red', 'orange', 'yellow', 'green', 'teal', 'sky', 'blue', 'purple', 'pink', 'gray'] as const
-const STEPS = ['50', '100', '200', '500', '700', '900'] as const
+// Derive color families and steps dynamically from tokens
+const COLOR_FAMILIES = Object.keys(tokens.color).filter(k => k !== 'semantic' && k !== 'black')
+const STEPS = Object.keys(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (tokens.color as any)[COLOR_FAMILIES[0]] ?? {}
+).sort((a, b) => Number(a) - Number(b))
 
 function ColorPalette() {
   return (
     <div>
       <SectionTitle>Color Palette</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(600px, 1fr))', gap: 24 }}>
         {COLOR_FAMILIES.map(family => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const familyTokens = (tokens.color as any)[family]
@@ -104,8 +108,12 @@ function SemanticColors() {
       <SectionTitle>Semantic Colors</SectionTitle>
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {Object.entries(tokens.color.semantic).map(([key, token]) => {
-          const hex = resolveAlias(token['$value'] as string)
+          const raw = token['$value'] as string
+          const hex = resolveAlias(raw)
           const light = isLight(hex)
+          // Extract alias path like "blue-500" from "{color.blue.500}"
+          const aliasMatch = raw.match(/^\{color\.(.+)\}$/)
+          const aliasLabel = aliasMatch ? aliasMatch[1].replace('.', '-') : raw
           return (
             <div key={key} style={{ width: 140 }}>
               <div style={{
@@ -120,7 +128,7 @@ function SemanticColors() {
                 <span style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: light ? '#222' : '#fff' }}>{hex}</span>
               </div>
               <div style={{ marginTop: 6, fontFamily: 'Open Sans, sans-serif', fontSize: 13, fontWeight: 600, color: '#222' }}>{SEMANTIC_LABELS[key] ?? key}</div>
-              <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#6C6C75', wordBreak: 'break-word' }}>{token['$description']}</div>
+              <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#6C6C75' }}>{aliasLabel}</div>
             </div>
           )
         })}
@@ -131,39 +139,40 @@ function SemanticColors() {
 
 // ─── Gradients ───────────────────────────────────────────────────────────────
 
+function resolveGradientStops(stops: Array<{ color: string; position: number }>): string {
+  return stops
+    .map(s => `${resolveAlias(s.color)} ${Math.round(s.position * 100)}%`)
+    .join(', ')
+}
+
 function Gradients() {
-  const { 'header-bg': headerBg, 'header-overlay': headerOverlay } = tokens.gradient
-
-  const bgStops = (headerBg['$value'] as Array<{ color: string; position: number }>)
-    .map(s => `${s.color} ${Math.round(s.position * 100)}%`)
-    .join(', ')
-
-  const overlayStops = (headerOverlay['$value'] as Array<{ color: string; position: number }>)
-    .map(s => `${s.color} ${Math.round(s.position * 100)}%`)
-    .join(', ')
+  const gradientEntries = Object.entries(tokens.gradient)
+  const cssStrings = gradientEntries.map(([, g]) =>
+    resolveGradientStops(g['$value'] as Array<{ color: string; position: number }>)
+  )
 
   return (
     <div>
       <SectionTitle>Gradients</SectionTitle>
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 280 }}>
-          <SubTitle>header-bg</SubTitle>
-          <div style={{ height: 80, borderRadius: 8, background: `linear-gradient(to right, ${bgStops})`, boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }} />
-          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{headerBg['$description']}</div>
-        </div>
-        <div style={{ flex: 1, minWidth: 280 }}>
-          <SubTitle>header-overlay</SubTitle>
-          <div style={{ height: 80, borderRadius: 8, background: `linear-gradient(to right, ${overlayStops})`, border: '1px solid #E0E0E0', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }} />
-          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{headerOverlay['$description']}</div>
-        </div>
+        {gradientEntries.map(([key, g], i) => (
+          <div key={key} style={{ flex: 1, minWidth: 280 }}>
+            <SubTitle>{key}</SubTitle>
+            <div style={{ height: 80, borderRadius: 8, background: `linear-gradient(to right, ${cssStrings[i]})`, border: '1px solid #E0E0E0', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }} />
+            <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{g['$description']}</div>
+          </div>
+        ))}
       </div>
-      <div style={{ marginTop: 16 }}>
-        <SubTitle>Combined (bg + overlay)</SubTitle>
-        <div style={{ height: 80, borderRadius: 8, position: 'relative', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${bgStops})` }} />
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${overlayStops})` }} />
+      {gradientEntries.length >= 2 && (
+        <div style={{ marginTop: 16 }}>
+          <SubTitle>Combined ({gradientEntries.map(([k]) => k).join(' + ')})</SubTitle>
+          <div style={{ height: 80, borderRadius: 8, position: 'relative', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
+            {cssStrings.map((css, i) => (
+              <div key={i} style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${css})` }} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -292,7 +301,7 @@ function Spacing() {
 
 function DesignTokensPage() {
   return (
-    <div style={{ padding: '32px 40px', maxWidth: 1100, fontFamily: 'Open Sans, system-ui, sans-serif' }}>
+    <div style={{ padding: '32px 40px', fontFamily: 'Open Sans, system-ui, sans-serif' }}>
       <h1 style={{ fontSize: 28, fontWeight: 700, color: '#222', margin: '0 0 4px' }}>Design Tokens</h1>
       <p style={{ color: '#6C6C75', fontSize: 14, margin: '0 0 8px' }}>
         Aurora color palette, semantic mappings, typography, spacing, and gradients — sourced from{' '}
@@ -314,7 +323,6 @@ const meta = {
   title: 'Foundation/Design Tokens',
   component: DesignTokensPage,
   parameters: { layout: 'fullscreen' },
-  tags: ['autodocs'],
 } satisfies Meta<typeof DesignTokensPage>
 
 export default meta

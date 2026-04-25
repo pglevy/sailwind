@@ -48,7 +48,7 @@ const SEMANTIC_MAP: Record<string, { path: string; ref: string }> = {
   ACCENT:    { path: 'accent',      ref: '{color.blue.500}' },
   POSITIVE:  { path: 'positive',    ref: '{color.green.500}' },
   NEGATIVE:  { path: 'destructive', ref: '{color.red.500}' },
-  SECONDARY: { path: 'secondary',   ref: '{color.gray.500}' },
+  SECONDARY: { path: 'secondary',   ref: '{color.gray.700}' },
   STANDARD:  { path: 'standard',    ref: '{color.gray.900}' },
 };
 
