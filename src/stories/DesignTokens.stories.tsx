@@ -151,28 +151,56 @@ function Gradients() {
     resolveGradientStops(g['$value'] as Array<{ color: string; position: number }>)
   )
 
+  // Find the bg and overlay gradients for the combined preview
+  const bgIndex = gradientEntries.findIndex(([k]) => k === 'header-bg')
+  const overlayIndex = gradientEntries.findIndex(([k]) => k === 'header-overlay')
+  const bgCss = bgIndex >= 0 ? cssStrings[bgIndex] : cssStrings[0]
+  const overlayCss = overlayIndex >= 0 ? cssStrings[overlayIndex] : cssStrings[1]
+
   return (
     <div>
       <SectionTitle>Gradients</SectionTitle>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        {gradientEntries.map(([key, g], i) => (
-          <div key={key} style={{ flex: 1, minWidth: 280 }}>
-            <SubTitle>{key}</SubTitle>
-            <div style={{ height: 80, borderRadius: 8, background: `linear-gradient(to right, ${cssStrings[i]})`, border: '1px solid #E0E0E0', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }} />
-            <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{g['$description']}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        {/* Left: individual gradient swatches (bg only) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {gradientEntries.map(([key, g], i) =>
+            key === 'header-overlay' ? null : (
+              <div key={key}>
+                <SubTitle>{key}</SubTitle>
+                <div style={{ height: 80, borderRadius: 8, background: `linear-gradient(to right, ${cssStrings[i]})`, border: '1px solid #E0E0E0', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }} />
+                <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{g['$description']}</div>
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Right: combined as seen in ApplicationHeader */}
+        <div>
+          <SubTitle>Header-BG with Overlay</SubTitle>
+          <div style={{
+            height: 80,
+            borderRadius: 8,
+            position: 'relative',
+            overflow: 'hidden',
+            background: `linear-gradient(to right, ${bgCss})`,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+            border: '1px solid #E0E0E0',
+          }}>
+            {/* Overlay offset from top by 0.5rem, matching .application-header-gradient::before */}
+            <div style={{
+              position: 'absolute',
+              top: '0.5rem',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `linear-gradient(to right, ${overlayCss})`,
+            }} />
           </div>
-        ))}
-      </div>
-      {gradientEntries.length >= 2 && (
-        <div style={{ marginTop: 16 }}>
-          <SubTitle>Combined ({gradientEntries.map(([k]) => k).join(' + ')})</SubTitle>
-          <div style={{ height: 80, borderRadius: 8, position: 'relative', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.12)' }}>
-            {cssStrings.map((css, i) => (
-              <div key={i} style={{ position: 'absolute', inset: 0, background: `linear-gradient(to right, ${css})` }} />
-            ))}
+          <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>
+            --gradient-header-overlay
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
