@@ -208,35 +208,11 @@ function Gradients() {
 // ─── Typography ──────────────────────────────────────────────────────────────
 
 function Typography() {
-  const { 'font-family': fontFamily, 'font-weight': fontWeight, 'text-size': textSize } = tokens.typography
+  const { 'text-size': textSize } = tokens.typography
 
   return (
     <div>
       <SectionTitle>Typography</SectionTitle>
-
-      <SubTitle>Font Families</SubTitle>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-        {Object.entries(fontFamily).map(([key, token]) => {
-          const families = (token['$value'] as string[]).join(', ')
-          return (
-            <div key={key} style={{ background: '#F5F5F7', borderRadius: 8, padding: '16px 20px', minWidth: 220 }}>
-              <div style={{ fontFamily: families, fontSize: 22, marginBottom: 8, color: '#222' }}>Aa Bb Cc 123</div>
-              <div style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: '#6C6C75', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{key}</div>
-              <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#6C6C75', marginTop: 2 }}>{families}</div>
-            </div>
-          )
-        })}
-      </div>
-
-      <SubTitle>Font Weight</SubTitle>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        {Object.entries(fontWeight).map(([key, token]) => (
-          <div key={key} style={{ background: '#F5F5F7', borderRadius: 8, padding: '12px 16px' }}>
-            <div style={{ fontWeight: token['$value'] as number, fontSize: 18, color: '#222', fontFamily: 'Open Sans, sans-serif' }}>The quick brown fox</div>
-            <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#6C6C75', marginTop: 4 }}>{key} — {String(token['$value'])}</div>
-          </div>
-        ))}
-      </div>
 
       <SubTitle>Text Size</SubTitle>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -247,7 +223,7 @@ function Typography() {
             ? resolveAlias(raw) as unknown as { value: number; unit: string }
             : raw as { value: number; unit: string }
           const desc = token['$description'] as string
-          const sailName = desc.split('—')[0].trim()
+          const sailName = desc.split('—')[0].trim().replace(/^[^.]+\./, '')
           // rem values are relative to browser default 16px root
           const px = Math.round(resolvedValue.value * 16)
           const sizeLabel = isAlias
@@ -270,42 +246,40 @@ function Typography() {
 // ─── Spacing ─────────────────────────────────────────────────────────────────
 
 function Spacing() {
-  const { margin, spacing: spacingScale, radius } = tokens.spacing
+  const { margin } = tokens.spacing
 
   return (
     <div>
       <SectionTitle>Spacing</SectionTitle>
 
-      <SubTitle>Margin Scale (SAIL)</SubTitle>
+      <SubTitle>Margin and Padding Scale</SubTitle>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {Object.entries(margin).map(([key, token]) => {
           const val = token['$value'] as { value: number; unit: string }
           const px = val.unit === 'rem' ? val.value * 16 : val.value
           const width = Math.max(px, 4)
+          const desc = (token['$description'] as string).replace(/^[^.]+\./, '')
           return (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 100, fontFamily: 'monospace', fontSize: 12, color: '#222', textAlign: 'right' }}>{key}</div>
               <div style={{ width, height: 20, background: '#2322F0', borderRadius: 3, minWidth: 4 }} />
-              <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{val.value}{val.unit} ({px}px) — {token['$description']}</div>
+              <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#6C6C75' }}>{val.value}{val.unit} ({px}px) — {desc}</div>
             </div>
           )
         })}
       </div>
+    </div>
+  )
+}
 
-      <SubTitle>Spacing Tokens</SubTitle>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        {Object.entries(spacingScale).map(([key, token]) => {
-          const val = token['$value'] as { value: number; unit: string }
-          const px = val.value * 16
-          return (
-            <div key={key} style={{ background: '#F5F5F7', borderRadius: 6, padding: '10px 14px', textAlign: 'center' }}>
-              <div style={{ width: px, height: px, background: '#2322F0', borderRadius: 3, margin: '0 auto 6px' }} />
-              <div style={{ fontFamily: 'monospace', fontSize: 11, color: '#222' }}>{key}</div>
-              <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#6C6C75' }}>{val.value}{val.unit}</div>
-            </div>
-          )
-        })}
-      </div>
+// ─── Shape ────────────────────────────────────────────────────────────────────
+
+function Shape() {
+  const { radius } = tokens.spacing
+
+  return (
+    <div>
+      <SectionTitle>Shape</SectionTitle>
 
       <SubTitle>Border Radius</SubTitle>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -341,6 +315,7 @@ function DesignTokensPage() {
       <Gradients />
       <Typography />
       <Spacing />
+      <Shape />
     </div>
   )
 }
