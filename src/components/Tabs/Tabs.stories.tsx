@@ -12,7 +12,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    size: { control: 'select', options: ['SMALL', 'STANDARD', 'LARGE'] },
+    variant: { control: 'select', options: ['UNDERLINE', 'PILL'] },
+    size: { control: 'select', options: ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] },
     color: { control: 'text' },
     orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
     activationMode: { control: 'select', options: ['AUTOMATIC', 'MANUAL'] },
@@ -259,5 +260,34 @@ export const ManualActivation: Story = {
     ],
     defaultValue: 'manual1',
     activationMode: 'MANUAL',
+  },
+}
+
+
+export const Pill: Story = {
+  args: {
+    tabs: [
+      { value: 'summary', label: 'Summary', content: <p className="text-base text-gray-700">Summary view content.</p> },
+      { value: 'details', label: 'Details', content: <p className="text-base text-gray-700">Details view content.</p> },
+      { value: 'activity', label: 'Activity', content: <p className="text-base text-gray-700">Activity view content.</p> },
+      { value: 'documents', label: 'Documents', content: <p className="text-base text-gray-700">Documents view content.</p> },
+      { value: 'history', label: 'History', content: <p className="text-base text-gray-700">History view content.</p> },
+    ],
+    defaultValue: 'summary',
+    variant: 'PILL',
+    size: 'SMALL',
+  },
+}
+
+export const PillCustomColor: Story = {
+  args: {
+    tabs: [
+      { value: 'tab1', label: 'Tab One', content: <p className="text-base text-gray-700">Custom color pill tab.</p> },
+      { value: 'tab2', label: 'Tab Two', content: <p className="text-base text-gray-700">Custom color pill tab.</p> },
+    ],
+    defaultValue: 'tab1',
+    variant: 'PILL',
+    size: 'SMALL',
+    color: '#9333EA',
   },
 }

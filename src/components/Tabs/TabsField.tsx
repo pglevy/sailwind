@@ -20,6 +20,13 @@ export interface TabItem {
 }
 
 /**
+ * Visual variant for tab styling
+ * - UNDERLINE: Standard tabs with a sliding underline indicator (default)
+ * - PILL: Filled background on active tab with a downward caret indicator
+ */
+export type TabsVariant = "UNDERLINE" | "PILL"
+
+/**
  * Displays a set of layered sections of content (tab panels) that are displayed one at a time
  * Inspired by SAIL form field patterns (not an official SAIL component)
  *
@@ -35,7 +42,9 @@ export interface TabsFieldProps {
   defaultValue?: string
   /** Callback when active tab changes */
   onValueChange?: (value: string) => void
-  /** Orientation of the tabs */
+  /** Visual variant for tab styling */
+  variant?: TabsVariant
+  /** Orientation of the tabs (only applies to UNDERLINE variant) */
   orientation?: "HORIZONTAL" | "VERTICAL"
   /** Size of the tab triggers */
   size?: SAILSize
@@ -60,6 +69,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   value,
   defaultValue,
   onValueChange,
+  variant = "UNDERLINE",
   orientation = "HORIZONTAL",
   size = "STANDARD",
   loop = true,
@@ -147,13 +157,36 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   }
   const indicatorColor = getIndicatorColor()
 
+  // PILL variant color helpers
+  const getPillBgColor = (): string => {
+    const semanticMap: Record<string, string> = {
+      ACCENT: 'bg-blue-500', POSITIVE: 'bg-green-700', NEGATIVE: 'bg-red-700',
+      SECONDARY: 'bg-gray-700', STANDARD: 'bg-gray-900',
+    }
+    if (semanticMap[color]) return semanticMap[color]
+    if (isPaletteColor(color)) return paletteColorMap[color].bg
+    return '' // hex — handled via inline style
+  }
+  const getPillTextColor = (): string => {
+    const semanticMap: Record<string, string> = {
+      ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
+      SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900',
+    }
+    if (semanticMap[color]) return semanticMap[color]
+    if (isPaletteColor(color)) return paletteColorMap[color].text
+    return '' // hex — handled via inline style
+  }
+  const isHexColor = typeof color === 'string' && color.startsWith('#')
+
   // Container classes
   const sailClasses = [marginMap[marginAbove], marginBottomMap[marginBelow]].filter(Boolean).join(' ')
   const containerClasses = mergeClasses(sailClasses, className)
 
-  const listClasses = orientation === "VERTICAL"
-    ? "relative flex flex-col"
-    : "relative flex"
+  const listClasses = variant === "PILL"
+    ? "flex items-end gap-1"
+    : orientation === "VERTICAL"
+      ? "relative flex flex-col"
+      : "relative flex"
 
   const contentClasses = orientation === "VERTICAL" ? "pl-4 flex-1 p-4" : "p-4"
   const rootClasses = orientation === "VERTICAL" ? "flex" : "block"
@@ -173,46 +206,89 @@ export const TabsField: React.FC<TabsFieldProps> = ({
           className={listClasses}
           loop={loop}
         >
-          {tabs.map((tab) => (
-            <Tabs.Trigger
-              key={tab.value}
-              value={tab.value}
-              disabled={tab.disabled}
-              className={[
-                sizeMap[size],
-                'relative bg-white text-gray-700 border-0 cursor-default select-none',
-                'flex items-center justify-center outline-none font-medium',
-                // Horizontal: bottom bar hover + active handled by slider
-                orientation === "HORIZONTAL" && 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:z-10 after:rounded-full after:bg-transparent after:transition-colors after:duration-200 hover:after:bg-gray-500 data-[state=active]:after:bg-transparent',
-                // Vertical: hover background + left bar hover
-                orientation === "VERTICAL" && 'hover:bg-gray-50 after:absolute after:left-0 after:top-0 after:h-full after:w-[2px] after:z-10 after:rounded-full after:bg-transparent after:transition-colors after:duration-200 hover:after:bg-gray-500 data-[state=active]:after:bg-transparent',
-                'data-[state=active]:font-semibold data-[state=active]:text-gray-900',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'focus-visible:relative focus-visible:shadow-[0_0_0_2px] focus-visible:shadow-blue-500'
-              ].filter(Boolean).join(' ')}
-            >
-              {tab.label}
-            </Tabs.Trigger>
-          ))}
+          {tabs.map((tab) => {
+            if (variant === "PILL") {
+              const isActive = internalActive === tab.value
+              return (
+                <Tabs.Trigger
+                  key={tab.value}
+                  value={tab.value}
+                  disabled={tab.disabled}
+                  className={[
+                    'group relative',
+                    sizeMap[size],
+                    'rounded-sm transition-colors whitespace-nowrap cursor-pointer select-none outline-none border-0',
+                    isActive
+                      ? (!isHexColor ? `${getPillBgColor()} text-white` : '')
+                      : (!isHexColor ? getPillTextColor() : ''),
+                    !isActive ? 'hover:bg-gray-100' : '',
+                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    'focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2'
+                  ].filter(Boolean).join(' ')}
+                  style={
+                    isHexColor
+                      ? isActive
+                        ? { backgroundColor: color, color: '#ffffff' }
+                        : { color: color }
+                      : undefined
+                  }
+                >
+                  {tab.label}
+                  {isActive && (
+                    <svg
+                      className={[
+                        'absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-1.5',
+                        !isHexColor ? getPillTextColor() : ''
+                      ].filter(Boolean).join(' ')}
+                      viewBox="0 0 12 6"
+                      aria-hidden="true"
+                    >
+                      <polygon
+                        points="6,6 0,0 12,0"
+                        fill={isHexColor ? color : 'currentColor'}
+                      />
+                    </svg>
+                  )}
+                </Tabs.Trigger>
+              )
+            }
 
-          {/* Full-width base line */}
-          {orientation === "HORIZONTAL" && (
+            return (
+              <Tabs.Trigger
+                key={tab.value}
+                value={tab.value}
+                disabled={tab.disabled}
+                className={[
+                  sizeMap[size],
+                  'relative bg-white text-gray-700 border-0 cursor-default select-none',
+                  'flex items-center justify-center outline-none font-medium',
+                  orientation === "HORIZONTAL" && 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:z-10 after:rounded-full after:bg-transparent after:transition-colors after:duration-200 hover:after:bg-gray-500 data-[state=active]:after:bg-transparent',
+                  orientation === "VERTICAL" && 'hover:bg-gray-50 after:absolute after:left-0 after:top-0 after:h-full after:w-[2px] after:z-10 after:rounded-full after:bg-transparent after:transition-colors after:duration-200 hover:after:bg-gray-500 data-[state=active]:after:bg-transparent',
+                  'data-[state=active]:font-semibold data-[state=active]:text-gray-900',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  'focus-visible:relative focus-visible:shadow-[0_0_0_2px] focus-visible:shadow-blue-500'
+                ].filter(Boolean).join(' ')}
+              >
+                {tab.label}
+              </Tabs.Trigger>
+            )
+          })}
+
+          {/* Sliding indicators — UNDERLINE variant only */}
+          {variant === "UNDERLINE" && orientation === "HORIZONTAL" && (
             <span aria-hidden="true" className="absolute bottom-0 left-0 w-full h-[2px] bg-gray-300 pointer-events-none" />
           )}
-          {/* Sliding active segment — horizontal */}
-          {orientation === "HORIZONTAL" && (
+          {variant === "UNDERLINE" && orientation === "HORIZONTAL" && (
             <span
               aria-hidden="true"
               className="absolute bottom-0 h-[2px] rounded-full transition-all duration-300 ease-in-out pointer-events-none z-20"
               style={{ ...indicatorStyle, backgroundColor: indicatorColor }}
             />
           )}
-          {/* Full-height base line — vertical */}
-          {orientation === "VERTICAL" && (
+          {variant === "UNDERLINE" && orientation === "VERTICAL" && (
             <span aria-hidden="true" className="absolute left-0 top-0 h-full w-[2px] bg-gray-300 pointer-events-none" />
           )}
-          {/* Sliding active segment — vertical */}
-          {orientation === "VERTICAL" && (
+          {variant === "UNDERLINE" && orientation === "VERTICAL" && (
             <span
               aria-hidden="true"
               className="absolute left-0 w-[2px] rounded-full transition-all duration-300 ease-in-out pointer-events-none z-20"
