@@ -275,10 +275,10 @@ const SiteNavItem: React.FC<{
 
         {/* Label + badge */}
         {!isCollapsed && (
-          <span className="flex-1 truncate text-sm text-gray-800">
+          <span className="flex-1 truncate text-sm text-gray-900">
             {page.label}
             {page.badge && (
-              <span className="ml-1 text-gray-500">{page.badge}</span>
+              <span className="ml-1 text-gray-700">{page.badge}</span>
             )}
           </span>
         )}
