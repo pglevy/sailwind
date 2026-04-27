@@ -4,6 +4,7 @@ import type { SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 import { isPaletteColor } from '../../utils/colorResolver'
 import { paletteColorMap } from '../../types/palette-colors.generated'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap, buttonSizeMap } from '../../utils/sailMaps'
 
 /**
  * Individual tab configuration
@@ -112,33 +113,6 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Margin mappings
-  const marginMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBottomMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
-  // Size mappings for tab triggers — matches ButtonWidget
-  const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2 text-sm leading-none',
-    STANDARD: 'px-4 py-3 text-base leading-none',
-    MEDIUM: 'px-5 py-4 text-lg leading-none',
-    LARGE: 'px-6 py-5 text-xl leading-none'
-  }
-
   // Active indicator color
   const getIndicatorColor = (): string => {
     const semanticMap: Record<string, string> = {
@@ -179,7 +153,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   const isHexColor = typeof color === 'string' && color.startsWith('#')
 
   // Container classes
-  const sailClasses = [marginMap[marginAbove], marginBottomMap[marginBelow]].filter(Boolean).join(' ')
+  const sailClasses = [marginAboveMap[marginAbove], marginBelowMap[marginBelow]].filter(Boolean).join(' ')
   const containerClasses = mergeClasses(sailClasses, className)
 
   const listClasses = variant === "PILL"
@@ -216,7 +190,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                   disabled={tab.disabled}
                   className={[
                     'group relative',
-                    sizeMap[size],
+                    buttonSizeMap[size],
                     'rounded-sm transition-colors whitespace-nowrap cursor-pointer select-none outline-none border-0',
                     isActive
                       ? (!isHexColor ? `${getPillBgColor()} text-white` : '')
@@ -259,7 +233,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                 value={tab.value}
                 disabled={tab.disabled}
                 className={[
-                  sizeMap[size],
+                  buttonSizeMap[size],
                   'relative bg-white text-gray-700 border-0 cursor-default select-none',
                   'flex items-center justify-center outline-none font-medium',
                   orientation === "HORIZONTAL" && 'after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:z-10 after:rounded-full after:bg-transparent after:transition-colors after:duration-200 hover:after:bg-gray-500 data-[state=active]:after:bg-transparent',

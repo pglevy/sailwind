@@ -3,6 +3,7 @@ import { FieldLabel } from '../shared/FieldLabel'
 import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
+import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 type Orientation = "HORIZONTAL" | "VERTICAL"
 type StepStyle = "LINE" | "CHEVRON" | "DOT"
@@ -66,25 +67,6 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   if (!showWhen) return null
 
   const fieldId = `milestone-${Math.random().toString(36).slice(2, 11)}`
-
-  // Map SAIL margin values to Tailwind classes
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
 
   // Map semantic colors to Tailwind classes
   const getColorClasses = (colorValue: Color) => {

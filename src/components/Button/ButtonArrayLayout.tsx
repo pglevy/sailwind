@@ -3,6 +3,7 @@ import type { ButtonWidgetProps } from './ButtonWidget'
 import { ButtonWidget } from './ButtonWidget'
 import type { SAILAlign, SAILMarginSize } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { marginBelowMap, alignMap } from '../../utils/sailMaps'
 
 /**
  * Props for the ButtonArrayLayout component
@@ -44,23 +45,6 @@ export const ButtonArrayLayout: React.FC<ButtonArrayLayoutProps> = ({
 
   // Filter out hidden buttons
   const visibleButtons = buttons.filter(btn => btn.showWhen !== false)
-
-  // Alignment mappings
-  const alignMap: Record<SAILAlign, string> = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
-  }
-
-  // Margin mappings - using Tailwind standard classes that map to SAIL values
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',           // SAIL NONE: no class needed
-    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
-    LESS: 'mb-2',      // SAIL LESS: 8px
-    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
-    MORE: 'mb-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
-  }
 
   // SAIL behavior: single button renders right-justified, multiple buttons left-justified
   const defaultAlign = visibleButtons.length === 1 ? 'END' : 'START'

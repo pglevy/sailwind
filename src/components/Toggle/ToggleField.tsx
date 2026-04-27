@@ -5,6 +5,7 @@ import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 import { isPaletteColor } from '../../utils/colorResolver'
 import { paletteColorMap } from '../../types/palette-colors.generated'
+import { buttonSizeMap } from '../../utils/sailMaps'
 
 type ToggleStyle = "SOLID" | "OUTLINE" | "GHOST"
 
@@ -96,14 +97,6 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   if (!showWhen) return null
 
   const inputId = `togglefield-${Math.random().toString(36).substr(2, 9)}`
-
-  // Size mappings — matches ButtonWidget exactly
-  const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2 text-sm leading-none',
-    STANDARD: 'px-4 py-3 text-base leading-none',
-    MEDIUM: 'px-5 py-4 text-lg leading-none',
-    LARGE: 'px-6 py-5 text-xl leading-none'
-  }
 
   // Get color classes based on style and pressed state
   const getColorClasses = (): string => {
@@ -223,7 +216,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
         'inline-flex items-center justify-center gap-1',
         'font-medium transition-colors h-auto rounded-sm',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-        sizeMap[size],
+        buttonSizeMap[size],
         getColorClasses(),
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       ].filter(Boolean).join(' ')}

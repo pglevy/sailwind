@@ -4,6 +4,7 @@ import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../ty
 import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 export type ProgressBarColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | SAILColorInput
 export type ProgressBarStyle = "THIN" | "THICK"
@@ -61,25 +62,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
   // Generate unique ID for accessibility
   const progressId = React.useId()
-
-  // Styling maps using standard Tailwind classes
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
 
   const styleMap: Record<ProgressBarStyle, { height: string; textSize: string }> = {
     THIN: { height: 'h-2', textSize: 'text-sm' },

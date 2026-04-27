@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { SAILMarginSize } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 /**
  * Width options for dialog sizing
@@ -77,25 +78,6 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Margin mappings
-  const marginMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBottomMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
   // Width mappings
   const widthMap: Record<DialogWidth, string> = {
     NARROW: 'w-[90vw] max-w-sm',      // ~384px max
@@ -117,8 +99,8 @@ export const DialogField: React.FC<DialogFieldProps> = ({
 
   // Container classes
   const sailClasses = [
-    marginMap[marginAbove],
-    marginBottomMap[marginBelow]
+    marginAboveMap[marginAbove],
+    marginBelowMap[marginBelow]
   ].filter(Boolean).join(' ')
 
   const containerClasses = mergeClasses(sailClasses, className)
