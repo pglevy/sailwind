@@ -20,9 +20,8 @@
   /* END GENERATED:typography */
 
   /* BEGIN GENERATED:spacing */
-  /* Intermediate spacing */
-  --spacing-1\.5: 0.375rem;
-  --spacing-2\.5: 0.625rem;
+  /* Base spacing unit (Tailwind multiplier) */
+  --spacing: 0.25rem;
 
   /* Border radius */
   --radius-sm: 0.25rem;

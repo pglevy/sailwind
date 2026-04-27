@@ -126,8 +126,13 @@ function generateTypographyCSS(typography: TokenFile['typography']): string {
 function generateSpacingCSS(spacing: TokenFile['spacing']): string {
   const lines: string[] = [];
 
+  // Base spacing unit — enables Tailwind multiplier math for all numeric utilities
+  lines.push('  /* Base spacing unit (Tailwind multiplier) */');
+  lines.push('  --spacing: 0.25rem;');
+  lines.push('');
+
   // Intermediate spacing values
-  if (spacing.spacing) {
+  if (spacing.spacing && Object.keys(spacing.spacing).length > 0) {
     lines.push('  /* Intermediate spacing */');
     for (const [name, token] of Object.entries(spacing.spacing)) {
       const dim = token.$value as DimensionValue;

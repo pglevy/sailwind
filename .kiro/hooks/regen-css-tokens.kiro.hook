@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Regenerate CSS on token change",
+  "description": "When tokens/tokens.json is edited, automatically regenerate the CSS custom properties in src/index.css to keep them in sync.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "tokens/tokens.json"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "pnpm run generate:css"
+  }
+}
