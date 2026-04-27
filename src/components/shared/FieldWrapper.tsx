@@ -2,6 +2,7 @@ import * as React from 'react'
 import { FieldLabel } from './FieldLabel'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 export interface FieldWrapperProps {
   /** The label text to display */
@@ -51,25 +52,6 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
   footer,
   className
 }) => {
-  // Map SAIL margin values to Tailwind classes
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
   const sailClasses = [
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],

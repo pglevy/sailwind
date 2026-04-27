@@ -2,6 +2,7 @@ import * as React from 'react'
 import type { SAILShape, SAILPadding, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap, paddingMap, shapeMap } from '../../utils/sailMaps'
 
 type CardHeight = "AUTO" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 type CardStyle = "NONE" | "TRANSPARENT" | "STANDARD" | "ACCENT" | "SUCCESS" | "WARN" | "ERROR" | "INFO" | "CHARCOAL_SCHEME" | "NAVY_SCHEME" | "PLUM_SCHEME"
@@ -72,42 +73,6 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     MEDIUM: 'h-48',
     TALL: 'h-64',
     EXTRA_TALL: 'h-96'
-  }
-
-  // Shape mappings - using Tailwind standard classes that map to SAIL values
-  const shapeMap: Record<SAILShape, string> = {
-    SQUARED: 'rounded-none',  // SAIL SQUARED: 0
-    SEMI_ROUNDED: 'rounded-sm', // SAIL SEMI_ROUNDED: 4px
-    ROUNDED: 'rounded-md'     // SAIL ROUNDED: 8px
-  }
-
-  // Padding mappings - using Tailwind standard classes that map to SAIL values
-  const paddingMap: Record<SAILPadding, string> = {
-    NONE: 'p-0',      // SAIL NONE: 0
-    EVEN_LESS: 'p-1', // SAIL EVEN_LESS: 4px
-    LESS: 'p-2',      // SAIL LESS: 8px
-    STANDARD: 'p-4',  // SAIL STANDARD: 16px
-    MORE: 'p-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'p-8'  // SAIL EVEN_MORE: 32px
-  }
-
-  // Margin mappings - using Tailwind standard classes that map to SAIL values
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',           // SAIL NONE: no class needed
-    EVEN_LESS: 'mt-1', // SAIL EVEN_LESS: 4px
-    LESS: 'mt-2',      // SAIL LESS: 8px
-    STANDARD: 'mt-4',  // SAIL STANDARD: 16px
-    MORE: 'mt-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'mt-8'  // SAIL EVEN_MORE: 32px
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',           // SAIL NONE: no class needed
-    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
-    LESS: 'mb-2',      // SAIL LESS: 8px
-    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
-    MORE: 'mb-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
   // Background color mappings for card styles

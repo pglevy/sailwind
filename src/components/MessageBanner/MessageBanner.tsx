@@ -4,6 +4,7 @@ import type { SAILShape, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { ButtonWidgetProps } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap, shapeMap } from '../../utils/sailMaps'
 
 export type BackgroundColor = "INFO" | "SUCCESS" | "WARN" | "ERROR" | string
 export type HighlightColor = "INFO" | "POSITIVE" | "WARN" | "NEGATIVE" | string
@@ -70,31 +71,6 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
 
   // Don't render visually if announce-only
   const isVisuallyHidden = announceBehavior === "ANNOUNCE_ONLY"
-
-  // Styling maps using standard Tailwind classes
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
-  const shapeMap: Record<SAILShape, string> = {
-    SQUARED: 'rounded-none',
-    SEMI_ROUNDED: 'rounded-sm',
-    ROUNDED: 'rounded-md'
-  }
 
   // Semantic color mappings with dark semantic text
   const backgroundColorMap: Record<string, { bg: string; text: string }> = {

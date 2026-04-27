@@ -2,6 +2,7 @@ import * as React from 'react'
 import type { SAILAlign, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
+import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 /**
  * Heading size values matching SAIL's size parameter
@@ -92,25 +93,6 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
     START: 'text-left',
     CENTER: 'text-center',
     END: 'text-right'
-  }
-
-  // Margin mappings
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
   }
 
   // Build color styles — semantic, palette, or hex
