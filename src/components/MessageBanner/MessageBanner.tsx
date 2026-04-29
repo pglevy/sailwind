@@ -122,13 +122,13 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
 
   const IconComponent = icon ? iconMap[icon] : null
   const isSemanticBg = backgroundColor in backgroundColorMap
-  const bgColors = isSemanticBg 
+  const bgColors = isSemanticBg
     ? backgroundColorMap[backgroundColor]
     : { bg: '', text: 'text-gray-900' }
 
   // Determine highlight bar color
   const isSemanticHighlight = highlightColor in highlightColorMap
-  const highlightBarColor = isSemanticHighlight 
+  const highlightBarColor = isSemanticHighlight
     ? highlightColorMap[highlightColor]
     : ''
 
@@ -167,14 +167,14 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   }
 
   return (
-    <div 
+    <div
       className={containerClasses}
       style={containerStyle}
       {...ariaAttributes}
     >
       {/* Decorative bar */}
       {showDecorativeBar && (
-        <div 
+        <div
           className={`absolute left-0 top-0 bottom-0 w-1 ${isSemanticHighlight ? highlightBarColor : ''}`}
           style={!isSemanticHighlight ? highlightStyle : undefined}
           aria-hidden="true"
@@ -218,11 +218,10 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
         {/* Close button */}
         {showCloseButton && (
           <ButtonWidget
-            style="GHOST"
+            style="LINK"
             size="SMALL"
-            icon={X}
+            icon={"X"}
             accessibilityText="Close banner"
-            marginBelow="NONE"
             onClick={onClose}
           />
         )}
