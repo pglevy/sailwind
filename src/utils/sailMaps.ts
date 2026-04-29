@@ -67,10 +67,18 @@ export const buttonIconOnlySizeMap: Record<SAILSize, string> = {
   LARGE: 'p-5 text-xl'
 }
 
-// --- Alignment Map ---
+// --- Alignment Maps ---
 
+/** Flex alignment (for button arrays, tags, images, stamps) */
 export const alignMap: Record<SAILAlign, string> = {
   START: 'justify-start',
   CENTER: 'justify-center',
   END: 'justify-end'
+}
+
+/** Text alignment (for headings, rich text, text fields) */
+export const textAlignMap: Record<SAILAlign, string> = {
+  START: 'text-left',
+  CENTER: 'text-center',
+  END: 'text-right'
 }

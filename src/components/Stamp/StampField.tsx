@@ -3,7 +3,7 @@ import * as LucideIcons from 'lucide-react'
 import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
-import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
 type StampBackgroundColor = SAILColorInput | "TRANSPARENT"
@@ -80,12 +80,6 @@ export const StampField: React.FC<StampFieldProps> = ({
     SMALL: { container: 'w-8 h-8', text: 'text-sm', icon: 'text-sm' },
     MEDIUM: { container: 'w-12 h-12', text: 'text-base', icon: 'text-base' },
     LARGE: { container: 'w-16 h-16', text: 'text-lg', icon: 'text-lg' }
-  }
-
-  const alignMap: Record<SAILAlign, string> = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
   }
 
   const shapeMap: Record<SAILShape, string> = {

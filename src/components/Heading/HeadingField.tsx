@@ -2,7 +2,7 @@ import * as React from 'react'
 import type { SAILAlign, SAILMarginSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
-import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, textAlignMap } from '../../utils/sailMaps'
 
 /**
  * Heading size values matching SAIL's size parameter
@@ -88,13 +88,6 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
     BOLD: 'font-bold'            // 700
   }
 
-  // Alignment mappings
-  const alignMap: Record<SAILAlign, string> = {
-    START: 'text-left',
-    CENTER: 'text-center',
-    END: 'text-right'
-  }
-
   // Build color styles — semantic, palette, or hex
   const colorStyles = isSemanticColor(color)
     ? { className: resolveColorClass(color, 'text') }
@@ -128,7 +121,7 @@ export const HeadingField: React.FC<HeadingFieldProps> = ({
   const sailClasses = [
     sizeMap[size],
     fontWeightMap[fontWeight],
-    alignMap[align],
+    textAlignMap[align],
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
     preventWrapping && 'truncate',

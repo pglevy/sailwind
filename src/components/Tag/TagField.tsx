@@ -4,7 +4,7 @@ import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize } from '../
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
-import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
 
 /**
  * Tag size - only SMALL and STANDARD are supported per SAIL docs
@@ -70,13 +70,6 @@ export const TagField: React.FC<TagFieldProps> = ({
   const sizeMap = {
     SMALL: 'text-xs px-2 py-1',      // SAIL SMALL: 12px text, 8px horizontal padding, 4px vertical
     STANDARD: 'text-base px-4 py-1'  // SAIL STANDARD: 16px text, 16px horizontal padding, 4px vertical
-  }
-
-  // Alignment mappings
-  const alignMap = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
   }
 
   // Semantic color mappings — tags use light tints for backgrounds
