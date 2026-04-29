@@ -156,11 +156,11 @@ export const TextField: React.FC<TextFieldProps> = ({
     readOnly && 'border-none bg-transparent p-0',
     // Normal mode: standard input styling
     !readOnly && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
-    !readOnly && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+    !readOnly && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-transparent',
     // Disabled state
     disabled && 'bg-gray-100 text-gray-700 cursor-not-allowed',
     // Error state
-    validations.length > 0 && 'border-red-700 focus:ring-red-700'
+    validations.length > 0 && 'border-red-700 focus-visible:ring-red-700'
   ].filter(Boolean).join(' ')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

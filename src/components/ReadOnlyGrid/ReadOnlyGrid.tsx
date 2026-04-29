@@ -363,7 +363,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                   allPageRowsSelected
                     ? 'border-blue-500 bg-blue-500'
                     : 'border-gray-400 bg-white',
-                  'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
                   'transition-colors duration-150 ease-in-out cursor-pointer',
                   'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
                 ].join(' ')}
@@ -446,7 +446,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                       isRowSelected
                         ? 'border-blue-500 bg-blue-500'
                         : 'border-gray-400 bg-white',
-                      'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                      'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
                       'transition-colors duration-150 ease-in-out cursor-pointer',
                       'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
                     ].join(' ')}

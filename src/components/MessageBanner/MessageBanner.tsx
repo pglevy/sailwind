@@ -219,7 +219,7 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="flex-shrink-0 p-1 rounded-sm hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500"
+            className="flex-shrink-0 p-1 rounded-sm hover:bg-black/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
             aria-label="Close banner"
           >
             <X className="w-4 h-4" aria-hidden="true" />

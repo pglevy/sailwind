@@ -148,7 +148,7 @@ export const DialogField: React.FC<DialogFieldProps> = ({
           'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
           'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
-          'focus:outline-none'
+          'focus-visible:outline-none'
         ].filter(Boolean).join(' ')}
         onPointerDownOutside={closeOnOutsideClick ? undefined : (e) => e.preventDefault()}
         onEscapeKeyDown={closeOnEscape ? undefined : (e) => e.preventDefault()}
@@ -172,7 +172,7 @@ export const DialogField: React.FC<DialogFieldProps> = ({
               {showCloseButton && (
                 <Dialog.Close asChild>
                   <button
-                    className="ml-4 p-1 rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="ml-4 p-1 rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     aria-label="Close dialog"
                   >
                     <X className="h-4 w-4" />

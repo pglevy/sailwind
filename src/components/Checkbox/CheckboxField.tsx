@@ -194,7 +194,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
                   isChecked
                     ? 'border-blue-500 bg-blue-500'
                     : 'border-gray-400 bg-white',
-                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
                   'transition-all duration-150 ease-in',
                   disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                 ].filter(Boolean).join(' ')}
