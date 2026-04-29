@@ -20,7 +20,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // Shared button classes matching ButtonWidget styles
-const btnBase = 'inline-flex items-center justify-center font-medium rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer'
+const btnBase = 'inline-flex items-center justify-center font-medium rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 cursor-pointer'
 const btnSolid = `${btnBase} px-4 py-3 text-base leading-none border border-transparent`
 const btnOutline = `${btnBase} px-4 py-3 text-base leading-none border`
 const btnSmOutline = `${btnBase} px-3 py-2 text-sm leading-none border`

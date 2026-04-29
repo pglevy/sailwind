@@ -236,7 +236,7 @@ export const SliderField: React.FC<SliderFieldProps> = ({
               'block rounded-full transition-colors',
               sizeMap[size].thumb,
               colorClasses.thumb,
-              'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
               orientation === "VERTICAL" ? '' : ''
             ].join(' ')}
             style={color.startsWith('#') ? { backgroundColor: color } : undefined}

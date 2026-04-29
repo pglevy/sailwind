@@ -202,7 +202,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
           'text-base text-left',
           disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'cursor-pointer hover:border-gray-500',
           showValidations && 'border-red-700',
-          'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500'
         ].filter(Boolean).join(' ')}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -245,7 +245,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search..."
-                  className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-sm text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500"
                 />
               </div>
             </div>
@@ -272,7 +272,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
                       'w-full px-3 py-2 text-left text-base',
                       'hover:bg-gray-100',
                       isSelected && 'bg-blue-50 text-blue-700 font-medium',
-                      'focus:outline-none focus:bg-gray-100'
+                      'focus-visible:outline-none focus-visible:bg-gray-100'
                     ].filter(Boolean).join(' ')}
                   >
                     {multiple && (

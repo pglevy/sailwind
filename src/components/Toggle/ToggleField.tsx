@@ -222,7 +222,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       className={[
         'inline-flex items-center justify-center gap-1',
         'font-medium transition-colors h-auto rounded-sm',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
         sizeMap[size],
         getColorClasses(),
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
