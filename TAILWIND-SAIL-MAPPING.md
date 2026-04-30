@@ -22,14 +22,14 @@ Sailwind uses a **two-layer architecture**:
 |------------|---------------|-------------|-------|
 | SMALL | `text-xs` | 12px (0.75rem) | Used for small tags, helper text |
 | - | `text-sm` | 14px (0.875rem) | Intermediate size for small buttons |
-| STANDARD | `text-base` | 16px (1rem) | Default body text size |
+| STANDARD | `text-base` | 14px (0.875rem) | Aliased to `text-sm` in theme |
 | MEDIUM | `text-lg` | 18px (1.125rem) | Section headings |
 | MEDIUM_PLUS | `text-xl` | 20px (1.25rem) | Large buttons, subheadings |
 | LARGE | `text-2xl` | 24px (1.5rem) | Page headings |
 | LARGE_PLUS | `text-3xl` | 28px (1.75rem) | Major headings ⚠️ Custom override |
 | EXTRA_LARGE | `text-4xl` | 32px (2rem) | Hero text |
 
-**Note:** Only `text-3xl` (28px) is overridden in theme - Tailwind default is 30px.
+**Note:** `text-base` is aliased to `text-sm` (14px) in the theme — `STANDARD` body text renders at 14px, not 16px. Only `text-3xl` (28px) overrides a Tailwind default (normally 30px).
 
 ## Spacing (Padding & Margins)
 
@@ -37,15 +37,12 @@ Sailwind uses a **two-layer architecture**:
 |------------|---------------|-------------|-------|
 | NONE | `p-0`, `m-0` | 0 | No spacing |
 | EVEN_LESS | `p-1`, `m-1` | 4px (0.25rem) | Minimal spacing |
-| - | `p-1.5`, `m-1.5` | 6px (0.375rem) | ⚠️ Custom - button padding |
 | LESS | `p-2`, `m-2` | 8px (0.5rem) | Small spacing |
-| - | `p-2.5`, `m-2.5` | 10px (0.625rem) | ⚠️ Custom - button padding |
-| - | `p-3`, `m-3` | 12px (0.75rem) | Intermediate |
 | STANDARD | `p-4`, `m-4` | 16px (1rem) | Default spacing |
 | MORE | `p-6`, `m-6` | 24px (1.5rem) | Generous spacing |
 | EVEN_MORE | `p-8`, `m-8` | 32px (2rem) | Maximum spacing |
 
-**Note:** `1.5` and `2.5` are custom intermediate values added for button sizing.
+The base spacing unit is `--spacing: 0.25rem`, so all Tailwind spacing utilities work as expected.
 
 ### Directional Spacing Examples
 
@@ -64,34 +61,20 @@ Sailwind uses a **two-layer architecture**:
 | SEMI_ROUNDED | `rounded-sm` | 4px (0.25rem) | ⚠️ Custom override - Tailwind default is 2px |
 | ROUNDED | `rounded-md` | 8px (0.5rem) | Noticeable rounding |
 
-## Aurora Color Palette
+## Color Palette
 
-All color families use a **consistent Tailwind scale**: `50, 100, 200, 500, 700, 900`
+All color families use a **full 10-step scale**: `50, 100, 200, 300, 400, 500, 600, 700, 800, 900`
 
-### Color Scale Mapping
+### Available Color Families
 
-Aurora palette steps map to Tailwind as follows:
+`red`, `burnt-orange`, `orange`, `amber`, `yellow`, `lime`, `green`, `teal`, `cyan`, `sky`, `blue`, `violet`, `purple`, `pink`, `gray`
 
-```
-Aurora → Tailwind
-  0   →   50   (lightest)
-  1   →  100   (very light)
-  2   →  200   (light)
-  3   →  500   (medium/primary - main color)
-  35  →  700   (dark - between primary and darkest)
-  4   →  700   (dark - when no 35)
-  4   →  900   (darkest - when 35 exists)
-  5   →  900   (darkest - when no 35)
-```
+### Recommended Steps by Use Case
 
-### Available Colors
-
-Use only these Tailwind steps across all color families:
-
-- **Backgrounds (light):** `50`, `100`, `200`
-- **Text/Borders/Buttons:** `500`, `700`, `900`
-
-**Color families:** `red`, `orange`, `yellow`, `green`, `teal`, `sky`, `blue`, `purple`, `pink`, `gray`
+- **Light backgrounds** (tags, hover states, tinted surfaces): `50`, `100`, `200`
+- **Primary / interactive elements** (buttons, links, icons): `500`
+- **Dark text, borders, emphasis**: `700`, `900`
+- **Mid-tone text / secondary elements**: `300`, `400`, `600` (available but less common)
 
 ### Examples
 
@@ -114,13 +97,13 @@ Use only these Tailwind steps across all color families:
 
 In Sailwind components, semantic colors map to:
 
-| Semantic | Tailwind Class | Aurora Color |
-|----------|---------------|--------------|
-| ACCENT | `blue-500` | Blue 3 (#2322F0) |
-| POSITIVE | `green-700` | Green 4 (#117C00) |
-| NEGATIVE | `red-700` | Red 35 (#B2002C) |
-| SECONDARY | `gray-700` | Gray 4 (#636363) |
-| STANDARD | `gray-900` | Gray 5 (#222222) |
+| Semantic | Tailwind Class | Hex |
+|----------|---------------|-----|
+| ACCENT | `blue-500` | #2322F0 |
+| POSITIVE | `green-700` | #357A38 |
+| NEGATIVE | `red-700` | #9B0027 |
+| SECONDARY | `gray-700` | #616161 |
+| STANDARD | `gray-900` | #212121 |
 
 ## Component Size Mappings
 
@@ -128,7 +111,7 @@ In Sailwind components, semantic colors map to:
 
 ```tsx
 // SAIL Component API uses UPPERCASE values
-<ButtonWidget size="SMALL" />   // Maps to: px-3 py-1.5 text-sm
+<ButtonWidget size="SMALL" />    // Maps to: px-3 py-1.5 text-sm
 <ButtonWidget size="STANDARD" /> // Maps to: px-4 py-2.5 text-base
 <ButtonWidget size="MEDIUM" />   // Maps to: px-6 py-3 text-lg
 <ButtonWidget size="LARGE" />    // Maps to: px-8 py-4 text-xl
@@ -138,7 +121,7 @@ Internal mapping in ButtonWidget.tsx:
 ```tsx
 const sizeMap: Record<SAILSize, string> = {
   SMALL: 'px-3 py-1.5 text-sm',      // 12px horizontal, 6px vertical, 14px text
-  STANDARD: 'px-4 py-2.5 text-base', // 16px horizontal, 10px vertical, 16px text
+  STANDARD: 'px-4 py-2.5 text-base', // 16px horizontal, 10px vertical, 14px text
   MEDIUM: 'px-6 py-3 text-lg',       // 24px horizontal, 12px vertical, 18px text
   LARGE: 'px-8 py-4 text-xl'         // 32px horizontal, 16px vertical, 20px text
 }
@@ -156,36 +139,40 @@ Internal mapping in TagField.tsx:
 ```tsx
 const sizeMap = {
   SMALL: 'text-xs px-2 py-1',      // 12px text, 8px horizontal, 4px vertical
-  STANDARD: 'text-base px-4 py-1'  // 16px text, 16px horizontal, 4px vertical
+  STANDARD: 'text-base px-4 py-1'  // 14px text, 16px horizontal, 4px vertical
 }
 ```
 
 ## Theme Configuration
 
-The `@theme` directive in `index.css` **only defines values that differ from Tailwind defaults**:
+The `@theme` directive in `index.css` is **fully generated from `tokens/tokens.json`** via `pnpm run generate:css`. Do not edit the generated regions by hand.
+
+Key overrides from Tailwind defaults:
 
 ```css
 @theme {
+  /* text-base aliased to text-sm (14px instead of 16px) */
+  --text-base: var(--text-sm);
+
   /* Custom text size (overrides default 30px) */
   --text-3xl: 1.75rem;       /* 28px - SAIL LARGE_PLUS */
 
-  /* Intermediate spacing (not in default scale) */
-  --spacing-1\.5: 0.375rem;  /* 6px - for button py-1.5 */
-  --spacing-2\.5: 0.625rem;  /* 10px - for button py-2.5 */
+  /* Base spacing unit */
+  --spacing: 0.25rem;
 
   /* Custom border radius (overrides default 2px) */
   --radius-sm: 0.25rem;      /* 4px - SAIL SEMI_ROUNDED */
 
-  /* Aurora color palette - all custom */
-  --color-red-50: #FDEDF0;
-  /* ... 100+ color definitions ... */
+  /* Full color palette - all 15 families × 10 steps */
+  --color-red-50: #FCE6EB;
+  /* ... all color definitions ... */
 }
 ```
 
-**Why only non-defaults?**
-- Cleaner configuration
-- Easier to see what's custom
-- Leverages Tailwind's built-in scale
+To regenerate after editing `tokens/tokens.json`:
+```bash
+pnpm run generate:css
+```
 
 ## Key Principles
 
@@ -201,9 +188,9 @@ The `@theme` directive in `index.css` **only defines values that differ from Tai
    }
    ```
 
-3. **Use consistent color steps for LLM steering**
+3. **Use the full color scale — prefer semantic steps**
    ```
-   "Only use these color steps: 50, 100, 200, 500, 700, 900"
+   "Light backgrounds: 50, 100, 200 — Primary: 500 — Dark text/borders: 700, 900"
    ```
 
 4. **Comments document SAIL equivalence**
@@ -214,10 +201,10 @@ The `@theme` directive in `index.css` **only defines values that differ from Tai
 ## Benefits of This Approach
 
 ✅ **Standard Tailwind utilities** - Better IDE support and autocomplete
-✅ **Minimal theme config** - Only non-defaults defined
+✅ **Token-driven theme** - Single source of truth in `tokens/tokens.json`
 ✅ **SAIL-exact at API level** - Components accept SAIL parameter names
 ✅ **LLM-friendly** - Clear, consistent patterns for code generation
-✅ **Consistent color scale** - Same steps across all color families
+✅ **Full color palette** - 15 families × 10 steps for rich UI expression
 
 ## For LLM Steering Files
 
@@ -227,7 +214,7 @@ When documenting for AI assistants, use:
 
 **Spacing:** `p-0`, `p-1`, `p-2`, `p-4`, `p-6`, `p-8` (and `m-*` equivalents)
 
-**Colors:** Only use steps `50`, `100`, `200`, `500`, `700`, `900` across all color families
+**Colors:** 15 families (`red`, `burnt-orange`, `orange`, `amber`, `yellow`, `lime`, `green`, `teal`, `cyan`, `sky`, `blue`, `violet`, `purple`, `pink`, `gray`), steps `50`–`900`
 
 **Example:**
 ```
