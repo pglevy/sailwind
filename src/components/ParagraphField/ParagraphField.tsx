@@ -56,6 +56,10 @@ export interface ParagraphFieldProps {
   width?: ComponentWidth
   /** Determines if URLs in read-only mode are automatically converted to links */
   linkify?: boolean
+  /** Removes border and background for embedding inside custom containers */
+  borderless?: boolean
+  /** Keyboard event handler passed through to the textarea */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
@@ -84,6 +88,8 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
   height = "MEDIUM",
   width,
   linkify = false,
+  borderless = false,
+  onKeyDown,
   className
 }) => {
   if (!showWhen) return null
@@ -107,10 +113,12 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
     'w-full text-base resize-vertical',
     heightMap[height],
     readOnly && 'border-none bg-transparent p-0',
-    !readOnly && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
-    !readOnly && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+    !readOnly && !borderless && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
+    !readOnly && !borderless && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+    !readOnly && borderless && 'px-3 py-2 border-0 bg-transparent resize-none focus:outline-none',
     disabled && 'bg-gray-100 text-gray-700 cursor-not-allowed',
-    validations.length > 0 && 'border-red-700 focus:ring-red-700'
+    disabled && borderless && '!bg-transparent opacity-50 cursor-not-allowed',
+    validations.length > 0 && !borderless && 'border-red-700 focus:ring-red-700'
   ].filter(Boolean).join(' ')
 
   const wrapperClasses = [
@@ -144,6 +152,7 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
         id={inputId}
         value={value}
         onChange={handleChange}
+        onKeyDown={onKeyDown}
         placeholder={readOnly ? undefined : placeholder}
         disabled={disabled}
         readOnly={readOnly}
