@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { mergeClasses } from '../../utils/classNames'
+import { ButtonWidget } from '../Button/ButtonWidget'
 
 export interface ChatConfirmationAction {
   label: string
@@ -28,10 +29,11 @@ export const ChatConfirmation: React.FC<ChatConfirmationProps> = ({
   className,
 }) => {
   const [internalCompleted, setInternalCompleted] = useState(false)
-  const completed = controlledCompleted ?? internalCompleted
+  const isControlled = controlledCompleted !== undefined
+  const completed = isControlled ? controlledCompleted : internalCompleted
 
   const handleClick = (action: ChatConfirmationAction) => {
-    setInternalCompleted(true)
+    if (!isControlled) setInternalCompleted(true)
     action.onClick()
   }
 
@@ -41,21 +43,21 @@ export const ChatConfirmation: React.FC<ChatConfirmationProps> = ({
     <div role="alert" className={mergeClasses(sailClasses, className)}>
       <p className={`text-base ${completed ? 'text-gray-700' : 'text-gray-900'}`}>{message}</p>
       <div className="flex gap-2 mt-2">
-        <button
-          onClick={() => handleClick(primaryAction)}
+        <ButtonWidget
+          label={primaryAction.label}
+          style="SOLID"
+          color="ACCENT"
           disabled={completed}
-          className={`px-4 py-2 text-base font-medium rounded-sm transition-colors ${completed ? 'bg-blue-500 text-white opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
-        >
-          {primaryAction.label}
-        </button>
+          onClick={() => handleClick(primaryAction)}
+        />
         {secondaryAction && (
-          <button
-            onClick={() => handleClick(secondaryAction)}
+          <ButtonWidget
+            label={secondaryAction.label}
+            style="OUTLINE"
+            color="SECONDARY"
             disabled={completed}
-            className={`px-4 py-2 text-base font-medium rounded-sm border transition-colors ${completed ? 'border-gray-200 text-gray-700 bg-white opacity-50 cursor-not-allowed' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-100'}`}
-          >
-            {secondaryAction.label}
-          </button>
+            onClick={() => handleClick(secondaryAction)}
+          />
         )}
       </div>
     </div>

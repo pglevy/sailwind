@@ -4,7 +4,8 @@ import { ThumbsUp, ThumbsDown } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
 import { CheckboxField } from '../Checkbox/CheckboxField'
 import { DialogField } from '../Dialog/DialogField'
-import { ButtonWidget } from '../Button/ButtonWidget'
+import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
+import { ParagraphField } from '../ParagraphField/ParagraphField'
 
 export interface FeedbackOption {
   id: string
@@ -19,28 +20,28 @@ export interface FeedbackOptions {
 }
 
 export interface FeedbackDetails {
-  /** The user's thumbs up or down selection */
-  feedback: 'up' | 'down'
+  /** The user's positive or negative selection */
+  feedback: 'positive' | 'negative'
   /** Optional free-form text feedback */
   comment?: string
   /** Array of selected checkbox option IDs */
   selectedOptions?: string[]
 }
 
-type ChatFeedbackVariant = 'DEFAULT' | 'AGENT_EVALUATION'
+type ChatFeedbackStyle = 'DEFAULT' | 'AGENT_EVALUATION'
 
 export interface ChatFeedbackProps {
   /**
-   * Color scheme variant
+   * Color scheme style
    * - "DEFAULT": Blue icon when selected, no background
    * - "AGENT_EVALUATION": Thumbs up uses green, thumbs down uses red with backgrounds
    */
-  variant?: ChatFeedbackVariant
+  style?: ChatFeedbackStyle
   /** Whether clicking thumbs up/down should open a dialog for detailed feedback */
   showDetailsDialog?: boolean
-  /** Whether to show checkbox options in the dialog */
-  showCheckboxOptions?: boolean
-  /** Predefined checkbox options for categorizing feedback */
+  /** Whether to show selectable options in the dialog */
+  showFeedbackOptions?: boolean
+  /** Selectable options for categorizing feedback */
   feedbackOptions?: FeedbackOptions
   /** Custom dialog configuration */
   dialogConfig?: {
@@ -57,21 +58,21 @@ export interface ChatFeedbackProps {
 }
 
 export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
-  variant = 'DEFAULT',
+  style = 'DEFAULT',
   showDetailsDialog = true,
-  showCheckboxOptions = true,
+  showFeedbackOptions = true,
   feedbackOptions,
   dialogConfig,
   onFeedbackSubmit,
   className,
 }) => {
-  const [feedback, setFeedback] = useState<'up' | 'down' | null>(null)
+  const [feedback, setFeedback] = useState<'positive' | 'negative' | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [feedbackComment, setFeedbackComment] = useState('')
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false)
 
-  const handleFeedbackClick = (type: 'up' | 'down') => {
+  const handleFeedbackClick = (type: 'positive' | 'negative') => {
     if (showDetailsDialog) {
       setFeedback(type)
       setIsDialogOpen(true)
@@ -111,7 +112,7 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
   }
 
   const dialogTitle = dialogConfig?.title || 'Feedback'
-  const defaultDescription = feedback === 'up'
+  const defaultDescription = feedback === 'positive'
     ? 'What was good about this response?'
     : 'What was the issue with this response?'
   const dialogDescription = dialogConfig?.description || defaultDescription
@@ -119,7 +120,7 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
   const submitText = dialogConfig?.submitText || 'Submit'
   const cancelText = dialogConfig?.cancelText || 'Cancel'
 
-  const currentCheckboxOptions = feedback === 'up'
+  const currentCheckboxOptions = feedback === 'positive'
     ? feedbackOptions?.positive
     : feedbackOptions?.negative
 
@@ -127,11 +128,11 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
   const isCommentRequired = isOtherSelected
   const showValidationError = hasAttemptedSubmit && isCommentRequired && !feedbackComment.trim()
 
-  const getButtonClasses = (type: 'up' | 'down', isSelected: boolean) => {
+  const getButtonClasses = (type: 'positive' | 'negative', isSelected: boolean) => {
     const base = 'p-1.5 rounded-md transition-colors'
     if (!isSelected) return `${base} text-gray-500 hover:text-gray-700 hover:bg-gray-100`
-    if (variant === 'DEFAULT') return `${base} text-blue-500`
-    if (type === 'up') return `${base} bg-green-50 text-green-700`
+    if (style === 'DEFAULT') return `${base} text-blue-500`
+    if (type === 'positive') return `${base} bg-green-50 text-green-700`
     return `${base} bg-red-50 text-red-700`
   }
 
@@ -142,16 +143,16 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
       <div className={mergeClasses(sailClasses, className)}>
         <div className="flex gap-1">
           <button
-            onClick={() => handleFeedbackClick('up')}
+            onClick={() => handleFeedbackClick('positive')}
             aria-label="Helpful"
-            className={getButtonClasses('up', feedback === 'up')}
+            className={getButtonClasses('positive', feedback === 'positive')}
           >
             <ThumbsUp size={16} />
           </button>
           <button
-            onClick={() => handleFeedbackClick('down')}
+            onClick={() => handleFeedbackClick('negative')}
             aria-label="Not helpful"
-            className={getButtonClasses('down', feedback === 'down')}
+            className={getButtonClasses('negative', feedback === 'negative')}
           >
             <ThumbsDown size={16} />
           </button>
@@ -168,7 +169,7 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
         marginAbove="NONE"
       >
         <div className="space-y-4">
-          {showCheckboxOptions && currentCheckboxOptions && currentCheckboxOptions.length > 0 && (
+          {showFeedbackOptions && currentCheckboxOptions && currentCheckboxOptions.length > 0 && (
             <CheckboxField
               choiceLabels={currentCheckboxOptions.map(o => o.label)}
               choiceValues={currentCheckboxOptions.map(o => o.id)}
@@ -180,45 +181,27 @@ export const ChatFeedback: React.FC<ChatFeedbackProps> = ({
             />
           )}
 
-          <div className="space-y-2">
-            {showCheckboxOptions && (
-              <label htmlFor="feedback-comment" className="text-sm font-medium text-gray-900">
-                Additional comments{isCommentRequired && <span className="text-red-700 ml-1">*</span>}
-              </label>
-            )}
-            <textarea
-              id="feedback-comment"
-              value={feedbackComment}
-              onChange={(e) => setFeedbackComment(e.target.value)}
-              placeholder={placeholder}
-              rows={4}
-              required={isCommentRequired}
-              aria-required={isCommentRequired}
-              aria-describedby={showValidationError ? 'feedback-comment-error' : undefined}
-              aria-invalid={showValidationError}
-              className="w-full min-h-32 resize-none rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-            />
-            {showValidationError && (
-              <p id="feedback-comment-error" role="alert" className="text-xs text-red-700">
-                Please provide additional details when selecting &quot;Other&quot;
-              </p>
-            )}
-          </div>
+          <ParagraphField
+            label={showFeedbackOptions ? 'Additional comments' : undefined}
+            labelPosition={showFeedbackOptions ? 'ABOVE' : 'COLLAPSED'}
+            required={isCommentRequired}
+            validations={showValidationError ? ['Please provide additional details when selecting "Other"'] : []}
+            value={feedbackComment}
+            saveInto={setFeedbackComment}
+            placeholder={placeholder}
+            height="SHORT"
+            marginBelow="NONE"
+            marginAbove="NONE"
+          />
 
-          <div className="flex justify-end gap-2">
-            <ButtonWidget
-              label={cancelText}
-              style="OUTLINE"
-              color="SECONDARY"
-              onClick={handleCancel}
-            />
-            <ButtonWidget
-              label={submitText}
-              style="SOLID"
-              color="ACCENT"
-              onClick={handleSubmitDetails}
-            />
-          </div>
+          <ButtonArrayLayout
+            align="END"
+            buttons={[
+              { label: cancelText, style: "OUTLINE", color: "SECONDARY", onClick: handleCancel },
+              { label: submitText, style: "SOLID", color: "ACCENT", onClick: handleSubmitDetails },
+            ]}
+            marginBelow="NONE"
+          />
         </div>
       </DialogField>
     </>

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Settings, MoreVertical, X } from 'lucide-react'
 import { ChatPanel } from './ChatPanel'
 import { ChatInput } from './ChatInput'
 
@@ -30,9 +29,9 @@ export const WithHeaderActions: Story = {
   args: {
     title: 'Chat Assistant',
     headerActions: [
-      { icon: <Settings size={18} />, label: 'Settings', onClick: () => console.log('Settings') },
-      { icon: <MoreVertical size={18} />, label: 'More options', onClick: () => console.log('More') },
-      { icon: <X size={18} />, label: 'Close', onClick: () => console.log('Close') },
+      { icon: 'settings', label: 'Settings', onClick: () => console.log('Settings') },
+      { icon: 'more-vertical', label: 'More options', onClick: () => console.log('More') },
+      { icon: 'x', label: 'Close', onClick: () => console.log('Close') },
     ],
     children: (
       <div className="space-y-4">
@@ -62,7 +61,7 @@ export const LongScrollingContent: Story = {
       </div>
     ),
     footer: <ChatInput />,
-    height: '600px',
+    height: 'TALL',
   },
 }
 

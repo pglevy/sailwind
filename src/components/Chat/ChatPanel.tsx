@@ -1,9 +1,11 @@
 import * as React from 'react'
 import type { ReactNode } from 'react'
+import type { SAILGridHeight } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { ButtonWidget } from '../Button/ButtonWidget'
 
 export interface ChatPanelHeaderAction {
-  icon: ReactNode
+  icon: string
   label: string
   onClick?: () => void
 }
@@ -17,8 +19,8 @@ export interface ChatPanelProps {
   children: ReactNode
   /** Content to display in the footer (typically ChatInput) */
   footer?: ReactNode
-  /** Height of the panel (defaults to full viewport height) */
-  height?: string
+  /** Height of the panel */
+  height?: SAILGridHeight
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
@@ -28,27 +30,39 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   headerActions,
   children,
   footer,
-  height = '100vh',
+  height = 'AUTO',
   className,
 }) => {
-  const sailClasses = 'flex flex-col bg-white'
+  const heightMap: Record<SAILGridHeight, string> = {
+    SHORT: 'h-40',
+    SHORT_PLUS: 'h-52',
+    MEDIUM: 'h-64',
+    MEDIUM_PLUS: 'h-80',
+    TALL: 'h-96',
+    TALL_PLUS: 'h-[28rem]',
+    EXTRA_TALL: 'h-[36rem]',
+    AUTO: 'h-screen',
+  }
+
+  const sailClasses = `flex flex-col bg-white ${heightMap[height]}`
 
   return (
-    <div className={mergeClasses(sailClasses, className)} style={{ height }}>
+    <div className={mergeClasses(sailClasses, className)}>
       {(title || headerActions) && (
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 shrink-0">
           {title && <h2 className="text-lg font-semibold text-gray-900">{title}</h2>}
           {headerActions && headerActions.length > 0 && (
             <div className="flex items-center gap-1" role="group" aria-label="Header actions">
               {headerActions.map((action, index) => (
-                <button
+                <ButtonWidget
                   key={index}
+                  icon={action.icon}
+                  style="GHOST"
+                  color="SECONDARY"
+                  size="SMALL"
+                  accessibilityText={action.label}
                   onClick={action.onClick}
-                  aria-label={action.label}
-                  className="p-1.5 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  {action.icon}
-                </button>
+                />
               ))}
             </div>
           )}
