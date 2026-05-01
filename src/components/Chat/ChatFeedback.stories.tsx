@@ -26,7 +26,7 @@ const meta = {
   parameters: { layout: 'centered' },
   args: {
     onFeedbackSubmit: fn(),
-    feedbackOptions,
+    feedbackOptions: feedbackOptions,
   },
 } satisfies Meta<typeof ChatFeedback>
 
@@ -35,17 +35,23 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
+export const WithoutDialog: Story = {
+  args: {
+    showDetailsDialog: false,
+  },
+}
+
 export const AgentEvaluationVariant: Story = {
   args: {
-    variant: 'AGENT_EVALUATION',
+    style: 'AGENT_EVALUATION',
   },
 }
 
 export const DialogWithCustomization: Story = {
   args: {
-    variant: 'AGENT_EVALUATION',
+    style: 'AGENT_EVALUATION',
     showDetailsDialog: true,
-    showCheckboxOptions: true,
+    showFeedbackOptions: true,
     dialogConfig: {
       title: 'Provide feedback',
       description: 'Help us improve',
@@ -89,7 +95,7 @@ export const DefaultInteraction: Story = {
 
 export const AgentEvaluationInteraction: Story = {
   args: {
-    variant: 'AGENT_EVALUATION',
+    style: 'AGENT_EVALUATION',
   },
   tags: ['test-only', '!autodocs'],
   parameters: { chromatic: { disableSnapshot: true } },

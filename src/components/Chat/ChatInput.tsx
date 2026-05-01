@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { useState } from 'react'
-import { Send, Paperclip, X, FileText, FileImage, FileVideo, File } from 'lucide-react'
+import { X, FileText, FileImage, FileVideo, File } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
+import { ButtonWidget } from '../Button/ButtonWidget'
+import { ParagraphField } from '../ParagraphField/ParagraphField'
 
 export interface ChatInputFile {
   name: string
@@ -18,7 +20,7 @@ export interface ChatInputProps {
   /** Value of the input (controlled) */
   value?: string
   /** Callback when value changes (controlled) */
-  onChange?: (value: string) => void
+  saveInto?: (value: string) => void
   /** Whether to show the upload/attach button */
   showUpload?: boolean
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -47,7 +49,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   onSubmit,
   disabled = false,
   value: controlledValue,
-  onChange,
+  saveInto,
   showUpload = false,
   className,
 }) => {
@@ -56,15 +58,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   const isControlled = controlledValue !== undefined
   const value = isControlled ? controlledValue : internalValue
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value
-    if (isControlled) {
-      onChange?.(newValue)
-    } else {
-      setInternalValue(newValue)
-    }
-  }
 
   const handleSubmit = () => {
     if (value.trim() && onSubmit) {
@@ -97,20 +90,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     input.click()
   }
 
-  const sailClasses = 'flex items-end gap-2 pr-1 pb-1 border border-gray-300 rounded-md focus-within:border-blue-500 transition-colors'
+  const sailClasses = 'border border-gray-300 rounded-sm focus-within:border-blue-500 transition-colors'
 
   return (
     <div className={mergeClasses(sailClasses, className)}>
       <div className="flex flex-col flex-1">
         {files.length > 0 && (
-          <div className="flex flex-col gap-1 px-3 pt-2">
+          <div className="flex flex-col gap-1 px-3 pt-3">
             {files.map((file, index) => {
               const IconComponent = getFileIcon(file.type)
               const iconColor = getFileIconColor(file.type)
               return (
                 <div
                   key={index}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-200 bg-white w-fit max-w-full"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-gray-200 bg-white w-fit max-w-full"
                 >
                   <IconComponent size={16} className={`shrink-0 ${iconColor}`} />
                   <span className="text-sm text-gray-900 truncate max-w-[200px]">{file.name}</span>
@@ -126,36 +119,51 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             })}
           </div>
         )}
-        <textarea
+        <ParagraphField
           value={value}
-          onChange={handleChange}
+          saveInto={(v) => {
+            if (isControlled) {
+              saveInto?.(v)
+            } else {
+              setInternalValue(v)
+            }
+          }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          rows={2}
-          className="flex-1 min-h-16 resize-none border-0 bg-transparent px-3 py-2 text-base text-gray-900 placeholder:text-gray-500 focus:outline-none disabled:opacity-50"
+          borderless
+          height="SHORT"
+          labelPosition="COLLAPSED"
+          label={placeholder}
+          marginBelow="NONE"
+          marginAbove="NONE"
+          className="flex-1 min-h-16"
         />
-        {showUpload && (
-          <div className="px-1">
-            <button
-              onClick={handleUploadClick}
-              disabled={disabled}
-              aria-label="Attach file"
-              className="shrink-0 p-2 rounded-md text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Paperclip size={18} />
-            </button>
+        <div className="flex items-center justify-between px-1 pb-1">
+          <div>
+            {showUpload && (
+              <ButtonWidget
+                icon="plus"
+                style="GHOST"
+                color="SECONDARY"
+                size="SMALL"
+                disabled={disabled}
+                accessibilityText="Attach file"
+                onClick={handleUploadClick}
+              />
+            )}
           </div>
-        )}
+          <ButtonWidget
+            icon="send"
+            style="GHOST"
+            color="ACCENT"
+            size="SMALL"
+            disabled={disabled || !value.trim()}
+            accessibilityText="Send message"
+            onClick={handleSubmit}
+          />
+        </div>
       </div>
-      <button
-        onClick={handleSubmit}
-        disabled={disabled || !value.trim()}
-        aria-label="Send message"
-        className="shrink-0 p-2 rounded-md text-gray-500 enabled:text-blue-500 enabled:hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        <Send size={18} />
-      </button>
     </div>
   )
 }
