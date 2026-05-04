@@ -34,6 +34,16 @@ export type SAILSizeExtended = SAILSize | "MEDIUM_PLUS" | "LARGE_PLUS" | "EXTRA_
 export type SAILAlign = "START" | "CENTER" | "END"
 
 /**
+ * Legacy alignment values used by older SAIL components (text fields, rich text,
+ * checkboxes, links, editable grid headers). These components accept both the
+ * modern START/CENTER/END and the older LEFT/CENTER/RIGHT systems.
+ *
+ * See: Appian docs — older form-input components use LEFT/CENTER/RIGHT while
+ * newer display components use START/CENTER/END.
+ */
+export type SAILAlignLegacy = "START" | "CENTER" | "END" | "LEFT" | "RIGHT"
+
+/**
  * Label position values matching SAIL's labelPosition parameter
  */
 export type SAILLabelPosition = "ABOVE" | "ADJACENT" | "COLLAPSED" | "JUSTIFIED"

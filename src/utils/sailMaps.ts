@@ -1,4 +1,4 @@
-import type { SAILMarginSize, SAILPadding, SAILShape, SAILSize, SAILAlign } from '../types/sail'
+import type { SAILMarginSize, SAILPadding, SAILShape, SAILSize, SAILAlign, SAILAlignLegacy } from '../types/sail'
 
 /**
  * Canonical SAIL enum → Tailwind class mappings.
@@ -69,16 +69,41 @@ export const buttonIconOnlySizeMap: Record<SAILSize, string> = {
 
 // --- Alignment Maps ---
 
-/** Flex alignment (for button arrays, tags, images, stamps) */
+/** Flex alignment (for button arrays, tags, images, stamps — modern START/CENTER/END only) */
 export const alignMap: Record<SAILAlign, string> = {
   START: 'justify-start',
   CENTER: 'justify-center',
   END: 'justify-end'
 }
 
-/** Text alignment (for headings, rich text, text fields) */
+/** Text alignment (for headings — modern START/CENTER/END only) */
 export const textAlignMap: Record<SAILAlign, string> = {
   START: 'text-left',
   CENTER: 'text-center',
   END: 'text-right'
+}
+
+// --- Legacy Alignment Maps ---
+//
+// Older SAIL components (text fields, rich text, checkboxes, links, editable
+// grid headers) use LEFT/CENTER/RIGHT. These backward-compatible maps accept
+// both the modern START/CENTER/END *and* the legacy LEFT/CENTER/RIGHT so that
+// LLM-generated code works regardless of which convention it picks.
+
+/** Flex alignment — backward-compatible (for checkboxes, links in grids) */
+export const legacyAlignMap: Record<SAILAlignLegacy, string> = {
+  START: 'justify-start',
+  LEFT: 'justify-start',
+  CENTER: 'justify-center',
+  END: 'justify-end',
+  RIGHT: 'justify-end'
+}
+
+/** Text alignment — backward-compatible (for text fields, rich text, integer/decimal fields) */
+export const legacyTextAlignMap: Record<SAILAlignLegacy, string> = {
+  START: 'text-left',
+  LEFT: 'text-left',
+  CENTER: 'text-center',
+  END: 'text-right',
+  RIGHT: 'text-right'
 }
