@@ -417,7 +417,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
           const isCheckboxSubtleHighlightSelected =
             selectable && selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT" && isRowSelected;
           const isClickableRow =
-            selectable && (selectionStyle === "ROW_HIGHLIGHT" || selectionStyle === "SUBTLE_HIGHLIGHT");
+            selectable && (selectionStyle === "ROW_HIGHLIGHT" || selectionStyle === "SUBTLE_HIGHLIGHT" || selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT");
           const alternateRowClass =
             shadeAlternateRows && rowIndex % 2 === 0 && !isRowHighlightSelected && !isSubtleHighlightSelected && !isCheckboxSubtleHighlightSelected
               ? "bg-gray-50"
