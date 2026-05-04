@@ -174,25 +174,42 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
               }
             }}
           >
-            <input
-              id={choiceId}
-              type="checkbox"
-              checked={isChecked}
-              disabled={disabled}
-              onChange={(e) => handleChange(choiceValue, e.target.checked)}
-              className={[
-                'appearance-none h-4 w-4 shrink-0 rounded-xs border',
-                isChecked
-                  ? 'border-blue-500 bg-blue-500 text-white'
-                  : 'border-gray-400 bg-white',
-                'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
-                'transition-colors duration-150 ease-in-out',
-                'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,IDxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTY3MSA1NjZxMCA0MC0yOCA2OGwtNzI0IDcyNC0xMzYgMTM2cS0yOCAyOC02OCAyOHQtNjgtMjhsLTEzNi0xMzYtMzYyLTM2MnEtMjgtMjgtMjgtNjh0MjgtNjhsMTM2LTEzNnEyOC0yOCA2OC0yOHQ2OCAyOGwyOTQgMjk1IDY1Ni02NTdxMjgtMjggNjgtMjh0NjggMjhsMTM2IDEzNnEyOCAyOCAyOCA2OHoiIGZpbGw9IndoaXRlIi8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
-                disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-              ].filter(Boolean).join(' ')}
-              aria-invalid={showValidations}
-              aria-errormessage={showValidations ? `${inputId}-error` : undefined}
-            />
+            <span className="relative shrink-0 h-4 w-4">
+              <input
+                id={choiceId}
+                type="checkbox"
+                checked={isChecked}
+                disabled={disabled}
+                onChange={(e) => handleChange(choiceValue, e.target.checked)}
+                className={[
+                  'appearance-none absolute inset-0 h-4 w-4 rounded-xs border',
+                  isChecked
+                    ? 'border-blue-500 bg-blue-500'
+                    : 'border-gray-400 bg-white',
+                  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
+                  'transition-all duration-150 ease-in',
+                  disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                ].filter(Boolean).join(' ')}
+                aria-invalid={showValidations}
+                aria-errormessage={showValidations ? `${inputId}-error` : undefined}
+              />
+              <span
+                className="pointer-events-none absolute overflow-hidden transition-[width] duration-300 ease-in"
+                style={{
+                  width: isChecked ? 10 : 0,
+                  height: 10,
+                  top: 3,
+                  left: 3,
+                  backgroundColor: 'white',
+                  maskImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1792 1792'%3E%3Cpath d='M1671 566q0 40-28 68l-724 724-136 136q-28 28-68 28t-68-28l-136-136-362-362q-28-28-28-68t28-68l136-136q28-28 68-28t68 28l294 295 656-657q28-28 68-28t68 28l136 136q28 28 28 68z'/%3E%3C/svg%3E")`,
+                  maskRepeat: 'no-repeat',
+                  maskSize: '10px 10px',
+                  WebkitMaskImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1792 1792'%3E%3Cpath d='M1671 566q0 40-28 68l-724 724-136 136q-28 28-68 28t-68-28l-136-136-362-362q-28-28-28-68t28-68l136-136q28-28 68-28t68 28l294 295 656-657q28-28 68-28t68 28l136 136q28 28 28 68z'/%3E%3C/svg%3E")`,
+                  WebkitMaskRepeat: 'no-repeat',
+                  WebkitMaskSize: '10px 10px',
+                }}
+              />
+            </span>
             <label
               htmlFor={choiceId}
               className={[

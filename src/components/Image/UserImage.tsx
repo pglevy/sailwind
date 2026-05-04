@@ -24,6 +24,8 @@ export interface UserImageProps {
   link?: () => void
   /** Controls visibility of the image */
   showWhen?: boolean
+  /** Background color for the initials fallback (hex or CSS color) */
+  backgroundColor?: string
 }
 
 /**

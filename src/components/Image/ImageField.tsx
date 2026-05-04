@@ -152,7 +152,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
         // Check if this is a user image
         if (isUserImage(imageProps)) {
           // Render user image with Radix Avatar
-          const { user, altText, caption, link } = imageProps
+          const { user, altText, caption, link, backgroundColor } = imageProps
           const imageAlt = altText || user?.name || 'User profile photo'
 
           // Use avatar size map for sizing
@@ -173,6 +173,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
             <Avatar.Root
               key={index}
               className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-gray-200 ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              style={backgroundColor ? { backgroundColor } : undefined}
               title={caption}
               onClick={link}
             >
@@ -183,6 +184,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
               />
               <Avatar.Fallback
                 className="w-full h-full flex items-center justify-center bg-gray-200"
+                style={backgroundColor ? { backgroundColor } : undefined}
                 delayMs={600}
               >
                 {fallbackContent}

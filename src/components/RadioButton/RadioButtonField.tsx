@@ -177,7 +177,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
                 isChecked
                   ? 'border-blue-500 bg-blue-500'
                   : 'border-gray-400 bg-white',
-                'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1',
+                'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
                 'transition-colors duration-150 ease-in-out',
                 'checked:bg-[url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9IndoaXRlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjgiIGN5PSI4IiByPSI0Ii8+PC9zdmc+")] checked:bg-center checked:bg-no-repeat checked:bg-[length:10px_10px]',
                 disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'

@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Info, CheckCircle, AlertCircle, AlertTriangle, X } from 'lucide-react'
 import type { SAILShape, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { ButtonWidgetProps } from '../Button/ButtonWidget'
+import { ButtonWidget } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap, shapeMap } from '../../utils/sailMaps'
@@ -97,13 +98,13 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
 
   const IconComponent = icon ? iconMap[icon] : null
   const isSemanticBg = backgroundColor in backgroundColorMap
-  const bgColors = isSemanticBg 
+  const bgColors = isSemanticBg
     ? backgroundColorMap[backgroundColor]
     : { bg: '', text: 'text-gray-900' }
 
   // Determine highlight bar color
   const isSemanticHighlight = highlightColor in highlightColorMap
-  const highlightBarColor = isSemanticHighlight 
+  const highlightBarColor = isSemanticHighlight
     ? highlightColorMap[highlightColor]
     : ''
 
@@ -142,14 +143,14 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   }
 
   return (
-    <div 
+    <div
       className={containerClasses}
       style={containerStyle}
       {...ariaAttributes}
     >
       {/* Decorative bar */}
       {showDecorativeBar && (
-        <div 
+        <div
           className={`absolute left-0 top-0 bottom-0 w-1 ${isSemanticHighlight ? highlightBarColor : ''}`}
           style={!isSemanticHighlight ? highlightStyle : undefined}
           aria-hidden="true"
@@ -192,14 +193,13 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
 
         {/* Close button */}
         {showCloseButton && (
-          <button
-            type="button"
+          <ButtonWidget
+            style="LINK"
+            size="SMALL"
+            icon={"X"}
+            accessibilityText="Close banner"
             onClick={onClose}
-            className="flex-shrink-0 p-1 rounded-sm hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500"
-            aria-label="Close banner"
-          >
-            <X className="w-4 h-4" aria-hidden="true" />
-          </button>
+          />
         )}
       </div>
 
