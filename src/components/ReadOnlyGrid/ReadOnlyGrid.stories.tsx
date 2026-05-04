@@ -28,7 +28,8 @@ const meta = {
     borderStyle: { control: 'select', options: ['STANDARD', 'LIGHT'] },
     spacing: { control: 'select', options: ['STANDARD', 'DENSE'] },
     height: { control: 'select', options: ['SHORT', 'SHORT_PLUS', 'MEDIUM', 'MEDIUM_PLUS', 'TALL', 'TALL_PLUS', 'EXTRA_TALL', 'AUTO'] },
-    selectionStyle: { control: 'select', options: ['CHECKBOX', 'ROW_HIGHLIGHT'] },
+    selectionStyle: { control: 'select', options: ['CHECKBOX', 'ROW_HIGHLIGHT', 'CHECKBOX_SUBTLE_HIGHLIGHT', 'SUBTLE_HIGHLIGHT'] },
+    pagingControls: { control: 'select', options: ['STANDARD', 'ROW_COUNT'] },
     labelPosition: { control: 'select', options: ['ABOVE', 'ADJACENT', 'COLLAPSED', 'JUSTIFIED'] },
     marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
@@ -69,11 +70,29 @@ export const EmptyState: Story = {
   ),
 }
 
-/** 3. WithPaging — Full dataset with pageSize=5 showing paging controls */
-export const WithPaging: Story = {
+/** 3. WithPagingStandard — Default STANDARD paging ("of many", no first/last buttons) */
+export const WithPagingStandard: Story = {
   args: {
     data: employees,
     pageSize: 5,
+    pagingControls: 'STANDARD',
+  },
+  render: (args) => (
+    <ReadOnlyGrid {...args}>
+      <GridColumn label="Name" value="name" sortField="name" />
+      <GridColumn label="Department" value="department" sortField="department" />
+      <GridColumn label="Salary" value="salary" sortField="salary" />
+      <GridColumn label="Start Date" value="startDate" />
+    </ReadOnlyGrid>
+  ),
+}
+
+/** 4. WithPagingRowCount — ROW_COUNT paging (shows total count + first/last buttons) */
+export const WithPagingRowCount: Story = {
+  args: {
+    data: employees,
+    pageSize: 5,
+    pagingControls: 'ROW_COUNT',
   },
   render: (args) => (
     <ReadOnlyGrid {...args}>
@@ -85,17 +104,14 @@ export const WithPaging: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    // Verify grid renders with data
     await expect(canvas.getByText('Alice Johnson')).toBeVisible()
-    // Navigate to next page
     const nextButton = canvas.getByRole('button', { name: /next page/i })
     await userEvent.click(nextButton)
-    // First page data should no longer be visible, second page data should appear
     await expect(canvas.getByText('Frank Miller')).toBeVisible()
   },
 }
 
-/** 4. WithSorting — Sortable columns with initial sort on salary descending */
+/** 5. WithSorting — Sortable columns with initial sort on salary descending */
 export const WithSorting: Story = {
   args: {
     data: employees,
@@ -112,7 +128,7 @@ export const WithSorting: Story = {
   ),
 }
 
-/** 5. WithCheckboxSelection — Selectable grid with checkbox style */
+/** 6. WithCheckboxSelection — CHECKBOX selection style (default) */
 export const WithCheckboxSelection: Story = {
   args: {
     data: employees.slice(0, 6),
@@ -131,7 +147,45 @@ export const WithCheckboxSelection: Story = {
   },
 }
 
-/** 6. WithRowHighlightSelection — ROW_HIGHLIGHT selection style */
+/** 7. WithCheckboxSubtleHighlightSelection — CHECKBOX_SUBTLE_HIGHLIGHT selection style (26.3) */
+export const WithCheckboxSubtleHighlightSelection: Story = {
+  args: {
+    data: employees.slice(0, 6),
+    selectable: true,
+    selectionStyle: 'CHECKBOX_SUBTLE_HIGHLIGHT',
+  },
+  render: (args) => {
+    const [selected, setSelected] = React.useState<(string | number)[]>([1, 3])
+    return (
+      <ReadOnlyGrid {...args} selectionValue={selected} selectionSaveInto={setSelected}>
+        <GridColumn label="Name" value="name" />
+        <GridColumn label="Department" value="department" />
+        <GridColumn label="Salary" value="salary" />
+      </ReadOnlyGrid>
+    )
+  },
+}
+
+/** 8. WithSubtleHighlightSelection — SUBTLE_HIGHLIGHT selection style (26.3) */
+export const WithSubtleHighlightSelection: Story = {
+  args: {
+    data: employees.slice(0, 6),
+    selectable: true,
+    selectionStyle: 'SUBTLE_HIGHLIGHT',
+  },
+  render: (args) => {
+    const [selected, setSelected] = React.useState<(string | number)[]>([2, 4])
+    return (
+      <ReadOnlyGrid {...args} selectionValue={selected} selectionSaveInto={setSelected}>
+        <GridColumn label="Name" value="name" />
+        <GridColumn label="Department" value="department" />
+        <GridColumn label="Salary" value="salary" />
+      </ReadOnlyGrid>
+    )
+  },
+}
+
+/** 9. WithRowHighlightSelection — ROW_HIGHLIGHT selection style */
 export const WithRowHighlightSelection: Story = {
   args: {
     data: employees.slice(0, 6),
@@ -150,7 +204,7 @@ export const WithRowHighlightSelection: Story = {
   },
 }
 
-/** 7. StyledGrid — borderStyle, shadeAlternateRows, dense spacing */
+/** 10. StyledGrid — borderStyle, shadeAlternateRows, dense spacing */
 export const StyledGrid: Story = {
   args: {
     data: employees.slice(0, 8),
@@ -168,7 +222,7 @@ export const StyledGrid: Story = {
   ),
 }
 
-/** 8. FixedHeight — MEDIUM height to show scrolling behavior */
+/** 11. FixedHeight — MEDIUM height to show scrolling behavior */
 export const FixedHeight: Story = {
   args: {
     data: employees,
@@ -184,7 +238,7 @@ export const FixedHeight: Story = {
   ),
 }
 
-/** 9. WithLabelAndValidations — label, instructions, validations, helpTooltip */
+/** 12. WithLabelAndValidations — label, instructions, validations, helpTooltip */
 export const WithLabelAndValidations: Story = {
   args: {
     label: 'Employee Directory',
@@ -202,7 +256,7 @@ export const WithLabelAndValidations: Story = {
   ),
 }
 
-/** 10. ColumnWidthsAndAlignment — Various column widths and alignments */
+/** 13. ColumnWidthsAndAlignment — Various column widths and alignments */
 export const ColumnWidthsAndAlignment: Story = {
   args: {
     data: employees.slice(0, 5),
@@ -217,7 +271,7 @@ export const ColumnWidthsAndAlignment: Story = {
   ),
 }
 
-/** 11. ComputedColumns — Using function value accessors for computed columns */
+/** 14. ComputedColumns — Using function value accessors for computed columns */
 export const ComputedColumns: Story = {
   args: {
     data: employees.slice(0, 6),
@@ -227,7 +281,7 @@ export const ComputedColumns: Story = {
       <GridColumn label="Name" value="name" />
       <GridColumn
         label="Formatted Salary"
-        value={(row: any) => `$${row.salary.toLocaleString()}`}
+        value={(row: any) => `${row.salary.toLocaleString()}`}
         align="END"
       />
       <GridColumn
