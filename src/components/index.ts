@@ -31,6 +31,9 @@ export * from './Stamp'
 // TextField components
 export * from './TextField'
 
+// ParagraphField components
+export * from './ParagraphField'
+
 // Checkbox components
 export * from './Checkbox'
 
@@ -72,3 +75,6 @@ export * from './SiteNav'
 
 // RecordView template
 export * from './RecordView'
+
+// Chat components
+export * from './Chat'
