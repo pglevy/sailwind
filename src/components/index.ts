@@ -31,6 +31,9 @@ export * from './Stamp'
 // TextField components
 export * from './TextField'
 
+// ParagraphField components
+export * from './ParagraphField'
+
 // Checkbox components
 export * from './Checkbox'
 
