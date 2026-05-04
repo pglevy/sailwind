@@ -4,6 +4,7 @@ import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize } from '../
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
+import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
 
 /**
  * Tag size - only SMALL and STANDARD are supported per SAIL docs
@@ -69,32 +70,6 @@ export const TagField: React.FC<TagFieldProps> = ({
   const sizeMap = {
     SMALL: 'text-xs px-2 py-1',      // SAIL SMALL: 12px text, 8px horizontal padding, 4px vertical
     STANDARD: 'text-base px-4 py-1'  // SAIL STANDARD: 16px text, 16px horizontal padding, 4px vertical
-  }
-
-  // Alignment mappings
-  const alignMap = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
-  }
-
-  // Margin mappings - using Tailwind standard classes that map to SAIL values
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',           // SAIL NONE: no class needed
-    EVEN_LESS: 'mt-1', // SAIL EVEN_LESS: 4px
-    LESS: 'mt-2',      // SAIL LESS: 8px
-    STANDARD: 'mt-4',  // SAIL STANDARD: 16px
-    MORE: 'mt-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'mt-8'  // SAIL EVEN_MORE: 32px
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',           // SAIL NONE: no class needed
-    EVEN_LESS: 'mb-1', // SAIL EVEN_LESS: 4px
-    LESS: 'mb-2',      // SAIL LESS: 8px
-    STANDARD: 'mb-4',  // SAIL STANDARD: 16px
-    MORE: 'mb-6',      // SAIL MORE: 24px
-    EVEN_MORE: 'mb-8'  // SAIL EVEN_MORE: 32px
   }
 
   // Semantic color mappings — tags use light tints for backgrounds

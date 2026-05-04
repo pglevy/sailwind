@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlign } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy } from '../../types/sail'
+import { legacyAlignMap } from '../../utils/sailMaps'
 
 type ChoiceLayout = "STACKED" | "COMPACT"
 type ChoiceStyle = "STANDARD" | "CARDS"
@@ -37,7 +38,7 @@ export interface CheckboxFieldProps {
   /** Custom message when field is required and not provided */
   requiredMessage?: string
   /** Determines alignment of choice labels. Use with Grid Layout */
-  align?: SAILAlign | "LEFT" | "CENTER" | "RIGHT"
+  align?: SAILAlignLegacy
   /** Determines where the label appears */
   labelPosition?: SAILLabelPosition
   /** Displays a help icon with tooltip text */
@@ -115,15 +116,6 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
     EVEN_MORE: 'gap-6'
   }
 
-  // Map align parameter to Tailwind classes
-  const alignMap: Record<string, string> = {
-    LEFT: 'justify-start',
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    RIGHT: 'justify-end',
-    END: 'justify-end'
-  }
-
   const handleChange = (choiceValue: any, checked: boolean) => {
     const handler = onChange || saveInto
     if (!handler) return
@@ -147,7 +139,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
       className={[
         choiceLayout === "STACKED" ? 'flex flex-col' : 'flex flex-wrap',
         spacingMap[spacing],
-        align && alignMap[align]
+        align && legacyAlignMap[align]
       ].filter(Boolean).join(' ')}
       role="group"
       aria-describedby={instructions ? `${inputId}-instructions` : undefined}

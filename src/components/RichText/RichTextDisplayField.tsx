@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { FieldLabel } from '../shared/FieldLabel'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
+import { marginAboveMap, marginBelowMap, legacyTextAlignMap } from '../../utils/sailMaps'
 
-type TextAlign = "LEFT" | "CENTER" | "RIGHT"
+type TextAlign = SAILAlignLegacy
 
 export interface RichTextDisplayFieldProps {
   /** Text to display as the field label */
@@ -55,32 +56,6 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
 }) => {
   if (!showWhen) return null
 
-  // Margin mappings
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
-  // Alignment mappings
-  const alignMap: Record<TextAlign, string> = {
-    LEFT: 'text-left',
-    CENTER: 'text-center',
-    RIGHT: 'text-right'
-  }
-
   // Build container classes
   const sailClasses = [
     marginAboveMap[marginAbove],
@@ -91,7 +66,7 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
 
   // Build content classes
   const contentClasses = [
-    alignMap[align],
+    legacyTextAlignMap[align],
     preventWrapping && 'truncate',
     'leading-relaxed' // Better line spacing for rich text
   ].filter(Boolean).join(' ')

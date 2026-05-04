@@ -3,6 +3,7 @@ import * as LucideIcons from 'lucide-react'
 import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
+import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
 type StampBackgroundColor = SAILColorInput | "TRANSPARENT"
@@ -74,36 +75,11 @@ export const StampField: React.FC<StampFieldProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Styling maps using standard Tailwind classes
-  const marginAboveMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mt-1',
-    LESS: 'mt-2',
-    STANDARD: 'mt-4',
-    MORE: 'mt-6',
-    EVEN_MORE: 'mt-8'
-  }
-
-  const marginBelowMap: Record<SAILMarginSize, string> = {
-    NONE: '',
-    EVEN_LESS: 'mb-1',
-    LESS: 'mb-2',
-    STANDARD: 'mb-4',
-    MORE: 'mb-6',
-    EVEN_MORE: 'mb-8'
-  }
-
   const sizeMap: Record<StampSize, { container: string; text: string; icon: string }> = {
     TINY: { container: 'w-6 h-6', text: 'text-xs', icon: 'text-xs' },
     SMALL: { container: 'w-8 h-8', text: 'text-sm', icon: 'text-sm' },
     MEDIUM: { container: 'w-12 h-12', text: 'text-base', icon: 'text-base' },
     LARGE: { container: 'w-16 h-16', text: 'text-lg', icon: 'text-lg' }
-  }
-
-  const alignMap: Record<SAILAlign, string> = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
   }
 
   const shapeMap: Record<SAILShape, string> = {

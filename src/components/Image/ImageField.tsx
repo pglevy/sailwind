@@ -4,6 +4,7 @@ import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { DocumentImageProps } from './DocumentImage'
 import type { UserImageProps } from './UserImage'
+import { alignMap } from '../../utils/sailMaps'
 
 // Union type for all image types supported by ImageField
 type ImageFieldImage = DocumentImageProps | UserImageProps
@@ -118,13 +119,6 @@ export const ImageField: React.FC<ImageFieldProps> = ({
     EXTRA_LARGE: 'w-96 h-96', // 384x384px (same as LARGE)
     GALLERY: 'w-20 h-20', // 80x80px (square version of gallery)
     FIT: 'max-w-full h-auto aspect-square' // Natural dimensions, square
-  }
-
-  // Map SAIL align values to Tailwind classes
-  const alignMap: Record<SAILAlign, string> = {
-    START: 'justify-start',
-    CENTER: 'justify-center',
-    END: 'justify-end'
   }
 
   // Style-specific classes

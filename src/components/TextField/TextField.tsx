@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy } from '../../types/sail'
+import { legacyTextAlignMap } from '../../utils/sailMaps'
 
 /**
  * Text alignment options for the input field
  */
-type TextAlign = "LEFT" | "CENTER" | "RIGHT"
+type TextAlign = SAILAlignLegacy
 
 /**
  * Input purpose for autocomplete hints (accessibility)
@@ -125,13 +126,6 @@ export const TextField: React.FC<TextFieldProps> = ({
   // Generate unique ID for label association
   const inputId = React.useMemo(() => `textfield-${Math.random().toString(36).substr(2, 9)}`, [])
 
-  // Map SAIL text alignment to Tailwind classes
-  const alignMap: Record<TextAlign, string> = {
-    LEFT: 'text-left',
-    CENTER: 'text-center',
-    RIGHT: 'text-right'
-  }
-
   // Map inputPurpose to autocomplete attribute
   const autoCompleteMap: Record<InputPurpose, string> = {
     NAME: 'name',
@@ -151,7 +145,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   const inputClasses = [
     'w-full',
     'text-base',
-    alignMap[align],
+    legacyTextAlignMap[align],
     // ReadOnly mode: no border, no background, no padding (inline display)
     readOnly && 'border-none bg-transparent p-0',
     // Normal mode: standard input styling

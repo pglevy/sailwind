@@ -3,6 +3,7 @@ import * as LucideIcons from 'lucide-react'
 import type { SAILSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
+import { buttonSizeMap, buttonIconOnlySizeMap } from '../../utils/sailMaps'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
 type ButtonWidth = "MINIMIZE" | "FILL"
@@ -91,24 +92,8 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Size mappings - leading-none removes line-height so button height is purely padding-driven
-  const sizeMap: Record<SAILSize, string> = {
-    SMALL: 'px-3 py-2 text-sm leading-none',
-    STANDARD: 'px-4 py-3 text-base leading-none',
-    MEDIUM: 'px-5 py-4 text-lg leading-none',
-    LARGE: 'px-6 py-5 text-xl leading-none'
-  }
-
-  // Icon-only size mappings — uniform padding for square aspect ratio
-  const iconOnlySizeMap: Record<SAILSize, string> = {
-    SMALL: 'p-2 text-sm',
-    STANDARD: 'p-3 text-base',
-    MEDIUM: 'p-4 text-lg',
-    LARGE: 'p-5 text-xl'
-  }
-
   const isIconOnly = !!icon && !label
-  const effectiveSizeClasses = isIconOnly ? iconOnlySizeMap[size] : sizeMap[size]
+  const effectiveSizeClasses = isIconOnly ? buttonIconOnlySizeMap[size] : buttonSizeMap[size]
 
   // Width mappings
   const widthClass = width === "FILL" ? 'w-full' : 'w-auto'

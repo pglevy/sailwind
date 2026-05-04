@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoveUp, MoveDow
 import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
+import { textAlignMap } from "../../utils/sailMaps";
 import type {
   SAILLabelPosition,
   SAILMarginSize,
@@ -148,12 +149,6 @@ const widthMap: Record<string, string> = {
   "8X": "flex-[8]",
   "9X": "flex-[9]",
   "10X": "flex-[10]",
-};
-
-const alignMap: Record<string, string> = {
-  START: "text-left",
-  CENTER: "text-center",
-  END: "text-right",
 };
 
 const bgColorMap: Record<string, string> = {
@@ -342,7 +337,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
     col.width && widthMap[col.width] ? widthMap[col.width] : "";
 
   const getColAlignClass = (col: GridColumnProps) =>
-    col.align && alignMap[col.align] ? alignMap[col.align] : "text-left";
+    col.align && textAlignMap[col.align] ? textAlignMap[col.align] : "text-left";
 
   const renderTable = () => (
     <table
