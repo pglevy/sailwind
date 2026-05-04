@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { fn } from 'storybook/test'
 import { ParagraphField } from './ParagraphField'
 
 const meta = {
-  title: 'Components/ParagraphField',
+  title: 'Components/Paragraph',
   component: ParagraphField,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
@@ -23,7 +24,10 @@ export const Default: Story = {
   args: {
     label: 'Description',
     placeholder: 'Enter a description...',
-    saveInto: fn(),
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <ParagraphField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -31,7 +35,22 @@ export const WithValue: Story = {
   args: {
     label: 'Comments',
     value: 'This is an existing comment that can be edited.',
-    saveInto: fn(),
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <ParagraphField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const WithInstructions: Story = {
+  args: {
+    label: 'Bio',
+    instructions: 'Write a short description about yourself. This will be visible on your profile.',
+    placeholder: 'Tell us about yourself...',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? '')
+    return <ParagraphField {...args} value={value} saveInto={setValue} />
   },
 }
 
@@ -90,6 +109,14 @@ export const NarrowWidth: Story = {
   },
 }
 
+export const ReadOnly: Story = {
+  args: {
+    label: 'Summary',
+    value: 'This is a read-only paragraph field displaying content without edit controls.',
+    readOnly: true,
+  },
+}
+
 export const ReadOnlyWithLinks: Story = {
   args: {
     label: 'Description',
@@ -104,14 +131,6 @@ export const Disabled: Story = {
     label: 'Locked Field',
     value: 'This field cannot be edited.',
     disabled: true,
-  },
-}
-
-export const ReadOnly: Story = {
-  args: {
-    label: 'Summary',
-    value: 'This is a read-only paragraph field displaying content without edit controls.',
-    readOnly: true,
   },
 }
 

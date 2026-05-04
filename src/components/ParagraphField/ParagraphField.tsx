@@ -3,9 +3,9 @@ import { AlertTriangle } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 
-type RefreshAfter = "KEYPRESS" | "UNFOCUS" | "PAUSE" | "ENTER"
+type RefreshAfter = "KEYPRESS" | "UNFOCUS"
 type ParagraphHeight = "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
-type ComponentWidth = "NARROW" | "MEDIUM" | "FULL"
+type ParagraphWidth = "NARROW" | "MEDIUM" | "FULL"
 
 export interface ParagraphFieldProps {
   /** Text to display as the field label */
@@ -53,7 +53,7 @@ export interface ParagraphFieldProps {
   /** Determines the height of the paragraph field */
   height?: ParagraphHeight
   /** Determines the width of the paragraph field */
-  width?: ComponentWidth
+  width?: ParagraphWidth
   /** Determines if URLs in read-only mode are automatically converted to links */
   linkify?: boolean
   /** Removes border and background for embedding inside custom containers */
@@ -92,9 +92,9 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
   onKeyDown,
   className
 }) => {
-  if (!showWhen) return null
-
   const inputId = React.useMemo(() => `paragraphfield-${Math.random().toString(36).substr(2, 9)}`, [])
+
+  if (!showWhen) return null
 
   const heightMap: Record<ParagraphHeight, string> = {
     SHORT: 'min-h-20',
@@ -103,19 +103,18 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
     EXTRA_TALL: 'min-h-64',
   }
 
-  const widthMap: Record<ComponentWidth, string> = {
+  const widthMap: Record<ParagraphWidth, string> = {
     NARROW: 'max-w-xs',
     MEDIUM: 'max-w-md',
     FULL: 'w-full',
   }
 
   const inputClasses = [
-    'w-full text-base resize-vertical',
+    'w-full text-base resize-y',
     heightMap[height],
-    readOnly && 'border-none bg-transparent p-0',
-    !readOnly && !borderless && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
-    !readOnly && !borderless && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-    !readOnly && borderless && 'px-3 py-2 border-0 bg-transparent resize-none focus:outline-none',
+    !borderless && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
+    !borderless && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+    borderless && 'px-3 py-2 border-0 bg-transparent resize-none focus:outline-none',
     disabled && 'bg-gray-100 text-gray-700 cursor-not-allowed',
     disabled && borderless && '!bg-transparent opacity-50 cursor-not-allowed',
     validations.length > 0 && !borderless && 'border-red-700 focus:ring-red-700'
@@ -144,8 +143,15 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
     )
   }
 
-  const inputElement = readOnly && linkify ? (
-    <div className="text-base whitespace-pre-wrap">{linkifyText(value)}</div>
+  const inputElement = readOnly ? (
+    <div
+      id={inputId}
+      className="text-base whitespace-pre-wrap"
+      aria-label={accessibilityText || (labelPosition === "COLLAPSED" ? label : undefined)}
+      aria-describedby={instructions ? `${inputId}-instructions` : undefined}
+    >
+      {linkify ? linkifyText(value) : value}
+    </div>
   ) : (
     <div className="relative">
       <textarea
