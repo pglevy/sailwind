@@ -38,7 +38,7 @@ function main(): void {
   const colors: Record<string, Record<string, DTCGToken>> = tokens.color;
 
   // Collect all palette entries
-  const entries: { sailName: string; tailwindSegment: string }[] = [];
+  const entries: { sailName: string; tailwindSegment: string; hex: string }[] = [];
 
   for (const [family, steps] of Object.entries(colors)) {
     const stepKeys = Object.keys(steps)
@@ -48,7 +48,8 @@ function main(): void {
     for (const step of stepKeys) {
       const sailName = `${family.toUpperCase().replace(/-/g, '_')}_${step}`;
       const tailwindSegment = `${family}-${step}`;
-      entries.push({ sailName, tailwindSegment });
+      const hex = (steps[step] as DTCGToken).$value as string;
+      entries.push({ sailName, tailwindSegment, hex });
     }
   }
 
@@ -83,6 +84,18 @@ function main(): void {
   for (const entry of entries) {
     const seg = entry.tailwindSegment;
     lines.push(`  '${entry.sailName}': { bg: 'bg-${seg}', text: 'text-${seg}', border: 'border-${seg}' },`);
+  }
+
+  lines.push('};');
+  lines.push('');
+
+  lines.push('/**');
+  lines.push(' * Map from palette token to its hex value.');
+  lines.push(' */');
+  lines.push('export const paletteHexMap: Record<SAILPaletteColor, string> = {');
+
+  for (const entry of entries) {
+    lines.push(`  '${entry.sailName}': '${entry.hex}',`);
   }
 
   lines.push('};');

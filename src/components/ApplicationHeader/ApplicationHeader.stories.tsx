@@ -127,3 +127,12 @@ export const LightCustomBackground: Story = {
     backgroundColor: '#f0fdf4',
   },
 }
+
+export const PaletteTokenBackground: Story = {
+  args: {
+    name: 'HR Portal',
+    userInitials: 'KM',
+    objectType: 'app',
+    backgroundColor: 'TEAL_700',
+  },
+}

@@ -4,6 +4,7 @@ import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { SwitchField } from '../Switch/SwitchField'
 import { ToggleField } from '../Toggle/ToggleField'
 import type { SAILColorInput } from '../../types/sail'
+import { paletteHexMap, type SAILPaletteColor } from '../../types/palette-colors.generated'
 import {
   ICON_APP,
   ICON_INTERFACE,
@@ -80,7 +81,15 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   className
 }) => {
   const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
+  const isDefaultIcon = !iconSrc
   const resolvedLogoSrc = appianLogoSrc ?? APPIAN_LOGO
+
+  // Only support full #rrggbb hex — anything else falls back to default gradient
+  const isValidHex = (s: string) => /^#[0-9a-fA-F]{6}$/.test(s)
+  const resolvedBgColor = backgroundColor && (backgroundColor in paletteHexMap)
+    ? paletteHexMap[backgroundColor as SAILPaletteColor]
+    : backgroundColor
+  const validBgColor = resolvedBgColor && isValidHex(resolvedBgColor) ? resolvedBgColor : undefined
 
   // WCAG contrast helper — returns '#ffffff' or '#000000' for a hex bg
   const getContrastColor = (hex: string): string => {
@@ -92,18 +101,18 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
     return (1.05 / (L + 0.05)) >= ((L + 0.05) / 0.05) ? '#ffffff' : '#000000'
   }
 
-  const fgColor = backgroundColor ? getContrastColor(backgroundColor) : undefined
+  const fgColor = validBgColor ? getContrastColor(validBgColor) : undefined
   const isLight = fgColor === '#000000'
   // For ghost buttons: use a hex color so ButtonWidget applies inline styles
   const ghostButtonColor: SAILColorInput = fgColor ?? 'STANDARD'
 
   const headerClasses = [
-    !backgroundColor && 'application-header-gradient border-b border-gray-200',
+    !validBgColor && 'application-header-gradient border-b border-gray-200',
     className
   ].filter(Boolean).join(' ')
 
-  const headerStyle: React.CSSProperties | undefined = backgroundColor
-    ? { backgroundColor, borderBottom: '1px solid rgba(0,0,0,0.1)' }
+  const headerStyle: React.CSSProperties | undefined = validBgColor
+    ? { backgroundColor: validBgColor, borderBottom: '1px solid rgba(0,0,0,0.1)' }
     : undefined
 
   return (
@@ -127,7 +136,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
               src={displayIconSrc}
               alt={objectType}
               className="h-8 w-8 mr-2"
-              style={fgColor ? { filter: isLight ? undefined : 'invert(1)' } : undefined}
+              style={fgColor && !isLight && isDefaultIcon ? { filter: 'invert(1)' } : undefined}
             />
             <span className="font-bold" style={fgColor ? { color: fgColor } : { color: '#1f2937' }}>{name}</span>
           </div>
@@ -176,21 +185,21 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                       icon: "palette",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     },
                     {
                       icon: "monitor",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     },
                     {
                       icon: "globe",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     }
                   ]}
@@ -205,7 +214,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                   value={showStoriesView}
                   saveInto={onStoryToggle}
                   marginBelow="NONE"
-                  color={!showStoriesView ? "STANDARD" : "ACCENT"}
+                  color={!showStoriesView ? ghostButtonColor : "ACCENT"}
                 />
               </div>
             </>
@@ -236,28 +245,28 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                 icon="Lightbulb"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square"
               />
               <ButtonWidget
                 icon="Undo"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square"
               />
               <ButtonWidget
                 icon="Redo"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square mr-3"
               />
               <ButtonWidget
                 icon="PieChart"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square mr-3"
               />
               
