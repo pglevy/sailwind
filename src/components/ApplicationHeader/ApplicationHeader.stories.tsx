@@ -100,3 +100,30 @@ export const AdminConsole: Story = {
     ],
   },
 }
+
+export const DarkBackground: Story = {
+  args: {
+    name: 'My Application',
+    userInitials: 'PL',
+    objectType: 'app',
+    backgroundColor: '#1e3a5f',
+  },
+}
+
+export const BrandedBackground: Story = {
+  args: {
+    name: 'Customer Portal',
+    userInitials: 'JD',
+    objectType: 'app',
+    backgroundColor: '#7c3aed',
+  },
+}
+
+export const LightCustomBackground: Story = {
+  args: {
+    name: 'Analytics Dashboard',
+    userInitials: 'AB',
+    objectType: 'interface',
+    backgroundColor: '#f0fdf4',
+  },
+}
