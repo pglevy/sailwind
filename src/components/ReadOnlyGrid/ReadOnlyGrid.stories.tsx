@@ -193,7 +193,7 @@ export const WithRowHighlightSelection: Story = {
     selectionStyle: 'ROW_HIGHLIGHT',
   },
   render: (args) => {
-    const [selected, setSelected] = React.useState<(string | number)[]>([])
+    const [selected, setSelected] = React.useState<(string | number)[]>([2, 4])
     return (
       <ReadOnlyGrid {...args} selectionValue={selected} selectionSaveInto={setSelected}>
         <GridColumn label="Name" value="name" />
