@@ -33,7 +33,7 @@ export interface ReadOnlyGridProps {
   /** Whether rows are selectable */
   selectable?: boolean;
   /** Selection visual style */
-  selectionStyle?: "CHECKBOX" | "ROW_HIGHLIGHT";
+  selectionStyle?: "CHECKBOX" | "ROW_HIGHLIGHT" | "CHECKBOX_SUBTLE_HIGHLIGHT" | "SUBTLE_HIGHLIGHT";
   /** Currently selected row identifiers */
   selectionValue?: (string | number)[];
   /** Callback when selection changes */
@@ -58,6 +58,8 @@ export interface ReadOnlyGridProps {
   marginAbove?: SAILMarginSize;
   /** Space below component */
   marginBelow?: SAILMarginSize;
+  /** Determines if the paging includes the total row count. "STANDARD" hides total count for performance; "ROW_COUNT" shows total count and first/last controls. */
+  pagingControls?: "STANDARD" | "ROW_COUNT";
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string;
 }
@@ -180,6 +182,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   shadeAlternateRows = false,
   spacing = "STANDARD",
   height = "AUTO",
+  pagingControls = "STANDARD",
   accessibilityText,
   marginAbove,
   marginBelow,
@@ -346,7 +349,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
     >
       <thead className={needsScrollContainer ? "sticky top-0 bg-white z-10" : undefined}>
         <tr className={headerRowBorderClass}>
-          {selectable && selectionStyle === "CHECKBOX" && (
+          {selectable && (selectionStyle === "CHECKBOX" || selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT") && (
             <th className={`${cellPaddingClass} w-10 align-middle text-center${colDividerClass ? ` ${colDividerClass}` : ""}`}>
               <input
                 type="checkbox"
@@ -409,27 +412,31 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
           const isRowSelected = selectable && selectionValue.includes(rowId);
           const isRowHighlightSelected =
             selectable && selectionStyle === "ROW_HIGHLIGHT" && isRowSelected;
+          const isSubtleHighlightSelected =
+            selectable && selectionStyle === "SUBTLE_HIGHLIGHT" && isRowSelected;
+          const isCheckboxSubtleHighlightSelected =
+            selectable && selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT" && isRowSelected;
+          const isClickableRow =
+            selectable && (selectionStyle === "ROW_HIGHLIGHT" || selectionStyle === "SUBTLE_HIGHLIGHT" || selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT");
           const alternateRowClass =
-            shadeAlternateRows && rowIndex % 2 === 0 && !isRowHighlightSelected
+            shadeAlternateRows && rowIndex % 2 === 0 && !isRowHighlightSelected && !isSubtleHighlightSelected && !isCheckboxSubtleHighlightSelected
               ? "bg-gray-50"
               : "";
           return (
             <tr
               key={rowIndex}
               className={`${cellBorderClass}${
-                selectable && selectionStyle === "ROW_HIGHLIGHT"
-                  ? " cursor-pointer"
-                  : ""
-              }${isRowHighlightSelected ? " bg-blue-50" : ""}${
-                alternateRowClass ? ` ${alternateRowClass}` : ""
-              }`}
+                isClickableRow ? " cursor-pointer" : ""
+              }${isRowHighlightSelected ? " bg-blue-500 text-white" : ""}${
+                isSubtleHighlightSelected || isCheckboxSubtleHighlightSelected ? " bg-blue-50 outline outline-1 outline-blue-500" : ""
+              }${alternateRowClass ? ` ${alternateRowClass}` : ""}`}
               onClick={
-                selectable && selectionStyle === "ROW_HIGHLIGHT"
+                isClickableRow
                   ? () => handleRowSelect(rowId)
                   : undefined
               }
             >
-              {selectable && selectionStyle === "CHECKBOX" && (
+              {selectable && (selectionStyle === "CHECKBOX" || selectionStyle === "CHECKBOX_SUBTLE_HIGHLIGHT") && (
                 <td className={`${cellPaddingClass} w-10 align-middle text-center${colDividerClass ? ` ${colDividerClass}` : ""}`}>
                   <input
                     type="checkbox"
@@ -454,10 +461,11 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
                 const bg = resolveBgColor(col.backgroundColor, row);
                 const isLastCol = colIndex === visibleColumns.length - 1;
                 const divider = !isLastCol && colDividerClass ? ` ${colDividerClass}` : "";
+                const textColorClass = isRowHighlightSelected ? "text-white" : "text-gray-900";
                 return (
                   <td
                     key={colIndex}
-                    className={`${cellPaddingClass} ${alignClass} text-sm text-gray-900${widthClass ? ` ${widthClass}` : ""}${bg.className ? ` ${bg.className}` : ""}${divider}`}
+                    className={`${cellPaddingClass} ${alignClass} text-sm ${textColorClass}${widthClass ? ` ${widthClass}` : ""}${bg.className ? ` ${bg.className}` : ""}${divider}`}
                     style={bg.style}
                   >
                     {resolveValue(col.value, row, startIndex + rowIndex)}
@@ -497,15 +505,17 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
           )}
           {totalPages > 1 && (
             <div className="flex items-center justify-end gap-2 px-3 py-2 text-sm text-gray-700">
-              <button
-                onClick={() => setCurrentPage(1)}
-                disabled={!hasPreviousPage}
-                aria-label="First page"
-                title="First page"
-                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-              >
-                <ChevronsLeft size={18} />
-              </button>
+              {pagingControls === "ROW_COUNT" && totalPages >= 3 && (
+                <button
+                  onClick={() => setCurrentPage(1)}
+                  disabled={!hasPreviousPage}
+                  aria-label="First page"
+                  title="First page"
+                  className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                >
+                  <ChevronsLeft size={18} />
+                </button>
+              )}
               <button
                 onClick={() => setCurrentPage(p => p - 1)}
                 disabled={!hasPreviousPage}
@@ -515,10 +525,17 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
               >
                 <ChevronLeft size={18} />
               </button>
-              <span>
-                <span className="font-bold">{startIndex + 1} – {endIndex}</span>
-                {" "}of {sortedRows.length}
-              </span>
+              {pagingControls === "ROW_COUNT" ? (
+                <span>
+                  <span className="font-bold">{startIndex + 1} – {endIndex}</span>
+                  {" "}of {sortedRows.length}
+                </span>
+              ) : (
+                <span>
+                  <span className="font-bold">{startIndex + 1} – {endIndex}</span>
+                  {" "}of many
+                </span>
+              )}
               <button
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={!hasNextPage}
@@ -528,15 +545,17 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
               >
                 <ChevronRight size={18} />
               </button>
-              <button
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={!hasNextPage}
-                aria-label="Last page"
-                title="Last page"
-                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-              >
-                <ChevronsRight size={18} />
-              </button>
+              {pagingControls === "ROW_COUNT" && totalPages >= 3 && (
+                <button
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={!hasNextPage}
+                  aria-label="Last page"
+                  title="Last page"
+                  className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
+                >
+                  <ChevronsRight size={18} />
+                </button>
+              )}
             </div>
           )}
         </>

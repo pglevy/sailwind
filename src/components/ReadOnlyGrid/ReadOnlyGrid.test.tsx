@@ -215,7 +215,7 @@ function expectRangeText(start: number, end: number, total: number) {
 describe("ReadOnlyGrid - paging", () => {
   it("shows paging controls when data exceeds pageSize", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(15)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -241,7 +241,7 @@ describe("ReadOnlyGrid - paging", () => {
   it("navigates to next page and back", async () => {
     const user = userEvent.setup();
     render(
-      <ReadOnlyGrid data={generateData(12)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(12)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -265,7 +265,7 @@ describe("ReadOnlyGrid - paging", () => {
 
   it("disables first/previous buttons on first page and last/next on last page", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(15)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -279,14 +279,14 @@ describe("ReadOnlyGrid - paging", () => {
   it("disables next/last buttons on last page", async () => {
     const user = userEvent.setup();
     render(
-      <ReadOnlyGrid data={generateData(8)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(13)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
 
-    // Navigate to last page (page 2)
-    await user.click(screen.getByRole("button", { name: "Next page" }));
-    expectRangeText(6, 8, 8);
+    // Navigate to last page (page 3)
+    await user.click(screen.getByRole("button", { name: "Last page" }));
+    expectRangeText(11, 13, 13);
     expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Last page" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Previous page" })).toBeEnabled();
@@ -296,7 +296,7 @@ describe("ReadOnlyGrid - paging", () => {
   it("first page button jumps to page 1, last page button jumps to final page", async () => {
     const user = userEvent.setup();
     render(
-      <ReadOnlyGrid data={generateData(25)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(25)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -314,7 +314,7 @@ describe("ReadOnlyGrid - paging", () => {
 
   it("defaults pageSize to 10", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)}>
+      <ReadOnlyGrid data={generateData(15)} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -328,7 +328,7 @@ describe("ReadOnlyGrid - paging", () => {
   it("shows correct page range text", async () => {
     const user = userEvent.setup();
     render(
-      <ReadOnlyGrid data={generateData(23)} pageSize={10}>
+      <ReadOnlyGrid data={generateData(23)} pageSize={10} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -344,7 +344,7 @@ describe("ReadOnlyGrid - paging", () => {
 
   it("handles invalid pageSize by defaulting to 10", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)} pageSize={0}>
+      <ReadOnlyGrid data={generateData(15)} pageSize={0} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -354,7 +354,7 @@ describe("ReadOnlyGrid - paging", () => {
 
   it("handles negative pageSize by defaulting to 10", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)} pageSize={-5}>
+      <ReadOnlyGrid data={generateData(15)} pageSize={-5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -364,7 +364,7 @@ describe("ReadOnlyGrid - paging", () => {
 
   it("paging buttons have tooltips", () => {
     render(
-      <ReadOnlyGrid data={generateData(15)} pageSize={5}>
+      <ReadOnlyGrid data={generateData(15)} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" />
       </ReadOnlyGrid>
     );
@@ -488,7 +488,7 @@ describe("ReadOnlyGrid - sorting", () => {
     }));
 
     render(
-      <ReadOnlyGrid data={data} pageSize={5}>
+      <ReadOnlyGrid data={data} pageSize={5} pagingControls="ROW_COUNT">
         <GridColumn label="Name" value="name" sortField="name" />
       </ReadOnlyGrid>
     );
@@ -652,10 +652,10 @@ describe("ReadOnlyGrid - selection", () => {
     expect(rows[2]).toHaveClass("cursor-pointer");
     expect(rows[3]).toHaveClass("cursor-pointer");
 
-    // Only Bob's row (id=2) should be highlighted
-    expect(rows[1]).not.toHaveClass("bg-blue-50");
-    expect(rows[2]).toHaveClass("bg-blue-50");
-    expect(rows[3]).not.toHaveClass("bg-blue-50");
+    // Only Bob's row (id=2) should be highlighted with solid blue
+    expect(rows[1]).not.toHaveClass("bg-blue-500");
+    expect(rows[2]).toHaveClass("bg-blue-500");
+    expect(rows[3]).not.toHaveClass("bg-blue-500");
   });
 
   it("ROW_HIGHLIGHT clicking row toggles selection", async () => {
