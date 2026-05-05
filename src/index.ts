@@ -18,4 +18,4 @@ export * from './types/sail'
 
 // Export color utilities
 export { resolveColorClass, isSemanticColor, isPaletteColor, semanticColorClasses } from './utils/colorResolver'
-export { paletteColorMap } from './types/palette-colors.generated'
+export { paletteColorMap, paletteHexMap } from './types/palette-colors.generated'

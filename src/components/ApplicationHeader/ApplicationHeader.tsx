@@ -4,6 +4,7 @@ import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
 import { SwitchField } from '../Switch/SwitchField'
 import { ToggleField } from '../Toggle/ToggleField'
 import type { SAILColorInput } from '../../types/sail'
+import { paletteHexMap, type SAILPaletteColor } from '../../types/palette-colors.generated'
 import {
   ICON_APP,
   ICON_INTERFACE,
@@ -44,6 +45,8 @@ export interface ApplicationHeaderProps {
   onBackClick?: () => void
   /** Path to Appian logo image */
   appianLogoSrc?: string
+  /** Background color for the header (hex). Foreground colors auto-swap for contrast. */
+  backgroundColor?: string
   /** Additional buttons to display before the right-side controls */
   additionalButtons?: Array<{
     label: string
@@ -72,19 +75,48 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
   onPreviewToggle,
   onStoryToggle,
   onBackClick,
-  appianLogoSrc = APPIAN_LOGO,
+  appianLogoSrc,
+  backgroundColor,
   additionalButtons = [],
   className
 }) => {
   const displayIconSrc = iconSrc || DEFAULT_ICON_MAP[objectType]
+  const isDefaultIcon = !iconSrc
+  const resolvedLogoSrc = appianLogoSrc ?? APPIAN_LOGO
+
+  // Only support full #rrggbb hex — anything else falls back to default gradient
+  const isValidHex = (s: string) => /^#[0-9a-fA-F]{6}$/.test(s)
+  const resolvedBgColor = backgroundColor && (backgroundColor in paletteHexMap)
+    ? paletteHexMap[backgroundColor as SAILPaletteColor]
+    : backgroundColor
+  const validBgColor = resolvedBgColor && isValidHex(resolvedBgColor) ? resolvedBgColor : undefined
+
+  // WCAG contrast helper — returns '#ffffff' or '#000000' for a hex bg
+  const getContrastColor = (hex: string): string => {
+    const r = parseInt(hex.slice(1, 3), 16)
+    const g = parseInt(hex.slice(3, 5), 16)
+    const b = parseInt(hex.slice(5, 7), 16)
+    const toLinear = (c: number) => { const s = c / 255; return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4) }
+    const L = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
+    return (1.05 / (L + 0.05)) >= ((L + 0.05) / 0.05) ? '#ffffff' : '#000000'
+  }
+
+  const fgColor = validBgColor ? getContrastColor(validBgColor) : undefined
+  const isLight = fgColor === '#000000'
+  // For ghost buttons: use a hex color so ButtonWidget applies inline styles
+  const ghostButtonColor: SAILColorInput = fgColor ?? 'STANDARD'
 
   const headerClasses = [
-    'application-header-gradient border-b border-gray-200',
+    !validBgColor && 'application-header-gradient border-b border-gray-200',
     className
   ].filter(Boolean).join(' ')
 
+  const headerStyle: React.CSSProperties | undefined = validBgColor
+    ? { backgroundColor: validBgColor, borderBottom: '1px solid rgba(0,0,0,0.1)' }
+    : undefined
+
   return (
-    <div className={headerClasses}>
+    <div className={headerClasses} style={headerStyle}>
       <div className="flex items-center justify-between px-6 pt-4 pb-3 min-w-0 overflow-x-auto">
         {/* Left section */}
         <div className="flex items-center gap-3 shrink-0">
@@ -93,6 +125,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
               icon="ChevronLeft"
               style="GHOST"
               size="SMALL"
+              color={ghostButtonColor}
               onClick={onBackClick}
               className="aspect-square"
             />
@@ -103,8 +136,9 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
               src={displayIconSrc}
               alt={objectType}
               className="h-8 w-8 mr-2"
+              style={fgColor && !isLight && isDefaultIcon ? { filter: 'invert(1)' } : undefined}
             />
-            <span className="text-gray-800 font-bold">{name}</span>
+            <span className="font-bold" style={fgColor ? { color: fgColor } : { color: '#1f2937' }}>{name}</span>
           </div>
 
           {showDesignerControls && (
@@ -151,21 +185,21 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                       icon: "palette",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     },
                     {
                       icon: "monitor",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     },
                     {
                       icon: "globe",
                       style: "GHOST",
                       size: "SMALL",
-                      color: "STANDARD",
+                      color: ghostButtonColor,
                       className: "aspect-square"
                     }
                   ]}
@@ -180,7 +214,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                   value={showStoriesView}
                   saveInto={onStoryToggle}
                   marginBelow="NONE"
-                  color={!showStoriesView ? "STANDARD" : "ACCENT"}
+                  color={!showStoriesView ? ghostButtonColor : "ACCENT"}
                 />
               </div>
             </>
@@ -211,28 +245,28 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                 icon="Lightbulb"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square"
               />
               <ButtonWidget
                 icon="Undo"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square"
               />
               <ButtonWidget
                 icon="Redo"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square mr-3"
               />
               <ButtonWidget
                 icon="PieChart"
                 style="GHOST"
                 size="SMALL"
-                color="STANDARD"
+                color={ghostButtonColor}
                 className="aspect-square mr-3"
               />
               
@@ -263,32 +297,38 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
             icon="Search"
             style="GHOST"
             size="SMALL"
-            color="STANDARD"
+            color={ghostButtonColor}
             className="aspect-square"
           />
           <ButtonWidget
             icon="Settings"
             style="GHOST"
             size="SMALL"
-            color="STANDARD"
+            color={ghostButtonColor}
             className="aspect-square"
           />
           <ButtonWidget
             icon="Grid3X3"
             style="GHOST"
             size="SMALL"
-            color="STANDARD"
+            color={ghostButtonColor}
             className="aspect-square mr-3"
           />
           
-          <div className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center mr-3">
-            <span className="text-gray-700 text-sm font-medium">{userInitials}</span>
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center mr-3"
+            style={fgColor
+              ? { border: `1px solid ${fgColor}`, color: fgColor }
+              : { border: '1px solid #d1d5db', color: '#374151' }}
+          >
+            <span className="text-sm font-medium">{userInitials}</span>
           </div>
           
           <img 
-            src={appianLogoSrc} 
+            src={resolvedLogoSrc} 
             alt="Appian" 
             className="h-6 w-auto"
+            style={fgColor && !isLight ? { filter: 'invert(1)' } : undefined}
           />
         </div>
       </div>
