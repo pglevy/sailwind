@@ -110,8 +110,9 @@ export const ParagraphField: React.FC<ParagraphFieldProps> = ({
   }
 
   const inputClasses = [
-    'w-full text-base resize-y',
+    'w-full text-base',
     heightMap[height],
+    !borderless && 'resize-y',
     !borderless && 'px-3 py-2 border border-gray-300 rounded-sm bg-white',
     !borderless && 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
     borderless && 'px-3 py-2 border-0 bg-transparent resize-none focus:outline-none',

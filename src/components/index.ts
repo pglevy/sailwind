@@ -75,3 +75,6 @@ export * from './SiteNav'
 
 // RecordView template
 export * from './RecordView'
+
+// Chat components
+export * from './Chat'
