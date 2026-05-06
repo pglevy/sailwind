@@ -1,6 +1,9 @@
+import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChatPanel } from './ChatPanel'
 import { ChatInput } from './ChatInput'
+import { ChatUserMessage } from './ChatUserMessage'
+import { ChatAssistantMessage } from './ChatAssistantMessage'
 
 const meta = {
   title: 'Components/Chat/ChatPanel',
@@ -17,8 +20,8 @@ export const Default: Story = {
     title: 'Chat',
     children: (
       <div className="space-y-4">
-        <div className="bg-blue-50 rounded-md px-4 py-2 ml-auto max-w-[80%] w-fit text-gray-900">Hello!</div>
-        <div className="text-gray-900">Hi there! How can I help you today?</div>
+        <ChatUserMessage message="Hello!" />
+        <ChatAssistantMessage message="Hi there! How can I help you today?" />
       </div>
     ),
     footer: <ChatInput />,
@@ -35,8 +38,8 @@ export const WithHeaderActions: Story = {
     ],
     children: (
       <div className="space-y-4">
-        <div className="bg-blue-50 rounded-md px-4 py-2 ml-auto max-w-[80%] w-fit text-gray-900">Hello!</div>
-        <div className="text-gray-900">Hi there! How can I help you today?</div>
+        <ChatUserMessage message="Hello!" />
+        <ChatAssistantMessage message="Hi there! How can I help you today?" />
       </div>
     ),
     footer: <ChatInput placeholder="Ask me anything..." />,
@@ -50,12 +53,8 @@ export const LongScrollingContent: Story = {
       <div className="space-y-4">
         {Array.from({ length: 20 }, (_, i) => (
           <div key={i} className="space-y-4">
-            <div className="bg-blue-50 rounded-md px-4 py-2 ml-auto max-w-[80%] w-fit text-gray-900">
-              Message {i + 1}: This is a test message
-            </div>
-            <div className="text-gray-900">
-              Response {i + 1}: This is a response to your message with additional content to demonstrate scrolling.
-            </div>
+            <ChatUserMessage message={`Message ${i + 1}: This is a test message`} />
+            <ChatAssistantMessage message={`Response ${i + 1}: This is a response to your message with additional content to demonstrate scrolling.`} />
           </div>
         ))}
       </div>
@@ -70,8 +69,8 @@ export const NoFooter: Story = {
     title: 'Read-only Chat',
     children: (
       <div className="space-y-4">
-        <div className="bg-blue-50 rounded-md px-4 py-2 ml-auto max-w-[80%] w-fit text-gray-900">Hello!</div>
-        <div className="text-gray-900">Hi there! This is a read-only chat view.</div>
+        <ChatUserMessage message="Hello!" />
+        <ChatAssistantMessage message="Hi there! This is a read-only chat view." />
       </div>
     ),
   },
@@ -81,10 +80,41 @@ export const NoHeader: Story = {
   args: {
     children: (
       <div className="space-y-4">
-        <div className="bg-blue-50 rounded-md px-4 py-2 ml-auto max-w-[80%] w-fit text-gray-900">Hello!</div>
-        <div className="text-gray-900">Hi there! This chat has no header.</div>
+        <ChatUserMessage message="Hello!" />
+        <ChatAssistantMessage message="Hi there! This chat has no header." />
       </div>
     ),
     footer: <ChatInput />,
+  },
+}
+
+export const Interactive: Story = {
+  render: () => {
+    const [messages, setMessages] = React.useState<{ role: 'user' | 'assistant'; text: string }[]>([
+      { role: 'assistant', text: 'Hi there! How can I help you today?' },
+    ])
+
+    const handleSubmit = (message: string) => {
+      setMessages(prev => [
+        ...prev,
+        { role: 'user', text: message },
+        { role: 'assistant', text: 'I received your message. Let me look into that for you.' },
+      ])
+    }
+
+    return (
+      <ChatPanel
+        title="Chat"
+        footer={<ChatInput onSubmit={handleSubmit} />}
+      >
+        <div className="space-y-4">
+          {messages.map((msg, i) =>
+            msg.role === 'user'
+              ? <ChatUserMessage key={i} message={msg.text} />
+              : <ChatAssistantMessage key={i} message={msg.text} />
+          )}
+        </div>
+      </ChatPanel>
+    )
   },
 }
