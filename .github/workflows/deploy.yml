@@ -28,7 +28,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install chromium --with-deps
       - run: pnpm run generate:css
-      - run: pnpm vitest --run --host 127.0.0.1
+      - run: pnpm test
+        env:
+          NODE_OPTIONS: --dns-result-order=ipv4first
 
   build:
     runs-on: ubuntu-latest
