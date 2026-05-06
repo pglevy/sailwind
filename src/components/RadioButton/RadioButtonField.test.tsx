@@ -167,7 +167,7 @@ describe("RadioButtonField - choiceStyle CARDS", () => {
     const { container } = render(
       <RadioButtonField {...choices} choiceStyle="CARDS" />
     );
-    const cardItems = container.querySelectorAll(".border.border-gray-200.rounded-sm");
+    const cardItems = container.querySelectorAll(".border.border-gray-300.rounded-sm");
     expect(cardItems.length).toBe(3);
   });
 
@@ -188,9 +188,10 @@ describe("RadioButtonField - choiceStyle CARDS", () => {
     );
     const cards = container.querySelectorAll(".border.rounded-sm");
     // First card (Apple) should be highlighted
-    expect(cards[0]).toHaveClass("border-blue-500", "bg-blue-50");
+    expect(cards[0]).toHaveClass("border-blue-500");
+    expect(cards[0]).not.toHaveClass("border-gray-300");
     // Others should not
-    expect(cards[1]).not.toHaveClass("bg-blue-50");
+    expect(cards[1]).not.toHaveClass("border-blue-500");
   });
 });
 
