@@ -1,3 +1,10 @@
+# Security: only allow these packages to run install scripts
 allowBuilds:
-  '@tailwindcss/oxide': true
   esbuild: true
+  '@tailwindcss/oxide': true
+
+# Security: block packages published less than 2 days ago (supply chain protection)
+# Note: if a designer can't install a brand-new package, this is why
+minimumReleaseAge: 2880
+
+strictPeerDependencies: false
