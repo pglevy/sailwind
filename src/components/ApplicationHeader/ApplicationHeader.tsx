@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { ButtonWidget } from '../Button/ButtonWidget'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
-import { SwitchField } from '../Switch/SwitchField'
 import { ToggleField } from '../Toggle/ToggleField'
+import { ButtonToggle } from '../ButtonToggle/ButtonToggle'
 import type { SAILColorInput } from '../../types/sail'
 import { paletteHexMap, type SAILPaletteColor } from '../../types/palette-colors.generated'
 import {
@@ -144,7 +144,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
           {showDesignerControls && (
             <>
               <div className="flex items-center gap-0 ml-4 bg-gray-50 p-1 rounded-sm">
-                <ToggleField
+                <ButtonToggle
                   icon="square-dashed-mouse-pointer"
                   style="GHOST"
                   size="SMALL"
@@ -152,7 +152,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                   saveInto={showStoriesView ? onStoryToggle : undefined}
                   marginBelow="NONE"
                 />
-                <ToggleField
+                <ButtonToggle
                   icon="code"
                   style="GHOST"
                   size="SMALL"
@@ -162,7 +162,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
               </div>
 
               <div className="mt-1 [&>div>div]:flex-row-reverse [&>div>div]:gap-2 [&_label]:mb-1 scale-75">
-                <SwitchField
+                <ToggleField
                   label="Preview"
                   labelPosition="ADJACENT"
                   value={previewEnabled}
@@ -207,7 +207,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
                 />
               </div>
               <div className="[&_button]:border-0">
-                <ToggleField
+                <ButtonToggle
                   icon="book-open-text"
                   style={!showStoriesView ? "GHOST" : "SOLID"}
                   size="SMALL"

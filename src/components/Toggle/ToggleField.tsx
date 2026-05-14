@@ -1,48 +1,37 @@
 import * as React from 'react'
-import * as Toggle from '@radix-ui/react-toggle'
-import * as LucideIcons from 'lucide-react'
+import * as Switch from '@radix-ui/react-switch'
+import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 import { isPaletteColor } from '../../utils/colorResolver'
 import { paletteColorMap } from '../../types/palette-colors.generated'
-import { buttonSizeMap } from '../../utils/sailMaps'
-
-type ToggleStyle = "SOLID" | "OUTLINE" | "GHOST"
 
 /**
- * Displays a toggle button for boolean input (button-style on/off)
- * Inspired by SAIL form field patterns (not an official SAIL component)
- *
- * This is a "new SAIL" component - not available in public SAIL but follows
- * the same conventions and patterns for consistency with other Sailwind components.
- *
- * Use ToggleField for button-style toggles (e.g., toolbar buttons, filters)
- * Use SwitchField for traditional on/off switches (e.g., settings)
+ * Displays a toggle (switch) for boolean input
+ * Maps to SAIL's a!toggleField()
  */
 export interface ToggleFieldProps {
   /** Text to display as the field label */
   label?: string
-  /** Text to display on the toggle button */
-  text?: string
   /** Supplemental text about this field */
   instructions?: string
   /** Determines if a value is required to submit the form */
   required?: boolean
   /** Determines if the field should display as grayed out */
   disabled?: boolean
-  /** Current pressed state (true = pressed, false = unpressed) */
+  /** Current checked state (true = on, false = off) */
   value?: boolean
   /** Validation errors to display below the field */
   validations?: string[]
-  /** Callback when the user toggles the button */
+  /** Callback when the user toggles the switch */
   saveInto?: (value: boolean) => void
-  /** Callback when the user toggles the button (React-style alias for saveInto) */
+  /** Callback when the user toggles the switch (React-style alias for saveInto) */
   onChange?: (value: boolean) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
   requiredMessage?: string
-  /** Determines where the label appears */
+  /** Determines where the label appears relative to the component */
   labelPosition?: SAILLabelPosition
   /** Displays a help icon with tooltip text */
   helpTooltip?: string
@@ -54,23 +43,18 @@ export interface ToggleFieldProps {
   marginAbove?: SAILMarginSize
   /** Space added below component */
   marginBelow?: SAILMarginSize
-  /** Size of the toggle button */
+  /** Size of the switch and its label */
   size?: SAILSize
-  /** Color when toggle is pressed (hex or semantic) */
+  /** Color when switch is on (hex or semantic) */
   color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
-  /** Determines the button's appearance */
-  style?: ToggleStyle
-  /** Icon to display in the button */
-  icon?: string
-  /** Position of icon relative to text */
-  iconPosition?: "START" | "END"
+  /** Position of the inline label relative to the switch control: LEFT or RIGHT */
+  toggleLabelPosition?: "LEFT" | "RIGHT"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
 
 export const ToggleField: React.FC<ToggleFieldProps> = ({
   label,
-  text,
   instructions,
   required = false,
   disabled = false,
@@ -80,7 +64,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   onChange,
   validationGroup: _validationGroup,
   requiredMessage,
-  labelPosition = "ABOVE",
+  labelPosition: _labelPosition = "ABOVE",
   helpTooltip,
   accessibilityText,
   showWhen = true,
@@ -88,9 +72,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   marginBelow = "STANDARD",
   size = "STANDARD",
   color = "ACCENT",
-  style = "SOLID",
-  icon,
-  iconPosition = "START",
+  toggleLabelPosition = "RIGHT",
   className
 }) => {
   // Visibility control
@@ -98,52 +80,63 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
   const inputId = `togglefield-${Math.random().toString(36).substr(2, 9)}`
 
-  // Get color classes based on style and pressed state
-  const getColorClasses = (): string => {
-    if (color.startsWith('#') || isPaletteColor(color)) return 'border'
+  // Size mappings for the switch control
+  const sizeMap: Record<SAILSize, { root: string; thumb: string }> = {
+    SMALL: {
+      root: 'h-5 w-9',
+      thumb: 'h-3.5 w-3.5 data-[state=checked]:translate-x-4'
+    },
+    STANDARD: {
+      root: 'h-6 w-11',
+      thumb: 'h-4 w-4 data-[state=checked]:translate-x-5.5'
+    },
+    MEDIUM: {
+      root: 'h-7 w-14',
+      thumb: 'h-5 w-5 data-[state=checked]:translate-x-7.5'
+    },
+    LARGE: {
+      root: 'h-9 w-18',
+      thumb: 'h-7 w-7 data-[state=checked]:translate-x-9.5'
+    }
+  }
 
-    const semanticColor = color as "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD"
+  // Size mappings for the inline label text
+  const labelSizeMap: Record<SAILSize, string> = {
+    SMALL: 'text-sm',
+    STANDARD: 'text-base',
+    MEDIUM: 'text-lg',
+    LARGE: 'text-xl'
+  }
 
-    if (style === "SOLID") {
-      const solidColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100 data-[state=on]:bg-blue-500 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-blue-500',
-        POSITIVE:  'border border-green-700 text-green-700 bg-white hover:bg-green-100 data-[state=on]:bg-green-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-green-700',
-        NEGATIVE:  'border border-red-700 text-red-700 bg-white hover:bg-red-100 data-[state=on]:bg-red-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-red-700',
-        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-700 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-gray-700',
-        STANDARD:  'border border-gray-900 text-gray-900 bg-white hover:bg-gray-200 data-[state=on]:bg-gray-900 data-[state=on]:text-white data-[state=on]:border-transparent hover:data-[state=on]:bg-gray-900'
-      }
-      return solidColors[semanticColor]
+  // Gap between switch and inline label, scaled by size
+  const gapMap: Record<SAILSize, string> = {
+    SMALL: 'gap-2',
+    STANDARD: 'gap-3',
+    MEDIUM: 'gap-3',
+    LARGE: 'gap-4'
+  }
+
+  // Color mapping for checked state
+  const getCheckedBgClass = (): string => {
+    if (color.startsWith('#')) return ''
+    if (isPaletteColor(color)) return '' // handled via inline style
+
+    const colorMap: Record<string, string> = {
+      ACCENT:    'data-[state=checked]:bg-blue-500',
+      POSITIVE:  'data-[state=checked]:bg-green-700',
+      NEGATIVE:  'data-[state=checked]:bg-red-700',
+      SECONDARY: 'data-[state=checked]:bg-gray-700',
+      STANDARD:  'data-[state=checked]:bg-gray-900'
     }
 
-    if (style === "OUTLINE") {
-      const outlineColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-blue-500 text-blue-500 bg-white hover:bg-blue-100 data-[state=on]:bg-blue-50',
-        POSITIVE:  'border border-green-700 text-green-700 bg-white hover:bg-green-100 data-[state=on]:bg-green-50',
-        NEGATIVE:  'border border-red-700 text-red-700 bg-white hover:bg-red-100 data-[state=on]:bg-red-50',
-        SECONDARY: 'border border-gray-700 text-gray-700 bg-white hover:bg-gray-100 data-[state=on]:bg-gray-50',
-        STANDARD:  'border border-gray-900 text-gray-900 bg-white hover:bg-gray-200 data-[state=on]:bg-gray-50'
-      }
-      return outlineColors[semanticColor]
-    }
-
-    if (style === "GHOST") {
-      const ghostColors: Record<typeof semanticColor, string> = {
-        ACCENT:    'border border-transparent text-blue-500 hover:bg-blue-100 data-[state=on]:bg-blue-50',
-        POSITIVE:  'border border-transparent text-green-700 hover:bg-green-100 data-[state=on]:bg-green-50',
-        NEGATIVE:  'border border-transparent text-red-700 hover:bg-red-100 data-[state=on]:bg-red-50',
-        SECONDARY: 'border border-transparent text-gray-700 hover:bg-gray-100 data-[state=on]:bg-gray-50',
-        STANDARD:  'border border-transparent text-gray-900 hover:bg-gray-200 data-[state=on]:bg-gray-50'
-      }
-      return ghostColors[semanticColor]
-    }
-
-    return ''
+    return colorMap[color] || 'data-[state=checked]:bg-blue-500'
   }
 
   // Resolve a non-semantic color to a CSS value for inline styles
   const resolveInlineColor = (): string | undefined => {
     if (color.startsWith('#')) return color
     if (isPaletteColor(color)) {
+      // 'bg-teal-700' → 'teal-700' → 'var(--color-teal-700)'
       const segment = paletteColorMap[color].bg.replace('bg-', '')
       return `var(--color-${segment})`
     }
@@ -152,51 +145,11 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
   const inlineColor = resolveInlineColor()
 
-  const handleChange = (pressed: boolean) => {
+  const handleChange = (checked: boolean) => {
     const handler = onChange || saveInto
     if (handler && !disabled) {
-      handler(pressed)
+      handler(checked)
     }
-  }
-
-  // Map any Lucide icon name directly, with SAIL compatibility fallbacks
-  const getIconComponent = (iconName: string) => {
-    // First try direct Lucide icon name (kebab-case or PascalCase)
-    const kebabToPascal = (str: string) => 
-      str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')
-    
-    const pascalIconName = kebabToPascal(iconName)
-    if (pascalIconName in LucideIcons) {
-      return LucideIcons[pascalIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
-    }
-    
-    // Also try direct case-insensitive lookup
-    const directIconName = iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase()
-    if (directIconName in LucideIcons) {
-      return LucideIcons[directIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
-    }
-    
-    // Fallback to SAIL compatibility mapping
-    const sailIconMap: Record<string, keyof typeof LucideIcons> = {
-      'STAR': 'Star',
-      'HOME': 'Home',
-      'USER': 'User',
-      'SETTINGS': 'Settings',
-      'SEARCH': 'Search',
-      'FILTER': 'Filter',
-      'ARROW_RIGHT': 'ArrowRight',
-      'ARROW_LEFT': 'ArrowLeft',
-      'ARROW_UP': 'ArrowUp',
-      'ARROW_DOWN': 'ArrowDown'
-    }
-    
-    const lucideIconName = sailIconMap[iconName]
-    if (lucideIconName && lucideIconName in LucideIcons) {
-      return LucideIcons[lucideIconName] as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
-    }
-    
-    // Fallback to a generic icon
-    return LucideIcons.Circle as React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }>
   }
 
   // Show validation errors
@@ -205,43 +158,88 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   // Show required message
   const showRequiredMessage = required && !value && requiredMessage
 
-  // Toggle button element
-  const toggleElement = (
-    <Toggle.Root
+  // The Radix switch control
+  const switchControl = (
+    <Switch.Root
       id={inputId}
-      pressed={value}
-      onPressedChange={handleChange}
+      checked={value}
+      onCheckedChange={handleChange}
       disabled={disabled}
+      required={required}
       className={[
-        'inline-flex items-center justify-center gap-1',
-        'font-medium transition-colors h-auto rounded-sm',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-        buttonSizeMap[size],
-        getColorClasses(),
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        sizeMap[size].root,
+        'shrink-0 relative rounded-full transition-colors border-2',
+        'data-[state=unchecked]:bg-white data-[state=unchecked]:border-gray-300',
+        'hover:data-[state=unchecked]:bg-gray-100',
+        getCheckedBgClass(),
+        'data-[state=checked]:border-transparent',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
       ].filter(Boolean).join(' ')}
-      aria-label={accessibilityText || text || label || (icon ? icon.replace(/-/g, ' ') : undefined)}
+      style={inlineColor && value ? { backgroundColor: inlineColor } : undefined}
+      aria-label={accessibilityText || label}
       aria-describedby={instructions ? `${inputId}-instructions` : undefined}
       aria-invalid={showValidations}
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}
-      style={inlineColor ? {
-        borderColor: value ? 'transparent' : inlineColor,
-        color: value ? '#ffffff' : inlineColor,
-        backgroundColor: value ? inlineColor : undefined,
-      } : undefined}
     >
-      {icon && iconPosition === "START" && (
-        <span aria-hidden="true">
-          {React.createElement(getIconComponent(icon), { size: 16 })}
+      <Switch.Thumb
+        className={[
+          sizeMap[size].thumb,
+          'block rounded-full bg-white shadow-lg transition-transform border border-gray-500 data-[state=checked]:border-transparent',
+          'translate-x-0.5',
+          'flex items-center justify-center'
+        ].filter(Boolean).join(' ')}
+      >
+        {value && (
+          <svg viewBox="0 0 12 12" fill="none" className="w-2/3 h-2/3" aria-hidden="true">
+            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className={inlineColor ? '' : ({
+                ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
+                SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900'
+              } as Record<string, string>)[color] ?? 'text-blue-500'}
+              style={inlineColor ? { color: inlineColor } : undefined}
+            />
+          </svg>
+        )}
+      </Switch.Thumb>
+    </Switch.Root>
+  )
+
+  // Inline label element (rendered next to the switch control)
+  const inlineLabel = label ? (
+    <label
+      htmlFor={inputId}
+      className={[
+        labelSizeMap[size],
+        'inline-flex items-center gap-1 font-medium text-gray-900 select-none',
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      ].join(' ')}
+    >
+      {label}
+      {required && <span className="text-red-700" aria-label="required">*</span>}
+      {helpTooltip && (
+        <span className="text-gray-700 cursor-help inline-flex items-center" title={helpTooltip} aria-label="help">
+          <Info size={14} />
         </span>
       )}
-      {text && <span>{text}</span>}
-      {icon && iconPosition === "END" && (
-        <span aria-hidden="true">
-          {React.createElement(getIconComponent(icon), { size: 16 })}
-        </span>
+    </label>
+  ) : null
+
+  // The switch + inline label row
+  const switchElement = (
+    <div className={`flex items-center ${gapMap[size]}`}>
+      {toggleLabelPosition === "LEFT" ? (
+        <>
+          {inlineLabel}
+          {switchControl}
+        </>
+      ) : (
+        <>
+          {switchControl}
+          {inlineLabel}
+        </>
       )}
-    </Toggle.Root>
+    </div>
   )
 
   // Footer content (validations and required message)
@@ -263,21 +261,19 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
     </>
   )
 
+  // Use FieldWrapper without a label — we handle the label inline
   return (
     <FieldWrapper
-      label={label}
-      labelPosition={labelPosition}
-      required={required}
-      instructions={instructions}
-      helpTooltip={helpTooltip}
-      accessibilityText={accessibilityText}
+      labelPosition="COLLAPSED"
+      accessibilityText={accessibilityText || label}
       inputId={inputId}
       marginAbove={marginAbove}
       marginBelow={marginBelow}
+      instructions={instructions}
       footer={footerContent}
       className={className}
     >
-      {toggleElement}
+      {switchElement}
     </FieldWrapper>
   )
 }

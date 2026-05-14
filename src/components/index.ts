@@ -43,11 +43,11 @@ export * from './RadioButton'
 // Dropdown components
 export * from './Dropdown'
 
-// Switch components (new SAIL)
-export * from './Switch'
-
-// Toggle components (new SAIL)
+// Toggle components (a!toggleField — switch/toggle for boolean input)
 export * from './Toggle'
+
+// ButtonToggle components (button-style on/off toggle)
+export * from './ButtonToggle'
 
 // Slider components (new SAIL)
 export * from './Slider'
