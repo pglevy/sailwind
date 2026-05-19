@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChatAssistantMessage } from './ChatAssistantMessage'
+import { FileCard } from './FileCard'
 
 const meta = {
   title: 'Components/Chat/ChatAssistantMessage',
@@ -37,6 +38,16 @@ export const MultipleMessages: Story = {
       <ChatAssistantMessage message="The project is currently on track for the Q3 deadline." />
       <ChatAssistantMessage message="Here is the latest report as of last Friday." />
       <ChatAssistantMessage message="You're welcome! Let me know if you need anything else." />
+    </div>
+  ),
+}
+
+export const WithFileAttachment: Story = {
+  args: { message: '' },
+  render: () => (
+    <div className="flex flex-col gap-2 w-full max-w-2xl">
+      <ChatAssistantMessage message="Here's the report you requested:" />
+      <FileCard fileName="quarterly-report.pdf" fileSize={1024 * 250} className="w-fit" />
     </div>
   ),
 }

@@ -1,12 +1,13 @@
 import * as React from 'react'
 import { useState } from 'react'
-import { X, FileText, FileImage, FileVideo, File } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
 import { ButtonWidget } from '../Button/ButtonWidget'
 import { ParagraphField } from '../ParagraphField/ParagraphField'
+import { FileCard } from './FileCard'
 
 export interface ChatInputFile {
   name: string
+  size?: number
   type?: string
 }
 
@@ -25,23 +26,6 @@ export interface ChatInputProps {
   showUpload?: boolean
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
-}
-
-const getFileIcon = (type?: string) => {
-  if (!type) return File
-  if (type.startsWith('image/')) return FileImage
-  if (type.startsWith('video/')) return FileVideo
-  if (type === 'application/pdf' || type.startsWith('text/')) return FileText
-  return File
-}
-
-const getFileIconColor = (type?: string) => {
-  if (!type) return 'text-gray-500'
-  if (type.startsWith('image/')) return 'text-blue-500'
-  if (type.startsWith('video/')) return 'text-red-500'
-  if (type === 'application/pdf') return 'text-red-700'
-  if (type.startsWith('text/')) return 'text-blue-700'
-  return 'text-gray-500'
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -83,7 +67,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     input.onchange = (e) => {
       const selected = (e.target as HTMLInputElement).files
       if (selected) {
-        const newFiles = Array.from(selected).map(f => ({ name: f.name, type: f.type }))
+        const newFiles = Array.from(selected).map(f => ({ name: f.name, size: f.size, type: f.type }))
         setFiles(prev => [...prev, ...newFiles])
       }
     }
@@ -96,27 +80,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <div className={mergeClasses(sailClasses, className)}>
       <div className="flex flex-col flex-1">
         {files.length > 0 && (
-          <div className="flex flex-col gap-1 px-3 pt-3">
-            {files.map((file, index) => {
-              const IconComponent = getFileIcon(file.type)
-              const iconColor = getFileIconColor(file.type)
-              return (
-                <div
-                  key={index}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-gray-200 bg-white w-fit max-w-full"
-                >
-                  <IconComponent size={16} className={`shrink-0 ${iconColor}`} />
-                  <span className="text-sm text-gray-900 truncate max-w-[200px]">{file.name}</span>
-                  <button
-                    onClick={() => setFiles(prev => prev.filter((_, i) => i !== index))}
-                    aria-label={`Remove ${file.name}`}
-                    className="shrink-0 p-0.5 rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              )
-            })}
+          <div className="flex flex-wrap gap-2 px-3 pt-3">
+            {files.map((file, index) => (
+              <FileCard
+                key={index}
+                fileName={file.name}
+                fileSize={file.size || 0}
+                showRemove
+                onRemove={() => setFiles(prev => prev.filter((_, i) => i !== index))}
+              />
+            ))}
           </div>
         )}
         <ParagraphField
