@@ -163,8 +163,7 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
 
               <div className="mt-1 [&>div>div]:flex-row-reverse [&>div>div]:gap-2 [&_label]:mb-1 scale-75">
                 <ToggleField
-                  label="Preview"
-                  labelPosition="ADJACENT"
+                  choiceLabel="Preview"
                   value={previewEnabled}
                   saveInto={onPreviewToggle}
                   marginBelow="NONE"

@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
+import type { SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
 import { isPaletteColor } from '../../utils/colorResolver'
 import { paletteColorMap } from '../../types/palette-colors.generated'
 
@@ -11,10 +11,8 @@ import { paletteColorMap } from '../../types/palette-colors.generated'
  * Maps to SAIL's a!toggleField()
  */
 export interface ToggleFieldProps {
-  /** Text to display as the field label */
-  label?: string
-  /** Supplemental text about this field */
-  instructions?: string
+  /** Text to display as the label next to the toggle */
+  choiceLabel?: string
   /** Determines if a value is required to submit the form */
   required?: boolean
   /** Determines if the field should display as grayed out */
@@ -31,9 +29,7 @@ export interface ToggleFieldProps {
   validationGroup?: string
   /** Custom message when field is required and not provided */
   requiredMessage?: string
-  /** Determines where the label appears relative to the component */
-  labelPosition?: SAILLabelPosition
-  /** Displays a help icon with tooltip text */
+  /** Displays a help icon next to the choice label with tooltip text */
   helpTooltip?: string
   /** Additional text for screen readers */
   accessibilityText?: string
@@ -47,15 +43,14 @@ export interface ToggleFieldProps {
   size?: SAILSize
   /** Color when switch is on (hex or semantic) */
   color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
-  /** Position of the inline label relative to the switch control: LEFT or RIGHT */
-  toggleLabelPosition?: "LEFT" | "RIGHT"
+  /** Determines whether the toggle appears on the left or right of the choice label. Valid values: "START" (default), "END" */
+  choicePosition?: "START" | "END"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
 
 export const ToggleField: React.FC<ToggleFieldProps> = ({
-  label,
-  instructions,
+  choiceLabel,
   required = false,
   disabled = false,
   value = false,
@@ -64,7 +59,6 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   onChange,
   validationGroup: _validationGroup,
   requiredMessage,
-  labelPosition: _labelPosition = "ABOVE",
   helpTooltip,
   accessibilityText,
   showWhen = true,
@@ -72,7 +66,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   marginBelow = "STANDARD",
   size = "STANDARD",
   color = "ACCENT",
-  toggleLabelPosition = "RIGHT",
+  choicePosition = "START",
   className
 }) => {
   // Visibility control
@@ -156,7 +150,8 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   const showValidations = validations.length > 0
 
   // Show required message
-  const showRequiredMessage = required && !value && requiredMessage
+  const resolvedRequiredMessage = requiredMessage || "Enable the toggle to continue"
+  const showRequiredMessage = required && !value
 
   // The Radix switch control
   const switchControl = (
@@ -177,8 +172,8 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
       ].filter(Boolean).join(' ')}
       style={inlineColor && value ? { backgroundColor: inlineColor } : undefined}
-      aria-label={accessibilityText || label}
-      aria-describedby={instructions ? `${inputId}-instructions` : undefined}
+      aria-label={accessibilityText || choiceLabel}
+      aria-describedby={undefined}
       aria-invalid={showValidations}
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}
     >
@@ -206,7 +201,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   )
 
   // Inline label element (rendered next to the switch control)
-  const inlineLabel = label ? (
+  const inlineLabel = choiceLabel ? (
     <label
       htmlFor={inputId}
       className={[
@@ -215,7 +210,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       ].join(' ')}
     >
-      {label}
+      {choiceLabel}
       {required && <span className="text-red-700" aria-label="required">*</span>}
       {helpTooltip && (
         <span className="text-gray-700 cursor-help inline-flex items-center" title={helpTooltip} aria-label="help">
@@ -226,9 +221,11 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   ) : null
 
   // The switch + inline label row
+  // choicePosition="START" means toggle appears on the left of the label
+  // choicePosition="END" means toggle appears on the right of the label
   const switchElement = (
     <div className={`flex items-center ${gapMap[size]}`}>
-      {toggleLabelPosition === "LEFT" ? (
+      {choicePosition === "END" ? (
         <>
           {inlineLabel}
           {switchControl}
@@ -255,7 +252,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
 
       {showRequiredMessage && (
         <p className="text-sm text-red-700 mt-2" role="alert">
-          {requiredMessage}
+          {resolvedRequiredMessage}
         </p>
       )}
     </>
@@ -265,11 +262,10 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   return (
     <FieldWrapper
       labelPosition="COLLAPSED"
-      accessibilityText={accessibilityText || label}
+      accessibilityText={accessibilityText || choiceLabel}
       inputId={inputId}
       marginAbove={marginAbove}
       marginBelow={marginBelow}
-      instructions={instructions}
       footer={footerContent}
       className={className}
     >

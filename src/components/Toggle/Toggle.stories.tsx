@@ -15,8 +15,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    label: 'Enable Notifications',
-    instructions: 'Receive email and push notifications for updates',
+    choiceLabel: 'Enable Notifications',
     value: true,
   },
   render: (args) => {
@@ -35,7 +34,7 @@ export const Default: Story = {
 
 export const Unchecked: Story = {
   args: {
-    label: 'Dark Mode',
+    choiceLabel: 'Dark Mode',
     value: false,
   },
   render: (args) => {
@@ -44,10 +43,10 @@ export const Unchecked: Story = {
   },
 }
 
-export const WithInstructions: Story = {
+export const WithHelpTooltip: Story = {
   args: {
-    label: 'Auto-save',
-    instructions: 'Automatically save changes every 30 seconds',
+    choiceLabel: 'Auto-save',
+    helpTooltip: 'Automatically save changes every 30 seconds',
     value: true,
     color: 'POSITIVE',
   },
@@ -61,7 +60,7 @@ export const WithInstructions: Story = {
 
 export const SmallSize: Story = {
   args: {
-    label: 'Small Toggle',
+    choiceLabel: 'Small Toggle',
     value: true,
     size: 'SMALL',
   },
@@ -73,7 +72,7 @@ export const SmallSize: Story = {
 
 export const StandardSize: Story = {
   args: {
-    label: 'Standard Toggle',
+    choiceLabel: 'Standard Toggle',
     value: true,
     size: 'STANDARD',
   },
@@ -85,7 +84,7 @@ export const StandardSize: Story = {
 
 export const MediumSize: Story = {
   args: {
-    label: 'Medium Toggle',
+    choiceLabel: 'Medium Toggle',
     value: true,
     size: 'MEDIUM',
   },
@@ -97,7 +96,7 @@ export const MediumSize: Story = {
 
 export const LargeSize: Story = {
   args: {
-    label: 'Large Toggle',
+    choiceLabel: 'Large Toggle',
     value: true,
     size: 'LARGE',
   },
@@ -108,12 +107,12 @@ export const LargeSize: Story = {
 }
 
 export const AllSizes: Story = {
-  args: { label: '', value: true },
+  args: { choiceLabel: '', value: true },
   render: () => {
     const sizes = ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] as const
     const SizeRow = ({ s }: { s: typeof sizes[number] }) => {
       const [value, setValue] = useState(true)
-      return <ToggleField label={`${s} size`} value={value} saveInto={setValue} size={s} marginBelow="NONE" />
+      return <ToggleField choiceLabel={`${s} size`} value={value} saveInto={setValue} size={s} marginBelow="NONE" />
     }
     return (
       <div className="flex flex-col gap-4">
@@ -127,7 +126,7 @@ export const AllSizes: Story = {
 
 export const ColorAccent: Story = {
   args: {
-    label: 'ACCENT (Blue)',
+    choiceLabel: 'ACCENT (Blue)',
     value: true,
     color: 'ACCENT',
   },
@@ -139,7 +138,7 @@ export const ColorAccent: Story = {
 
 export const ColorPositive: Story = {
   args: {
-    label: 'POSITIVE (Green)',
+    choiceLabel: 'POSITIVE (Green)',
     value: true,
     color: 'POSITIVE',
   },
@@ -151,7 +150,7 @@ export const ColorPositive: Story = {
 
 export const ColorNegative: Story = {
   args: {
-    label: 'NEGATIVE (Red)',
+    choiceLabel: 'NEGATIVE (Red)',
     value: true,
     color: 'NEGATIVE',
   },
@@ -163,7 +162,7 @@ export const ColorNegative: Story = {
 
 export const CustomHexColor: Story = {
   args: {
-    label: 'Custom Hex Color',
+    choiceLabel: 'Custom Hex Color',
     value: true,
     color: 'VIOLET_500',
   },
@@ -177,7 +176,7 @@ export const CustomHexColor: Story = {
 
 export const DisabledOff: Story = {
   args: {
-    label: 'Disabled (Off)',
+    choiceLabel: 'Disabled (Off)',
     value: false,
     disabled: true,
   },
@@ -185,19 +184,19 @@ export const DisabledOff: Story = {
 
 export const DisabledOn: Story = {
   args: {
-    label: 'Disabled (On)',
+    choiceLabel: 'Disabled (On)',
     value: true,
     disabled: true,
   },
 }
 
-// --- Label position stories ---
+// --- Choice position stories ---
 
-export const LabelOnRight: Story = {
+export const ChoicePositionStart: Story = {
   args: {
-    label: 'Label on Right (default)',
+    choiceLabel: 'Toggle on left (START, default)',
     value: true,
-    toggleLabelPosition: 'RIGHT',
+    choicePosition: 'START',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)
@@ -205,11 +204,11 @@ export const LabelOnRight: Story = {
   },
 }
 
-export const LabelOnLeft: Story = {
+export const ChoicePositionEnd: Story = {
   args: {
-    label: 'Label on Left',
+    choiceLabel: 'Toggle on right (END)',
     value: true,
-    toggleLabelPosition: 'LEFT',
+    choicePosition: 'END',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)
@@ -217,22 +216,49 @@ export const LabelOnLeft: Story = {
   },
 }
 
-export const LabelPositionComparison: Story = {
-  args: { label: '', value: true },
+export const ChoicePositionComparison: Story = {
+  args: { choiceLabel: '', value: true },
   render: () => {
-    const RightLabel = () => {
+    const StartPosition = () => {
       const [value, setValue] = useState(true)
-      return <ToggleField label="Label on Right" value={value} saveInto={setValue} toggleLabelPosition="RIGHT" marginBelow="NONE" />
+      return <ToggleField choiceLabel="Toggle on left (START)" value={value} saveInto={setValue} choicePosition="START" marginBelow="NONE" />
     }
-    const LeftLabel = () => {
+    const EndPosition = () => {
       const [value, setValue] = useState(true)
-      return <ToggleField label="Label on Left" value={value} saveInto={setValue} toggleLabelPosition="LEFT" marginBelow="NONE" />
+      return <ToggleField choiceLabel="Toggle on right (END)" value={value} saveInto={setValue} choicePosition="END" marginBelow="NONE" />
     }
     return (
       <div className="flex flex-col gap-4">
-        <RightLabel />
-        <LeftLabel />
+        <StartPosition />
+        <EndPosition />
       </div>
     )
+  },
+}
+
+// --- Required message stories ---
+
+export const RequiredDefault: Story = {
+  args: {
+    choiceLabel: 'Accept Terms',
+    value: false,
+    required: true,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const RequiredCustomMessage: Story = {
+  args: {
+    choiceLabel: 'Accept Terms',
+    value: false,
+    required: true,
+    requiredMessage: 'You must accept the terms to proceed',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
   },
 }
