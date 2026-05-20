@@ -176,7 +176,7 @@ const sizeMap: Record<SAILSize, string> = {
 
 ### Toggle (switch for boolean input — a!toggleField)
 ```tsx
-<ToggleField choiceLabel="Enable Notifications" value={true} saveInto={setValue} color="ACCENT" />
+<ToggleField choiceLabel="Enable Notifications" value={true} saveInto={setValue} />
 ```
 
 ### ButtonToggle (button-style on/off toggle)

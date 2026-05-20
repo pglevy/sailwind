@@ -2,9 +2,7 @@ import * as React from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILMarginSize, SAILSize, SAILColorInput } from '../../types/sail'
-import { isPaletteColor } from '../../utils/colorResolver'
-import { paletteColorMap } from '../../types/palette-colors.generated'
+import type { SAILMarginSize } from '../../types/sail'
 
 /**
  * Displays a toggle (switch) for boolean input
@@ -39,10 +37,6 @@ export interface ToggleFieldProps {
   marginAbove?: SAILMarginSize
   /** Space added below component */
   marginBelow?: SAILMarginSize
-  /** Size of the switch and its label */
-  size?: SAILSize
-  /** Color when switch is on (hex or semantic) */
-  color?: "ACCENT" | "POSITIVE" | "NEGATIVE" | "SECONDARY" | "STANDARD" | SAILColorInput
   /** Determines whether the toggle appears on the left or right of the choice label. Valid values: "START" (default), "END" */
   choicePosition?: "START" | "END"
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
@@ -64,80 +58,13 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   showWhen = true,
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  size = "STANDARD",
-  color = "ACCENT",
   choicePosition = "START",
   className
 }) => {
   // Visibility control
   if (!showWhen) return null
 
-  const inputId = `togglefield-${Math.random().toString(36).substr(2, 9)}`
-
-  // Size mappings for the switch control
-  const sizeMap: Record<SAILSize, { root: string; thumb: string }> = {
-    SMALL: {
-      root: 'h-5 w-9',
-      thumb: 'h-3.5 w-3.5 data-[state=checked]:translate-x-4'
-    },
-    STANDARD: {
-      root: 'h-6 w-11',
-      thumb: 'h-4 w-4 data-[state=checked]:translate-x-5.5'
-    },
-    MEDIUM: {
-      root: 'h-7 w-14',
-      thumb: 'h-5 w-5 data-[state=checked]:translate-x-7.5'
-    },
-    LARGE: {
-      root: 'h-9 w-18',
-      thumb: 'h-7 w-7 data-[state=checked]:translate-x-9.5'
-    }
-  }
-
-  // Size mappings for the inline label text
-  const labelSizeMap: Record<SAILSize, string> = {
-    SMALL: 'text-sm',
-    STANDARD: 'text-base',
-    MEDIUM: 'text-lg',
-    LARGE: 'text-xl'
-  }
-
-  // Gap between switch and inline label, scaled by size
-  const gapMap: Record<SAILSize, string> = {
-    SMALL: 'gap-2',
-    STANDARD: 'gap-3',
-    MEDIUM: 'gap-3',
-    LARGE: 'gap-4'
-  }
-
-  // Color mapping for checked state
-  const getCheckedBgClass = (): string => {
-    if (color.startsWith('#')) return ''
-    if (isPaletteColor(color)) return '' // handled via inline style
-
-    const colorMap: Record<string, string> = {
-      ACCENT:    'data-[state=checked]:bg-blue-500',
-      POSITIVE:  'data-[state=checked]:bg-green-700',
-      NEGATIVE:  'data-[state=checked]:bg-red-700',
-      SECONDARY: 'data-[state=checked]:bg-gray-700',
-      STANDARD:  'data-[state=checked]:bg-gray-900'
-    }
-
-    return colorMap[color] || 'data-[state=checked]:bg-blue-500'
-  }
-
-  // Resolve a non-semantic color to a CSS value for inline styles
-  const resolveInlineColor = (): string | undefined => {
-    if (color.startsWith('#')) return color
-    if (isPaletteColor(color)) {
-      // 'bg-teal-700' → 'teal-700' → 'var(--color-teal-700)'
-      const segment = paletteColorMap[color].bg.replace('bg-', '')
-      return `var(--color-${segment})`
-    }
-    return undefined
-  }
-
-  const inlineColor = resolveInlineColor()
+  const inputId = `togglefield-${Math.random().toString(36).substring(2, 11)}`
 
   const handleChange = (checked: boolean) => {
     const handler = onChange || saveInto
@@ -149,11 +76,11 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   // Show validation errors
   const showValidations = validations.length > 0
 
-  // Show required message
+  // Show required message (default per SAIL docs: "Enable the toggle to continue")
   const resolvedRequiredMessage = requiredMessage || "Enable the toggle to continue"
   const showRequiredMessage = required && !value
 
-  // The Radix switch control
+  // The Radix switch control (fixed STANDARD size, ACCENT color)
   const switchControl = (
     <Switch.Root
       id={inputId}
@@ -162,37 +89,31 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       disabled={disabled}
       required={required}
       className={[
-        sizeMap[size].root,
+        'h-6 w-11',
         'shrink-0 relative rounded-full transition-colors border-2',
         'data-[state=unchecked]:bg-white data-[state=unchecked]:border-gray-300',
         'hover:data-[state=unchecked]:bg-gray-100',
-        getCheckedBgClass(),
+        'data-[state=checked]:bg-blue-500',
         'data-[state=checked]:border-transparent',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
-      ].filter(Boolean).join(' ')}
-      style={inlineColor && value ? { backgroundColor: inlineColor } : undefined}
+      ].join(' ')}
       aria-label={accessibilityText || choiceLabel}
-      aria-describedby={undefined}
       aria-invalid={showValidations}
       aria-errormessage={showValidations ? `${inputId}-error` : undefined}
     >
       <Switch.Thumb
         className={[
-          sizeMap[size].thumb,
+          'h-4 w-4 data-[state=checked]:translate-x-5.5',
           'block rounded-full bg-white shadow-lg transition-transform border border-gray-500 data-[state=checked]:border-transparent',
           'translate-x-0.5',
           'flex items-center justify-center'
-        ].filter(Boolean).join(' ')}
+        ].join(' ')}
       >
         {value && (
           <svg viewBox="0 0 12 12" fill="none" className="w-2/3 h-2/3" aria-hidden="true">
             <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              className={inlineColor ? '' : ({
-                ACCENT: 'text-blue-500', POSITIVE: 'text-green-700', NEGATIVE: 'text-red-700',
-                SECONDARY: 'text-gray-700', STANDARD: 'text-gray-900'
-              } as Record<string, string>)[color] ?? 'text-blue-500'}
-              style={inlineColor ? { color: inlineColor } : undefined}
+              className="text-blue-500"
             />
           </svg>
         )}
@@ -205,7 +126,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
     <label
       htmlFor={inputId}
       className={[
-        labelSizeMap[size],
+        'text-base',
         'inline-flex items-center gap-1 font-medium text-gray-900 select-none',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       ].join(' ')}
@@ -224,7 +145,7 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   // choicePosition="START" means toggle appears on the left of the label
   // choicePosition="END" means toggle appears on the right of the label
   const switchElement = (
-    <div className={`flex items-center ${gapMap[size]}`}>
+    <div className="flex items-center gap-3">
       {choicePosition === "END" ? (
         <>
           {inlineLabel}
