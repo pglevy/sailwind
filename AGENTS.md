@@ -174,6 +174,16 @@ const sizeMap: Record<SAILSize, string> = {
 />
 ```
 
+### Toggle (switch for boolean input — a!toggleField)
+```tsx
+<ToggleField choiceLabel="Enable Notifications" value={true} saveInto={setValue} />
+```
+
+### ButtonToggle (button-style on/off toggle)
+```tsx
+<ButtonToggle text="Bold" icon="bold" style="SOLID" value={pressed} saveInto={setPressed} />
+```
+
 ## Validation
 
 Run `npm run build` to catch TypeScript errors before considering work complete.

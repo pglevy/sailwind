@@ -15,10 +15,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    label: 'Text Formatting',
-    text: 'Bold',
-    value: false,
-    style: 'SOLID',
+    choiceLabel: 'Enable Notifications',
+    value: true,
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)
@@ -26,23 +24,30 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const toggle = canvas.getByRole('button', { name: /bold/i })
-    await expect(toggle).toBeVisible()
-    await expect(toggle).toHaveAttribute('aria-pressed', 'false')
-    await userEvent.click(toggle)
-    await expect(toggle).toHaveAttribute('aria-pressed', 'true')
-    await userEvent.click(toggle)
-    await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    const switchEl = canvas.getByRole('switch')
+    await expect(switchEl).toBeVisible()
+    await expect(switchEl).toBeChecked()
+    await userEvent.click(switchEl)
+    await expect(switchEl).not.toBeChecked()
   },
 }
 
-export const WithIcon: Story = {
+export const Unchecked: Story = {
   args: {
-    label: 'Favorite',
-    text: 'Add to Favorites',
-    icon: 'star',
+    choiceLabel: 'Dark Mode',
+    value: false,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const WithHelpTooltip: Story = {
+  args: {
+    choiceLabel: 'Auto-save',
+    helpTooltip: 'Automatically save changes every 30 seconds',
     value: true,
-    color: 'ACCENT',
   },
   render: (args) => {
     const [value, setValue] = useState(args.value)
@@ -50,139 +55,93 @@ export const WithIcon: Story = {
   },
 }
 
-export const StyleSolid: Story = {
+// --- Disabled stories ---
+
+export const DisabledOff: Story = {
   args: {
-    label: 'SOLID Style',
-    text: 'Toggle Me',
+    choiceLabel: 'Disabled (Off)',
     value: false,
-    style: 'SOLID',
-    color: 'ACCENT',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
+    disabled: true,
   },
 }
 
-export const StyleOutline: Story = {
+export const DisabledOn: Story = {
   args: {
-    label: 'OUTLINE Style',
-    text: 'Toggle Me',
-    value: false,
-    style: 'OUTLINE',
-    color: 'ACCENT',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const StyleGhost: Story = {
-  args: {
-    label: 'GHOST Style',
-    text: 'Toggle Me',
-    value: false,
-    style: 'GHOST',
-    color: 'ACCENT',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const IconAtStart: Story = {
-  args: {
-    label: 'Icon at START',
-    text: 'Filter',
-    icon: 'filter',
-    iconPosition: 'START',
-    value: false,
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const IconAtEnd: Story = {
-  args: {
-    label: 'Icon at END',
-    text: 'Search',
-    icon: 'arrow-right',
-    iconPosition: 'END',
-    value: false,
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const ColorAccent: Story = {
-  args: {
-    label: 'ACCENT',
-    text: 'Accent Color',
-    value: false,
-    color: 'ACCENT',
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const ColorPositive: Story = {
-  args: {
-    label: 'POSITIVE',
-    text: 'Positive Color',
-    value: false,
-    color: 'POSITIVE',
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const ColorNegative: Story = {
-  args: {
-    label: 'NEGATIVE',
-    text: 'Negative Color',
-    value: false,
-    color: 'NEGATIVE',
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const ColorSecondary: Story = {
-  args: {
-    label: 'SECONDARY',
-    text: 'Secondary Color',
-    value: false,
-    color: 'SECONDARY',
-    style: 'OUTLINE',
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value)
-    return <ToggleField {...args} value={value} saveInto={setValue} />
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    label: 'Disabled Toggle',
-    text: "Can't Click Me",
+    choiceLabel: 'Disabled (On)',
     value: true,
     disabled: true,
+  },
+}
+
+// --- Choice position stories ---
+
+export const ChoicePositionStart: Story = {
+  args: {
+    choiceLabel: 'Toggle on left (START, default)',
+    value: true,
+    choicePosition: 'START',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const ChoicePositionEnd: Story = {
+  args: {
+    choiceLabel: 'Toggle on right (END)',
+    value: true,
+    choicePosition: 'END',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const ChoicePositionComparison: Story = {
+  args: { choiceLabel: '', value: true },
+  render: () => {
+    const StartPosition = () => {
+      const [value, setValue] = useState(true)
+      return <ToggleField choiceLabel="Toggle on left (START)" value={value} saveInto={setValue} choicePosition="START" marginBelow="NONE" />
+    }
+    const EndPosition = () => {
+      const [value, setValue] = useState(true)
+      return <ToggleField choiceLabel="Toggle on right (END)" value={value} saveInto={setValue} choicePosition="END" marginBelow="NONE" />
+    }
+    return (
+      <div className="flex flex-col gap-4">
+        <StartPosition />
+        <EndPosition />
+      </div>
+    )
+  },
+}
+
+// --- Required message stories ---
+
+export const RequiredDefault: Story = {
+  args: {
+    choiceLabel: 'Accept Terms',
+    value: false,
+    required: true,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
+  },
+}
+
+export const RequiredCustomMessage: Story = {
+  args: {
+    choiceLabel: 'Accept Terms',
+    value: false,
+    required: true,
+    requiredMessage: 'You must accept the terms to proceed',
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value)
+    return <ToggleField {...args} value={value} saveInto={setValue} />
   },
 }
