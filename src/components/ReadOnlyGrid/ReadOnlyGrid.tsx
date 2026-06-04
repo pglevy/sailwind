@@ -503,11 +503,9 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
             renderTable()
           )}
           <Paging
-            startIndex={startIndex + 1}
-            endIndex={endIndex}
             totalCount={sortedRows.length}
+            pageSize={pageSize}
             currentPage={currentPage}
-            totalPages={totalPages}
             pagingControls={pagingControls}
             onPageChange={setCurrentPage}
           />

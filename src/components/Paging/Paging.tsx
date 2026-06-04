@@ -2,37 +2,35 @@ import * as React from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
 export interface PagingProps {
-  /** 1-based index of the first visible item */
-  startIndex: number
-  /** Index of the last visible item on the current page */
-  endIndex: number
-  /** Total number of items (used when pagingControls is "ROW_COUNT") */
+  /** Total number of items */
   totalCount: number
+  /** Number of items per page */
+  pageSize: number
   /** Current page number (1-based) */
   currentPage: number
-  /** Total number of pages */
-  totalPages: number
-  /** Determines if the paging includes the total row count. "STANDARD" hides total count; "ROW_COUNT" shows total count and first/last controls. */
-  pagingControls?: 'STANDARD' | 'ROW_COUNT'
   /** Callback when page changes */
   onPageChange: (page: number) => void
+  /** Determines if the paging includes the total row count. "STANDARD" hides total count; "ROW_COUNT" shows total count and first/last controls. */
+  pagingControls?: 'STANDARD' | 'ROW_COUNT'
   /** Whether the component is displayed */
   showWhen?: boolean
 }
 
 export const Paging: React.FC<PagingProps> = ({
-  startIndex,
-  endIndex,
   totalCount,
+  pageSize,
   currentPage,
-  totalPages,
-  pagingControls = 'STANDARD',
   onPageChange,
+  pagingControls = 'STANDARD',
   showWhen = true,
 }) => {
   if (!showWhen) return null
+
+  const totalPages = Math.ceil(totalCount / pageSize)
   if (totalPages <= 1) return null
 
+  const startIndex = (currentPage - 1) * pageSize + 1
+  const endIndex = Math.min(currentPage * pageSize, totalCount)
   const hasPreviousPage = currentPage > 1
   const hasNextPage = currentPage < totalPages
 

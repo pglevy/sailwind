@@ -21,24 +21,17 @@ type Story = StoryObj<typeof meta>
 
 export const Standard: Story = {
   args: {
-    startIndex: 1,
-    endIndex: 10,
     totalCount: 50,
+    pageSize: 10,
     currentPage: 1,
-    totalPages: 5,
     pagingControls: 'STANDARD',
     onPageChange: fn(),
   },
   render: (args) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
-    const pageSize = args.endIndex - args.startIndex + 1
-    const startIndex = (currentPage - 1) * pageSize + 1
-    const endIndex = Math.min(currentPage * pageSize, args.totalCount)
     return (
       <Paging
         {...args}
-        startIndex={startIndex}
-        endIndex={endIndex}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
@@ -48,24 +41,17 @@ export const Standard: Story = {
 
 export const RowCount: Story = {
   args: {
-    startIndex: 1,
-    endIndex: 10,
     totalCount: 50,
+    pageSize: 10,
     currentPage: 1,
-    totalPages: 5,
     pagingControls: 'ROW_COUNT',
     onPageChange: fn(),
   },
   render: (args) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
-    const pageSize = args.endIndex - args.startIndex + 1
-    const startIndex = (currentPage - 1) * pageSize + 1
-    const endIndex = Math.min(currentPage * pageSize, args.totalCount)
     return (
       <Paging
         {...args}
-        startIndex={startIndex}
-        endIndex={endIndex}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
@@ -75,24 +61,17 @@ export const RowCount: Story = {
 
 export const TwoPages: Story = {
   args: {
-    startIndex: 1,
-    endIndex: 10,
     totalCount: 15,
+    pageSize: 10,
     currentPage: 1,
-    totalPages: 2,
     pagingControls: 'ROW_COUNT',
     onPageChange: fn(),
   },
   render: (args) => {
     const [currentPage, setCurrentPage] = useState(args.currentPage)
-    const pageSize = args.endIndex - args.startIndex + 1
-    const startIndex = (currentPage - 1) * pageSize + 1
-    const endIndex = Math.min(currentPage * pageSize, args.totalCount)
     return (
       <Paging
         {...args}
-        startIndex={startIndex}
-        endIndex={endIndex}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
