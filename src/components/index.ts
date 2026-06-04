@@ -70,6 +70,9 @@ export * from './SideNavAdmin'
 // ReadOnlyGrid components
 export * from './ReadOnlyGrid'
 
+// Paging components
+export * from './Paging'
+
 // SiteNav component
 export * from './SiteNav'
 

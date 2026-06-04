@@ -1,5 +1,6 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, MoveUp, MoveDown } from "lucide-react";
+import { MoveUp, MoveDown } from "lucide-react";
+import { Paging } from "../Paging";
 import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
@@ -283,8 +284,6 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const totalPages = Math.ceil(sortedRows.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, sortedRows.length);
-  const hasPreviousPage = currentPage > 1;
-  const hasNextPage = currentPage < totalPages;
 
   // Slice sorted data for current page
   const pageRows = sortedRows.slice(startIndex, endIndex);
@@ -503,61 +502,13 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
           ) : (
             renderTable()
           )}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-end gap-2 px-3 py-2 text-sm text-gray-700">
-              {pagingControls === "ROW_COUNT" && totalPages >= 3 && (
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={!hasPreviousPage}
-                  aria-label="First page"
-                  title="First page"
-                  className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-                >
-                  <ChevronsLeft size={18} />
-                </button>
-              )}
-              <button
-                onClick={() => setCurrentPage(p => p - 1)}
-                disabled={!hasPreviousPage}
-                aria-label="Previous page"
-                title="Previous page"
-                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              {pagingControls === "ROW_COUNT" ? (
-                <span>
-                  <span className="font-bold">{startIndex + 1} – {endIndex}</span>
-                  {" "}of {sortedRows.length}
-                </span>
-              ) : (
-                <span>
-                  <span className="font-bold">{startIndex + 1} – {endIndex}</span>
-                  {" "}of many
-                </span>
-              )}
-              <button
-                onClick={() => setCurrentPage(p => p + 1)}
-                disabled={!hasNextPage}
-                aria-label="Next page"
-                title="Next page"
-                className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-              >
-                <ChevronRight size={18} />
-              </button>
-              {pagingControls === "ROW_COUNT" && totalPages >= 3 && (
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={!hasNextPage}
-                  aria-label="Last page"
-                  title="Last page"
-                  className="px-1 py-1 disabled:text-gray-400 disabled:cursor-not-allowed text-blue-700 hover:text-blue-900 cursor-pointer"
-                >
-                  <ChevronsRight size={18} />
-                </button>
-              )}
-            </div>
-          )}
+          <Paging
+            totalCount={sortedRows.length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            pagingControls={pagingControls}
+            onPageChange={setCurrentPage}
+          />
         </>
       )}
     </FieldWrapper>
