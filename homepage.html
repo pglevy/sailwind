@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sailwind — React components fluent in SAIL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TOKENS — lifted directly from tokens/tokens.json
+     ============================================================ */
+  :root{
+    --red-500:#DE0037;      --red-700:#9B0027;      --red-50:#FCE6EB;   --red-100:#F5B3C3;
+    --burnt-500:#FF5722;
+    --orange-500:#FF9800;
+    --amber-500:#FFC107;    --amber-100:#FFECB5;    --amber-50:#FFF9E6;
+    --yellow-500:#FFD948;
+    --lime-500:#7DE208;
+    --green-500:#4CAF50;    --green-700:#357A38;    --green-50:#EDF7EE;
+    --teal-500:#009688;
+    --cyan-500:#00D4D4;
+    --sky-500:#03A9F4;
+    --blue-500:#2322F0;     --blue-600:#201FD8;     --blue-700:#1918A8; --blue-100:#BDBDFB; --blue-50:#E9E9FE;
+    --violet-500:#7C4DFF;
+    --purple-500:#B561FF;
+    --pink-500:#E21496;     --pink-600:#CB1287;     --pink-100:#F6B9E0; --pink-50:#FCE8F5;
+    --gray-50:#FAFAFA;  --gray-100:#F5F5F5; --gray-200:#EEEEEE; --gray-300:#E0E0E0;
+    --gray-400:#BDBDBD; --gray-500:#9E9E9E; --gray-600:#757575; --gray-700:#616161;
+    --gray-800:#424242; --gray-900:#212121;
+
+    --radius-sm:0.25rem;
+    --radius-md:0.5rem;
+    --radius-none:0;
+
+    --font-display:'Bricolage Grotesque', sans-serif;
+    --font-body:'Open Sans', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+
+    /* the literal gradient.header-bg + gradient.header-overlay tokens */
+    --gradient-aurora: linear-gradient(135deg, var(--blue-500) 0%, var(--pink-500) 57%, var(--amber-500) 83%, var(--yellow-500) 100%);
+    --gradient-overlay: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0.95) 75%);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--gray-900);
+    background:#fff;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.55;
+  }
+  img,svg{ display:block; max-width:100%; }
+  a{ color:inherit; }
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 1.75rem;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+  code, .mono{ font-family:var(--font-mono); }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    margin:0;
+    line-height:1.05;
+    letter-spacing:-0.01em;
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(22px);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+  .reveal-1{ transition-delay:.05s; }
+  .reveal-2{ transition-delay:.14s; }
+  .reveal-3{ transition-delay:.23s; }
+  .reveal-4{ transition-delay:.32s; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    *{ animation:none !important; }
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:1.1rem 0;
+    transition:background .3s ease, box-shadow .3s ease, padding .3s ease;
+  }
+  .nav--scrolled{
+    background:rgba(255,255,255,0.86);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    box-shadow:0 1px 0 var(--gray-200);
+    padding:0.75rem 0;
+  }
+  .nav .container{ display:flex; align-items:center; justify-content:space-between; gap:1.5rem; }
+  .brand{ display:flex; align-items:center; gap:0.55rem; text-decoration:none; }
+  .brand-mark{ width:26px; height:26px; }
+  .brand-word{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.2rem;
+    color:var(--gray-900);
+  }
+  .nav--scrolled .brand-word, .hero .brand-word{ color:inherit; }
+  .nav-links{ display:flex; align-items:center; gap:1.75rem; }
+  .nav-link{
+    font-size:0.9rem; font-weight:600; text-decoration:none;
+    color:var(--gray-700);
+    display:flex; align-items:center; gap:0.3rem;
+  }
+  .nav-link:hover{ color:var(--blue-500); }
+  .nav-right{ display:flex; align-items:center; gap:1rem; }
+  .version-badge{
+    font-family:var(--font-mono);
+    font-size:0.72rem; font-weight:600;
+    color:var(--gray-600);
+    background:var(--gray-100);
+    border:1px solid var(--gray-200);
+    border-radius:999px;
+    padding:0.3rem 0.65rem;
+    white-space:nowrap;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:1rem;
+    padding:0.625rem 1rem; /* STANDARD: px-4 py-2.5 */
+    border-radius:var(--radius-sm);
+    text-decoration:none;
+    border:1.5px solid transparent;
+    cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn svg{ width:16px; height:16px; flex:none; transition:transform .18s ease; }
+  .btn-solid-accent{ background:var(--blue-500); color:#fff; }
+  .btn-solid-accent:hover{ background:var(--blue-600); transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(35,34,240,0.55); }
+  .btn-solid-accent:hover svg{ transform:translateX(3px); }
+  .btn-outline-light{ border-color:rgba(255,255,255,0.35); color:#fff; }
+  .btn-outline-light:hover{ border-color:#fff; background:rgba(255,255,255,0.08); transform:translateY(-2px); }
+  .btn-outline-dark{ border-color:rgba(255,255,255,0.3); color:rgba(255,255,255,0.85); }
+  .btn-outline-dark:hover{ border-color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.06); transform:translateY(-2px); }
+  .btn-sm{ padding:0.45rem 0.8rem; font-size:0.85rem; }
+
+  .copy-pill{
+    display:inline-flex; align-items:center; gap:0.65rem;
+    font-family:var(--font-mono); font-size:0.85rem;
+    background:rgba(255,255,255,0.06);
+    border:1.5px solid rgba(255,255,255,0.18);
+    color:#fff;
+    padding:0.6rem 0.6rem 0.6rem 1rem;
+    border-radius:var(--radius-sm);
+    cursor:pointer;
+    transition:border-color .18s ease, background .18s ease;
+  }
+  .copy-pill:hover{ border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.1); }
+  .copy-pill .copy-icon-wrap{
+    display:flex; align-items:center; justify-content:center;
+    width:26px; height:26px; border-radius:4px;
+    background:rgba(255,255,255,0.12);
+  }
+  .copy-pill svg{ width:14px; height:14px; }
+  .copy-pill.copied{ border-color:var(--lime-500); }
+  .copy-pill.copied .copy-icon-wrap{ background:rgba(125,226,8,0.25); }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    position:relative;
+    background:var(--gray-900);
+    color:#fff;
+    padding:8.5rem 0 6rem;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .hero-glow{
+    position:absolute; z-index:-1; inset:-20% -10% auto auto;
+    width:70vw; height:70vw; max-width:900px; max-height:900px;
+    background:var(--gradient-aurora);
+    filter:blur(90px);
+    opacity:0.4;
+    border-radius:50%;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:3.5rem;
+    align-items:center;
+  }
+  .hero-eyebrow{ color:var(--amber-500); margin-bottom:1.1rem; display:flex; align-items:center; gap:0.5rem; }
+  .hero-eyebrow::before{
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:var(--gradient-aurora);
+    box-shadow:0 0 12px rgba(255,193,7,0.7);
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 4.6vw, 4rem);
+    font-weight:700;
+    margin-bottom:1.4rem;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:var(--gradient-aurora);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.lede{
+    font-size:1.15rem;
+    color:rgba(255,255,255,0.72);
+    max-width:38rem;
+    margin-bottom:2.2rem;
+  }
+  .hero p.lede code{ color:#fff; background:rgba(255,255,255,0.1); padding:0.1rem 0.4rem; border-radius:4px; font-size:0.92em; }
+  .hero-ctas{ display:flex; flex-wrap:wrap; gap:0.9rem; }
+
+  /* floating code -> render card */
+  .code-card{
+    background:#181722;
+    border:1px solid rgba(255,255,255,0.09);
+    border-radius:var(--radius-md);
+    box-shadow:0 30px 70px -20px rgba(0,0,0,0.6);
+    overflow:hidden;
+    transform:translateY(8px) rotate(0.4deg);
+  }
+  .code-card-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.65rem 0.9rem;
+    background:rgba(255,255,255,0.03);
+    border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .code-card-dots{ display:flex; gap:6px; }
+  .code-card-dots span{ width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.18); }
+  .code-card-file{ font-family:var(--font-mono); font-size:0.72rem; color:rgba(255,255,255,0.4); }
+  .code-card-body{ padding:1.35rem 1.4rem 1rem; }
+  .code-card pre{
+    margin:0; font-family:var(--font-mono); font-size:0.86rem; line-height:1.7;
+    color:#e7e6f5; white-space:pre;
+  }
+  .tok-tag{ color:#7cd3ff; }
+  .tok-attr{ color:#ffd66b; }
+  .tok-str{ color:#9be89b; }
+  .tok-punc{ color:rgba(255,255,255,0.4); }
+
+  .code-card-arrow{
+    display:flex; align-items:center; gap:0.6rem;
+    padding:0.6rem 1.4rem;
+    font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:rgba(255,255,255,0.35);
+  }
+  .code-card-arrow svg{ width:14px; height:14px; animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(4px);} }
+
+  .code-card-render{
+    padding:0.4rem 1.4rem 1.5rem;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  }
+  .demo-btn{
+    font-family:var(--font-body); font-weight:600; font-size:1rem;
+    background:var(--blue-500); color:#fff;
+    padding:0.625rem 1rem; border-radius:var(--radius-sm);
+    border:none;
+  }
+  .code-card-caption{ font-family:var(--font-mono); font-size:0.72rem; color:rgba(255,255,255,0.4); text-align:right; }
+
+  /* ============================================================
+     PALETTE STRIP
+     ============================================================ */
+  .palette-section{ padding:5.5rem 0; }
+  .section-head{ max-width:38rem; margin-bottom:2.75rem; }
+  .section-head .eyebrow{ color:var(--pink-600); margin-bottom:0.8rem; }
+  .section-head h2{ font-size:clamp(1.8rem,3vw,2.4rem); font-weight:700; margin-bottom:0.85rem; }
+  .section-head p{ color:var(--gray-700); font-size:1.05rem; }
+
+  .swatch-ribbon{
+    display:flex; width:100%; height:88px;
+    border-radius:var(--radius-md);
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(0,0,0,0.06);
+  }
+  .swatch{
+    flex:1; position:relative; cursor:default;
+    transition:flex-grow .35s cubic-bezier(.2,.7,.2,1);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding-bottom:0.5rem;
+  }
+  .swatch:hover{ flex-grow:2.4; }
+  .swatch-label{
+    font-family:var(--font-mono); font-size:0.65rem; font-weight:600;
+    color:rgba(255,255,255,0.92);
+    opacity:0; transform:translateY(4px);
+    transition:opacity .2s ease, transform .2s ease;
+    white-space:nowrap;
+    text-shadow:0 1px 3px rgba(0,0,0,0.35);
+  }
+  .swatch-label.dark{
+    color:rgba(0,0,0,0.7);
+    text-shadow:none;
+  }
+  .swatch:hover .swatch-label{ opacity:1; transform:translateY(0); }
+  .palette-foot{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:1rem; flex-wrap:wrap; gap:0.5rem;
+  }
+  .palette-foot span{ font-family:var(--font-mono); font-size:0.78rem; color:var(--gray-500); }
+
+  /* ============================================================
+     ARCHITECTURE
+     ============================================================ */
+  .architecture{ background:var(--gray-50); padding:6rem 0; border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); }
+  .arch-row{
+    display:grid; grid-template-columns:1fr auto 1fr;
+    align-items:center; gap:1.75rem;
+    background:#fff; border:1px solid var(--gray-200); border-radius:var(--radius-md);
+    padding:1.75rem;
+    margin-bottom:1.25rem;
+    box-shadow:0 1px 2px rgba(0,0,0,0.03);
+  }
+  .arch-col-label{
+    font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gray-500); margin-bottom:0.7rem;
+  }
+  .arch-code{
+    font-family:var(--font-mono); font-size:0.83rem; line-height:1.65;
+    background:var(--gray-900); color:#e7e6f5;
+    border-radius:var(--radius-sm); padding:1rem 1.1rem;
+    white-space:pre;
+  }
+  .arch-arrow{ color:var(--gray-300); }
+  .arch-arrow svg{ width:22px; height:22px; }
+  .arch-render{ display:flex; align-items:center; gap:1rem; }
+
+  .tag-chip{
+    display:inline-flex; align-items:center;
+    font-size:0.85rem; font-weight:600;
+    padding:0.25rem 1rem; border-radius:var(--radius-sm);
+    background:#FED7DE; color:#9F0019;
+  }
+  .toggle-demo{ display:flex; align-items:center; gap:0.7rem; }
+  .toggle-demo .switch{
+    width:38px; height:22px; border-radius:999px; background:var(--blue-500);
+    position:relative; flex:none;
+  }
+  .toggle-demo .switch::after{
+    content:''; position:absolute; top:3px; right:3px; width:16px; height:16px;
+    border-radius:50%; background:#fff;
+  }
+  .toggle-demo span.lbl{ font-size:0.9rem; color:var(--gray-800); }
+
+  /* ============================================================
+     COMPONENTS GRID
+     ============================================================ */
+  .components-section{ padding:6.5rem 0; }
+  .comp-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;
+    margin-top:2.5rem;
+  }
+  .comp-card{
+    border:1px solid var(--gray-200); border-radius:var(--radius-md);
+    padding:1.5rem; background:#fff;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .comp-card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px -18px rgba(33,33,33,0.25); border-color:var(--gray-300); }
+  .comp-visual{
+    height:64px; border-radius:var(--radius-sm);
+    background:var(--gray-50); border:1px solid var(--gray-200);
+    display:flex; align-items:center; padding:0 1rem; gap:0.5rem;
+    margin-bottom:1.1rem; overflow:hidden;
+  }
+  .comp-card h3{ font-size:1.05rem; font-weight:700; margin-bottom:0.4rem; }
+  .comp-card p{ font-size:0.9rem; color:var(--gray-600); margin:0 0 0.9rem; }
+  .comp-tags{ display:flex; flex-wrap:wrap; gap:0.4rem; }
+  .comp-tags span{
+    font-family:var(--font-mono); font-size:0.68rem; color:var(--gray-600);
+    background:var(--gray-100); border-radius:4px; padding:0.2rem 0.45rem;
+  }
+
+  /* mini visuals per card */
+  .mv-buttons{ gap:0.5rem; }
+  .mv-btn{ font-size:0.72rem; font-weight:600; padding:0.3rem 0.6rem; border-radius:var(--radius-sm); }
+  .mv-btn.solid{ background:var(--blue-500); color:#fff; }
+  .mv-btn.outline{ border:1.5px solid var(--blue-500); color:var(--blue-500); background:transparent; }
+  .mv-btn.ghost{ color:var(--gray-600); }
+
+  .mv-form{ display:flex; flex-direction:column; gap:0.35rem; width:100%; }
+  .mv-form .line{ height:6px; border-radius:3px; background:var(--gray-300); }
+  .mv-form .line.short{ width:40%; }
+  .mv-input{ height:16px; border-radius:4px; border:1.5px solid var(--gray-300); background:#fff; width:70%; }
+
+  .mv-layout .mv-card{ width:60%; height:36px; border-radius:4px; border:1.5px solid var(--gray-300); background:#fff; position:relative; }
+  .mv-layout .mv-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:10px; background:var(--gray-200); border-radius:4px 4px 0 0; }
+  .mv-tabs{ display:flex; gap:0.4rem; }
+  .mv-tabs span{ font-size:0.6rem; font-family:var(--font-mono); color:var(--gray-500); border-bottom:2px solid transparent; padding-bottom:2px; }
+  .mv-tabs span.active{ color:var(--blue-500); border-color:var(--blue-500); }
+
+  .mv-feedback{ flex-direction:column; align-items:flex-start !important; gap:0.5rem; padding:0.8rem 1rem !important; }
+  .mv-progress{ width:100%; height:6px; border-radius:3px; background:var(--gray-200); overflow:hidden; }
+  .mv-progress::after{ content:''; display:block; width:62%; height:100%; background:var(--green-700); }
+  .mv-tag-mini{ font-size:0.65rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:3px; background:var(--amber-100); color:#7a5900; }
+
+  .mv-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:3px; width:100%; }
+  .mv-grid div{ height:8px; background:var(--gray-200); border-radius:2px; }
+  .mv-grid div:nth-child(4n+1){ background:var(--gray-400); }
+
+  .mv-chat{ gap:0.4rem; }
+  .bubble{ font-size:0.6rem; padding:0.35rem 0.55rem; border-radius:10px; }
+  .bubble.a{ background:var(--gray-200); color:var(--gray-700); }
+  .bubble.b{ background:var(--blue-500); color:#fff; }
+
+  .comp-foot-link{
+    display:inline-flex; align-items:center; gap:0.4rem;
+    margin-top:2.75rem;
+    font-weight:600; color:var(--blue-500); text-decoration:none; font-size:0.95rem;
+  }
+  .comp-foot-link svg{ width:15px; height:15px; transition:transform .18s ease; }
+  .comp-foot-link:hover svg{ transform:translateX(3px); }
+
+  /* ============================================================
+     QUICKSTART
+     ============================================================ */
+  .quickstart{ background:var(--gray-900); color:#fff; padding:6.5rem 0; }
+  .quickstart .section-head .eyebrow{ color:var(--amber-500); }
+  .quickstart .section-head h2{ color:#fff; }
+  .quickstart .section-head p{ color:rgba(255,255,255,0.65); }
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:2.5rem; }
+  .step{ border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-md); padding:1.5rem; background:rgba(255,255,255,0.03); }
+  .step-num{ font-family:var(--font-mono); font-size:0.75rem; color:var(--amber-500); margin-bottom:0.6rem; }
+  .step h4{ font-family:var(--font-body); font-size:1rem; font-weight:700; margin:0 0 0.75rem; }
+  .step pre{ font-family:var(--font-mono); font-size:0.8rem; background:#000; padding:0.75rem 0.9rem; border-radius:6px; overflow-x:auto; color:#e7e6f5; margin:0; }
+  .quickstart-links{ margin-top:2.25rem; display:flex; gap:1.75rem; flex-wrap:wrap; }
+  .quickstart-links a{ font-weight:600; text-decoration:none; color:#fff; display:flex; align-items:center; gap:0.4rem; font-size:0.95rem; border-bottom:1px solid rgba(255,255,255,0.3); padding-bottom:2px; }
+  .quickstart-links a:hover{ border-color:#fff; }
+
+  /* ============================================================
+     CLOSING CTA
+     ============================================================ */
+  .cta-banner{
+    position:relative; overflow:hidden;
+    background:var(--gradient-aurora);
+    padding:5.5rem 0;
+    text-align:center;
+  }
+  .cta-banner::before{ content:''; position:absolute; inset:0; background:var(--gradient-overlay); mix-blend-mode:normal; opacity:0.55; }
+  .cta-banner-inner{ position:relative; z-index:1; }
+  .cta-banner h2{ font-size:clamp(1.9rem,3.4vw,2.6rem); font-weight:700; color:var(--gray-900); margin-bottom:0.75rem; }
+  .cta-banner p{ color:var(--gray-800); font-size:1.05rem; margin-bottom:2rem; }
+  .cta-banner .btn-solid-accent{ box-shadow:0 14px 30px -10px rgba(35,34,240,0.45); }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer{ background:#fff; padding:4.5rem 0 2.5rem; border-top:1px solid var(--gray-200); }
+  .footer-top{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:3rem; margin-bottom:3rem; }
+  .footer-brand p{ color:var(--gray-600); font-size:0.95rem; max-width:26rem; margin:0.9rem 0 0; }
+  .footer-col h5{ font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-500); margin:0 0 1rem; }
+  .footer-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.65rem; }
+  .footer-col a{ text-decoration:none; color:var(--gray-700); font-size:0.92rem; }
+  .footer-col a:hover{ color:var(--blue-500); }
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;
+    padding-top:1.75rem; border-top:1px solid var(--gray-200);
+    font-family:var(--font-mono); font-size:0.75rem; color:var(--gray-500);
+  }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 960px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .code-card{ max-width:480px; }
+    .arch-row{ grid-template-columns:1fr; }
+    .arch-arrow{ transform:rotate(90deg); justify-self:start; }
+    .comp-grid{ grid-template-columns:repeat(2,1fr); }
+    .steps{ grid-template-columns:1fr; }
+    .footer-top{ grid-template-columns:1fr; gap:2rem; }
+  }
+  @media (max-width: 640px){
+    .nav-links{ display:none; }
+    .hero{ padding-top:7rem; }
+    .comp-grid{ grid-template-columns:1fr; }
+    .swatch-ribbon{ height:64px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ MARK (shared SVG symbol) ============ -->
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="container">
+    <a href="#top" class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32">
+        <path d="M18 3 L18 28 L27 25 Z" fill="var(--blue-500)"/>
+        <path d="M14 7 C5 12 2 20 5 26 L20 22 Z" fill="var(--pink-500)"/>
+      </svg>
+      <span class="brand-word">Sailwind</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="/components/" target="_blank" rel="noopener">Components</a>
+      <a class="nav-link" href="#architecture">How it works</a>
+      <a class="nav-link" href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="nav-right">
+      <span class="version-badge">v0.15.0</span>
+      <a class="btn btn-solid-accent btn-sm" href="https://github.com/pglevy/sailwind-starter/generate" target="_blank" rel="noopener">
+        Download Template
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="hero-glow"></div>
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-eyebrow eyebrow reveal">React · Tailwind · SAIL</div>
+      <h1 class="reveal reveal-1">React components,<br><em>fluent</em> in SAIL.</h1>
+      <p class="lede reveal reveal-2">Every prop mirrors Appian SAIL exactly — <code>size="STANDARD"</code>, <code>color="ACCENT"</code>, uppercase values included. Prototype in React; hand your SAIL developer something they already recognize.</p>
+      <div class="hero-ctas reveal reveal-3">
+        <a class="btn btn-solid-accent" href="https://github.com/pglevy/sailwind-starter/generate" target="_blank" rel="noopener">
+          Download Template
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </a>
+        <a class="btn btn-outline-dark" href="/components/" target="_blank" rel="noopener">
+          View Components
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <button class="copy-pill" data-copy="pnpm add @pglevy/sailwind">
+          <span>pnpm add @pglevy/sailwind</span>
+          <span class="copy-icon-wrap">
+            <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M5 13l4 4L19 7"/></svg>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="reveal reveal-4">
+      <div class="code-card">
+        <div class="code-card-bar">
+          <div class="code-card-dots"><span></span><span></span><span></span></div>
+          <div class="code-card-file">ButtonWidget.tsx</div>
+        </div>
+        <div class="code-card-body">
+          <pre><span class="tok-punc">&lt;</span><span class="tok-tag">ButtonWidget</span>
+  <span class="tok-attr">size</span><span class="tok-punc">=</span><span class="tok-str">"STANDARD"</span>
+  <span class="tok-attr">style</span><span class="tok-punc">=</span><span class="tok-str">"SOLID"</span>
+  <span class="tok-attr">color</span><span class="tok-punc">=</span><span class="tok-str">"ACCENT"</span>
+<span class="tok-punc">/&gt;</span></pre>
+        </div>
+        <div class="code-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          renders as
+        </div>
+        <div class="code-card-render">
+          <button class="demo-btn">Continue</button>
+          <div class="code-card-caption">px-4 py-2.5 text-base<br>rounded-sm · #2322F0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PALETTE ============ -->
+<section class="palette-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Design tokens</div>
+      <h2>Fifteen families. Ten steps each.</h2>
+      <p>Every color, radius, and spacing value in Sailwind traces back to one <code>tokens.json</code> file — the same source that generates this ribbon and the CSS custom properties behind every component.</p>
+    </div>
+    <div class="swatch-ribbon reveal">
+      <div class="swatch" style="background:#DE0037"><span class="swatch-label">red</span></div>
+      <div class="swatch" style="background:#FF5722"><span class="swatch-label">burnt-orange</span></div>
+      <div class="swatch" style="background:#FF9800"><span class="swatch-label dark">orange</span></div>
+      <div class="swatch" style="background:#FFC107"><span class="swatch-label dark">amber</span></div>
+      <div class="swatch" style="background:#FFD948"><span class="swatch-label dark">yellow</span></div>
+      <div class="swatch" style="background:#7DE208"><span class="swatch-label dark">lime</span></div>
+      <div class="swatch" style="background:#4CAF50"><span class="swatch-label">green</span></div>
+      <div class="swatch" style="background:#009688"><span class="swatch-label">teal</span></div>
+      <div class="swatch" style="background:#00D4D4"><span class="swatch-label">cyan</span></div>
+      <div class="swatch" style="background:#03A9F4"><span class="swatch-label">sky</span></div>
+      <div class="swatch" style="background:#2322F0"><span class="swatch-label">blue</span></div>
+      <div class="swatch" style="background:#7C4DFF"><span class="swatch-label">violet</span></div>
+      <div class="swatch" style="background:#B561FF"><span class="swatch-label">purple</span></div>
+      <div class="swatch" style="background:#E21496"><span class="swatch-label">pink</span></div>
+      <div class="swatch" style="background:#9E9E9E"><span class="swatch-label dark">gray</span></div>
+    </div>
+    <div class="palette-foot reveal">
+      <span>15 families × 10 steps = 150 color tokens</span>
+      <span>tokens/tokens.json → generate:css → @theme</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="architecture" id="architecture">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">How it works</div>
+      <h2>One prop set, two languages.</h2>
+      <p>Sailwind's two-layer architecture keeps the SAIL API exact and uppercase, while an internal mapping layer translates each value into real Tailwind classes. You never see the seam.</p>
+    </div>
+
+    <div class="arch-row reveal">
+      <div>
+        <div class="arch-col-label">SAIL API — what you write</div>
+        <div class="arch-code"><span class="tok-punc">&lt;</span><span class="tok-tag">TagField</span>
+  <span class="tok-attr">size</span><span class="tok-punc">=</span><span class="tok-str">"STANDARD"</span>
+  <span class="tok-attr">tags</span><span class="tok-punc">={[{</span>
+    text: <span class="tok-str">"URGENT"</span>,
+    backgroundColor: <span class="tok-str">"#FED7DE"</span>,
+    textColor: <span class="tok-str">"#9F0019"</span>
+  <span class="tok-punc">}]}</span>
+<span class="tok-punc">/&gt;</span></div>
+      </div>
+      <div class="arch-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div>
+        <div class="arch-col-label">Rendered — what ships</div>
+        <div class="arch-render">
+          <span class="tag-chip">URGENT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-row reveal">
+      <div>
+        <div class="arch-col-label">SAIL API — what you write</div>
+        <div class="arch-code"><span class="tok-punc">&lt;</span><span class="tok-tag">ToggleField</span>
+  <span class="tok-attr">choiceLabel</span><span class="tok-punc">=</span><span class="tok-str">"Enable Notifications"</span>
+  <span class="tok-attr">value</span><span class="tok-punc">={</span>true<span class="tok-punc">}</span>
+<span class="tok-punc">/&gt;</span></div>
+      </div>
+      <div class="arch-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div>
+        <div class="arch-col-label">Rendered — what ships</div>
+        <div class="arch-render toggle-demo">
+          <div class="switch"></div>
+          <span class="lbl">Enable Notifications</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPONENTS ============ -->
+<section class="components-section" id="components">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Component library</div>
+      <h2>Test drive everything in Storybook.</h2>
+      <p>From single buttons to a full record view template, every component ships with SAIL-exact props, the same color system, and a Storybook story you can try live.</p>
+    </div>
+
+    <div class="comp-grid">
+      <div class="comp-card reveal">
+        <div class="comp-visual mv-buttons">
+          <span class="mv-btn solid">Save</span>
+          <span class="mv-btn outline">Cancel</span>
+          <span class="mv-btn ghost">Skip</span>
+        </div>
+        <h3>Actions</h3>
+        <p>Buttons and toggles for every solid, outline, and ghost state.</p>
+        <div class="comp-tags"><span>ButtonWidget</span><span>ButtonArrayLayout</span><span>ButtonToggle</span></div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-visual">
+          <div class="mv-form">
+            <div class="line short"></div>
+            <div class="mv-input"></div>
+            <div class="line short" style="width:25%"></div>
+          </div>
+        </div>
+        <h3>Forms &amp; input</h3>
+        <p>Text, dropdowns, checkboxes, radios, sliders, and toggles.</p>
+        <div class="comp-tags"><span>TextField</span><span>Dropdown</span><span>Checkbox</span><span>RadioButton</span><span>Slider</span><span>Toggle</span></div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-visual mv-layout" style="flex-direction:column; align-items:flex-start; justify-content:center; gap:0.4rem;">
+          <div class="mv-tabs"><span class="active">Overview</span><span>Details</span><span>History</span></div>
+          <div class="mv-card"></div>
+        </div>
+        <h3>Layout &amp; navigation</h3>
+        <p>Cards, tabs, site nav, admin nav, and the application header.</p>
+        <div class="comp-tags"><span>CardLayout</span><span>TabsField</span><span>SiteNav</span><span>SideNavAdmin</span><span>ApplicationHeader</span></div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-visual mv-feedback">
+          <span class="mv-tag-mini">3 of 5 done</span>
+          <div class="mv-progress"></div>
+        </div>
+        <h3>Feedback &amp; status</h3>
+        <p>Banners, progress bars, milestones, tags, and stamps.</p>
+        <div class="comp-tags"><span>MessageBanner</span><span>ProgressBar</span><span>Milestone</span><span>TagField</span><span>Stamp</span></div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-visual">
+          <div class="mv-grid">
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+          </div>
+        </div>
+        <h3>Data &amp; content</h3>
+        <p>Read-only grids, record views, rich text, headings, and images.</p>
+        <div class="comp-tags"><span>ReadOnlyGrid</span><span>RecordView</span><span>RichTextDisplayField</span><span>HeadingField</span></div>
+      </div>
+
+      <div class="comp-card reveal">
+        <div class="comp-visual mv-chat" style="flex-direction:column; align-items:flex-start; justify-content:center; gap:0.35rem;">
+          <span class="bubble a">How do I file a claim?</span>
+          <span class="bubble b" style="align-self:flex-end;">Let's start with your policy number.</span>
+        </div>
+        <h3>Conversational</h3>
+        <p>Chat threads and dialogs for AI-assisted and guided flows.</p>
+        <div class="comp-tags"><span>Chat</span><span>Dialog</span></div>
+      </div>
+    </div>
+
+    <a class="comp-foot-link" href="/components/" target="_blank" rel="noopener">
+      Browse every component in Storybook
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ QUICKSTART ============ -->
+<section class="quickstart">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Get started</div>
+      <h2>From install to interface, three steps.</h2>
+      <p>Sailwind needs React 18 or 19 and nothing else exotic. Add it to any project, or start from the pre-configured template.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h4>Install the package</h4>
+        <pre>pnpm add @pglevy/sailwind</pre>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h4>Import the styles</h4>
+        <pre>import '@pglevy/sailwind/index.css'</pre>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h4>Build with SAIL-exact props</h4>
+        <pre>&lt;ButtonWidget
+  size="STANDARD"
+  style="SOLID"
+  color="ACCENT"
+/&gt;</pre>
+      </div>
+    </div>
+    <div class="quickstart-links">
+      <a href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">Read the docs on GitHub →</a>
+      <a href="/components/" target="_blank" rel="noopener">Browse components in Storybook →</a>
+      <a href="https://github.com/pglevy/sailwind-starter" target="_blank" rel="noopener">sailwind-starter template →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSING CTA ============ -->
+<section class="cta-banner">
+  <div class="container cta-banner-inner reveal">
+    <h2>See every component in one place.</h2>
+    <p>Live, interactive examples for all 27 component families — try every size, style, and color before you write a line.</p>
+    <a class="btn btn-solid-accent" href="/components/" target="_blank" rel="noopener">
+      View Components
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <svg class="brand-mark" viewBox="0 0 32 32">
+            <path d="M18 3 L18 28 L27 25 Z" fill="var(--blue-500)"/>
+            <path d="M14 7 C5 12 2 20 5 26 L20 22 Z" fill="var(--pink-500)"/>
+          </svg>
+          <span class="brand-word">Sailwind</span>
+        </a>
+        <p>A React component library for vibe coding that speaks Appian SAIL. Built on Radix UI, Tailwind CSS, and TypeScript.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Documentation</h5>
+        <ul>
+          <li><a href="/components/" target="_blank" rel="noopener">Component reference</a></li>
+          <li><a href="https://github.com/pglevy/sailwind/blob/main/TAILWIND-SAIL-MAPPING.md" target="_blank" rel="noopener">Tailwind ↔ SAIL mapping</a></li>
+          <li><a href="https://github.com/pglevy/sailwind/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md</a></li>
+          <li><a href="https://github.com/pglevy/sailwind/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Project</h5>
+        <ul>
+          <li><a href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">GitHub repository</a></li>
+          <li><a href="https://www.npmjs.com/package/@pglevy/sailwind" target="_blank" rel="noopener">npm package</a></li>
+          <li><a href="https://github.com/pglevy/sailwind-starter" target="_blank" rel="noopener">sailwind-starter template</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>MIT License</span>
+      <span>@pglevy/sailwind · v0.15.0</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav background on scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('nav--scrolled', window.scrollY > 20);
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach((el) => io.observe(el));
+  } else {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // Copy install command
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const text = btn.getAttribute('data-copy');
+      const finish = () => {
+        btn.classList.add('copied');
+        btn.querySelector('.icon-copy').style.display = 'none';
+        btn.querySelector('.icon-check').style.display = 'block';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.querySelector('.icon-copy').style.display = 'block';
+          btn.querySelector('.icon-check').style.display = 'none';
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(finish).catch(finish);
+      } else {
+        finish();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
