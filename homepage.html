@@ -309,6 +309,10 @@
     white-space:nowrap;
     text-shadow:0 1px 3px rgba(0,0,0,0.35);
   }
+  .swatch-label.dark{
+    color:rgba(0,0,0,0.7);
+    text-shadow:none;
+  }
   .swatch:hover .swatch-label{ opacity:1; transform:translateY(0); }
   .palette-foot{
     display:flex; justify-content:space-between; align-items:center;
@@ -586,10 +590,10 @@
     <div class="swatch-ribbon reveal">
       <div class="swatch" style="background:#DE0037"><span class="swatch-label">red</span></div>
       <div class="swatch" style="background:#FF5722"><span class="swatch-label">burnt-orange</span></div>
-      <div class="swatch" style="background:#FF9800"><span class="swatch-label">orange</span></div>
-      <div class="swatch" style="background:#FFC107"><span class="swatch-label">amber</span></div>
-      <div class="swatch" style="background:#FFD948"><span class="swatch-label">yellow</span></div>
-      <div class="swatch" style="background:#7DE208"><span class="swatch-label">lime</span></div>
+      <div class="swatch" style="background:#FF9800"><span class="swatch-label dark">orange</span></div>
+      <div class="swatch" style="background:#FFC107"><span class="swatch-label dark">amber</span></div>
+      <div class="swatch" style="background:#FFD948"><span class="swatch-label dark">yellow</span></div>
+      <div class="swatch" style="background:#7DE208"><span class="swatch-label dark">lime</span></div>
       <div class="swatch" style="background:#4CAF50"><span class="swatch-label">green</span></div>
       <div class="swatch" style="background:#009688"><span class="swatch-label">teal</span></div>
       <div class="swatch" style="background:#00D4D4"><span class="swatch-label">cyan</span></div>
@@ -598,7 +602,7 @@
       <div class="swatch" style="background:#7C4DFF"><span class="swatch-label">violet</span></div>
       <div class="swatch" style="background:#B561FF"><span class="swatch-label">purple</span></div>
       <div class="swatch" style="background:#E21496"><span class="swatch-label">pink</span></div>
-      <div class="swatch" style="background:#9E9E9E"><span class="swatch-label">gray</span></div>
+      <div class="swatch" style="background:#9E9E9E"><span class="swatch-label dark">gray</span></div>
     </div>
     <div class="palette-foot reveal">
       <span>15 families × 10 steps = 150 color tokens</span>
