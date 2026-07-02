@@ -17,7 +17,7 @@ const config: StorybookConfig = {
   },
   async viteFinal(config) {
     if (process.env.NODE_ENV === 'production') {
-      config.base = '/sailwind/'
+      config.base = '/sailwind/components/'
     }
     return config
   },
