@@ -45,9 +45,17 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build-storybook
+      # Assemble the final Pages site:
+      #   /           → landing page (homepage.html)
+      #   /components → Storybook
+      - name: Assemble Pages artifact
+        run: |
+          mkdir -p pages/components
+          cp homepage.html pages/index.html
+          cp -r storybook-static/. pages/components/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./storybook-static
+          path: ./pages
 
   deploy:
     environment:
