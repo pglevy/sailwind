@@ -54,6 +54,11 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
   marginBelow = "STANDARD",
   className: classNameProp
 }) => {
+  // Generate unique ID for accessibility
+  const fieldId = React.useMemo(() => 
+    `richtext-${Math.random().toString(36).substr(2, 9)}`, []
+  )
+
   if (!showWhen) return null
 
   // Build container classes
@@ -70,11 +75,6 @@ export const RichTextDisplayField: React.FC<RichTextDisplayFieldProps> = ({
     preventWrapping && 'truncate',
     'leading-relaxed' // Better line spacing for rich text
   ].filter(Boolean).join(' ')
-
-  // Generate unique ID for accessibility
-  const fieldId = React.useMemo(() => 
-    `richtext-${Math.random().toString(36).substr(2, 9)}`, []
-  )
 
   return (
     <div className={containerClasses}>

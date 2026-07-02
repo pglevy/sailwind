@@ -120,11 +120,11 @@ export const TextField: React.FC<TextFieldProps> = ({
   marginBelow = "STANDARD",
   className
 }) => {
-  // Visibility control
-  if (!showWhen) return null
-
   // Generate unique ID for label association
   const inputId = React.useMemo(() => `textfield-${Math.random().toString(36).substr(2, 9)}`, [])
+
+  // Visibility control
+  if (!showWhen) return null
 
   // Map inputPurpose to autocomplete attribute
   const autoCompleteMap: Record<InputPurpose, string> = {

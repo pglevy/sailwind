@@ -83,9 +83,6 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   marginBelow = "STANDARD",
   className
 }) => {
-  // Visibility control
-  if (!showWhen) return null
-
   const inputId = `dropdown-${Math.random().toString(36).substr(2, 9)}`
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -96,6 +93,31 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   const shouldShowSearch =
     searchDisplay === "ON" ||
     (searchDisplay === "AUTO" && choiceLabels.length > 11)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+        setSearchTerm('')
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && shouldShowSearch && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isOpen, shouldShowSearch])
+
+  // Visibility control
+  if (!showWhen) return null
 
   // Filter choices based on search term
   const filteredChoices = searchTerm
@@ -155,28 +177,6 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
       handler(null)
     }
   }
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-        setSearchTerm('')
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen])
-
-  // Focus search input when dropdown opens
-  useEffect(() => {
-    if (isOpen && shouldShowSearch && searchInputRef.current) {
-      searchInputRef.current.focus()
-    }
-  }, [isOpen, shouldShowSearch])
 
   // Show validations
   const showValidations = validations.length > 0

@@ -53,15 +53,15 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   marginBelow = "STANDARD",
   className: classNameProp
 }) => {
+  // Generate unique ID for accessibility
+  const progressId = React.useId()
+
   // Visibility control
   if (!showWhen) return null
 
   // Clamp percentage between 0 and 100 for display, but show actual value in text
   const clampedPercentage = Math.max(0, Math.min(100, percentage))
   const displayPercentage = Math.round(percentage)
-
-  // Generate unique ID for accessibility
-  const progressId = React.useId()
 
   const styleMap: Record<ProgressBarStyle, { height: string; textSize: string }> = {
     THIN: { height: 'h-2', textSize: 'text-sm' },

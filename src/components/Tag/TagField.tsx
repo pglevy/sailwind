@@ -60,6 +60,8 @@ export const TagField: React.FC<TagFieldProps> = ({
   marginBelow = "STANDARD",
   className
 }) => {
+  const fieldId = React.useId()
+
   // Visibility control
   if (!showWhen) return null
 
@@ -147,8 +149,6 @@ export const TagField: React.FC<TagFieldProps> = ({
       </Component>
     )
   }
-
-  const fieldId = React.useId()
 
   // Build SAIL-computed classes for root container
   const sailClasses = `${marginAboveMap[marginAbove]} ${marginBelowMap[marginBelow]}`
