@@ -126,6 +126,14 @@
   }
   .nav-link:hover{ color:var(--blue-500); }
   .nav-right{ display:flex; align-items:center; gap:1rem; }
+  .nav-icon-link{
+    display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:6px;
+    color:var(--gray-600);
+    transition:color .18s ease, background .18s ease;
+  }
+  .nav-icon-link:hover{ color:var(--gray-900); background:var(--gray-100); }
+  .nav-icon-link svg{ width:20px; height:20px; }
   .version-badge{
     font-family:var(--font-mono);
     font-size:0.72rem; font-weight:600;
@@ -489,6 +497,7 @@
     .comp-grid{ grid-template-columns:repeat(2,1fr); }
     .steps{ grid-template-columns:1fr; }
     .footer-top{ grid-template-columns:1fr; gap:2rem; }
+    .token-extras{ grid-template-columns:1fr !important; }
   }
   @media (max-width: 640px){
     .nav-links{ display:none; }
@@ -512,11 +521,14 @@
       <span class="brand-word">Sailwind</span>
     </a>
     <div class="nav-links">
-      <a class="nav-link" href="/sailwind/components/" target="_blank" rel="noopener">Components</a>
       <a class="nav-link" href="#architecture">How it works</a>
-      <a class="nav-link" href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">GitHub</a>
+      <a class="nav-link" href="#components">Components</a>
+      <a class="nav-link" href="#tokens">Tokens</a>
     </div>
     <div class="nav-right">
+      <a class="nav-icon-link" href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      </a>
       <span class="version-badge">v0.16.0</span>
       <a class="btn btn-solid-accent btn-sm" href="https://github.com/pglevy/sailwind-starter/archive/refs/heads/main.zip" target="_blank" rel="noopener">
         Download Template
@@ -578,38 +590,6 @@
     </div>
   </div>
 </header>
-
-<!-- ============ PALETTE ============ -->
-<section class="palette-section">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow">Design tokens</div>
-      <h2>Fifteen families. Ten steps each.</h2>
-      <p>Every color, radius, and spacing value in Sailwind traces back to one <code>tokens.json</code> file — the same source that generates this ribbon and the CSS custom properties behind every component.</p>
-    </div>
-    <div class="swatch-ribbon reveal">
-      <div class="swatch" style="background:#DE0037"><span class="swatch-label">red</span></div>
-      <div class="swatch" style="background:#FF5722"><span class="swatch-label">burnt-orange</span></div>
-      <div class="swatch" style="background:#FF9800"><span class="swatch-label dark">orange</span></div>
-      <div class="swatch" style="background:#FFC107"><span class="swatch-label dark">amber</span></div>
-      <div class="swatch" style="background:#FFD948"><span class="swatch-label dark">yellow</span></div>
-      <div class="swatch" style="background:#7DE208"><span class="swatch-label dark">lime</span></div>
-      <div class="swatch" style="background:#4CAF50"><span class="swatch-label">green</span></div>
-      <div class="swatch" style="background:#009688"><span class="swatch-label">teal</span></div>
-      <div class="swatch" style="background:#00D4D4"><span class="swatch-label">cyan</span></div>
-      <div class="swatch" style="background:#03A9F4"><span class="swatch-label">sky</span></div>
-      <div class="swatch" style="background:#2322F0"><span class="swatch-label">blue</span></div>
-      <div class="swatch" style="background:#7C4DFF"><span class="swatch-label">violet</span></div>
-      <div class="swatch" style="background:#B561FF"><span class="swatch-label">purple</span></div>
-      <div class="swatch" style="background:#E21496"><span class="swatch-label">pink</span></div>
-      <div class="swatch" style="background:#9E9E9E"><span class="swatch-label dark">gray</span></div>
-    </div>
-    <div class="palette-foot reveal">
-      <span>15 families × 10 steps = 150 color tokens</span>
-      <span>tokens/tokens.json → generate:css → @theme</span>
-    </div>
-  </div>
-</section>
 
 <!-- ============ ARCHITECTURE ============ -->
 <section class="architecture" id="architecture">
@@ -750,39 +730,138 @@
   </div>
 </section>
 
+<!-- ============ PALETTE / DESIGN TOKENS ============ -->
+<section class="palette-section" id="tokens">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Design tokens</div>
+      <h2>Unified design vocabulary.</h2>
+      <p>Every color, radius, and spacing value in Sailwind traces back to one <code>tokens.json</code> file — the same source that generates this ribbon and the CSS custom properties behind every component.</p>
+    </div>
+    <div class="swatch-ribbon reveal">
+      <div class="swatch" style="background:#DE0037"><span class="swatch-label">red</span></div>
+      <div class="swatch" style="background:#FF5722"><span class="swatch-label">burnt-orange</span></div>
+      <div class="swatch" style="background:#FF9800"><span class="swatch-label dark">orange</span></div>
+      <div class="swatch" style="background:#FFC107"><span class="swatch-label dark">amber</span></div>
+      <div class="swatch" style="background:#FFD948"><span class="swatch-label dark">yellow</span></div>
+      <div class="swatch" style="background:#7DE208"><span class="swatch-label dark">lime</span></div>
+      <div class="swatch" style="background:#4CAF50"><span class="swatch-label">green</span></div>
+      <div class="swatch" style="background:#009688"><span class="swatch-label">teal</span></div>
+      <div class="swatch" style="background:#00D4D4"><span class="swatch-label">cyan</span></div>
+      <div class="swatch" style="background:#03A9F4"><span class="swatch-label">sky</span></div>
+      <div class="swatch" style="background:#2322F0"><span class="swatch-label">blue</span></div>
+      <div class="swatch" style="background:#7C4DFF"><span class="swatch-label">violet</span></div>
+      <div class="swatch" style="background:#B561FF"><span class="swatch-label">purple</span></div>
+      <div class="swatch" style="background:#E21496"><span class="swatch-label">pink</span></div>
+      <div class="swatch" style="background:#9E9E9E"><span class="swatch-label dark">gray</span></div>
+    </div>
+
+    <!-- Spacing + Type samples -->
+    <div class="token-extras reveal" style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:2.5rem;">
+      <div>
+        <div class="arch-col-label" style="margin-bottom:0.75rem;">Spacing scale</div>
+        <div style="display:flex; align-items:flex-end; gap:0.5rem;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:4px; height:4px; background:var(--blue-500); border-radius:1px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">4</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:8px; height:8px; background:var(--blue-500); border-radius:2px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">8</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:16px; height:16px; background:var(--blue-500); border-radius:2px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">16</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:24px; height:24px; background:var(--blue-500); border-radius:3px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">24</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:32px; height:32px; background:var(--blue-500); border-radius:3px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">32</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.3rem;">
+            <div style="width:48px; height:48px; background:var(--blue-500); border-radius:4px;"></div>
+            <span style="font-family:var(--font-mono); font-size:0.62rem; color:var(--gray-500);">48</span>
+          </div>
+        </div>
+        <div style="font-family:var(--font-mono); font-size:0.72rem; color:var(--gray-500); margin-top:0.65rem;">EVEN_LESS → LESS → STANDARD → MORE → EVEN_MORE → …</div>
+      </div>
+      <div>
+        <div class="arch-col-label" style="margin-bottom:0.75rem;">Type scale</div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <span style="font-family:var(--font-display); font-size:2rem; font-weight:700; line-height:1.1; color:var(--gray-900);">EXTRA_LARGE</span>
+          <span style="font-family:var(--font-display); font-size:1.5rem; font-weight:700; line-height:1.15; color:var(--gray-800);">LARGE</span>
+          <span style="font-family:var(--font-body); font-size:1.125rem; line-height:1.3; color:var(--gray-700);">MEDIUM — body emphasis</span>
+          <span style="font-family:var(--font-body); font-size:1rem; line-height:1.4; color:var(--gray-600);">STANDARD — default body</span>
+          <span style="font-family:var(--font-body); font-size:0.75rem; line-height:1.4; color:var(--gray-500);">SMALL — captions &amp; labels</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-foot reveal">
+      <span>15 families × 10 steps = 150 color tokens</span>
+      <span>tokens/tokens.json → generate:css → @theme</span>
+    </div>
+  </div>
+</section>
+
 <!-- ============ QUICKSTART ============ -->
 <section class="quickstart">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Get started</div>
-      <h2>From install to interface, three steps.</h2>
-      <p>Sailwind needs React 18 or 19 and nothing else exotic. Add it to any project, or start from the pre-configured template.</p>
+      <h2>Download the template. Describe what you want.</h2>
+      <p>The sailwind-starter template comes pre-configured for AI-assisted development — steering files, custom agents, and project context included. Just tell your AI what to build.</p>
     </div>
     <div class="steps">
       <div class="step reveal">
         <div class="step-num">01</div>
-        <h4>Install the package</h4>
-        <pre>pnpm add @pglevy/sailwind</pre>
+        <h4>Download the template</h4>
+        <pre>sailwind-starter.zip</pre>
+        <a class="btn btn-solid-accent btn-sm" href="https://github.com/pglevy/sailwind-starter/archive/refs/heads/main.zip" target="_blank" rel="noopener" style="margin-top:0.75rem;">
+          Download
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </a>
       </div>
       <div class="step reveal">
         <div class="step-num">02</div>
-        <h4>Import the styles</h4>
-        <pre>import '@pglevy/sailwind/index.css'</pre>
+        <h4>Describe what you want to build</h4>
+        <pre style="white-space:pre-wrap; word-break:break-word;">"Create a page called vendor-registration
+with a form for company name, contact,
+email, and a submit button."</pre>
       </div>
       <div class="step reveal">
         <div class="step-num">03</div>
-        <h4>Build with SAIL-exact props</h4>
-        <pre>&lt;ButtonWidget
-  size="STANDARD"
-  style="SOLID"
-  color="ACCENT"
-/&gt;</pre>
+        <h4>Iterate with AI</h4>
+        <pre style="white-space:pre-wrap; word-break:break-word;">"Add a search bar to the home page that
+filters the page list as you type."</pre>
       </div>
     </div>
-    <div class="quickstart-links">
-      <a href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">Read the docs on GitHub →</a>
+
+    <div style="margin-top:2.5rem; border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-md); padding:1.5rem; background:rgba(255,255,255,0.03);" class="reveal">
+      <h4 style="font-family:var(--font-body); font-size:1rem; font-weight:700; margin:0 0 0.75rem; color:var(--amber-500);">Built for Kiro IDE &amp; CLI</h4>
+      <p style="color:rgba(255,255,255,0.65); font-size:0.92rem; margin:0 0 1rem;">The template includes a pre-configured "sailor" agent, project steering files, and skills for environment setup, security audits, sharing, and even deploying to Appian — all ready out of the box.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">Configure Environment</span>
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">Security Audit</span>
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">Share Link</span>
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">Deploy to Appian</span>
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">Generate Appian App</span>
+        <span style="font-family:var(--font-mono); font-size:0.7rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; padding:0.25rem 0.5rem; color:rgba(255,255,255,0.6);">+ more</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem; border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-md); padding:1.25rem; background:rgba(255,255,255,0.02);" class="reveal">
+      <h4 style="font-family:var(--font-body); font-size:0.9rem; font-weight:600; margin:0 0 0.5rem; color:rgba(255,255,255,0.5);">Alternate: add the package to an existing project</h4>
+      <pre style="font-family:var(--font-mono); font-size:0.8rem; background:#000; padding:0.6rem 0.9rem; border-radius:6px; color:#e7e6f5; margin:0;">pnpm add @pglevy/sailwind</pre>
+    </div>
+
+    <div class="quickstart-links" style="margin-top:2.25rem;">
+      <a href="https://github.com/pglevy/sailwind-starter" target="_blank" rel="noopener">sailwind-starter on GitHub →</a>
       <a href="/sailwind/components/" target="_blank" rel="noopener">Browse components in Storybook →</a>
-      <a href="https://github.com/pglevy/sailwind-starter" target="_blank" rel="noopener">sailwind-starter template →</a>
+      <a href="https://github.com/pglevy/sailwind" target="_blank" rel="noopener">Library docs on GitHub →</a>
     </div>
   </div>
 </section>
