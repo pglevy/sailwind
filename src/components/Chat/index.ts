@@ -1,6 +1,9 @@
 export { ChatInput } from './ChatInput'
 export type { ChatInputProps, ChatInputFile } from './ChatInput'
 
+export { FileCard } from './FileCard'
+export type { FileCardProps } from './FileCard'
+
 export { ChatPanel } from './ChatPanel'
 export type { ChatPanelProps, ChatPanelHeaderAction } from './ChatPanel'
 

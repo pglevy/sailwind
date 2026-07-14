@@ -4,6 +4,7 @@ import { ChatPanel } from './ChatPanel'
 import { ChatInput } from './ChatInput'
 import { ChatUserMessage } from './ChatUserMessage'
 import { ChatAssistantMessage } from './ChatAssistantMessage'
+import { FileCard } from './FileCard'
 
 const meta = {
   title: 'Components/Chat/ChatPanel',
@@ -116,5 +117,32 @@ export const Interactive: Story = {
         </div>
       </ChatPanel>
     )
+  },
+}
+
+export const WithFileAttachments: Story = {
+  args: {
+    title: 'Design Review',
+    children: (
+      <div className="space-y-4">
+        <div className="flex flex-col gap-2 items-end">
+          <div className="flex flex-wrap gap-2 justify-end">
+            <FileCard fileName="homepage-mockup.png" fileSize={1024 * 1024 * 2.1} />
+            <FileCard fileName="dashboard-mockup.png" fileSize={1024 * 1024 * 1.8} />
+            <FileCard fileName="settings-mockup.png" fileSize={1024 * 512} />
+          </div>
+          <ChatUserMessage message="Here are the mockups for the new pages. Can you generate the React components?" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <ChatAssistantMessage message="I've reviewed your mockups and generated the components. Here are the files:" />
+          <div className="flex flex-wrap gap-2">
+            <FileCard fileName="HomePage.tsx" fileSize={1024 * 12} className="w-fit" />
+            <FileCard fileName="Dashboard.tsx" fileSize={1024 * 18} className="w-fit" />
+            <FileCard fileName="Settings.tsx" fileSize={1024 * 8} className="w-fit" />
+          </div>
+        </div>
+      </div>
+    ),
+    footer: <ChatInput showUpload />,
   },
 }
