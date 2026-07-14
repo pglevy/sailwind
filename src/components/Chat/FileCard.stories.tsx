@@ -74,7 +74,7 @@ export const RemoveInteraction: Story = {
   args: { fileName: 'test-file.pdf', fileSize: 1024 * 100, showRemove: true, onRemove: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement)
-    const removeButton = canvas.getByRole('button', { name: /remove file/i })
+    const removeButton = canvas.getByRole('button', { name: /remove test-file\.pdf/i })
     await expect(removeButton).toBeInTheDocument()
     await userEvent.click(removeButton)
     await expect(args.onRemove).toHaveBeenCalled()
