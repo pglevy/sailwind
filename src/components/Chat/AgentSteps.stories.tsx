@@ -15,27 +15,23 @@ type Story = StoryObj<typeof meta>
 const basicSteps: AgentStep[] = [
   {
     id: '1',
-    icon: 'file',
     title: 'Reading project configuration',
     subtitle: 'package.json, tsconfig.json',
     status: 'COMPLETED',
   },
   {
     id: '2',
-    icon: 'database',
     title: 'Analyzing component structure',
     subtitle: 'Identified 12 components across 3 directories',
     status: 'COMPLETED',
   },
   {
     id: '3',
-    icon: 'gitBranch',
     title: 'Creating feature branch',
     status: 'ACTIVE',
   },
   {
     id: '4',
-    icon: 'plus',
     title: 'Generate new component files',
     status: 'PENDING',
   },
@@ -47,12 +43,22 @@ export const Default: Story = {
   },
 }
 
+export const AllStatuses: Story = {
+  args: {
+    steps: [
+      { id: '1', title: 'Completed step', subtitle: 'Finished successfully', status: 'COMPLETED' },
+      { id: '2', title: 'Active step', subtitle: 'Currently processing...', status: 'ACTIVE' },
+      { id: '3', title: 'Pending step', subtitle: 'Waiting to start', status: 'PENDING' },
+      { id: '4', title: 'Error step', subtitle: 'Build failed with 3 errors', status: 'ERROR' },
+    ],
+  },
+}
+
 export const WithCodePreview: Story = {
   args: {
     steps: [
       {
         id: '1',
-        icon: 'file',
         title: 'Created AgentSteps.tsx',
         subtitle: 'New component with timeline layout',
         status: 'COMPLETED',
@@ -69,7 +75,6 @@ export const WithCodePreview: Story = {
       },
       {
         id: '2',
-        icon: 'file',
         title: 'Updated Chat/index.ts',
         subtitle: 'Added barrel export',
         status: 'COMPLETED',
@@ -88,7 +93,6 @@ export const WithActions: Story = {
     steps: [
       {
         id: '1',
-        icon: 'file',
         title: 'Modified ButtonWidget.tsx',
         subtitle: 'Added loading state support',
         status: 'COMPLETED',
@@ -98,7 +102,6 @@ export const WithActions: Story = {
       },
       {
         id: '2',
-        icon: 'file',
         title: 'Modified TagField.tsx',
         subtitle: 'Updated color resolution logic',
         status: 'COMPLETED',
@@ -115,12 +118,23 @@ export const WithActions: Story = {
   },
 }
 
+export const WithError: Story = {
+  args: {
+    steps: [
+      { id: '1', title: 'Read existing components', status: 'COMPLETED' },
+      { id: '2', title: 'Generated migration script', status: 'COMPLETED' },
+      { id: '3', title: 'Running database migration', subtitle: 'Connection refused: ECONNREFUSED 127.0.0.1:5432', status: 'ERROR' },
+      { id: '4', title: 'Verify migration results', status: 'PENDING' },
+    ],
+  },
+}
+
 export const AllCompleted: Story = {
   args: {
     steps: [
-      { id: '1', icon: 'file', title: 'Read existing components', status: 'COMPLETED' },
-      { id: '2', icon: 'database', title: 'Analyzed dependencies', status: 'COMPLETED' },
-      { id: '3', icon: 'plus', title: 'Created new component', status: 'COMPLETED' },
+      { id: '1', title: 'Read existing components', status: 'COMPLETED' },
+      { id: '2', title: 'Analyzed dependencies', status: 'COMPLETED' },
+      { id: '3', title: 'Created new component', status: 'COMPLETED' },
       { id: '4', title: 'Verified build passes', status: 'COMPLETED' },
     ],
   },
@@ -130,5 +144,12 @@ export const SmallSize: Story = {
   args: {
     steps: basicSteps,
     size: 'SMALL',
+  },
+}
+
+export const LargeSize: Story = {
+  args: {
+    steps: basicSteps,
+    size: 'LARGE',
   },
 }

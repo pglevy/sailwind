@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { CheckCircle, Circle, FileText, Database, Plus, LoaderCircle, GitBranch, RotateCcw } from 'lucide-react'
+import { CheckCircle, Circle, XCircle, FileText, Database, Plus, LoaderCircle, GitBranch, RotateCcw } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
 import { ButtonWidget } from '../Button/ButtonWidget'
-import type { SAILSize } from '../../types/sail'
 
 const iconMap = {
   circle: Circle,
+  xCircle: XCircle,
   file: FileText,
   database: Database,
   plus: Plus,
@@ -14,9 +14,11 @@ const iconMap = {
   rotateCcw: RotateCcw,
 } as const
 
-type AgentStepStatus = "COMPLETED" | "ACTIVE" | "PENDING"
+type AgentStepStatus = "COMPLETED" | "ACTIVE" | "PENDING" | "ERROR"
 
 type AgentStepActionStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
+
+type AgentStepsSize = "SMALL" | "STANDARD" | "LARGE"
 
 export interface AgentStepAction {
   /** Button label */
@@ -32,7 +34,7 @@ export interface AgentStepAction {
 export interface AgentStep {
   /** Unique identifier for the step */
   id: string
-  /** Lucide icon key to display */
+  /** Lucide icon key to display (overrides default status icon) */
   icon?: keyof typeof iconMap
   /** Step title text */
   title: string
@@ -52,8 +54,8 @@ export interface AgentStep {
 export interface AgentStepsProps {
   /** Array of steps to display */
   steps: AgentStep[]
-  /** Size of step text */
-  size?: SAILSize
+  /** Size of step text: SMALL (12px), STANDARD (14px), LARGE (18px) */
+  size?: AgentStepsSize
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
@@ -68,13 +70,6 @@ export const AgentSteps: React.FC<AgentStepsProps> = ({
   size = "STANDARD",
   className,
 }) => {
-  const textSizeMap: Record<SAILSize, string> = {
-    SMALL: 'text-xs',
-    STANDARD: 'text-sm',
-    MEDIUM: 'text-base',
-    LARGE: 'text-lg',
-  }
-
   const sailClasses = 'relative'
   const finalClasses = mergeClasses(sailClasses, className)
 
@@ -85,7 +80,7 @@ export const AgentSteps: React.FC<AgentStepsProps> = ({
           key={step.id}
           step={step}
           isLast={index === steps.length - 1}
-          textSize={textSizeMap[size]}
+          size={size}
         />
       ))}
     </div>
@@ -95,27 +90,38 @@ export const AgentSteps: React.FC<AgentStepsProps> = ({
 interface AgentStepItemProps {
   step: AgentStep
   isLast: boolean
-  textSize: string
+  size: AgentStepsSize
 }
 
-const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, textSize }) => {
-  const statusColorMap: Record<AgentStepStatus, string> = {
-    COMPLETED: 'text-blue-500',
-    ACTIVE: 'text-gray-500',
-    PENDING: 'text-gray-500',
-  }
+const sizeConfig: Record<AgentStepsSize, { text: string; subtitle: string; iconSize: string; iconMt: string; lineTop: string }> = {
+  SMALL: { text: 'text-xs leading-4', subtitle: 'text-xs', iconSize: 'size-3.5', iconMt: 'mt-0.5', lineTop: 'top-4' },
+  STANDARD: { text: 'text-sm leading-5', subtitle: 'text-xs', iconSize: 'size-4', iconMt: 'mt-0.5', lineTop: 'top-5' },
+  LARGE: { text: 'text-lg leading-7', subtitle: 'text-sm', iconSize: 'size-5', iconMt: 'mt-1', lineTop: 'top-7' },
+}
+
+const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => {
+  const config = sizeConfig[size]
 
   const renderIcon = () => {
     if (step.status === "COMPLETED") {
-      return <CheckCircle className="size-4 text-blue-500" aria-hidden="true" />
+      return <CheckCircle className={`${config.iconSize} text-blue-500`} aria-hidden="true" />
     }
 
+    if (step.status === "ERROR") {
+      return <XCircle className={`${config.iconSize} text-red-700`} aria-hidden="true" />
+    }
+
+    if (step.status === "ACTIVE") {
+      return <LoaderCircle className={`${config.iconSize} text-blue-500 animate-spin`} aria-hidden="true" />
+    }
+
+    // PENDING — use custom icon if provided, otherwise default circle
     if (step.icon) {
       const IconComponent = iconMap[step.icon]
-      return <IconComponent className={`size-4 ${statusColorMap[step.status]}`} aria-hidden="true" />
+      return <IconComponent className={`${config.iconSize} text-gray-500`} aria-hidden="true" />
     }
 
-    return <Circle className="size-4 text-gray-500" aria-hidden="true" />
+    return <Circle className={`${config.iconSize} text-gray-500`} aria-hidden="true" />
   }
 
   return (
@@ -123,20 +129,20 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, textSize })
       {/* Connector line */}
       {!isLast && (
         <div
-          className="absolute left-[7px] top-5 bottom-0 w-0.5 bg-gray-200"
+          className={`absolute left-[7px] ${config.lineTop} bottom-0 w-0.5 bg-gray-200`}
           aria-hidden="true"
         />
       )}
 
       {/* Icon */}
-      <div className="relative z-10 flex items-center justify-center size-4 mt-0.5 shrink-0 bg-white">
+      <div className={`relative z-10 flex items-center justify-center ${config.iconSize} ${config.iconMt} shrink-0 bg-white`}>
         {renderIcon()}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <span className={`font-medium text-gray-900 ${textSize}`}>
+        <div className="flex items-baseline justify-between gap-2">
+          <span className={`font-medium text-gray-900 ${config.text}`}>
             {step.title}
           </span>
 
@@ -158,7 +164,7 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, textSize })
         </div>
 
         {step.subtitle && (
-          <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
+          <p className={`mt-0.5 text-gray-700 ${config.subtitle} leading-relaxed`}>
             {step.subtitle}
           </p>
         )}
@@ -191,6 +197,7 @@ const AgentStepPreview: React.FC<AgentStepPreviewProps> = ({ content }) => {
 function mapIconToLucideName(key: keyof typeof iconMap): string {
   const nameMap: Record<keyof typeof iconMap, string> = {
     circle: 'circle',
+    xCircle: 'x-circle',
     file: 'file-text',
     database: 'database',
     plus: 'plus',
