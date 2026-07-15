@@ -2,6 +2,7 @@ import * as React from 'react'
 import { CheckCircle, Circle, XCircle, FileText, Database, Plus, LoaderCircle, GitBranch, RotateCcw } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
 import { ButtonWidget } from '../Button/ButtonWidget'
+import { TextItem } from '../RichText/TextItem'
 
 const iconMap = {
   circle: Circle,
@@ -93,10 +94,10 @@ interface AgentStepItemProps {
   size: AgentStepsSize
 }
 
-const sizeConfig: Record<AgentStepsSize, { text: string; subtitle: string; iconSize: string; iconMt: string; lineTop: string }> = {
-  SMALL: { text: 'text-xs leading-4', subtitle: 'text-xs', iconSize: 'size-3.5', iconMt: 'mt-0.5', lineTop: 'top-4' },
-  STANDARD: { text: 'text-sm leading-5', subtitle: 'text-xs', iconSize: 'size-4', iconMt: 'mt-0.5', lineTop: 'top-5' },
-  LARGE: { text: 'text-lg leading-7', subtitle: 'text-sm', iconSize: 'size-5', iconMt: 'mt-1', lineTop: 'top-7' },
+const sizeConfig: Record<AgentStepsSize, { titleSize: 'SMALL' | 'STANDARD' | 'MEDIUM'; subtitleSize: 'SMALL' | 'STANDARD'; iconSize: string; iconMt: string; lineTop: string }> = {
+  SMALL: { titleSize: 'SMALL', subtitleSize: 'SMALL', iconSize: 'size-3.5', iconMt: 'mt-0.5', lineTop: 'top-4' },
+  STANDARD: { titleSize: 'STANDARD', subtitleSize: 'SMALL', iconSize: 'size-4', iconMt: 'mt-0.5', lineTop: 'top-5' },
+  LARGE: { titleSize: 'MEDIUM', subtitleSize: 'STANDARD', iconSize: 'size-5', iconMt: 'mt-1', lineTop: 'top-7' },
 }
 
 const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => {
@@ -140,15 +141,15 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => 
       </div>
 
       {/* Content — negative margin for optical alignment with icon */}
-      <div className="relative flex-1 min-w-0 -mt-[0.2rem]">
-        <span className={`font-medium text-gray-900 ${config.text}`}>
-          {step.title}
-        </span>
+      <div className="relative flex-1 min-w-0 -mt-[0.1rem]">
+        <div className="leading-none">
+          <TextItem text={step.title} style="PLAIN" size={config.titleSize} color="STANDARD" />
+        </div>
 
         {step.subtitle && (
-          <p className={`mt-0.5 text-gray-700 ${config.subtitle} leading-relaxed`}>
-            {step.subtitle}
-          </p>
+          <div className="leading-normal">
+            <TextItem text={step.subtitle} size={config.subtitleSize} color="SECONDARY" />
+          </div>
         )}
 
         {step.actions && step.actions.length > 0 && (
