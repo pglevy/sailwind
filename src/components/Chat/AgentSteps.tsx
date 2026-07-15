@@ -139,8 +139,8 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => 
         {renderIcon()}
       </div>
 
-      {/* Content */}
-      <div className="relative flex-1 min-w-0">
+      {/* Content — negative margin for optical alignment with icon */}
+      <div className="relative flex-1 min-w-0 -mt-[0.2rem]">
         <span className={`font-medium text-gray-900 ${config.text}`}>
           {step.title}
         </span>
