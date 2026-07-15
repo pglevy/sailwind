@@ -140,33 +140,31 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => 
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className={`font-medium text-gray-900 ${config.text}`}>
-            {step.title}
-          </span>
-
-          {step.actions && step.actions.length > 0 && (
-            <div className="flex items-center gap-1 shrink-0">
-              {step.actions.map((action, idx) => (
-                <ButtonWidget
-                  key={idx}
-                  label={action.label}
-                  icon={action.icon ? mapIconToLucideName(action.icon) : undefined}
-                  style={action.style || "GHOST"}
-                  color="SECONDARY"
-                  size="SMALL"
-                  onClick={action.onClick}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="relative flex-1 min-w-0">
+        <span className={`font-medium text-gray-900 ${config.text}`}>
+          {step.title}
+        </span>
 
         {step.subtitle && (
           <p className={`mt-0.5 text-gray-700 ${config.subtitle} leading-relaxed`}>
             {step.subtitle}
           </p>
+        )}
+
+        {step.actions && step.actions.length > 0 && (
+          <div className="absolute top-0 right-0 flex items-center gap-1">
+            {step.actions.map((action, idx) => (
+              <ButtonWidget
+                key={idx}
+                label={action.label}
+                icon={action.icon ? mapIconToLucideName(action.icon) : undefined}
+                style={action.style || "GHOST"}
+                color="SECONDARY"
+                size="SMALL"
+                onClick={action.onClick}
+              />
+            ))}
+          </div>
         )}
 
         {step.preview && step.preview.type === "code" && (
