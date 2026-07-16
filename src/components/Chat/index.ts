@@ -24,3 +24,6 @@ export type { AgentStepsProps, AgentStep, AgentStepAction } from './AgentSteps'
 
 export { TaskProgress } from './TaskProgress'
 export type { TaskProgressProps, Task } from './TaskProgress'
+
+export { TaskPlan } from './TaskPlan'
+export type { TaskPlanProps, TaskPlanItem, ObjectTypeKey } from './TaskPlan'
