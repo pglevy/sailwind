@@ -18,3 +18,6 @@ export type { ChatUserMessageProps } from './ChatUserMessage'
 
 export { ChatAssistantMessage } from './ChatAssistantMessage'
 export type { ChatAssistantMessageProps } from './ChatAssistantMessage'
+
+export { AgentSteps } from './AgentSteps'
+export type { AgentStepsProps, AgentStep, AgentStepAction } from './AgentSteps'
