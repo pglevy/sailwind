@@ -5,6 +5,7 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
+        method: 'alphabetical',
         order: ['Welcome', 'Components', 'Patterns', 'Pages'],
       },
     },
