@@ -35,7 +35,7 @@ export interface AgentStepAction {
 export interface AgentStep {
   /** Unique identifier for the step */
   id: string
-  /** Lucide icon key to display (overrides default status icon) */
+  /** Lucide icon key to display (used when status is PENDING; other statuses use fixed status icons) */
   icon?: keyof typeof iconMap
   /** Step title text */
   title: string
@@ -138,6 +138,7 @@ const AgentStepItem: React.FC<AgentStepItemProps> = ({ step, isLast, size }) => 
       {/* Icon */}
       <div className={`relative z-10 flex items-center justify-center ${config.iconSize} ${config.iconMt} shrink-0 bg-white`}>
         {renderIcon()}
+        <span className="sr-only">{statusLabel(step.status)}</span>
       </div>
 
       {/* Content — negative margin for optical alignment with icon */}
@@ -205,4 +206,17 @@ function mapIconToLucideName(key: keyof typeof iconMap): string {
     rotateCcw: 'rotate-ccw',
   }
   return nameMap[key]
+}
+
+/**
+ * Returns a human-readable status label for screen readers.
+ */
+function statusLabel(status: AgentStepStatus): string {
+  const labels: Record<AgentStepStatus, string> = {
+    COMPLETED: 'Completed',
+    ACTIVE: 'In progress',
+    PENDING: 'Pending',
+    ERROR: 'Error',
+  }
+  return labels[status]
 }
