@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import { ChevronDown, Check, Circle } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 type TaskStatus = "COMPLETED" | "ACTIVE" | "TODO"
 
@@ -63,11 +64,13 @@ export const TaskProgress: React.FC<TaskProgressProps> = ({
               <span className="font-medium">{completedCount}</span> / {totalCount}
             </span>
             <div className="flex-1 min-w-0">
-              <progress
-                value={completedCount}
-                max={totalCount}
-                className="w-full h-2 rounded-full appearance-none [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-blue-500 [&::-moz-progress-bar]:bg-blue-500"
-                aria-label={`Task progress: ${completedCount} of ${totalCount} completed`}
+              <ProgressBar
+                percentage={progressValue}
+                showPercentage={false}
+                labelPosition="COLLAPSED"
+                accessibilityText={`Task progress: ${completedCount} of ${totalCount} completed`}
+                marginAbove="NONE"
+                marginBelow="NONE"
               />
             </div>
           </div>
