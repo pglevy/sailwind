@@ -21,3 +21,6 @@ export type { ChatAssistantMessageProps } from './ChatAssistantMessage'
 
 export { AgentSteps } from './AgentSteps'
 export type { AgentStepsProps, AgentStep, AgentStepAction } from './AgentSteps'
+
+export { TaskProgress } from './TaskProgress'
+export type { TaskProgressProps, Task } from './TaskProgress'
