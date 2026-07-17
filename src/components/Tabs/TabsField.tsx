@@ -358,8 +358,10 @@ export const TabsField: React.FC<TabsFieldProps> = ({
               )
             })}
 
-            {/* Sliding indicators — UNDERLINE variant only (non-full-width mode) */}
-            {!fullWidthSeparator && renderSeparatorLine()}
+            {/* Sliding indicators — UNDERLINE variant only.
+                The inline separator is suppressed only when the full-width separator
+                replaces it (horizontal only); vertical always keeps its inline line. */}
+            {!(fullWidthSeparator && orientation === "HORIZONTAL") && renderSeparatorLine()}
             {renderActiveIndicator()}
           </Tabs.List>
         </div>

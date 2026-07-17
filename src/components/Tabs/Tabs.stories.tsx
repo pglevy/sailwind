@@ -18,6 +18,7 @@ const meta = {
     color: { control: 'text' },
     orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
     align: { control: 'select', options: ['START', 'CENTER', 'END'] },
+    contentsPadding: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
     activationMode: { control: 'select', options: ['AUTOMATIC', 'MANUAL'] },
     navigationOnly: { control: 'boolean' },
     fullWidthSeparator: { control: 'boolean' },
