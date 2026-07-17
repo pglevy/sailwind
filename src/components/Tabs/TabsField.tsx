@@ -371,6 +371,14 @@ export const TabsField: React.FC<TabsFieldProps> = ({
             style={{ backgroundColor: separatorColor, opacity: separatorOpacity }}
           />
         )}
+        {/* Full-height separator for vertical: spans the full TabsField height */}
+        {fullWidthSeparator && variant === "UNDERLINE" && orientation === "VERTICAL" && (
+          <div
+            aria-hidden="true"
+            className="absolute left-0 top-0 bottom-0 w-[2px] pointer-events-none"
+            style={{ backgroundColor: separatorColor, opacity: separatorOpacity }}
+          />
+        )}
 
         {hasContent && tabs.map((tab) => (
           <Tabs.Content
