@@ -14,9 +14,13 @@ const meta = {
   argTypes: {
     variant: { control: 'select', options: ['UNDERLINE', 'PILL'] },
     size: { control: 'select', options: ['SMALL', 'STANDARD', 'MEDIUM', 'LARGE'] },
+    density: { control: 'select', options: ['STANDARD', 'DENSE'] },
     color: { control: 'text' },
     orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
+    align: { control: 'select', options: ['START', 'CENTER', 'END'] },
     activationMode: { control: 'select', options: ['AUTOMATIC', 'MANUAL'] },
+    navigationOnly: { control: 'boolean' },
+    fullWidthSeparator: { control: 'boolean' },
   },
 } satisfies Meta<typeof TabsField>
 
@@ -193,6 +197,192 @@ export const VerticalOrientation: Story = {
   },
 }
 
+export const NavigationOnly: Story = {
+  name: 'Navigation Only (No Content Panels)',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const [activeTab, setActiveTab] = useState('dashboard')
+
+    const navTabs: TabItem[] = [
+      { value: 'dashboard', label: 'Dashboard' },
+      { value: 'reports', label: 'Reports' },
+      { value: 'settings', label: 'Settings' },
+      { value: 'help', label: 'Help' },
+    ]
+
+    return (
+      <div style={{ width: 480 }}>
+        <TabsField
+          tabs={navTabs}
+          value={activeTab}
+          onValueChange={setActiveTab}
+          navigationOnly
+          size="STANDARD"
+          color="ACCENT"
+        />
+        <div className="mt-4 p-4 border border-gray-200 rounded-md">
+          <p className="text-base text-gray-700">
+            Active route: <strong>{activeTab}</strong>
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            Content is rendered externally — no content panels in the tab component.
+          </p>
+        </div>
+      </div>
+    )
+  },
+}
+
+export const NavigationOnlyVertical: Story = {
+  name: 'Navigation Only — Vertical Sidebar',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const [activeTab, setActiveTab] = useState('inbox')
+
+    const navTabs: TabItem[] = [
+      { value: 'inbox', label: 'Inbox' },
+      { value: 'drafts', label: 'Drafts' },
+      { value: 'sent', label: 'Sent' },
+      { value: 'archive', label: 'Archive' },
+      { value: 'trash', label: 'Trash' },
+    ]
+
+    return (
+      <div className="flex gap-4" style={{ width: 480 }}>
+        <TabsField
+          tabs={navTabs}
+          value={activeTab}
+          onValueChange={setActiveTab}
+          navigationOnly
+          orientation="VERTICAL"
+          align="START"
+          size="STANDARD"
+          color="ACCENT"
+        />
+        <div className="flex-1 p-4 border border-gray-200 rounded-md">
+          <p className="text-base text-gray-700">
+            Viewing: <strong>{activeTab}</strong>
+          </p>
+        </div>
+      </div>
+    )
+  },
+}
+
+export const DensityComparison: Story = {
+  name: 'Density — STANDARD vs DENSE',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const tabs: TabItem[] = [
+      { value: 'one', label: 'First Tab', content: <p className="text-base text-gray-700">Content for first tab.</p> },
+      { value: 'two', label: 'Second Tab', content: <p className="text-base text-gray-700">Content for second tab.</p> },
+      { value: 'three', label: 'Third Tab', content: <p className="text-base text-gray-700">Content for third tab.</p> },
+    ]
+
+    return (
+      <div className="space-y-8" style={{ width: 480 }}>
+        <div>
+          <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Density: STANDARD (default)</p>
+          <TabsField tabs={tabs} defaultValue="one" density="STANDARD" />
+        </div>
+        <div>
+          <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Density: DENSE</p>
+          <TabsField tabs={tabs} defaultValue="one" density="DENSE" />
+        </div>
+      </div>
+    )
+  },
+}
+
+export const FullWidthSeparator: Story = {
+  name: 'Full-Width Separator',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const tabs: TabItem[] = [
+      { value: 'overview', label: 'Overview', content: <p className="text-base text-gray-700">Overview content here.</p> },
+      { value: 'details', label: 'Details', content: <p className="text-base text-gray-700">Details content here.</p> },
+      { value: 'history', label: 'History', content: <p className="text-base text-gray-700">History content here.</p> },
+    ]
+
+    return (
+      <div className="border border-gray-200 rounded-md p-6" style={{ width: 600 }}>
+        <HeadingField text="Record Detail" size="MEDIUM" marginBelow="STANDARD" />
+        <TabsField
+          tabs={tabs}
+          defaultValue="overview"
+          fullWidthSeparator
+          size="STANDARD"
+          color="ACCENT"
+        />
+      </div>
+    )
+  },
+}
+
+export const LightBackground: Story = {
+  name: 'Light Background (Non-White)',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const tabs: TabItem[] = [
+      { value: 'overview', label: 'Overview', content: <p className="text-gray-700">Overview content on light bg.</p> },
+      { value: 'details', label: 'Details', content: <p className="text-gray-700">Details content on light bg.</p> },
+      { value: 'history', label: 'History', content: <p className="text-gray-700">History content on light bg.</p> },
+    ]
+
+    return (
+      <div className="bg-gray-100 text-gray-800 p-6 rounded-md" style={{ width: 480 }}>
+        <TabsField
+          tabs={tabs}
+          defaultValue="overview"
+          size="STANDARD"
+          color="ACCENT"
+        />
+      </div>
+    )
+  },
+}
+
+export const DarkBackground: Story = {
+  name: 'Dark Background (Auto Separator)',
+  args: {
+    tabs: simpleTabs,
+    defaultValue: 'tab1',
+  },
+  render: () => {
+    const tabs: TabItem[] = [
+      { value: 'overview', label: 'Overview', content: <p className="text-gray-200">Overview content on dark.</p> },
+      { value: 'details', label: 'Details', content: <p className="text-gray-200">Details content on dark.</p> },
+      { value: 'history', label: 'History', content: <p className="text-gray-200">History content on dark.</p> },
+    ]
+
+    return (
+      <div className="bg-gray-900 text-white p-6 rounded-md" style={{ width: 480 }}>
+        <TabsField
+          tabs={tabs}
+          defaultValue="overview"
+          size="STANDARD"
+          color="ACCENT"
+        />
+      </div>
+    )
+  },
+}
+
 export const SizeSmall: Story = {
   args: {
     tabs: [
@@ -215,30 +405,6 @@ export const SizeLarge: Story = {
   },
 }
 
-export const ColorPositive: Story = {
-  args: {
-    tabs: [
-      { value: 'success', label: 'Success', content: <p className="text-base text-gray-700">Success content with positive color scheme.</p> },
-      { value: 'warning', label: 'Warning', content: <p className="text-base text-gray-700">Warning content with negative color scheme.</p> },
-      { value: 'info', label: 'Info', content: <p className="text-base text-gray-700">Info content with secondary color scheme.</p> },
-    ],
-    defaultValue: 'success',
-    color: 'POSITIVE',
-  },
-}
-
-export const ColorNegative: Story = {
-  args: {
-    tabs: [
-      { value: 'success', label: 'Success', content: <p className="text-base text-gray-700">Success content with positive color scheme.</p> },
-      { value: 'warning', label: 'Warning', content: <p className="text-base text-gray-700">Warning content with negative color scheme.</p> },
-      { value: 'info', label: 'Info', content: <p className="text-base text-gray-700">Info content with secondary color scheme.</p> },
-    ],
-    defaultValue: 'warning',
-    color: 'NEGATIVE',
-  },
-}
-
 export const ColorCustomHex: Story = {
   args: {
     tabs: [
@@ -250,19 +416,6 @@ export const ColorCustomHex: Story = {
     color: '#9333EA',
   },
 }
-
-export const ManualActivation: Story = {
-  args: {
-    tabs: [
-      { value: 'manual1', label: 'Manual 1', content: <p>Manual activation tab 1</p> },
-      { value: 'manual2', label: 'Manual 2', content: <p>Manual activation tab 2</p> },
-      { value: 'manual3', label: 'Manual 3', content: <p>Manual activation tab 3</p> },
-    ],
-    defaultValue: 'manual1',
-    activationMode: 'MANUAL',
-  },
-}
-
 
 export const Pill: Story = {
   args: {
