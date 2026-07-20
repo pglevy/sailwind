@@ -1,17 +1,24 @@
 import * as React from 'react'
 import * as Avatar from '@radix-ui/react-avatar'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlign } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape } from '../../types/sail'
 import type { DocumentImageProps } from './DocumentImage'
 import type { UserImageProps } from './UserImage'
-import { alignMap } from '../../utils/sailMaps'
+import type { WebImageProps } from './WebImage'
+import { alignMap, shapeMap } from '../../utils/sailMaps'
+import { resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 
 // Union type for all image types supported by ImageField
-type ImageFieldImage = DocumentImageProps | UserImageProps
+type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps
 
 // Type guard to check if an image is a UserImage
 function isUserImage(image: ImageFieldImage): image is UserImageProps {
   return 'imageType' in image && image.imageType === 'user'
+}
+
+// Type guard to check if an image is a WebImage
+function isWebImage(image: ImageFieldImage): image is WebImageProps {
+  return 'source' in image
 }
 
 type ImageSize = 
@@ -50,6 +57,8 @@ export interface ImageFieldProps {
   isThumbnail?: boolean
   /** Determines how the images are rendered */
   style?: ImageStyle
+  /** Determines the border radius of images. Ignored when style is "AVATAR" (always circular). */
+  shape?: SAILShape
   /** Determines alignment of the images */
   align?: SAILAlign
   /** Additional text for screen readers */
@@ -76,6 +85,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   size = "MEDIUM",
   isThumbnail = false,
   style = "STANDARD",
+  shape = "SEMI_ROUNDED",
   align = "START",
   accessibilityText,
   marginAbove = "NONE",
@@ -123,13 +133,13 @@ export const ImageField: React.FC<ImageFieldProps> = ({
 
   // Style-specific classes
   const getImageClasses = () => {
-    // Use avatar size map when style is AVATAR
-    const activeSizeMap = style === "AVATAR" ? avatarSizeMap : sizeMap
+    // Use avatar (square) size map when style is AVATAR or shape is CIRCLE
+    const activeSizeMap = (style === "AVATAR" || shape === "CIRCLE") ? avatarSizeMap : sizeMap
 
     const baseClasses = [
       activeSizeMap[size],
       'object-cover', // Maintain aspect ratio
-      style === "AVATAR" ? 'rounded-full' : 'rounded-sm',
+      style === "AVATAR" ? 'rounded-full' : shapeMap[shape],
       isThumbnail ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''
     ].filter(Boolean).join(' ')
 
@@ -159,9 +169,34 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           const activeSizeMap = avatarSizeMap
           const sizeClasses = activeSizeMap[size]
 
+          // Resolve backgroundColor — supports SAIL tokens, palette colors, or hex
+          let bgClass = 'bg-gray-200'
+          let bgInlineStyle: React.CSSProperties | undefined
+          let initialsColor: string | undefined
+          if (backgroundColor) {
+            const resolved = resolveColorClass(backgroundColor, 'bg')
+            if (resolved) {
+              bgClass = resolved
+            } else {
+              // Hex or unknown — use inline style
+              bgClass = ''
+              bgInlineStyle = { backgroundColor }
+            }
+            // Determine accessible text color for initials
+            const hex = resolveColorToHex(backgroundColor)
+            if (hex) {
+              initialsColor = getContrastColor(hex)
+            }
+          }
+
           // Build fallback content (initials or default icon)
           const fallbackContent = user?.initials ? (
-            <span className="font-medium text-gray-700">{user.initials}</span>
+            <span
+              className="font-medium"
+              style={initialsColor ? { color: initialsColor } : undefined}
+            >
+              {user.initials}
+            </span>
           ) : (
             // Default user icon SVG
             <svg className="w-3/5 h-3/5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
@@ -172,8 +207,8 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           return (
             <Avatar.Root
               key={index}
-              className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full bg-gray-200 ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
-              style={backgroundColor ? { backgroundColor } : undefined}
+              className={`inline-flex items-center justify-center align-middle overflow-hidden select-none rounded-full ${bgClass} ${sizeClasses} ${link ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              style={bgInlineStyle}
               title={caption}
               onClick={link}
             >
@@ -183,13 +218,47 @@ export const ImageField: React.FC<ImageFieldProps> = ({
                 alt={imageAlt}
               />
               <Avatar.Fallback
-                className="w-full h-full flex items-center justify-center bg-gray-200"
-                style={backgroundColor ? { backgroundColor } : undefined}
+                className={`w-full h-full flex items-center justify-center ${bgClass}`}
+                style={bgInlineStyle}
                 delayMs={600}
               >
                 {fallbackContent}
               </Avatar.Fallback>
             </Avatar.Root>
+          )
+        }
+
+        // Check if this is a web image
+        if (isWebImage(imageProps)) {
+          const imageClasses = getImageClasses()
+
+          const handleClick = () => {
+            if (imageProps.link) {
+              imageProps.link()
+            }
+          }
+
+          return (
+            <div key={index} className="relative">
+              <img
+                src={imageProps.source}
+                alt={imageProps.altText || ''}
+                title={imageProps.caption}
+                className={imageClasses}
+                onClick={imageProps.link ? handleClick : undefined}
+              />
+
+              {/* Show link indicator if image has link */}
+              {imageProps.link && (
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm">
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </div>
           )
         }
 

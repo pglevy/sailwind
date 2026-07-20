@@ -127,3 +127,102 @@ export const UserDefaultIconFallback: Story = {
     size: 'SMALL',
   },
 }
+
+// --- Issue #113: Custom background colors for avatar fallback ---
+
+export const UserInitialsWithColors: Story = {
+  name: 'Avatar with SAIL Color Backgrounds',
+  args: {
+    label: 'Team Members',
+    images: [
+      { imageType: 'user' as const, user: { name: 'Jane Doe', initials: 'JD' }, backgroundColor: 'ACCENT' },
+      { imageType: 'user' as const, user: { name: 'Bob Johnson', initials: 'BJ' }, backgroundColor: 'POSITIVE' },
+      { imageType: 'user' as const, user: { name: 'Alice Williams', initials: 'AW' }, backgroundColor: 'NEGATIVE' },
+      { imageType: 'user' as const, user: { name: 'Tom Chen', initials: 'TC' }, backgroundColor: 'TEAL_200' },
+      { imageType: 'user' as const, user: { name: 'Sarah Park', initials: 'SP' }, backgroundColor: 'PURPLE_200' },
+      { imageType: 'user' as const, user: { name: 'Mike Lee', initials: 'ML' }, backgroundColor: '#E8A87C' },
+    ],
+    style: 'AVATAR',
+    size: 'TINY',
+  },
+}
+
+// --- Issue #121: WebImage support ---
+
+export const WebImage: Story = {
+  name: 'Web Image (External URL)',
+  args: {
+    label: 'External Images',
+    instructions: 'Images loaded from external URLs using a!webImage()',
+    images: [
+      {
+        source: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=300&fit=crop',
+        altText: 'Mountain landscape',
+        caption: 'Beautiful mountain view',
+      },
+      {
+        source: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop',
+        altText: 'Nature scene',
+        caption: 'Peaceful nature',
+      },
+    ],
+    size: 'MEDIUM_PLUS',
+  },
+}
+
+export const WebImageAvatar: Story = {
+  name: 'Web Image as Avatar',
+  args: {
+    labelPosition: 'COLLAPSED',
+    images: [
+      {
+        source: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
+        altText: 'User avatar from web',
+      },
+    ],
+    style: 'AVATAR',
+    size: 'SMALL_PLUS',
+  },
+}
+
+// --- Issue #126: Shape/borderRadius prop ---
+
+export const ShapeSquared: Story = {
+  name: 'Shape: SQUARED',
+  args: {
+    label: 'Squared Images',
+    images: [
+      { document: 'images/case-management-studio.webp', altText: 'Case management' },
+      { document: 'images/process-modeler.webp', altText: 'Process modeler' },
+    ],
+    size: 'MEDIUM',
+    shape: 'SQUARED',
+  },
+}
+
+export const ShapeRounded: Story = {
+  name: 'Shape: ROUNDED',
+  args: {
+    label: 'Rounded Images',
+    images: [
+      { document: 'images/case-management-studio.webp', altText: 'Case management' },
+      { document: 'images/process-modeler.webp', altText: 'Process modeler' },
+    ],
+    size: 'MEDIUM',
+    shape: 'ROUNDED',
+  },
+}
+
+export const ShapeCircle: Story = {
+  name: 'Shape: CIRCLE',
+  args: {
+    label: 'Circle Images',
+    instructions: 'Circular crop without using avatar style',
+    images: [
+      { document: 'images/case-management-studio.webp', altText: 'Case management' },
+      { document: 'images/process-modeler.webp', altText: 'Process modeler' },
+    ],
+    size: 'SMALL_PLUS',
+    shape: 'CIRCLE',
+  },
+}
