@@ -186,7 +186,7 @@ const sizeMap: Record<SAILSize, string> = {
 
 ## Validation
 
-Run `npm run build` to catch TypeScript errors before considering work complete.
+Run `pnpm run build` to catch TypeScript errors before considering work complete.
 
 ## Resources
 

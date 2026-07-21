@@ -47,6 +47,7 @@
     "generate:css": "tsx scripts/generate-css.ts",
     "build:theme": "tsx scripts/generate-theme.ts",
     "token-server": "tsx scripts/token-server.ts",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",

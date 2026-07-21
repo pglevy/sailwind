@@ -4,9 +4,9 @@
  * Usage:
  *   node scripts/visual-check.js '{"url": "http://localhost:5173", "checks": {...}}'
  * 
- * Or use npm scripts:
- *   npm run check-page
- *   npm run check-page:full
+ * Or use pnpm scripts:
+ *   pnpm run check-page
+ *   pnpm run check-page:full
  */
 
 const { chromium } = require('playwright');

@@ -60,7 +60,7 @@ Lightweight Playwright scripts for checking pages without the MCP server overhea
 Install Playwright (if not already installed):
 
 ```bash
-npm install -D playwright
+pnpm install -D playwright
 npx playwright install chromium
 ```
 
@@ -70,13 +70,13 @@ npx playwright install chromium
 
 ```bash
 # Check default (http://localhost:5173)
-npm run check-page
+pnpm run check-page
 
 # Check specific URL
-npm run check-page http://localhost:5173/customerdashboard
+pnpm run check-page http://localhost:5173/customerdashboard
 
 # Check with custom screenshot name
-npm run check-page http://localhost:5173/publications screenshots/publications.png
+pnpm run check-page http://localhost:5173/publications screenshots/publications.png
 ```
 
 **Output:** 
@@ -88,10 +88,10 @@ npm run check-page http://localhost:5173/publications screenshots/publications.p
 
 ```bash
 # Full check with all diagnostics
-npm run check-page:full
+pnpm run check-page:full
 
 # Full check specific URL
-npm run check-page:full http://localhost:5173/patterns/taskdashboard
+pnpm run check-page:full http://localhost:5173/patterns/taskdashboard
 ```
 
 **Output:**
@@ -214,7 +214,7 @@ Runs axe-core against every story in a running Storybook instance to find access
 
 ```bash
 # Requires Storybook running (default: http://localhost:6006)
-npm run a11y-audit
+pnpm run a11y-audit
 
 # Or specify a custom URL
 node scripts/a11y-audit.cjs http://localhost:9009
