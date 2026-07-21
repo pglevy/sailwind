@@ -218,9 +218,6 @@ describe("Property 3: Column configuration application", () => {
 
         // Hidden column labels should NOT appear in any header
         columns.hidden.forEach((col) => {
-          const matchingHeaders = headers.filter((h) =>
-            h.textContent?.includes(col.label)
-          );
           // Only fail if the hidden label uniquely doesn't appear
           // (it could coincidentally match a visible label, so we check headers only)
           const headerTexts = headers.map((h) => h.textContent);

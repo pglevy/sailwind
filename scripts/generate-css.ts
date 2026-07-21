@@ -25,7 +25,6 @@ const root = path.resolve(import.meta.dirname, '..');
 
 interface DimensionValue { value: number; unit: string }
 interface DTCGToken { $value: unknown; $type: string; $description?: string }
-interface TokenGroup { [key: string]: DTCGToken | TokenGroup }
 
 interface TokenFile {
   color: Record<string, Record<string, DTCGToken>>;

@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
       json(res, 200, JSON.parse(content));
-    } catch (err) {
+    } catch {
       json(res, 500, { error: `Failed to read ${tokenType} tokens` });
     }
     return;

@@ -9,7 +9,7 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["dist", "storybook-static"]),
+  globalIgnores(["dist", "storybook-static", "gitignore"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
@@ -24,7 +24,10 @@ export default defineConfig([
     },
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+      }],
     },
   },
   ...storybook.configs["flat/recommended"],
