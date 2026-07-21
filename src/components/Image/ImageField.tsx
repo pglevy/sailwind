@@ -232,32 +232,46 @@ export const ImageField: React.FC<ImageFieldProps> = ({
         if (isWebImage(imageProps)) {
           const imageClasses = getImageClasses()
 
-          const handleClick = () => {
-            if (imageProps.link) {
-              imageProps.link()
-            }
-          }
+          const imgElement = (
+            <img
+              src={imageProps.source}
+              alt={imageProps.altText || ''}
+              title={imageProps.caption}
+              className={imageClasses}
+            />
+          )
 
-          return (
-            <div key={index} className="relative">
-              <img
-                src={imageProps.source}
-                alt={imageProps.altText || ''}
-                title={imageProps.caption}
-                className={imageClasses}
-                onClick={imageProps.link ? handleClick : undefined}
-              />
-
-              {/* Show link indicator if image has link */}
-              {imageProps.link && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm">
+          if (imageProps.link) {
+            return (
+              <div
+                key={index}
+                className="relative cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-label={imageProps.altText || 'Open linked image'}
+                onClick={() => imageProps.link!()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    imageProps.link!()
+                  }
+                }}
+              >
+                {imgElement}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm pointer-events-none">
                   <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </div>
                 </div>
-              )}
+              </div>
+            )
+          }
+
+          return (
+            <div key={index} className="relative">
+              {imgElement}
             </div>
           )
         }
@@ -267,32 +281,46 @@ export const ImageField: React.FC<ImageFieldProps> = ({
 
         const imageClasses = getImageClasses()
 
-        const handleClick = () => {
-          if (imageProps.link) {
-            imageProps.link()
-          }
-        }
+        const imgElement = (
+          <img
+            src={imageSrc}
+            alt={imageProps.altText || ''}
+            title={imageProps.caption}
+            className={imageClasses}
+          />
+        )
 
-        return (
-          <div key={index} className="relative">
-            <img
-              src={imageSrc}
-              alt={imageProps.altText || ''}
-              title={imageProps.caption}
-              className={imageClasses}
-              onClick={imageProps.link ? handleClick : undefined}
-            />
-
-            {/* Show link indicator if image has link */}
-            {imageProps.link && (
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm">
+        if (imageProps.link) {
+          return (
+            <div
+              key={index}
+              className="relative cursor-pointer"
+              role="button"
+              tabIndex={0}
+              aria-label={imageProps.altText || 'Open linked image'}
+              onClick={() => imageProps.link!()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  imageProps.link!()
+                }
+              }}
+            >
+              {imgElement}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black bg-opacity-20 transition-opacity rounded-sm pointer-events-none">
                 <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
                   <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </div>
               </div>
-            )}
+            </div>
+          )
+        }
+
+        return (
+          <div key={index} className="relative">
+            {imgElement}
           </div>
         )
       })}
