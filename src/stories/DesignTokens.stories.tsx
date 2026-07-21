@@ -1,5 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import tokens from '../../public/tokens.json'
+import sourceTokens from '../../tokens/tokens.json'
+
+// Augment the source tokens with semantic color aliases (same logic as generate-tokens.ts)
+// so this story doesn't need to import from public/ (which Vite warns about).
+const tokens = {
+  ...sourceTokens,
+  color: {
+    ...sourceTokens.color,
+    black: { $value: '#171717', $type: 'color', $description: 'Black — sourced from studio grey-1000' },
+    semantic: {
+      accent:      { $value: '{color.blue.500}',  $type: 'color', $description: 'SAILSemanticColor.ACCENT' },
+      positive:    { $value: '{color.green.500}',  $type: 'color', $description: 'SAILSemanticColor.POSITIVE' },
+      destructive: { $value: '{color.red.500}',   $type: 'color', $description: 'SAILSemanticColor.NEGATIVE' },
+      secondary:   { $value: '{color.gray.700}',  $type: 'color', $description: 'SAILSemanticColor.SECONDARY' },
+      standard:    { $value: '{color.gray.900}',  $type: 'color', $description: 'SAILSemanticColor.STANDARD' },
+    },
+  },
+}
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -307,7 +324,7 @@ function DesignTokensPage() {
       <h1 style={{ fontSize: 28, fontWeight: 700, color: '#222', margin: '0 0 4px' }}>Design Tokens</h1>
       <p style={{ color: '#6C6C75', fontSize: 14, margin: '0 0 8px' }}>
         Aurora color palette, semantic mappings, typography, spacing, and gradients — sourced from{' '}
-        <code style={{ fontFamily: 'monospace', background: '#EDEDF2', padding: '1px 5px', borderRadius: 4 }}>public/tokens.json</code>
+        <code style={{ fontFamily: 'monospace', background: '#EDEDF2', padding: '1px 5px', borderRadius: 4 }}>tokens/tokens.json</code>
       </p>
       <hr style={{ border: 'none', borderTop: '1px solid #E0E0E0', margin: '20px 0 0' }} />
       <ColorPalette />
