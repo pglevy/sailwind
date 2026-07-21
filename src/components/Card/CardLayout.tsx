@@ -174,7 +174,8 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
     marginBelowMap[marginBelow],
     showBorder ? `border ${borderProps.className || ''}` : '',
     showShadow ? 'shadow-md' : '',
-    'relative'
+    'relative',
+    'flex flex-col'
   ].filter(Boolean).join(' ')
 
   // Merge with optional className override
@@ -202,7 +203,7 @@ export const CardLayout: React.FC<CardLayoutProps> = ({
           aria-hidden="true"
         />
       )}
-      <div className={decorativeBarPosition === "TOP" ? "pt-1" : ""}>
+      <div className={`flex-1 flex flex-col ${decorativeBarPosition === "TOP" ? "pt-1" : ""}`}>
         {children}
       </div>
     </div>
