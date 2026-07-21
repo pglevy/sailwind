@@ -99,6 +99,8 @@ The distributable file is available in two places:
 - `dist/tokens.json` — included in the npm package (`@pglevy/sailwind/tokens.json`)
 - `public/tokens.json` — committed to the repo for versioned CDN access
 
+> ⚠️ **Do not remove `public/tokens.json` from the repo.** External tools (Kiro skills, Aurora) fetch tokens at runtime from the jsdelivr CDN, which serves files directly from this path on the `main` branch.
+
 You can access the latest version here:
 ```
 https://cdn.jsdelivr.net/gh/pglevy/sailwind@latest/public/tokens.json

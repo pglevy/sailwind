@@ -7,8 +7,11 @@
  *   - src/types/sail.ts    (SAIL enum types for semantic color tokens)
  *
  * Writes:
- *   - dist/tokens.json
- *   - public/tokens.json
+ *   - dist/tokens.json   — included in the npm package (@pglevy/sailwind/tokens.json)
+ *   - public/tokens.json — committed to the repo for versioned CDN access via jsdelivr
+ *
+ * ⚠️  Do NOT remove the public/ output. External tools (e.g. Kiro skills, Aurora)
+ *     fetch tokens from: https://cdn.jsdelivr.net/gh/pglevy/sailwind@main/public/tokens.json
  *
  * The source file is mostly passed through. This script adds:
  *   - color.black alias
