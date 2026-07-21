@@ -1,5 +1,5 @@
 import type { SAILSemanticColor } from '../types/sail'
-import { paletteColorMap } from '../types/palette-colors.generated'
+import { paletteColorMap, paletteHexMap } from '../types/palette-colors.generated'
 import type { SAILPaletteColor } from '../types/palette-colors.generated'
 
 /**
@@ -48,4 +48,56 @@ export function resolveColorClass(color: string, prefix: TailwindPrefix = 'bg'):
   }
   // Hex or unknown — caller handles via inline style
   return ''
+}
+
+
+/**
+ * Hex values for semantic colors (matches the Aurora palette tokens).
+ */
+const semanticHexMap: Record<SAILSemanticColor, string> = {
+  ACCENT:    '#2322F0', // blue-500
+  POSITIVE:  '#357A38', // green-700
+  NEGATIVE:  '#9B0027', // red-700
+  SECONDARY: '#616161', // gray-700
+  STANDARD:  '#212121', // gray-900
+}
+
+/**
+ * Resolve any SAIL color (semantic, palette, or hex) to a hex string.
+ * Returns the input unchanged if it's already a hex string.
+ * Returns undefined for unrecognized values.
+ */
+export function resolveColorToHex(color: string): string | undefined {
+  if (isSemanticColor(color)) {
+    return semanticHexMap[color]
+  }
+  if (isPaletteColor(color)) {
+    return paletteHexMap[color]
+  }
+  if (color.startsWith('#')) {
+    return color
+  }
+  return undefined
+}
+
+/**
+ * Returns accessible foreground color ('#ffffff' or '#000000') for a given hex background.
+ * Uses WCAG 2.x relative luminance to determine contrast.
+ */
+export function getContrastColor(hex: string): string {
+  // Normalize shorthand #RGB/#RGBA to #RRGGBB/#RRGGBBAA
+  if (hex.length === 4 || hex.length === 5) {
+    hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`
+  }
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const toLinear = (c: number) => {
+    const s = c / 255
+    return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
+  }
+  const L = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
+  const contrastWhite = (1.0 + 0.05) / (L + 0.05)
+  const contrastBlack = (L + 0.05) / (0.0 + 0.05)
+  return contrastWhite >= contrastBlack ? '#ffffff' : '#000000'
 }

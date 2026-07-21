@@ -6,7 +6,7 @@
 /**
  * Border radius/shape values matching SAIL's shape parameter
  */
-export type SAILShape = "SQUARED" | "SEMI_ROUNDED" | "ROUNDED"
+export type SAILShape = "SQUARED" | "SEMI_ROUNDED" | "ROUNDED" | "CIRCLE"
 
 /**
  * Padding values matching SAIL's padding parameter

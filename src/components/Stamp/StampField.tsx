@@ -85,7 +85,8 @@ export const StampField: React.FC<StampFieldProps> = ({
   const shapeMap: Record<SAILShape, string> = {
     SQUARED: 'rounded-none',
     SEMI_ROUNDED: 'rounded-sm',
-    ROUNDED: 'rounded-full'
+    ROUNDED: 'rounded-full',
+    CIRCLE: 'rounded-full'
   }
 
   // Background color mapping

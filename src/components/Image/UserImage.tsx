@@ -24,7 +24,7 @@ export interface UserImageProps {
   link?: () => void
   /** Controls visibility of the image */
   showWhen?: boolean
-  /** Background color for the initials fallback (hex or CSS color) */
+  /** Background color for the initials fallback. Accepts SAIL color tokens (e.g. "ACCENT", "TEAL_200") or hex strings (e.g. "#4A90D9") */
   backgroundColor?: string
 }
 

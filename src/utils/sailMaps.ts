@@ -46,7 +46,8 @@ export const paddingMap: Record<SAILPadding, string> = {
 export const shapeMap: Record<SAILShape, string> = {
   SQUARED: 'rounded-none',
   SEMI_ROUNDED: 'rounded-sm',
-  ROUNDED: 'rounded-md'
+  ROUNDED: 'rounded-md',
+  CIRCLE: 'rounded-full'
 }
 
 // --- Button / Interactive Size Maps ---
