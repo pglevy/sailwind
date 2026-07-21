@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CardLayout } from "./CardLayout";
 import { HeadingField } from "../Heading/HeadingField";
 import { RichTextDisplayField } from "../RichText/RichTextDisplayField";
+import { TextItem } from "../RichText/TextItem";
 import { ButtonWidget } from "../Button/ButtonWidget";
 
 const meta = {
@@ -256,41 +257,41 @@ export const VerticalAlignment: Story = {
         <div className="grid grid-cols-4 gap-4">
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
             <div className="w-full h-24 bg-gradient-to-br from-green-200 to-green-400 rounded mb-3"></div>
-            <HeadingField text="Edamame" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
-            <RichTextDisplayField value={["Steamed soybeans with sea salt."]} marginBelow="NONE" />
+            <HeadingField text="Edamame" size="MEDIUM" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
+            <RichTextDisplayField value={[<TextItem text="Steamed soybeans with sea salt." />]} marginBelow="NONE" className="[&>div]:leading-tight!" />
             <div className="flex items-center justify-between mt-auto pt-3">
-              <span className="font-bold text-gray-900">$6.99</span>
-              <ButtonWidget label="+" style="OUTLINE" color="ACCENT" size="SMALL" />
+              <RichTextDisplayField value={[<TextItem text="$6.99" size="MEDIUM" style="STRONG" />]} marginBelow="NONE" />
+              <ButtonWidget icon="plus" style="OUTLINE" color="ACCENT" size="SMALL" />
             </div>
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
             <div className="w-full h-24 bg-gradient-to-br from-amber-200 to-amber-400 rounded mb-3"></div>
-            <HeadingField text="Gyoza" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
-            <RichTextDisplayField value={["Pan-fried pork and vegetable dumplings served with a soy-vinegar dipping sauce."]} marginBelow="NONE" />
+            <HeadingField text="Gyoza" size="MEDIUM" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
+            <RichTextDisplayField value={[<TextItem text="Pan-fried pork and vegetable dumplings served with a soy-vinegar dipping sauce." />]} marginBelow="NONE" className="[&>div]:leading-tight!" />
             <div className="flex items-center justify-between mt-auto pt-3">
               <span className="font-bold text-gray-900">$8.00</span>
-              <ButtonWidget label="+" style="OUTLINE" color="ACCENT" size="SMALL" />
+              <ButtonWidget icon="plus" style="OUTLINE" color="ACCENT" size="SMALL" />
             </div>
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
             <div className="w-full h-24 bg-gradient-to-br from-yellow-200 to-orange-300 rounded mb-3"></div>
-            <HeadingField text="Agedashi Tofu" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
-            <RichTextDisplayField value={["Lightly fried tofu cubes in warm dashi broth with green onions."]} marginBelow="NONE" />
+            <HeadingField text="Agedashi Tofu" size="MEDIUM" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
+            <RichTextDisplayField value={[<TextItem text="Lightly fried tofu cubes in warm dashi broth with green onions." />]} marginBelow="NONE" className="[&>div]:leading-tight!" />
             <div className="flex items-center justify-between mt-auto pt-3">
               <span className="font-bold text-gray-900">$8.50</span>
-              <ButtonWidget label="+" style="OUTLINE" color="ACCENT" size="SMALL" />
+              <ButtonWidget icon="plus" style="OUTLINE" color="ACCENT" size="SMALL" />
             </div>
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
             <div className="w-full h-24 bg-gradient-to-br from-gray-700 to-gray-900 rounded mb-3"></div>
-            <HeadingField text="Seaweed Salad" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
-            <RichTextDisplayField value={["Chilled seasoned seaweed with sesame seeds and light vinegar dressing."]} marginBelow="NONE" />
+            <HeadingField text="Seaweed Salad" size="MEDIUM" fontWeight="SEMI_BOLD" marginBelow="EVEN_LESS" />
+            <RichTextDisplayField value={[<TextItem text="Chilled seasoned seaweed with sesame seeds and light vinegar dressing." />]} marginBelow="NONE" className="[&>div]:leading-tight!" />
             <div className="flex items-center justify-between mt-auto pt-3">
               <span className="font-bold text-gray-900">$7.00</span>
-              <ButtonWidget label="+" style="OUTLINE" color="ACCENT" size="SMALL" />
+              <ButtonWidget icon="plus" style="OUTLINE" color="ACCENT" size="SMALL" />
             </div>
           </CardLayout>
         </div>
@@ -301,7 +302,7 @@ export const VerticalAlignment: Story = {
         <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Variable feature list, button at bottom</p>
         <div className="grid grid-cols-3 gap-4">
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Starter" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="NONE" />
+            <HeadingField text="Starter" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
             <HeadingField text="$9/mo" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ 5 projects</li>
@@ -313,7 +314,7 @@ export const VerticalAlignment: Story = {
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Professional" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="NONE" />
+            <HeadingField text="Professional" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
             <HeadingField text="$29/mo" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ Unlimited projects</li>
@@ -328,7 +329,7 @@ export const VerticalAlignment: Story = {
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Enterprise" size="SMALL" fontWeight="SEMI_BOLD" marginBelow="NONE" />
+            <HeadingField text="Enterprise" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
             <HeadingField text="Custom" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ Everything in Pro</li>
