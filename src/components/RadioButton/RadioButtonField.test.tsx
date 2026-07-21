@@ -174,7 +174,7 @@ describe("RadioButtonField - choiceStyle CARDS", () => {
   it("clicking the card container (not the input) triggers selection", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    const { container } = render(
+    render(
       <RadioButtonField {...choices} choiceStyle="CARDS" onChange={onChange} />
     );
     // Click the label text (part of the card, not the input itself)

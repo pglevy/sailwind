@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Info, CheckCircle, AlertCircle, AlertTriangle, X } from 'lucide-react'
+import { Info, CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react'
 import type { SAILShape, SAILMarginSize, SAILAlign } from '../../types/sail'
 import type { ButtonWidgetProps } from '../Button/ButtonWidget'
 import { ButtonWidget } from '../Button/ButtonWidget'

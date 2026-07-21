@@ -9,11 +9,6 @@ const choices = {
   choiceValues: ["red", "green", "blue"],
 };
 
-// Helper to open the dropdown
-async function openDropdown(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /select\.\.\.|red|green|blue/i }));
-}
-
 // ─── DropdownField (single-select) ───────────────────────────────────────────
 
 describe("DropdownField - visibility", () => {

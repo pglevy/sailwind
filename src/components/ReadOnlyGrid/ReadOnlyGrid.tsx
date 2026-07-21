@@ -195,7 +195,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const pageSize = pageSizeProp > 0 ? pageSizeProp : 10;
 
   // Normalize data — treat undefined/null/non-array as empty
-  const rows = Array.isArray(data) ? data : [];
+  const rows = React.useMemo(() => Array.isArray(data) ? data : [], [data]);
 
   // Paging state (1-based)
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -281,7 +281,6 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const needsScrollContainer = height !== "AUTO" && heightClass !== "";
 
   // Compute paging state (use sortedRows for total count)
-  const totalPages = Math.ceil(sortedRows.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, sortedRows.length);
 
