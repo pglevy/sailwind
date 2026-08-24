@@ -13,7 +13,7 @@ const meta = {
     ],
   },
   argTypes: {
-    size: { control: 'select', options: ['SMALL', 'STANDARD'] },
+    size: { control: 'select', options: ['SMALL', 'STANDARD', 'LARGE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
   },
 } satisfies Meta<typeof TagField>
@@ -53,4 +53,47 @@ export const SmallSize: Story = {
       { text: 'PENDING', backgroundColor: 'SECONDARY' },
     ],
   },
+}
+
+export const LargeSize: Story = {
+  args: {
+    size: 'LARGE',
+    tags: [
+      { text: 'ACTIVE', backgroundColor: 'POSITIVE' },
+      { text: 'PENDING', backgroundColor: 'SECONDARY' },
+    ],
+  },
+}
+
+export const WithIcons: Story = {
+  args: {
+    size: 'STANDARD',
+    tags: [
+      { text: 'ACTIVE', backgroundColor: 'POSITIVE', icon: 'loader-circle', iconPosition: 'START' },
+      { text: 'APPROVED', backgroundColor: 'ACCENT', icon: 'check', iconPosition: 'END' },
+      { text: 'REJECTED', backgroundColor: 'NEGATIVE', icon: 'x', iconPosition: 'END' },
+    ],
+  },
+}
+
+export const IconSizes: Story = {
+  args: {
+    tags: [],
+  },
+  render: () => (
+    <div className="flex flex-col gap-3">
+      <TagField
+        size="LARGE"
+        tags={[{ text: 'ACTIVE', backgroundColor: 'POSITIVE', icon: 'loader-circle' }]}
+      />
+      <TagField
+        size="STANDARD"
+        tags={[{ text: 'ACTIVE', backgroundColor: 'POSITIVE', icon: 'loader-circle' }]}
+      />
+      <TagField
+        size="SMALL"
+        tags={[{ text: 'ACTIVE', backgroundColor: 'POSITIVE', icon: 'loader-circle' }]}
+      />
+    </div>
+  ),
 }

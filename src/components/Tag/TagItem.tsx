@@ -1,5 +1,8 @@
 import type { SAILColorInput } from '../../types/sail'
 
+/** Position of the icon relative to the tag text */
+export type TagIconPosition = "START" | "END"
+
 /**
  * Props for individual tag items
  * Maps to SAIL's a!tagItem() function
@@ -17,6 +20,10 @@ export interface TagItemProps {
   showWhen?: boolean
   /** Link to apply to the tag (href string for React implementation) */
   link?: string
+  /** Icon to display (Lucide icon name, e.g. "check" or "circle") */
+  icon?: string
+  /** Position of the icon relative to the text */
+  iconPosition?: TagIconPosition
 }
 
 /**

@@ -133,15 +133,27 @@ const sizeMap: Record<SAILSize, string> = {
 // SAIL Component API
 <TagField size="SMALL" />    // Maps to: px-2 py-1 text-xs
 <TagField size="STANDARD" /> // Maps to: px-4 py-1 text-base
+<TagField size="LARGE" />    // Maps to: px-5 py-1.5 text-xl
 ```
 
-Internal mapping in TagField.tsx:
+Internal mapping (`tagSizeMap` in `src/utils/sailMaps.ts`):
 ```tsx
-const sizeMap = {
+export const tagSizeMap = {
   SMALL: 'text-xs px-2 py-1',      // 12px text, 8px horizontal, 4px vertical
-  STANDARD: 'text-base px-4 py-1'  // 14px text, 16px horizontal, 4px vertical
+  STANDARD: 'text-base px-4 py-1', // 16px text, 16px horizontal, 4px vertical
+  LARGE: 'text-xl px-5 py-1.5'     // 20px text, 20px horizontal, 6px vertical
 }
 ```
+
+Tags don't support `MEDIUM` per SAIL docs. Vertical padding stays shallow across
+all three sizes (compared to `buttonSizeMap`) so tags keep their compact pill
+shape rather than a button's taller click target; text size scales in step
+with `buttonSizeMap` for visual consistency across components.
+
+Tag icons (`icon`/`iconPosition` on `TagItem`) size alongside the tag
+(`tagIconSizeMap` in `src/utils/sailMaps.ts`: 12px / 16px / 20px for
+SMALL / STANDARD / LARGE) and inherit the tag's text color via `currentColor`
+— there is no separate icon color prop.
 
 ## Theme Configuration
 
