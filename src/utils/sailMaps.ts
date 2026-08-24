@@ -68,6 +68,36 @@ export const buttonIconOnlySizeMap: Record<SAILSize, string> = {
   LARGE: 'p-5 text-xl'
 }
 
+/**
+ * Size classes for tags (SMALL, STANDARD, LARGE only — no MEDIUM per SAIL docs).
+ * Text sizes align to buttonSizeMap for consistency; vertical padding stays
+ * shallow so tags keep their compact pill shape rather than a button's height.
+ */
+export const tagSizeMap: Record<Extract<SAILSize, "SMALL" | "STANDARD" | "LARGE">, string> = {
+  SMALL: 'text-xs px-2 py-1',
+  STANDARD: 'text-base px-4 py-1',
+  LARGE: 'text-xl px-5 py-1.5'
+}
+
+/**
+ * Horizontal padding for tags, split by side, so the side adjacent to an
+ * icon can be reduced by 2px. The icon's own visual weight plus the gap to
+ * the text otherwise makes that side look heavier than the plain side.
+ * `base` matches tagSizeMap's px-* value; `tight` is base minus 2px.
+ */
+export const tagHorizontalPaddingMap: Record<Extract<SAILSize, "SMALL" | "STANDARD" | "LARGE">, { base: string; tight: string }> = {
+  SMALL: { base: '0.5rem', tight: '0.375rem' },     // px-2 (8px) → 6px
+  STANDARD: { base: '1rem', tight: '0.875rem' },    // px-4 (16px) → 14px
+  LARGE: { base: '1.25rem', tight: '1.125rem' }     // px-5 (20px) → 18px
+}
+
+/** Icon size (px) for tags, keyed by tag size */
+export const tagIconSizeMap: Record<Extract<SAILSize, "SMALL" | "STANDARD" | "LARGE">, number> = {
+  SMALL: 12,
+  STANDARD: 16,
+  LARGE: 20
+}
+
 // --- Alignment Maps ---
 
 /** Flex alignment (for button arrays, tags, images, stamps — modern START/CENTER/END only) */

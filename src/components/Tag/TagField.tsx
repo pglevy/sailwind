@@ -1,15 +1,16 @@
 import * as React from 'react'
+import * as LucideIcons from 'lucide-react'
 import type { TagItemProps } from './TagItem'
 import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
-import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, alignMap, tagSizeMap, tagIconSizeMap, tagHorizontalPaddingMap } from '../../utils/sailMaps'
 
 /**
- * Tag size - only SMALL and STANDARD are supported per SAIL docs
+ * Tag size - SMALL, STANDARD, and LARGE are supported (no MEDIUM per SAIL docs)
  */
-type TagSize = Extract<SAILSize, "SMALL" | "STANDARD">
+type TagSize = Extract<SAILSize, "SMALL" | "STANDARD" | "LARGE">
 
 /**
  * Props for the TagField component
@@ -30,7 +31,7 @@ export interface TagFieldProps {
   align?: SAILAlign
   /** Additional text for screen readers */
   accessibilityText?: string
-  /** Size of the tags */
+  /** Size of the tags (SMALL, STANDARD, or LARGE) */
   size?: TagSize
   /** Controls field visibility */
   showWhen?: boolean
@@ -68,12 +69,6 @@ export const TagField: React.FC<TagFieldProps> = ({
   // Filter out hidden tags
   const visibleTags = tags.filter(tag => tag.showWhen !== false && tag.text)
 
-  // Size mappings - using Tailwind standard classes that map to SAIL values
-  const sizeMap = {
-    SMALL: 'text-xs px-2 py-1',      // SAIL SMALL: 12px text, 8px horizontal padding, 4px vertical
-    STANDARD: 'text-base px-4 py-1'  // SAIL STANDARD: 16px text, 16px horizontal padding, 4px vertical
-  }
-
   // Semantic color mappings — tags use light tints for backgrounds
   const bgColorMap: Record<string, string> = {
     ACCENT: 'bg-blue-50',
@@ -89,6 +84,25 @@ export const TagField: React.FC<TagFieldProps> = ({
     NEGATIVE: 'text-red-700',
     SECONDARY: 'text-gray-700',
     STANDARD: 'text-gray-900'
+  }
+
+  // Map a Lucide icon name (kebab-case or PascalCase) to its component
+  const getIconComponent = (iconName: string) => {
+    const kebabToPascal = (str: string) =>
+      str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')
+
+    const pascalIconName = kebabToPascal(iconName)
+    if (pascalIconName in LucideIcons) {
+      return LucideIcons[pascalIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>
+    }
+
+    const directIconName = iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase()
+    if (directIconName in LucideIcons) {
+      return LucideIcons[directIconName as keyof typeof LucideIcons] as React.ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>
+    }
+
+    console.warn(`Icon "${iconName}" not found in Lucide icons`)
+    return null
   }
 
   // Render individual tag
@@ -127,16 +141,35 @@ export const TagField: React.FC<TagFieldProps> = ({
     const Component = tag.link ? 'a' : 'span'
     const componentProps = tag.link ? { href: tag.link } : {}
 
+    // Resolve icon (icon color follows text color — inherits via currentColor)
+    const IconComponent = tag.icon ? getIconComponent(tag.icon) : null
+    const iconPosition = tag.iconPosition || 'START'
+    const iconSize = tagIconSizeMap[size]
+    const iconElement = IconComponent && (
+      <IconComponent size={iconSize} className="shrink-0" aria-hidden={true} />
+    )
+
+    // When an icon is present, tighten the padding on the icon's side by 2px.
+    // The icon's own visual weight plus the gap to the text otherwise makes
+    // that side look heavier than the plain (text-only) side.
+    if (IconComponent) {
+      const { tight } = tagHorizontalPaddingMap[size]
+      if (iconPosition === 'START') {
+        inlineStyle.paddingLeft = tight
+      } else {
+        inlineStyle.paddingRight = tight
+      }
+    }
+
     return (
       <Component
         key={index}
         {...componentProps}
         role="listitem"
         className={[
-          'inline-block font-semibold max-w-full',
-          'whitespace-nowrap overflow-hidden text-ellipsis',
+          'inline-flex items-center gap-1 font-semibold max-w-full',
           'rounded-sm',
-          sizeMap[size],
+          tagSizeMap[size],
           bgClass,
           textClass,
           tag.link ? 'hover:underline cursor-pointer' : 'cursor-default'
@@ -145,7 +178,9 @@ export const TagField: React.FC<TagFieldProps> = ({
         title={tag.tooltip}
         aria-label={tag.tooltip}
       >
-        {tag.text}
+        {iconElement && iconPosition === 'START' && iconElement}
+        <span className="overflow-hidden whitespace-nowrap text-ellipsis">{tag.text}</span>
+        {iconElement && iconPosition === 'END' && iconElement}
       </Component>
     )
   }
