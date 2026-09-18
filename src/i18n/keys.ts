@@ -15,6 +15,10 @@
  * Paging adopts full-phrase interpolated keys (`paging.range`, `paging.rangeMany`)
  * rather than concatenating a connector word, because word order differs across
  * languages and a single interpolated phrase stays translatable (Requirement 4.1).
+ * The bold "start – end" number-range is its own substitutable unit
+ * (`paging.numberRange`), interpolated as a single React node into `paging.range`
+ * / `paging.rangeMany` via {@link interpolateNodes} so one translatable phrase
+ * still controls word order while the range itself keeps its bold styling.
  */
 
 import type { LocaleCode } from './types'
@@ -35,10 +39,12 @@ export const KEYS = {
   pagingNextPage: 'paging.nextPage',
   /** Paging: "Last page" control (aria-label / title). */
   pagingLastPage: 'paging.lastPage',
-  /** Paging: full range phrase for `ROW_COUNT` controls — `{0} – {1} of {2}`. */
+  /** Paging: full range phrase for `ROW_COUNT` controls — `{0} of {1}`, where `{0}` is the bold number-range node. */
   pagingRange: 'paging.range',
-  /** Paging: full range phrase for `STANDARD` controls — `{0} – {1} of many`. */
+  /** Paging: full range phrase for `STANDARD` controls — `{0} of many`, where `{0}` is the bold number-range node. */
   pagingRangeMany: 'paging.rangeMany',
+  /** Paging: the "start – end" number-range unit — `{0} – {1}` — substituted as a single bold node into {@link KEYS.pagingRange} / {@link KEYS.pagingRangeMany}. */
+  pagingNumberRange: 'paging.numberRange',
   /** ButtonWidget: loading-indicator aria-label. */
   buttonLoading: 'button.loading',
   /** FieldLabel: help-tooltip aria-label. */

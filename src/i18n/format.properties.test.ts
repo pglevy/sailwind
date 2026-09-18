@@ -117,7 +117,16 @@ describe("Property 11: Formatting robustness", () => {
         expect(typeof dateResult).toBe("string");
         expect(typeof numberResult).toBe("string");
       }),
-      { numRuns: 100 }
+      {
+        numRuns: 100,
+        examples: [
+          [Symbol("x"), "en-US"],
+          [10n, "en-US"],
+          [{}, "de-DE"],
+          [[], "fr-FR"],
+          [() => {}, "ja-JP"],
+        ],
+      }
     );
   });
 });

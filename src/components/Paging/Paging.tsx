@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { useI18n, useLocale, KEYS } from '../../i18n'
+import { useI18n, useLocale, KEYS, interpolateNodes } from '../../i18n'
 
 export interface PagingProps {
   /** Total number of items */
@@ -69,11 +69,29 @@ export const Paging: React.FC<PagingProps> = ({
       >
         <ChevronLeft size={18} />
       </button>
-      {pagingControls === 'ROW_COUNT' ? (
-        <span>{t(KEYS.pagingRange, startIndex, endIndex, totalCount)}</span>
-      ) : (
-        <span>{t(KEYS.pagingRangeMany, startIndex, endIndex)}</span>
-      )}
+      {(() => {
+        // The "start – end" number-range is its own translatable unit
+        // (paging.numberRange) rendered as a single bold node, so it can be
+        // substituted as-is into the surrounding phrase below.
+        const numberRange = (
+          <span className="font-bold">{t(KEYS.pagingNumberRange, startIndex, endIndex)}</span>
+        )
+
+        // NOTE: `t(KEYS.pagingRange)` / `t(KEYS.pagingRangeMany)` are called with
+        // NO value args on purpose. With no args, the lookup's missing-argument
+        // behavior leaves the `{0}`/`{1}` placeholders in the resolved template
+        // untouched, so we get back the raw phrase (e.g. "{0} of {1}") instead of
+        // a fully-substituted string. `interpolateNodes` then fills those same
+        // placeholders with React nodes (the bold `numberRange` above, plus
+        // `totalCount`) — this is node-aware interpolation, not concatenation:
+        // the phrase (and its word order) still comes from a single translatable
+        // string, it's just filled with elements instead of text.
+        return pagingControls === 'ROW_COUNT' ? (
+          <span>{interpolateNodes(t(KEYS.pagingRange), [numberRange, totalCount])}</span>
+        ) : (
+          <span>{interpolateNodes(t(KEYS.pagingRangeMany), [numberRange])}</span>
+        )
+      })()}
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!hasNextPage}

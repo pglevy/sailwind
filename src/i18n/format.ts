@@ -46,13 +46,22 @@ function resolveLocale(locale: string): string {
  * `null`/`undefined` and any value that produces an invalid `Date` (empty
  * string, non-date string, `NaN`, non-finite number) yield `null`, which the
  * caller renders as an empty string (Requirement 8.5).
+ *
+ * The coercion itself is guarded: some exotic inputs (e.g. `Symbol`, `BigInt`)
+ * make the `Date` constructor throw a `TypeError` rather than produce an
+ * invalid date. That throw is caught here and also yields `null`, so this
+ * helper is total — it never throws for any input (Requirement 8.5, 8.6).
  */
 function toValidDate(value: Date | string | number | null | undefined): Date | null {
   if (value === null || value === undefined) {
     return null
   }
-  const date = value instanceof Date ? value : new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
+  try {
+    const date = value instanceof Date ? value : new Date(value as string | number)
+    return Number.isNaN(date.getTime()) ? null : date
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -61,6 +70,11 @@ function toValidDate(value: Date | string | number | null | undefined): Date | n
  * `null`/`undefined`, empty/whitespace-only strings, non-numeric strings, and
  * non-finite numbers (`NaN`, `±Infinity`) yield `null`, which the caller renders
  * as an empty string (Requirement 8.5).
+ *
+ * The coercion itself is guarded: some exotic inputs (e.g. `Symbol`) make
+ * `Number()` throw a `TypeError` rather than produce `NaN`. That throw is
+ * caught here and also yields `null`, so this helper is total — it never
+ * throws for any input (Requirement 8.5, 8.6).
  */
 function toValidNumber(value: number | string | null | undefined): number | null {
   if (value === null || value === undefined) {
@@ -69,8 +83,12 @@ function toValidNumber(value: number | string | null | undefined): number | null
   if (typeof value === 'string' && value.trim() === '') {
     return null
   }
-  const num = typeof value === 'number' ? value : Number(value)
-  return Number.isFinite(num) ? num : null
+  try {
+    const num = typeof value === 'number' ? value : Number(value as unknown as string)
+    return Number.isFinite(num) ? num : null
+  } catch {
+    return null
+  }
 }
 
 /**

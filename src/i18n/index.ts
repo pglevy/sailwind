@@ -20,6 +20,9 @@ export { formatDate, formatNumber } from './format'
 // Text_Direction helper (exposed for future RTL consumption)
 export { directionForLocale } from './direction'
 
+// Node-aware interpolation (placeholders that must be React nodes, not strings)
+export { interpolateNodes } from './interpolateNodes'
+
 // Translation_Key catalog + supported-locale registry
 export { KEYS, SUPPORTED_LOCALES, DEFAULT_LOCALE } from './keys'
 export type { TranslationKey, TranslationKeyName } from './keys'

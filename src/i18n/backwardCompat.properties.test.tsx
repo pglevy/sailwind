@@ -27,7 +27,7 @@ import { useI18n } from "./context";
  * `src/i18n/bundles/components.properties` — the backward-compat source of
  * truth. The bundle loader decodes `\u2013` to the real EN DASH (U+2013), so the
  * expected value uses that character (written here as the `\u2013` escape, which
- * is the same code point); the `{0}`/`{1}`/`{2}` interpolation placeholders are
+ * is the same code point); the `{0}`/`{1}` interpolation placeholders are
  * kept literal because Property 7 resolves keys with no arguments.
  *
  * Typing this as `Record<TranslationKey, string>` makes completeness compile-time
@@ -40,8 +40,9 @@ const EXPECTED: Record<TranslationKey, string> = {
   "paging.previousPage": "Previous page",
   "paging.nextPage": "Next page",
   "paging.lastPage": "Last page",
-  "paging.range": "{0} \u2013 {1} of {2}",
-  "paging.rangeMany": "{0} \u2013 {1} of many",
+  "paging.range": "{0} of {1}",
+  "paging.rangeMany": "{0} of many",
+  "paging.numberRange": "{0} \u2013 {1}",
   "button.loading": "loading",
   "field.help": "help",
   "field.required": "required",
