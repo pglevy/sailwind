@@ -1,0 +1,606 @@
+{
+  "pbtResults": {
+    "5.2 Write property test for direction mapping": {
+      "status": "passed",
+      "lastRunTimestamp": 1789506794895
+    }
+  },
+  "executionHistory": {
+    "1.1 Create `src/i18n/normalizeLocale.ts` and shared i18n types": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201333
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506211554
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506305319
+      }
+    ],
+    "2.1 Implement `src/i18n/I18nLookup.ts`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201390
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506310372
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506486259
+      }
+    ],
+    "3.1 Implement `src/i18n/bundleLoader.ts`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201436
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506627151
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510418054
+      }
+    ],
+    "4. Checkpoint - core lookup + loader": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201499
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514426867
+      }
+    ],
+    "5.1 Implement `src/i18n/direction.ts`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201547
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506311420
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506487193
+      }
+    ],
+    "6.1 Implement `src/i18n/format.ts`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201590
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506312124
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506488071
+      }
+    ],
+    "7.1 Implement `src/i18n/context.tsx`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201632
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514431576
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515134478
+      }
+    ],
+    "8.1 Implement `src/i18n/appianLocale.ts` and integrate with `LocaleProvider`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201672
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515343277
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515543643
+      }
+    ],
+    "9.1 Create `src/i18n/keys.ts`, `src/i18n/bundles/components.properties`, registry, and `src/i18n/index.ts`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201713
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515341879
+      }
+    ],
+    "10. Checkpoint - i18n runtime complete (core + React + bridge + bundle)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201757
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515904259
+      }
+    ],
+    "11.1 Externalize `Paging` strings": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201799
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515344226
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515545014
+      }
+    ],
+    "11.2 Externalize `ButtonWidget` loading label": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201842
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515345700
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515545983
+      }
+    ],
+    "11.3 Externalize `FieldLabel` and `StampField` labels": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201891
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515346574
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515547351
+      }
+    ],
+    "11.4 Externalize `ProgressBar` default aria-label": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506201968
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515348025
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515548367
+      }
+    ],
+    "11.5 Externalize `ImageField` default aria-label": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506202017
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515549788
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515898363
+      }
+    ],
+    "11.6 Externalize `ReadOnlyGrid` empty-state message": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506202059
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515550723
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515899057
+      }
+    ],
+    "13.1 Add locale toolbar and decorator in `.storybook/preview.tsx`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506202100
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515554415
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515902825
+      }
+    ],
+    "15. Final verification": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506202143
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789520300306
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789520499496
+      }
+    ],
+    "1. Establish i18n module foundations (types + locale normalization)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506305363
+      }
+    ],
+    "2. Implement the pure lookup engine": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506486310
+      }
+    ],
+    "5. Implement the Text_Direction helper (core — direction signal is not optional)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506487270
+      }
+    ],
+    "6. Implement locale-aware formatting helpers": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506488116
+      }
+    ],
+    "1.2 Write property test for locale normalization": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506543260
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506623873
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510414425
+      }
+    ],
+    "2.2 Write property test for lookup fallback determinism": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506624809
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510415728
+      }
+    ],
+    "2.3 Write property test for positional interpolation": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506626228
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510416663
+      }
+    ],
+    "5.2 Write property test for direction mapping": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506628109
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510419002
+      }
+    ],
+    "6.2 Write property test for date formatting": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506629504
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514423272
+      }
+    ],
+    "6.3 Write property test for number formatting": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506630459
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514424516
+      }
+    ],
+    "6.4 Write property test for formatting robustness": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789506631860
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514425473
+      }
+    ],
+    "3. Implement the bundle loader (.properties parser + Unicode decoding)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789510418128
+      }
+    ],
+    "3.2 Write property test for loader filename handling": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514427813
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515131782
+      }
+    ],
+    "3.3 Write property test for Unicode escape decoding": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514429223
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515132178
+      }
+    ],
+    "3.4 Write property test for context-key exclusion": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789514430351
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515133055
+      }
+    ],
+    "7. Implement the React context, provider, and hooks": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515134542
+      }
+    ],
+    "9. Author the key catalog, default bundle, registry, and public exports": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515341941
+      }
+    ],
+    "8. Implement the Appian locale bridge and wire it into the provider": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515543712
+      }
+    ],
+    "8.2 Write unit tests for the Appian bridge": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515552048
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515900035
+      }
+    ],
+    "9.2 Write default-bundle completeness and export-stability tests": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515553014
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515901430
+      }
+    ],
+    "11. Wire library-owned components to resolve strings via `t()`": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515899104
+      }
+    ],
+    "13. Add Storybook locale selection": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515902894
+      }
+    ],
+    "11.7 Write no-provider backward-compatibility property test": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515905159
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516298010
+      }
+    ],
+    "11.8 Write consumer text pass-through property test": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515906582
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516299419
+      }
+    ],
+    "12.1 Consume `direction` from `useLocale()` to set `dir` and mirror layout": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515907997
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516300827
+      }
+    ],
+    "14.1 Author `_en_US` designer-translation bundles per component version": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789515908918
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516301782
+      }
+    ],
+    "12. Apply RTL layout in components (OPTIONAL for v1)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516300881
+      }
+    ],
+    "14. Appian designer bundles and packaging validation (downstream — OPTIONAL for v1)": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516301825
+      }
+    ],
+    "14.2 Add packaging-validation step enforcing the `_en_US` designer bundle": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789516303184
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789520300340
+      }
+    ],
+    "7.2 Write unit/example tests for provider and hooks": [
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789520518650
+      },
+      {
+        "executionId": "740bfd5e-30d1-47cb-8e4e-83f2c0a91a93",
+        "chatSessionId": "sess_e3d44a68-df04-467c-a2e2-3750e6ce3556",
+        "timestamp": 1789520749823
+      }
+    ]
+  }
+}
