@@ -64,8 +64,13 @@ export type TranslationKey = (typeof KEYS)[TranslationKeyName]
  * default `en-us` bundle; adding a locale is a drop-in `.properties` file plus
  * one entry here (used only for provider validation and the Storybook picker —
  * lookup itself is data-driven).
+ *
+ * `'es'` is a temporary SMOKE-TEST FIXTURE for manually exercising locale
+ * switching in Storybook. Its bundle (`components_es.properties`) is
+ * illustrative and has not been professionally reviewed — v1 officially ships
+ * en-US only.
  */
-export const SUPPORTED_LOCALES: LocaleCode[] = ['en-us']
+export const SUPPORTED_LOCALES: LocaleCode[] = ['en-us', 'es']
 
 /**
  * The normalized Default_Locale. The lookup fallback chain always terminates
