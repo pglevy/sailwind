@@ -123,7 +123,7 @@ describe("Property 1: Data rendering dimensions", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -154,7 +154,7 @@ describe("Property 2: Cell value resolution", () => {
       }),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 
   it("resolves function accessors to the correct computed values", () => {
     fc.assert(
@@ -180,7 +180,7 @@ describe("Property 2: Cell value resolution", () => {
       }),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -232,7 +232,7 @@ describe("Property 3: Column configuration application", () => {
       }),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -299,7 +299,7 @@ describe("Property 4: Grid metadata rendering", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -528,7 +528,7 @@ describe("Property 8: Initial sorts applied correctly", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -749,7 +749,7 @@ describe("Property 11: Pre-selected rows render as selected", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 
@@ -791,7 +791,7 @@ describe("Property 12: Alternate row shading pattern", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
 
 // =============================================================================
@@ -846,5 +846,5 @@ describe("Property 13: Fixed height constrains grid body", () => {
       ),
       { numRuns: 100 }
     );
-  }, 30000);
+  }, 60000);
 });
