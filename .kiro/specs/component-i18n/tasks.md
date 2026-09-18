@@ -137,6 +137,7 @@ Tasks marked `*` are optional (test sub-tasks, RTL-application work, and downstr
 - [x] 11. Wire library-owned components to resolve strings via `t()`
   - [x] 11.1 Externalize `Paging` strings
     - `src/components/Paging/Paging.tsx`: replace hardcoded control labels/aria/titles with `t()`; render range using the full-phrase interpolated keys (`paging.range` / `paging.rangeMany`), not concatenation
+    - As-built: the bold "start – end" number-range is its own key (`paging.numberRange`), spliced into `paging.range`/`paging.rangeMany` as a single React node via the new `interpolateNodes` helper (see task 16.1) — `t(KEYS.pagingRange)` is called with no value args so its placeholders survive for the node splice
     - _Requirements: 4.1, 4.2, 5.1, 5.2_
 
   - [x] 11.2 Externalize `ButtonWidget` loading label
@@ -216,3 +217,20 @@ Tasks marked `*` are optional (test sub-tasks, RTL-application work, and downstr
   ]
 }
 ```
+
+## Post-implementation refinements
+
+- [x] 16.1 Restore bold numeric range in Paging via node interpolation
+  - Added `paging.numberRange` key (`{0} \u2013 {1}`) holding the bold "start – end" range as its own translatable unit; restructured `paging.range` to `{0} of {1}` and `paging.rangeMany` to `{0} of many`, both taking the number-range as a bold node
+  - Added `src/i18n/interpolateNodes.tsx` (`interpolateNodes(template, args)`), exported from `src/i18n/index.ts`, to splice React nodes into `{n}` placeholders while mirroring the string interpolation's missing-arg passthrough
+  - Added the Paging bold-range render test (`src/components/Paging/Paging.test.tsx`) and the `interpolateNodes` unit test (`src/i18n/interpolateNodes.test.tsx`)
+  - _Requirements: 4.1, 4.2, 5.1_
+
+- [x] 16.2 Add temporary Spanish smoke-test fixture
+  - Added `src/i18n/bundles/components_es.properties` and `'es'` to `SUPPORTED_LOCALES` in `keys.ts`, for manually verifying locale switching in Storybook only — unreviewed, not an officially shipped locale
+  - _Requirements: 1.6, 2.1, 10.4_
+
+- [x] 16.3 Harden formatters against exotic-input coercion throws
+  - Wrapped `toValidDate`/`toValidNumber` coercion (`new Date(value)` / `Number(value)`) in `try/catch` in `format.ts` so inputs that throw during coercion (e.g., `Symbol`, `BigInt`) return `''` instead of throwing, making the helpers total for any input
+  - Extended Property 11's test with deterministic `examples` (`Symbol`, `BigInt`, object, array, function) to guard against regression
+  - _Requirements: 8.5, 8.6_

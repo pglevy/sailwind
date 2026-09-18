@@ -19,6 +19,10 @@ The design is anchored by three non-negotiable constraints from the requirements
 | Translation mechanism | In-house `I18nLookup` + `loadI18nBundle` port. **No** react-i18next / FormatJS / other libraries. |
 | Locale-aware formatting | **Date and number** formatting via the `Intl` API are in scope. **Currency and relative-time are deferred** (future considerations). |
 
+> **Note (post-implementation):** a temporary, unreviewed `es` smoke-test fixture bundle (`components_es.properties`) exists solely to manually exercise locale switching in Storybook. It is **not** an officially shipped locale — v1 still ships `en-US` only as the authored, reviewed translation. See `SUPPORTED_LOCALES` and the "Bundle file model" section below.
+>
+> **Note (post-implementation):** the direction→`dir` reference wiring described under `directionForLocale` is now in place in `FieldWrapper` and `Paging` (`dir={direction === 'RTL' ? 'rtl' : undefined}`), a no-op for `LTR`/`en-us`. Full layout mirroring beyond the `dir` attribute is still deferred.
+
 ### Goals
 
 - All library-owned user-facing strings and generated ARIA text resolve through a single lookup with predictable fallback.
@@ -114,6 +118,7 @@ Three mechanisms guarantee Requirement 5:
 src/i18n/
 ├── index.ts                 # public exports (LocaleProvider, useI18n, useLocale, formatters, types)
 ├── I18nLookup.ts            # pure lookup + interpolation (port of ui-library)
+├── interpolateNodes.tsx     # node-aware interpolation for styled placeholders
 ├── bundleLoader.ts          # loadI18nBundle via import.meta.glob
 ├── context.tsx              # I18nContext + LocaleProvider + hooks
 ├── direction.ts             # directionForLocale(), RTL language table
@@ -123,7 +128,7 @@ src/i18n/
 ├── keys.ts                  # Translation_Key constants (typed catalog)
 └── bundles/
     ├── components.properties          # default (en-US) — REQUIRED, complete
-    └── components_en_US.properties     # explicit en_US (optional mirror; see Bundle strategy)
+    └── components_es.properties       # smoke-test fixture (Spanish, unreviewed)
 ```
 
 ### Type definitions
@@ -183,6 +188,18 @@ Fallback order for `lookup(locale, key, ...args)` (Requirement 2.1–2.4):
 
 Interpolation (Requirement 2.7–2.8): replace each `{n}` with the string form of `args[n]`; if `args[n]` is `undefined`/`null` or absent, leave the `{n}` token unchanged.
 
+### Node-aware interpolation (`interpolateNodes`)
+
+```typescript
+export function interpolateNodes(template: string, args: ReactNode[]): ReactNode[]
+```
+
+`I18nLookup`'s interpolation only ever produces a `string`, which is sufficient when every substituted value is plain text. It is not sufficient when a placeholder must be a styled or otherwise non-text React element — for example, the bold "start – end" page range in `Paging`, which needs to render as a `<span className="font-bold">` nested inside a larger translatable phrase. Concatenating strings around a styled span would restore the styling at the cost of hardcoding word order outside the translation, which defeats the purpose of externalizing the phrase.
+
+`interpolateNodes` solves this without concatenation: it takes an already-*resolved* template string (call `t(key)` with **no** interpolation arguments so its `{n}` placeholders survive) and splices `ReactNode`s into it directly. The phrase — and its word order — still comes from one translatable string; only the *content* of each placeholder is a node instead of text. Missing-argument behavior mirrors the string interpolation exactly: a placeholder is substituted only when the corresponding `args[index]` is provided and not `undefined`, otherwise the literal `{index}` token is left unchanged.
+
+Consumers get this via the `t(key)`-with-no-args template + `interpolateNodes` pattern (see "Component integration pattern" below for the Paging example). `interpolateNodes` is exported from `src/i18n/index.ts` alongside the rest of the public API.
+
 ### `bundleLoader` (Vite `import.meta.glob`)
 
 Replaces webpack `require.context` with Vite's compile-time glob. `.properties` files are imported eagerly as raw strings, parsed into key/value maps, filtered for `.##CONTEXT##`, keyed by normalized locale, and handed to `I18nLookup`.
@@ -231,7 +248,7 @@ export function directionForLocale(locale: string): TextDirection
 
 - Maintains a small set of RTL language subtags: `ar`, `he`, `fa`, `ur` (extendable).
 - Returns `'RTL'` when the normalized locale's language subtag is in the set (Requirement 9.2), `'LTR'` otherwise, including for absent/unknown locales (Requirement 9.3, 9.5).
-- **v1 scope:** the value is computed and exposed via context/hook. Components are **not** required to consume it yet; documentation shows the intended consumption pattern (e.g., `<div dir={direction === 'RTL' ? 'rtl' : 'ltr'}>`). RTL application tasks are optional.
+- **v1 scope (as-built):** the value is computed and exposed via context/hook, and is now consumed as a **reference implementation** in `FieldWrapper` and `Paging`: `dir={direction === 'RTL' ? 'rtl' : undefined}`. The conditional is deliberate — for `LTR`/`en-us` it evaluates to `undefined`, so no `dir` attribute is emitted and there is zero DOM change versus pre-i18n output (preserving Requirement 5). Other components are **not** required to consume it yet, and full layout mirroring (spacing, icon direction, etc.) beyond the `dir` attribute remains optional/deferred.
 
 ### Formatting helpers (`format.ts`)
 
@@ -258,6 +275,8 @@ Behavior (Requirement 8):
 - If even the default locale fails to format → return the value's default string representation (`String(value)`), without throwing (8.6).
 
 Component-facing usage will typically pull the locale from the hook: a thin convenience is exposed so grids and other components can format without threading locale manually. Currency and relative-time helpers are intentionally **not** included in v1 (future considerations).
+
+**Hardened for any input (as-built):** `toValidDate`/`toValidNumber` wrap their coercion (`new Date(value)` / `Number(value)`) in `try/catch`. Some exotic inputs (`Symbol`, `BigInt`, etc.) make the coercion itself throw a `TypeError` rather than yield an invalid date/`NaN`; that throw is now caught and treated the same as an unparseable value, returning `''`. This makes both helpers total for **any** input, not just the invalid-but-non-throwing cases originally covered, strengthening Requirement 8.5/8.6.
 
 ### Appian locale bridge (`appianLocale.ts`)
 
@@ -296,6 +315,18 @@ emptyGridMessage,
 const emptyText = emptyGridMessage ?? t('grid.emptyMessage')
 ```
 
+Where a placeholder must be a styled React node rather than plain text — the bold page-range in `Paging` — the component builds the node first, then splices it into the surrounding phrase's template via `interpolateNodes` instead of concatenating strings:
+
+```typescript
+const numberRange = (
+  <span className="font-bold">{t('paging.numberRange', start, end)}</span>
+)
+
+// `t('paging.range')` is called with NO args, so its `{0}`/`{1}` placeholders
+// stay intact for the node splice below.
+const range = interpolateNodes(t('paging.range'), [numberRange, total])
+```
+
 ## Data Models
 
 ### Translation_Key catalog and namespacing
@@ -308,8 +339,9 @@ Keys use a `component.camelCaseName` dotted namespace. This keeps keys stable, r
 | `paging.previousPage` | `Previous page` | `Paging` | "Previous page" |
 | `paging.nextPage` | `Next page` | `Paging` | "Next page" |
 | `paging.lastPage` | `Last page` | `Paging` | "Last page" |
-| `paging.rangeOf` | `of` | `Paging` | "… of {total}" connector |
-| `paging.ofMany` | `of many` | `Paging` | "… of many" |
+| `paging.range` | `{0} of {1}` | `Paging` | full range phrase for `ROW_COUNT` controls; `{0}` is the bold number-range node, `{1}` is the total |
+| `paging.rangeMany` | `{0} of many` | `Paging` | full range phrase for `STANDARD` controls; `{0}` is the bold number-range node |
+| `paging.numberRange` | `{0} \u2013 {1}` | `Paging` | the bold "start – end" number-range unit, spliced into `paging.range`/`paging.rangeMany` as a single node |
 | `button.loading` | `loading` | `ButtonWidget` | `aria-label="loading"` |
 | `field.help` | `help` | `FieldLabel`, `StampField` | `aria-label="help"` |
 | `field.required` | `required` | `FieldLabel` | `aria-label="required"` |
@@ -317,14 +349,7 @@ Keys use a `component.camelCaseName` dotted namespace. This keeps keys stable, r
 | `image.openLinked` | `Open linked image` | `ImageField` | default `aria-label` "Open linked image" |
 | `grid.emptyMessage` | `No items available` | `ReadOnlyGrid` | `emptyGridMessage` default |
 
-Note on `paging.rangeOf`: the current rendering is `"{start} – {end} of {total}"`. Because word order differs across languages, the design prefers a **single interpolated key** over concatenation for translatability. A follow-up key is therefore recommended:
-
-| Translation_Key | Default (en-US) value | Notes |
-| --- | --- | --- |
-| `paging.range` | `{0} – {1} of {2}` | Full phrase, interpolated. Preferred over concatenating `rangeOf`. |
-| `paging.rangeMany` | `{0} – {1} of many` | Full phrase for `STANDARD` controls. |
-
-Using the full-phrase keys avoids grammatically broken output in other locales and is the recommended target; the split keys are listed for traceability to the current literals. The tasks phase should adopt the full-phrase keys.
+Note on `paging.range` / `paging.rangeMany` / `paging.numberRange` (as-built): the original design considered a single fully-substituted phrase like `"{0} – {1} of {2}"`, but that would have flattened the bold "start – end" range to plain text, losing the visual emphasis the component previously rendered via concatenation. The final decision splits the phrase into two translatable units instead of concatenating markup around a translation: `paging.numberRange` (`{0} \u2013 {1}`) holds just the bold numeric range, and `paging.range`/`paging.rangeMany` hold the surrounding full phrase (`{0} of {1}` / `{0} of many`) with `{0}` reserved for that range. `Paging` calls `t(KEYS.pagingRange)` (or `pagingRangeMany`) with **no** value arguments — so the `{0}`/`{1}` placeholders stay intact in the returned template — then pipes that template through `interpolateNodes` to splice in the bold `numberRange` node (and the total, for `pagingRange`). The range renders bold, the phrase remains one translatable unit per locale, and no string concatenation is involved.
 
 ### Bundle file model
 
@@ -336,8 +361,9 @@ paging.firstPage=First page
 paging.previousPage=Previous page
 paging.nextPage=Next page
 paging.lastPage=Last page
-paging.range={0} \u2013 {1} of {2}
-paging.rangeMany={0} \u2013 {1} of many
+paging.range={0} of {1}
+paging.rangeMany={0} of many
+paging.numberRange={0} \u2013 {1}
 button.loading=loading
 field.help=help
 field.required=required
@@ -496,6 +522,7 @@ The i18n subsystem is designed to degrade gracefully; no i18n code path may thro
 - Locale rejected by `Intl` (`RangeError`) → retry with Default_Locale (Requirement 8.4).
 - Default locale also fails → `String(value)` (Requirement 8.6).
 - No helper throws under any input.
+- **As-built:** the value coercion itself (`new Date(value)` / `Number(value)`) is also guarded with `try/catch`, so exotic inputs that throw during coercion (e.g., `Symbol`, `BigInt`) are caught and yield `''` just like any other unparseable value — the helpers are total for any input (Requirement 8.5, 8.6).
 
 ### Designer / packaging (downstream)
 
@@ -521,7 +548,7 @@ Tag format: `Feature: component-i18n, Property {number}: {property_text}`
 | P8 Consumer pass-through | `src/i18n/passthrough.properties.test.tsx` | arbitrary non-empty strings into component text props |
 | P9 Date formatting | `src/i18n/format.properties.test.ts` | arbitrary valid dates × supported locales × option sets |
 | P10 Number formatting | `src/i18n/format.properties.test.ts` | arbitrary finite numbers × supported locales × option sets |
-| P11 Formatting robustness | `src/i18n/format.properties.test.ts` | nullish, NaN, unparseable, garbage-locale inputs |
+| P11 Formatting robustness | `src/i18n/format.properties.test.ts` | nullish, NaN, unparseable, garbage-locale inputs; extended with deterministic exotic-input `examples` (`Symbol`, `BigInt`, object, array, function) so coercion-throw regressions can't pass silently |
 | P12 Direction mapping | `src/i18n/direction.properties.test.ts` | RTL and non-RTL locales with case/region/separator variants |
 
 Notes:
@@ -535,6 +562,8 @@ Notes:
 - Default-bundle completeness (3.6): assert every constant in `keys.ts` has a non-key resolution in the default bundle.
 - Export stability (5.3): assert existing `src/index.ts` exports are still present; the existing component test suite must continue to pass unchanged (5.2).
 - Appian bridge (6.1, 6.4, 6.5): mock/inject a global `Appian.getLocale` and assert the provider consumes it; assert `null` on empty/absent global with no throw.
+- `interpolateNodes` unit test (`src/i18n/interpolateNodes.test.tsx`): node substitution into `{n}` placeholders, missing-argument passthrough, and literal-text preservation.
+- Paging bold-range render test (`src/components/Paging/Paging.test.tsx`): asserts the number-range renders as a bold node nested inside the full translated phrase for both `ROW_COUNT` and `STANDARD` controls.
 
 ### Integration / manual
 
@@ -552,5 +581,5 @@ Per project convention, `pnpm run typecheck`, `pnpm run lint`, and `pnpm test` (
 ## Future Considerations
 
 - **Additional locales:** drop a `components_<locale>.properties` file into `src/i18n/bundles/` and add the code to `SUPPORTED_LOCALES`; no other code change is required.
-- **RTL layout application:** components can consume `direction` from `useLocale()` to set `dir` and mirror layout; deferred as optional for v1.
+- **RTL layout application:** the reference `dir` wiring now exists in `FieldWrapper` and `Paging` (`dir={direction === 'RTL' ? 'rtl' : undefined}`, a no-op for LTR); remaining work is extending this pattern to other components and full layout mirroring (spacing, icon direction, etc.), still deferred as optional for v1.
 - **Currency and relative-time formatting:** add `formatCurrency` (`Intl.NumberFormat` with `style: 'currency'`) and `formatRelativeTime` (`Intl.RelativeTimeFormat`) following the same resolution/fallback pattern as the v1 helpers. Deferred out of v1 scope.
