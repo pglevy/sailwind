@@ -5,6 +5,7 @@ import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldWrapper } from "../shared/FieldWrapper";
 import { GridColumn, type GridColumnProps } from "./GridColumn";
 import { textAlignMap } from "../../utils/sailMaps";
+import { useI18n, KEYS } from '../../i18n'
 import type {
   SAILLabelPosition,
   SAILMarginSize,
@@ -168,7 +169,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   labelPosition,
   instructions,
   helpTooltip,
-  emptyGridMessage = "No items available",
+  emptyGridMessage,
   data,
   children,
   pageSize: pageSizeProp = 10,
@@ -189,6 +190,11 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   marginBelow,
   className
 }) => {
+  // Locale-aware translation for the library default empty-state message.
+  // Consumer-supplied emptyGridMessage always passes through untouched;
+  // only the omitted case falls back to the externalized string, which the
+  // default en-US bundle maps back to "No items available" (byte-for-byte compatible).
+  const { t } = useI18n();
   const gridId = React.useId();
 
   // Handle invalid pageSize (0 or negative → default to 10)
@@ -491,7 +497,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
       className={className}
     >
       {rows.length === 0 ? (
-        <div className="text-gray-700 py-4 text-center">{emptyGridMessage}</div>
+        <div className="text-gray-700 py-4 text-center">{emptyGridMessage ?? t(KEYS.gridEmptyMessage)}</div>
       ) : (
         <>
           {needsScrollContainer ? (

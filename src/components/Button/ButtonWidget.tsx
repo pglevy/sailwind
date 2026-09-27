@@ -4,6 +4,7 @@ import type { SAILSize, SAILColorInput } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 import { buttonSizeMap, buttonIconOnlySizeMap } from '../../utils/sailMaps'
+import { useI18n, KEYS } from '../../i18n'
 
 type ButtonStyle = "SOLID" | "OUTLINE" | "GHOST" | "LINK"
 type ButtonWidth = "MINIMIZE" | "FILL"
@@ -89,6 +90,8 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
   value,
   className
 }) => {
+  const { t } = useI18n()
+
   // Visibility control
   if (!showWhen) return null
 
@@ -288,7 +291,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       title={tooltip}
     >
       {loadingIndicator && (
-        <span className="animate-spin" aria-label="loading">⟳</span>
+        <span className="animate-spin" aria-label={t(KEYS.buttonLoading)}>⟳</span>
       )}
       {!loadingIndicator && IconElement && iconPosition === "START" && IconElement}
       {label && <span>{label}</span>}

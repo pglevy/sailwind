@@ -7,6 +7,7 @@ import type { UserImageProps } from './UserImage'
 import type { WebImageProps } from './WebImage'
 import { alignMap, shapeMap } from '../../utils/sailMaps'
 import { resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
+import { useI18n, KEYS } from '../../i18n'
 
 // Union type for all image types supported by ImageField
 type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps
@@ -92,6 +93,9 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   marginBelow = "STANDARD",
   className
 }) => {
+  // Locale-aware translation for the library default aria-label
+  const { t } = useI18n()
+
   // Visibility control
   if (!showWhen) return null
 
@@ -248,7 +252,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
                 className="relative cursor-pointer"
                 role="button"
                 tabIndex={0}
-                aria-label={imageProps.altText || 'Open linked image'}
+                aria-label={imageProps.altText || t(KEYS.imageOpenLinked)}
                 onClick={() => imageProps.link!()}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -297,7 +301,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
               className="relative cursor-pointer"
               role="button"
               tabIndex={0}
-              aria-label={imageProps.altText || 'Open linked image'}
+              aria-label={imageProps.altText || t(KEYS.imageOpenLinked)}
               onClick={() => imageProps.link!()}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

@@ -57,6 +57,41 @@ This ensures Tailwind scans Sailwind's compiled output for class names. The `@im
 
 The `ApplicationHeader` component includes all its icon assets as embedded data URIs — no image copying or configuration needed. Icons render automatically based on the `objectType` prop, and you can override them via `iconSrc` and `appianLogoSrc` if needed.
 
+## Internationalization (i18n)
+
+i18n is opt-in and fully backward-compatible. With no provider in the tree, every component renders the same English text as before — existing prototypes need no changes.
+
+### Providing a locale
+
+Wrap your app (or just a subtree) in `LocaleProvider` and read the active locale/translations via the `useI18n()` / `useLocale()` hooks:
+
+```tsx
+import { LocaleProvider, useI18n } from '@pglevy/sailwind'
+
+<LocaleProvider locale="en-US">
+  <App />
+</LocaleProvider>
+```
+
+Inside Appian, the locale is picked up automatically from the Appian client. The `locale` prop and its default (`en-US`) are there for Storybook and standalone use outside Appian.
+
+### Locale-aware formatting
+
+`formatDate` and `formatNumber` are exported helpers (built on `Intl`) for formatting dates and numbers correctly for the active locale.
+
+### Adding a locale (contributors)
+
+1. Drop a `components_<locale>.properties` file into `src/i18n/bundles/` (Appian-convention `.properties`, keyed by the `_<locale>` filename suffix).
+2. Add the normalized code to `SUPPORTED_LOCALES` in `src/i18n/keys.ts`.
+
+No other code changes are needed — the bundle loader auto-discovers the new file, and it shows up in the Storybook locale picker.
+
+> v1 ships `en-US` only. A temporary, unreviewed Spanish (`es`) bundle is included purely as a smoke-test fixture for manually verifying locale switching — it isn't a reviewed translation.
+
+### Storybook
+
+Use the Locale toolbar (globe icon) to switch locales and see components re-render. The a11y addon's Accessibility panel runs per-story, so you can check each locale for accessibility issues too.
+
 ## For Contributors
 
 ### Setup
@@ -178,6 +213,7 @@ a!tagField(
 ## Documentation
 
 - **[Component Reference](https://pglevy.github.io/sailwind/)** — Live Storybook with all components
+- **[Internationalization (i18n)](#internationalization-i18n)** — Providing a locale, formatting helpers, and adding a new locale
 - **[TAILWIND-SAIL-MAPPING.md](TAILWIND-SAIL-MAPPING.md)** — Tailwind to SAIL style mappings
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — How to contribute to the project
 - **[AGENTS.md](AGENTS.md)** — Guidance for AI agents working with the library

@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { SAILLabelPosition } from '../../types/sail'
+import { useI18n, KEYS } from '../../i18n'
 
 export interface FieldLabelProps {
   /** The label text to display */
@@ -33,6 +34,8 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
   htmlFor,
   accessibilityText
 }) => {
+  const { t } = useI18n()
+
   // If no label or accessibility text, render nothing
   if (!label && !accessibilityText) return null
 
@@ -53,12 +56,12 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
   return (
     <label htmlFor={htmlFor} className={labelClasses}>
       {label}
-      {required && <span className="text-red-700 ml-1" aria-label="required">*</span>}
+      {required && <span className="text-red-700 ml-1" aria-label={t(KEYS.fieldRequired)}>*</span>}
       {helpTooltip && (
         <span
           className="ml-2 text-gray-700 cursor-help"
           title={helpTooltip}
-          aria-label="help"
+          aria-label={t(KEYS.fieldHelp)}
         >
           ℹ️
         </span>
