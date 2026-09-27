@@ -120,6 +120,8 @@ Sailwind's design tokens (colors, typography, spacing, gradients) are published 
 - From the CDN, latest: `https://cdn.jsdelivr.net/gh/pglevy/sailwind@latest/public/tokens.json`
 - From the CDN, a specific version: `https://cdn.jsdelivr.net/gh/pglevy/sailwind@0.10.2/public/tokens.json`
 
+Semantic colors are under `color.semantic`, keyed by the lowercase SAIL name (`accent`, `positive`, `negative`, `secondary`, `standard`). They point to the same palette steps the components render.
+
 ## Contributing
 
 Contributions are welcome, including AI-assisted ones, from developers and designers alike. Start with [CONTRIBUTING.md](CONTRIBUTING.md). It covers how contributions work, what we look for in a pull request, and how to review your changes with AI before submitting.

@@ -17,7 +17,11 @@ Reads `tokens/tokens.json` and writes CSS custom properties into marked regions 
 npx tsx scripts/generate-tokens.ts
 ```
 
-Reads `tokens/tokens.json`, adds derived tokens (semantic color aliases from `src/types/sail.ts`, the `black` alias), and writes to both `dist/tokens.json` (npm package) and `public/tokens.json` (GitHub raw URL).
+Reads `tokens/tokens.json`, adds `$schema` and derived tokens (the `black` alias and `color.semantic` aliases), and writes to both `dist/tokens.json` (npm package) and `public/tokens.json` (GitHub raw URL).
+
+The derived tokens come from `src/utils/derivedTokens.ts`. `semanticPaletteColors` in that file sets which palette step each SAIL semantic color uses, and components (`colorResolver.ts`), the published tokens, and the Storybook Design Tokens page all read it. Semantic keys are the lowercase SAIL names (`color.semantic.negative` for `NEGATIVE`).
+
+Don't edit `public/tokens.json` by hand. The build overwrites it, and CI fails if the build changes any committed file.
 
 ### Validate
 

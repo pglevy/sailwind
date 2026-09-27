@@ -3,8 +3,8 @@
  * Generate the distributable DTCG tokens.json from the source token file.
  *
  * Reads:
- *   - tokens/tokens.json  (source of truth)
- *   - src/types/sail.ts    (SAIL enum types for semantic color tokens)
+ *   - tokens/tokens.json         (source of truth)
+ *   - src/utils/derivedTokens.ts (semantic color → palette step, shared with components)
  *
  * Writes:
  *   - dist/tokens.json   — included in the npm package (@pglevy/sailwind/tokens.json)
@@ -14,8 +14,12 @@
  *     fetch tokens from: https://cdn.jsdelivr.net/gh/pglevy/sailwind@main/public/tokens.json
  *
  * The source file is mostly passed through. This script adds:
+ *   - $schema (first key)
  *   - color.black alias
- *   - color.semantic tokens (derived from SAILSemanticColor enum)
+ *   - color.semantic aliases (same palette steps components render)
+ *
+ * Everything in the output comes from this script. Don't edit public/tokens.json
+ * by hand; the next build overwrites it and CI fails if the committed copy is stale.
  *
  * Run standalone:  npx tsx scripts/generate-tokens.ts
  * Or via build:    pnpm run build:tokens
@@ -23,71 +27,27 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { addDerivedTokens } from '../src/utils/derivedTokens';
 
 const root = path.resolve(import.meta.dirname, '..');
+
+const DTCG_SCHEMA = 'https://www.designtokens.org/schemas/2025.10/format.json';
 
 // ── Types ────────────────────────────────────────────────────────────
 
 interface DTCGToken { $value: unknown; $type: string; $description?: string }
 interface DTCGGroup { [key: string]: DTCGToken | DTCGGroup }
 
-// ── SAIL Type Parsing ────────────────────────────────────────────────
-
-function parseSAILSemanticColors(content: string): string[] {
-  const re = /export\s+type\s+SAILSemanticColor\s*=\s*((?:[^;](?!\n\n))*[^;]);?/;
-  const m = re.exec(content);
-  if (!m) return [];
-  const values: string[] = [];
-  const valueRe = /"([^"]+)"/g;
-  let vm: RegExpExecArray | null;
-  while ((vm = valueRe.exec(m[1])) !== null) {
-    values.push(vm[1]);
-  }
-  return values;
-}
-
-// Semantic color → DTCG alias mapping
-const SEMANTIC_MAP: Record<string, { path: string; ref: string }> = {
-  ACCENT:    { path: 'accent',      ref: '{color.blue.500}' },
-  POSITIVE:  { path: 'positive',    ref: '{color.green.500}' },
-  NEGATIVE:  { path: 'destructive', ref: '{color.red.500}' },
-  SECONDARY: { path: 'secondary',   ref: '{color.gray.700}' },
-  STANDARD:  { path: 'standard',    ref: '{color.gray.900}' },
-};
-
 // ── Main ─────────────────────────────────────────────────────────────
 
 function main(): void {
   const tokenPath = path.join(root, 'tokens/tokens.json');
-  const sailPath = path.join(root, 'src/types/sail.ts');
 
   // Read source
   const tokens = JSON.parse(fs.readFileSync(tokenPath, 'utf-8'));
-  const sailContent = fs.readFileSync(sailPath, 'utf-8');
 
-  // Deep clone for output
-  const output = JSON.parse(JSON.stringify(tokens));
-
-  // Add color.black (sourced from studio grey-1000)
-  output.color.black = {
-    $value: '#171717',
-    $type: 'color',
-    $description: 'Black — sourced from studio grey-1000',
-  };
-
-  // Add semantic color tokens
-  const semanticValues = parseSAILSemanticColors(sailContent);
-  output.color.semantic = {};
-  for (const value of semanticValues) {
-    const mapping = SEMANTIC_MAP[value];
-    if (mapping) {
-      output.color.semantic[mapping.path] = {
-        $value: mapping.ref,
-        $type: 'color',
-        $description: `SAILSemanticColor.${value}`,
-      };
-    }
-  }
+  // $schema goes first so editors pick it up; derived tokens are added on top of the source
+  const output = { $schema: DTCG_SCHEMA, ...addDerivedTokens(tokens) };
 
   // Write output
   const json = JSON.stringify(output, null, 2) + '\n';
