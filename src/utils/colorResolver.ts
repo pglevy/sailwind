@@ -1,18 +1,19 @@
 import type { SAILSemanticColor } from '../types/sail'
 import { paletteColorMap, paletteHexMap } from '../types/palette-colors.generated'
 import type { SAILPaletteColor } from '../types/palette-colors.generated'
+import { semanticPaletteColors } from './derivedTokens'
+
+const semanticEntries = Object.entries(semanticPaletteColors) as [SAILSemanticColor, SAILPaletteColor][]
 
 /**
- * Hand-curated semantic color mappings.
+ * Semantic color mappings.
  * Each semantic color maps to a set of Tailwind classes for different contexts.
+ * The palette step for each one is defined in `semanticPaletteColors` (./derivedTokens).
+ * The classes themselves are complete literals in the generated palette map.
  */
-export const semanticColorClasses: Record<SAILSemanticColor, { bg: string; text: string; border: string }> = {
-  ACCENT:    { bg: 'bg-blue-500',  text: 'text-blue-500',  border: 'border-blue-500'  },
-  POSITIVE:  { bg: 'bg-green-700', text: 'text-green-700', border: 'border-green-700' },
-  NEGATIVE:  { bg: 'bg-red-700',   text: 'text-red-700',   border: 'border-red-700'   },
-  SECONDARY: { bg: 'bg-gray-700',  text: 'text-gray-700',  border: 'border-gray-700'  },
-  STANDARD:  { bg: 'bg-gray-900',  text: 'text-gray-900',  border: 'border-gray-900'  },
-}
+export const semanticColorClasses = Object.fromEntries(
+  semanticEntries.map(([name, palette]) => [name, paletteColorMap[palette]])
+) as Record<SAILSemanticColor, { bg: string; text: string; border: string }>
 
 const SEMANTIC_KEYS = new Set<string>(Object.keys(semanticColorClasses))
 
@@ -52,15 +53,11 @@ export function resolveColorClass(color: string, prefix: TailwindPrefix = 'bg'):
 
 
 /**
- * Hex values for semantic colors (matches the Aurora palette tokens).
+ * Hex values for semantic colors, taken from the palette tokens.
  */
-const semanticHexMap: Record<SAILSemanticColor, string> = {
-  ACCENT:    '#2322F0', // blue-500
-  POSITIVE:  '#357A38', // green-700
-  NEGATIVE:  '#9B0027', // red-700
-  SECONDARY: '#616161', // gray-700
-  STANDARD:  '#212121', // gray-900
-}
+const semanticHexMap = Object.fromEntries(
+  semanticEntries.map(([name, palette]) => [name, paletteHexMap[palette]])
+) as Record<SAILSemanticColor, string>
 
 /**
  * Resolve any SAIL color (semantic, palette, or hex) to a hex string.

@@ -35,6 +35,14 @@ jobs:
           NODE_OPTIONS: --dns-result-order=ipv4first
       - run: pnpm run validate:designer-bundles
       - run: pnpm run build:lib
+      # Generated files (public/tokens.json, src/index.css, palette types) are
+      # committed. If the build changed any tracked file, the committed copy is stale.
+      - name: Check generated files are up to date
+        run: |
+          if ! git diff --exit-code --stat; then
+            echo "::error::The build changed tracked files. Run 'pnpm run build:lib' locally and commit the result."
+            exit 1
+          fi
 
   build:
     runs-on: ubuntu-latest

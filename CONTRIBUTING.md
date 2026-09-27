@@ -263,7 +263,9 @@ Design tokens live in `tokens/tokens.json` as the single source of truth, in [W3
 Two things are generated from that file:
 
 - **CSS custom properties** in the `BEGIN GENERATED` regions of `src/index.css`, via `pnpm run generate:css`. Don't edit those regions by hand; edit the tokens and regenerate.
-- **Distributable tokens** in `dist/tokens.json` and `public/tokens.json`, via `pnpm run build:tokens`. These add semantic color aliases on top of the source.
+- **Distributable tokens** in `dist/tokens.json` and `public/tokens.json`, via `pnpm run build:tokens`. These add semantic color aliases on top of the source. To change which palette step a semantic color uses, edit `semanticPaletteColors` in `src/utils/derivedTokens.ts`; components and the published tokens both read it.
+
+Commit generated files after running the build. CI runs `pnpm run build:lib` and fails if that changes any tracked file.
 
 > ⚠️ **Do not remove `public/tokens.json` from the repo.** External tools (Kiro skills, Aurora) fetch tokens at runtime from the jsdelivr CDN, which serves this path from `main`.
 
