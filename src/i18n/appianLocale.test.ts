@@ -78,11 +78,10 @@ describe('getAppianLocale + LocaleProvider (Appian bridge)', () => {
     // With the bridge yielding null, the provider falls back to its `locale`
     // prop, then the Default_Locale. 'en-US' normalizes to the default 'en-us'.
     render(
-      createElement(
-        LocaleProvider,
-        { locale: 'en-US' },
-        createElement(LocaleProbe)
-      )
+      createElement(LocaleProvider, {
+        locale: 'en-US',
+        children: createElement(LocaleProbe),
+      })
     )
 
     expect(screen.getByTestId('active-locale').textContent).toBe(DEFAULT_LOCALE)
