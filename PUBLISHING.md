@@ -48,6 +48,15 @@ git push --follow-tags
 #    - Create a GitHub release
 ```
 
+### 5. Write the release notes
+
+GitHub Releases is the project's changelog, so every release needs notes. Edit the release that the workflow created and include:
+
+- **Breaking Changes**: anything that changes behavior for existing usages (see [CONTRIBUTING.md](CONTRIBUTING.md#breaking-changes)). Put this first. Write "None" if there aren't any.
+- **Migration Notes**: what consumers need to change to upgrade, for each breaking change or deprecation.
+- **Added / Changed / Fixed**: the rest of the release, grouped.
+- **Linked PRs and issues** for each item.
+
 ### Manual Release (Fallback)
 
 If you need to publish manually (will require OTP from authenticator):
@@ -80,8 +89,14 @@ Add to your README.md:
 ## Best Practices
 
 ### Version Numbering (Semantic Versioning)
-- **Patch** (0.1.x): Bug fixes, documentation updates
-- **Minor** (0.x.0): New components, new features (backwards compatible)
+
+While Sailwind is pre-1.0:
+- **Patch** (0.x.y): Bug fixes, documentation updates
+- **Minor** (0.x.0): New components and features, and breaking changes. Call out breaking changes at the top of the release notes.
+
+After 1.0:
+- **Patch** (x.y.z): Bug fixes, documentation updates
+- **Minor** (x.y.0): New components, new features (backwards compatible)
 - **Major** (x.0.0): Breaking changes to component APIs
 
 ### Pre-release Versions
