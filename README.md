@@ -55,7 +55,32 @@ This ensures Tailwind scans Sailwind's compiled output for class names. The `@im
 
 ### Using Images
 
-TBD
+Sailwind components take images as URL strings (for example, the `source` of an `ImageField` image), so you can use images from your project or from the web. In a Vite project like [sailwind-starter](https://github.com/pglevy/sailwind-starter), there are two places to put your own images.
+
+**Import from `src/assets/` (the default).** Use this for images your code refers to directly, like an empty-state illustration or a logo:
+
+```tsx
+import emptyInbox from '../assets/empty-inbox.svg'
+
+<ImageField
+  images={[{ source: emptyInbox, altText: 'Empty inbox' }]}
+  size="LARGE"
+/>
+```
+
+Vite resolves the path wherever the prototype is deployed, and the build fails if the file is missing or the name has a typo.
+
+**Put in `public/` when the path is a string in data.** Use this for images named in mock data (like a `photoUrl` for each user in a JSON file), or files that need a fixed URL, like a favicon. Vite copies `public/` as is, and you refer to the files by path:
+
+```tsx
+{ name: 'Jane Doe', photoUrl: 'images/avatars/jane.png' }
+```
+
+Leave off the leading slash. Write `images/avatars/jane.png`, not `/images/avatars/jane.png`. Prototypes are often deployed in a subfolder (for example on GitHub Pages), and a leading slash points to the root of the site instead of your prototype. Files in `public/` also aren't checked at build time, so a wrong path only shows up as a broken image.
+
+A rule of thumb: if you `import` it, it goes in `src/assets/`. If you type its path in a string, it goes in `public/`.
+
+Images from external URLs work too, which is handy for quick mockups. They can change or disappear, though, so copy anything you want to keep into your project.
 
 ## Internationalization (i18n)
 
