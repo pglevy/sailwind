@@ -194,3 +194,52 @@ describe("DialogField - width/height classes", () => {
     });
   });
 });
+
+describe("DialogField - background", () => {
+  it("defaults to the STANDARD opaque surface", () => {
+    render(
+      <DialogField open={true} title="T">
+        <p>Content</p>
+      </DialogField>
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("data-background", "standard");
+    expect(dialog.className).toContain("bg-white");
+    expect(dialog.className).not.toContain("backdrop-blur-xl");
+  });
+
+  it("applies the translucent glass surface when background is GLASS", () => {
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("data-background", "glass");
+    expect(dialog.className).toContain("bg-white/70");
+    expect(dialog.className).toContain("backdrop-blur-xl");
+  });
+
+  it("falls back to an opaque surface for reduced transparency and forced colors", () => {
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    const className = screen.getByRole("dialog").className;
+    expect(className).toContain("[@media(prefers-reduced-transparency:reduce)]:bg-white");
+    expect(className).toContain(
+      "[@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none"
+    );
+    expect(className).toContain("forced-colors:backdrop-blur-none");
+  });
+
+  it("keeps the description at full-strength text color on glass", () => {
+    render(
+      <DialogField open={true} title="T" description="Readable" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    expect(screen.getByText("Readable").className).toContain("text-gray-900");
+  });
+});
