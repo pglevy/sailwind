@@ -16,6 +16,16 @@ export type DialogWidth = "NARROW" | "MEDIUM" | "MEDIUM_PLUS" | "WIDE" | "FIT"
 export type DialogHeight = "AUTO" | "FIT" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 
 /**
+ * Surface treatment for the dialog.
+ *
+ * - `STANDARD` — opaque white card (the default)
+ * - `GLASS` — glassmorphism: translucent surface with a blurred backdrop.
+ *   Falls back to an opaque surface when the user prefers reduced transparency
+ *   or when forced colors (high contrast) mode is active.
+ */
+export type DialogBackground = "STANDARD" | "GLASS"
+
+/**
  * Displays a modal dialog overlay with customizable content
  * Inspired by SAIL form field patterns (not an official SAIL component)
  *
@@ -39,6 +49,8 @@ export interface DialogFieldProps {
   width?: DialogWidth
   /** Height of the dialog */
   height?: DialogHeight
+  /** Surface treatment: opaque (STANDARD) or translucent glassmorphism (GLASS) */
+  background?: DialogBackground
   /** Whether to show the close button */
   showCloseButton?: boolean
   /** Whether clicking outside closes the dialog */
@@ -66,6 +78,7 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   children,
   width = "MEDIUM",
   height = "AUTO",
+  background = "STANDARD",
   showCloseButton = true,
   closeOnOutsideClick = true,
   closeOnEscape = true,
@@ -97,6 +110,31 @@ export const DialogField: React.FC<DialogFieldProps> = ({
     EXTRA_TALL: 'h-[85vh]'           // Very tall, viewport-based
   }
 
+  // Surface (glassmorphism) mappings.
+  // Both variants degrade to an opaque surface when the user asks for reduced
+  // transparency or is in forced-colors mode, so text never sits on a busy blur.
+  const reducedTransparency = '[@media(prefers-reduced-transparency:reduce)]'
+
+  const overlayBackgroundMap: Record<DialogBackground, string> = {
+    STANDARD: 'bg-black/50',
+    GLASS: [
+      'bg-black/40 backdrop-blur-sm',
+      `${reducedTransparency}:bg-black/60 ${reducedTransparency}:backdrop-blur-none`,
+      'forced-colors:bg-black/60 forced-colors:backdrop-blur-none'
+    ].join(' ')
+  }
+
+  const contentBackgroundMap: Record<DialogBackground, string> = {
+    STANDARD: 'bg-white border border-gray-200 shadow-lg',
+    GLASS: [
+      // 70% white keeps body text (gray-900) above 6:1 contrast over any backdrop
+      'bg-white/70 backdrop-blur-xl backdrop-saturate-150',
+      'border border-white/60 shadow-2xl ring-1 ring-black/5',
+      `${reducedTransparency}:bg-white ${reducedTransparency}:backdrop-blur-none ${reducedTransparency}:backdrop-saturate-100 ${reducedTransparency}:border-gray-200`,
+      'forced-colors:bg-[Canvas] forced-colors:backdrop-blur-none forced-colors:border-[CanvasText]'
+    ].join(' ')
+  }
+
   // Container classes
   const sailClasses = [
     marginAboveMap[marginAbove],
@@ -117,11 +155,13 @@ export const DialogField: React.FC<DialogFieldProps> = ({
 
   const dialogContent = (
     <Dialog.Portal>
-      <Dialog.Overlay className="fixed inset-0 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <Dialog.Overlay className={`fixed inset-0 ${overlayBackgroundMap[background]} data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0`} />
       <Dialog.Content
+        data-background={background.toLowerCase()}
         className={[
           'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-          'bg-white rounded-md shadow-lg border border-gray-200',
+          'rounded-md',
+          contentBackgroundMap[background],
           'p-6',
           widthMap[width],
           heightMap[height],
@@ -146,7 +186,7 @@ export const DialogField: React.FC<DialogFieldProps> = ({
                   </Dialog.Title>
                 )}
                 {description && (
-                  <Dialog.Description className="text-sm text-gray-700">
+                  <Dialog.Description className={`text-sm ${background === "GLASS" ? 'text-gray-900' : 'text-gray-700'}`}>
                     {description}
                   </Dialog.Description>
                 )}
@@ -154,7 +194,12 @@ export const DialogField: React.FC<DialogFieldProps> = ({
               {showCloseButton && (
                 <Dialog.Close asChild>
                   <button
-                    className="ml-4 p-1 rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                    className={[
+                      'ml-4 p-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+                      background === "GLASS"
+                        ? 'text-gray-900 hover:bg-white/70'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    ].join(' ')}
                     aria-label="Close dialog"
                   >
                     <X className="h-4 w-4" />

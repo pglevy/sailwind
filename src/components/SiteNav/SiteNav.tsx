@@ -217,6 +217,12 @@ export const SiteNav: React.FC<SiteNavProps> = ({
 }
 
 /**
+ * Timing shared by the group expand/collapse animation and the chevron rotation:
+ * 300ms on a decelerating curve.
+ */
+const EXPAND_TRANSITION = 'duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none motion-reduce:duration-0'
+
+/**
  * SiteNavItem — renders a single navigation item (page or group).
  */
 const SiteNavItem: React.FC<{
@@ -230,9 +236,15 @@ const SiteNavItem: React.FC<{
     // Auto-expand if any child is selected
     page.children?.some((c) => c.isSelected) ?? false
   )
+  const groupId = React.useId()
 
   const IconComponent = page.icon
   const hasChildren = page.isGroup || (page.children && page.children.length > 0)
+
+  // Children animate open/closed only in the expanded rail; the collapsed rail has no
+  // room for them, so the subtree is not rendered there at all.
+  const showChildren = Boolean(hasChildren && page.children?.length && !isCollapsed)
+  const isOpen = expanded && showChildren
 
   const handleClick = () => {
     if (hasChildren) {
@@ -260,6 +272,8 @@ const SiteNavItem: React.FC<{
             : undefined
         }
         aria-current={page.isSelected ? 'page' : undefined}
+        aria-expanded={showChildren ? isOpen : undefined}
+        aria-controls={showChildren ? groupId : undefined}
       >
         {/* Icon */}
         {IconComponent && (
@@ -286,27 +300,42 @@ const SiteNavItem: React.FC<{
         {/* Group chevron */}
         {hasChildren && !isCollapsed && (
           <ChevronRight
-            className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${
-              expanded ? 'rotate-90' : ''
+            className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${EXPAND_TRANSITION} ${
+              isOpen ? 'rotate-90' : 'rotate-0'
             }`}
           />
         )}
       </button>
 
-      {/* Children */}
-      {hasChildren && expanded && !isCollapsed && page.children && (
-        <ul className="list-none m-0 p-0 pl-4" role="group">
-          {page.children.map((child) => (
-            <SiteNavItem
-              key={child.label}
-              page={child}
-              isCollapsed={isCollapsed}
-              highlightClass={highlightClass}
-              highlightStyle={highlightStyle}
-              depth={depth + 1}
-            />
-          ))}
-        </ul>
+      {/*
+        Children: the wrapper is a grid whose single row animates between 0fr and 1fr,
+        so the subtree slides open to its natural height without a hardcoded max-height.
+        The inner list needs min-h-0 + overflow-hidden for the row to be able to shrink.
+        Collapsed content stays mounted so it can animate out, so it is marked inert and
+        aria-hidden to keep it out of the tab order and off screen readers.
+      */}
+      {showChildren && (
+        <div
+          id={groupId}
+          className={`grid transition-[grid-template-rows,opacity] ${EXPAND_TRANSITION} ${
+            isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+          }`}
+          aria-hidden={!isOpen}
+          inert={!isOpen}
+        >
+          <ul className="list-none m-0 p-0 pl-4 min-h-0 overflow-hidden">
+            {page.children!.map((child) => (
+              <SiteNavItem
+                key={child.label}
+                page={child}
+                isCollapsed={isCollapsed}
+                highlightClass={highlightClass}
+                highlightStyle={highlightStyle}
+                depth={depth + 1}
+              />
+            ))}
+          </ul>
+        </div>
       )}
     </li>
   )
