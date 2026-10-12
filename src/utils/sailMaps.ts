@@ -50,6 +50,22 @@ export const shapeMap: Record<SAILShape, string> = {
   CIRCLE: 'rounded-full'
 }
 
+/**
+ * Top-corner-only counterpart to shapeMap, for a header row that sits above
+ * other content inside a `shape`-rounded container (e.g. BoxLayout). Rounds
+ * just the top two corners to the same radius as the outer container, so a
+ * differently-colored header background doesn't square off past the outer
+ * border — without clipping the rest of the container via overflow-hidden,
+ * which would also cut off anything (like an open dropdown menu) that needs
+ * to render outside the container's bounds.
+ */
+export const headerTopShapeMap: Record<SAILShape, string> = {
+  SQUARED: 'rounded-t-none',
+  SEMI_ROUNDED: 'rounded-t-sm',
+  ROUNDED: 'rounded-t-md',
+  CIRCLE: 'rounded-t-full'
+}
+
 // --- Button / Interactive Size Maps ---
 
 /** Size classes for labeled buttons, tabs, and toggles */

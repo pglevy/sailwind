@@ -168,6 +168,61 @@ describe("BoxLayout - inert attribute on collapsed content", () => {
   });
 });
 
+describe("BoxLayout - collapsed content has zero rendered height", () => {
+  it("renders the content wrapper's direct grid child with min-h-0, not a nested descendant", () => {
+    // min-h-0 must be the direct grid child of the grid-rows-[0fr] wrapper —
+    // a grid item's default min-height:auto otherwise blocks the row from
+    // shrinking below its content's intrinsic size, leaving a visible sliver
+    // of cut-off text when collapsed (the bug this guards against).
+    const { container } = render(
+      <BoxLayout label="Section" isCollapsible={true} isInitiallyCollapsed={true}>
+        <p>This content is collapsed by default. Click the header to expand it.</p>
+      </BoxLayout>
+    );
+    const button = screen.getByRole("button", { name: /section/i });
+    const contentId = button.getAttribute("aria-controls");
+    const wrapper = container.querySelector(`#${contentId}`) as HTMLElement;
+    const directChild = wrapper.firstElementChild as HTMLElement;
+    expect(directChild.className.split(" ")).toContain("min-h-0");
+  });
+
+  it("does not render the collapsed text visibly (jsdom has no real layout, so this checks the grid-rows-[0fr] class and inert, which together settle to 0 height in a real browser)", () => {
+    const { container } = render(
+      <BoxLayout label="Section" isCollapsible={true} isInitiallyCollapsed={true}>
+        <p>This content is collapsed by default. Click the header to expand it.</p>
+      </BoxLayout>
+    );
+    const button = screen.getByRole("button", { name: /section/i });
+    const contentId = button.getAttribute("aria-controls");
+    const wrapper = container.querySelector(`#${contentId}`) as HTMLElement;
+    expect(wrapper.className).toContain("grid-rows-[0fr]");
+    expect(wrapper.hasAttribute("inert")).toBe(true);
+  });
+});
+
+describe("BoxLayout - header corner radius matches outer shape", () => {
+  const cases: Array<[string, string]> = [
+    ["SQUARED", "rounded-t-none"],
+    ["SEMI_ROUNDED", "rounded-t-sm"],
+    ["ROUNDED", "rounded-t-md"],
+  ];
+
+  cases.forEach(([shape, expectedClass]) => {
+    it(`shape="${shape}" gives the header row ${expectedClass}, matching the outer shape's radius`, () => {
+      const { container } = render(<BoxLayout label="Section" shape={shape as any} />);
+      const root = container.firstChild as HTMLElement;
+      const header = root.firstElementChild as HTMLElement;
+      expect(header.className).toContain(expectedClass);
+    });
+  });
+
+  it("does not rely on overflow-hidden on the outer container (would clip content that must render outside the box, e.g. an open dropdown menu)", () => {
+    const { container } = render(<BoxLayout label="Section" shape="ROUNDED" />);
+    const root = container.firstChild as HTMLElement;
+    expect(root.className.split(" ")).not.toContain("overflow-hidden");
+  });
+});
+
 describe("BoxLayout - overflow-hidden scoping", () => {
   afterEach(() => {
     vi.useRealTimers();

@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
 import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 import { mergeClasses } from '../../utils/classNames'
-import { marginAboveMap, marginBelowMap, paddingMap, shapeMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, paddingMap, shapeMap, headerTopShapeMap } from '../../utils/sailMaps'
 import { useI18n, KEYS } from '../../i18n'
 
 /** Must stay in sync with the `duration-200` Tailwind class on the content wrapper. */
@@ -312,8 +312,13 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
 
   // The header row's padding is fixed regardless of the `padding` prop — only
   // the content/body area scales with `padding`. The header's label/chevron
-  // are chrome, not `contents`.
-  const headerRowClasses = ['px-3 py-2', headerColors.bgClassName].filter(Boolean).join(' ')
+  // are chrome, not `contents`. headerTopShapeMap rounds the header's own top
+  // corners to match the outer shape, so its background doesn't square off
+  // past the outer border on SEMI_ROUNDED/ROUNDED (SQUARED's rounded-t-none
+  // is a no-op). Rounding just the header, instead of overflow-hidden on the
+  // outer container, avoids clipping other content that must render outside
+  // the box's bounds — e.g. WithDropdownContent's open dropdown menu.
+  const headerRowClasses = ['px-3 py-2', headerTopShapeMap[shape], headerColors.bgClassName].filter(Boolean).join(' ')
 
   // Present whenever the box is not fully settled open: either closed/closing
   // or actively mid-transition in either direction. Dropped only once open AND
@@ -327,7 +332,7 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
       ].filter(Boolean).join(' ')
     : ''
 
-  const contentPaddingClasses = ['min-h-0', paddingMap[padding]].filter(Boolean).join(' ')
+  const contentPaddingClasses = paddingMap[padding]
 
   return (
     <div className={outerClasses} style={outerInlineStyle}>
@@ -361,7 +366,16 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
       )}
       {isCollapsible ? (
         <div id={contentId} ref={contentRef} className={contentWrapperClasses}>
-          <div className={contentPaddingClasses}>{children}</div>
+          {/* `min-h-0` must sit on this div because it's the direct grid child
+              of the `grid-rows-[0fr]`/`grid-rows-[1fr]` wrapper above — a grid
+              item's default `min-height: auto` otherwise keeps the row from
+              shrinking below its content's intrinsic height, so a 0fr row
+              still rendered at the content's full height without this. The
+              padding div is nested one level deeper so padding never adds
+              height outside the row that's actually sized to 0fr. */}
+          <div className="min-h-0">
+            <div className={contentPaddingClasses}>{children}</div>
+          </div>
         </div>
       ) : (
         // Non-collapsible: no grid/overflow-hidden/transition/inert at all —

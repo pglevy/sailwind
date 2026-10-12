@@ -66,6 +66,12 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /account details/i });
     await expect(button).toHaveAttribute("aria-expanded", "false");
+    // Regression check: while settled closed, the content wrapper must be a
+    // true zero-height row, not just visually hidden text — a sliver of
+    // cut-off content peeking out below the header was the reported bug.
+    const contentId = button.getAttribute("aria-controls");
+    const wrapper = canvasElement.querySelector(`#${contentId}`) as HTMLElement;
+    await expect(wrapper.getBoundingClientRect().height).toBe(0);
     await userEvent.click(button);
     await expect(button).toHaveAttribute("aria-expanded", "true");
     await expect(
@@ -119,6 +125,24 @@ export const Shapes: Story = {
       </BoxLayout>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    // Regression check: the header's own background must be clipped to the
+    // same corner radius as the outer border for SEMI_ROUNDED/ROUNDED — a
+    // square header background poking out past a rounded border was the
+    // reported bug. Checked via computed top-corner radius matching the
+    // outer box's, rather than overflow-hidden on the outer container,
+    // which would also clip content (e.g. an open dropdown) meant to render
+    // outside the box's bounds — see WithDropdownContent below.
+    const boxes = Array.from(
+      canvasElement.querySelectorAll(".grid.grid-cols-3 > div")
+    ) as HTMLElement[];
+    for (const box of boxes) {
+      const header = box.firstElementChild as HTMLElement;
+      const outerRadius = getComputedStyle(box).borderTopLeftRadius;
+      const headerRadius = getComputedStyle(header).borderTopLeftRadius;
+      await expect(headerRadius).toBe(outerRadius);
+    }
+  },
 };
 
 export const BorderVisibility: Story = {
@@ -234,6 +258,11 @@ export const WithDropdownContent: Story = {
     await userEvent.click(trigger);
     const listbox = canvas.getByRole("listbox");
     await expect(listbox).toBeVisible();
+    // Regression check: the box's rounded-corner fix (header-only top
+    // radius, not overflow-hidden on the outer container) must not clip
+    // this dropdown menu, which renders below the box's own bottom edge.
+    const options = canvas.getAllByRole("option");
+    await expect(options[options.length - 1]).toBeVisible();
   },
 };
 
