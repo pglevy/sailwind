@@ -28,6 +28,29 @@ export default defineConfig({
           globals: true,
           setupFiles: ['./src/test/setup.ts'],
           include: ['src/**/*.test.{ts,tsx}'],
+          exclude: ['src/**/*.browser.test.{ts,tsx}'],
+        },
+      },
+      // Real-browser (Playwright) tests for behavior jsdom can't verify, e.g.
+      // native Tab-key navigation honoring the `inert` attribute. Kept out of
+      // the "storybook" project below because that project's `include` is
+      // driven by Storybook's own `stories` glob (`*.stories.tsx`), not a
+      // generic test pattern, so a plain `*.test.tsx` file never runs under
+      // it. Kept out of "unit" (jsdom) because `vitest/browser` can only be
+      // imported inside Vitest's browser-mode runtime.
+      {
+        extends: true,
+        test: {
+          name: 'browser',
+          globals: true,
+          setupFiles: ['./src/test/setup.ts'],
+          include: ['src/**/*.browser.test.{ts,tsx}'],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: 'chromium' }],
+          },
         },
       },
       // Storybook component + a11y tests

@@ -1,15 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { userEvent, within, expect } from "storybook/test";
-// Native, provider-backed (Playwright) userEvent — used only for the
-// Tab-key navigation assertion below. storybook/test's own `userEvent.tab()`
-// is a JS-simulated implementation (ported from @testing-library/user-event)
-// that computes the next focus target in JS and calls `.focus()` directly,
-// bypassing the browser's native `inert`-aware focus engine even when run in
-// real Chromium — so it can't prove the actual tab-skipping behavior the
-// `inert` attribute produces. `@vitest/browser/context`'s `userEvent.tab()`
-// dispatches a real Tab keypress through the browser automation provider,
-// which does honor `inert`.
-import { userEvent as browserUserEvent } from "vitest/browser";
 import { BoxLayout } from "./BoxLayout";
 import { CardLayout } from "../Card/CardLayout";
 import { HeadingField } from "../Heading/HeadingField";
@@ -247,6 +237,14 @@ export const WithDropdownContent: Story = {
   },
 };
 
+// Demonstrates that collapsed content doesn't take up layout space and that
+// its header button is focusable. The behavioral proof that native Tab
+// navigation actually skips the collapsed, `inert` content (rather than just
+// looking collapsed) lives in BoxLayout.browser.test.tsx, which uses
+// vitest/browser's real-Chromium userEvent.tab(). That API is only available
+// inside Vitest's own browser-mode test runner, not in a module Storybook's
+// plain dev server loads, so it can't live here or in this file's play
+// functions without breaking `pnpm run storybook` for every Box story.
 export const CollapsedTabSkip: Story = {
   args: {
     label: "Collapsed Section",
@@ -274,13 +272,5 @@ export const CollapsedTabSkip: Story = {
     });
     headerButton.focus();
     await expect(headerButton).toHaveFocus();
-    // Native Tab keypress (see the import comment above) — the only way to
-    // actually prove the content wrapper's `inert` attribute removes its
-    // descendants from the tab order.
-    await browserUserEvent.tab();
-    const siblingButton = canvas.getByRole("button", {
-      name: /sibling button after box/i,
-    });
-    await expect(siblingButton).toHaveFocus();
   },
 };
