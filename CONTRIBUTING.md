@@ -2,6 +2,9 @@
 
 Thanks for helping out. Contributions are welcome from developers and designers alike, and AI-assisted contributions are welcome too. This guide explains how the project works, what we look for in a pull request, and how to get the most out of your AI tools along the way.
 
+> [!NOTE]
+> By contributing to this Open Source project, you provide Appian Corporation a non-exclusive, perpetual, royalty-free license to use your contribution for any purpose.
+
 If you're using an AI assistant, it reads [AGENTS.md](AGENTS.md) automatically. That file covers the technical rules. This one covers the expectations.
 
 ## Start here
