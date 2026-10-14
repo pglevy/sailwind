@@ -258,7 +258,7 @@ describe("BoxLayout - style/borderColor override rules", () => {
   it("style=INFO with default borderColor applies the INFO border/label classes", () => {
     const { container } = render(<BoxLayout label="Info Box" style="INFO" />);
     const root = container.firstChild as HTMLElement;
-    expect(root.className).toContain("border-sky-300");
+    expect(root.className).toContain("border-sky-200");
     const heading = screen.getByRole("heading");
     expect(heading.className).toContain("text-sky-900");
   });
@@ -266,9 +266,26 @@ describe("BoxLayout - style/borderColor override rules", () => {
   it("style=ERROR with default borderColor applies the ERROR border/label classes", () => {
     const { container } = render(<BoxLayout label="Error Box" style="ERROR" />);
     const root = container.firstChild as HTMLElement;
-    expect(root.className).toContain("border-red-300");
+    expect(root.className).toContain("border-red-200");
     const heading = screen.getByRole("heading");
     expect(heading.className).toContain("text-red-900");
+  });
+
+  it.each([
+    ["ACCENT", "border-blue-200"],
+    ["SUCCESS", "border-green-200"],
+    ["WARN", "border-yellow-400"],
+  ] as const)("style=%s with default borderColor applies %s", (style, borderClass) => {
+    const { container } = render(<BoxLayout label="Styled Box" style={style} />);
+    const root = container.firstChild as HTMLElement;
+    expect(root.className).toContain(borderClass);
+    expect(root.className).not.toContain("border-gray-300");
+  });
+
+  it("a hex style keeps the STANDARD border", () => {
+    const { container } = render(<BoxLayout label="Hex Box" style="#4B2E83" />);
+    const root = container.firstChild as HTMLElement;
+    expect(root.className).toContain("border-gray-300");
   });
 
   it("an explicit non-default borderColor alongside style=INFO is NOT overridden", () => {
@@ -277,7 +294,7 @@ describe("BoxLayout - style/borderColor override rules", () => {
     );
     const root = container.firstChild as HTMLElement;
     expect(root.className).toContain("border-yellow-400");
-    expect(root.className).not.toContain("border-sky-300");
+    expect(root.className).not.toContain("border-sky-200");
   });
 });
 

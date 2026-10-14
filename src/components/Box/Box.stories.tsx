@@ -109,7 +109,7 @@ export const BoxStyles: Story = {
       </BoxLayout>
       <BoxLayout label="Info" style="INFO" padding="STANDARD">
         <p className="text-sm text-gray-700">
-          Info style — border and label color follow the header by default.
+          Info style — label color follows the header too.
         </p>
       </BoxLayout>
       <BoxLayout label="Warn" style="WARN" padding="STANDARD">
@@ -117,7 +117,7 @@ export const BoxStyles: Story = {
       </BoxLayout>
       <BoxLayout label="Error" style="ERROR" padding="STANDARD">
         <p className="text-sm text-gray-700">
-          Error style — border and label color follow the header by default.
+          Error style — label color follows the header too.
         </p>
       </BoxLayout>
     </div>

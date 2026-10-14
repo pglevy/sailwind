@@ -28,16 +28,15 @@ export type BoxShape = Exclude<SAILShape, 'CIRCLE'>
 // exhaustively checked by tsc; they're never used as a prop type.
 type BoxStyleNamed = "STANDARD" | "ACCENT" | "SUCCESS" | "INFO" | "WARN" | "ERROR"
 type BoxBorderColorNamed = "STANDARD" | "ACCENT" | "POSITIVE" | "WARN" | "NEGATIVE" | "INFO"
-// EffectiveBorderColorNamed adds "ERROR": the INFO/ERROR override can assign the
-// literal "ERROR" into the border-resolution step, and "ERROR" is not a member
-// of BoxBorderColorNamed itself (only borderColor's own 6 names are).
-type EffectiveBorderColorNamed = Exclude<BoxBorderColorNamed, "ACCENT" | "POSITIVE" | "NEGATIVE"> | "ERROR"
+// borderColor's named values that aren't SAIL semantic colors. ACCENT/POSITIVE/
+// NEGATIVE resolve through resolveColorClass instead of a local map.
+type LocalBorderColorNamed = Exclude<BoxBorderColorNamed, "ACCENT" | "POSITIVE" | "NEGATIVE">
 
 function isBoxStyleNamed(v: string): v is BoxStyleNamed {
   return v === "STANDARD" || v === "ACCENT" || v === "SUCCESS" || v === "INFO" || v === "WARN" || v === "ERROR"
 }
-function isEffectiveBorderColorNamed(v: string): v is EffectiveBorderColorNamed {
-  return v === "STANDARD" || v === "WARN" || v === "INFO" || v === "ERROR"
+function isLocalBorderColorNamed(v: string): v is LocalBorderColorNamed {
+  return v === "STANDARD" || v === "WARN" || v === "INFO"
 }
 
 // Header background + label text color maps. Every one of the 6 named values has
@@ -60,11 +59,25 @@ const headerLabelColorMap: Record<BoxStyleNamed, string> = {
   ERROR: 'text-red-900',
 }
 
-const borderColorMap: Record<EffectiveBorderColorNamed, string> = {
+// Border color a named style supplies while borderColor is left at STANDARD.
+// SAIL's style "determines the color of the label and box outline", so every
+// named style has a border tone matched to its header.
+const styleBorderColorMap: Record<BoxStyleNamed, string> = {
+  STANDARD: 'border-gray-300',
+  ACCENT: 'border-blue-200',
+  SUCCESS: 'border-green-200',
+  INFO: 'border-sky-200',
+  WARN: 'border-yellow-400',
+  ERROR: 'border-red-200',
+}
+
+// Explicit borderColor values that use a local class. Kept in step with the
+// matching styleBorderColorMap entries so borderColor="WARN" and style="WARN"
+// draw the same border.
+const borderColorMap: Record<LocalBorderColorNamed, string> = {
   STANDARD: 'border-gray-300',
   WARN: 'border-yellow-400',
-  INFO: 'border-sky-300',
-  ERROR: 'border-red-300',
+  INFO: 'border-sky-200',
 }
 
 const borderWeightMap: Record<BoxBorderWeight, string> = {
@@ -152,24 +165,34 @@ function resolveHeaderColors(style: BoxStyle): HeaderColorResolution {
   }
 }
 
+interface BorderColorResolution {
+  className?: string
+  inlineStyle?: { borderColor: string }
+}
+
 /**
- * Resolves `effectiveBorderColor` (either the `borderColor` prop or, when
- * defaulted, the `style` prop) to a border color, in four branches: named ->
- * local map; ACCENT/POSITIVE/NEGATIVE -> resolveColorClass (avoids a second
- * hardcoded copy of colors colorResolver.ts already owns); palette token ->
- * resolveColorClass; otherwise hex (optional alpha) -> inline style.
+ * Resolves the outer border color. While `borderColor` is left at STANDARD, a
+ * named `style` supplies it from styleBorderColorMap (hex and palette styles
+ * keep the STANDARD border). Otherwise `borderColor` resolves in four branches:
+ * local name -> local map; ACCENT/POSITIVE/NEGATIVE -> resolveColorClass
+ * (avoids a second hardcoded copy of colors colorResolver.ts already owns);
+ * palette token -> resolveColorClass; otherwise hex (optional alpha) -> inline
+ * style. An explicit borderColor always wins over the style.
  */
-function resolveBorderColor(effectiveBorderColor: BoxBorderColor): { className?: string; inlineStyle?: { borderColor: string } } {
-  if (isEffectiveBorderColorNamed(effectiveBorderColor)) {
-    return { className: borderColorMap[effectiveBorderColor] }
+function resolveBorderColor(borderColor: BoxBorderColor, style: BoxStyle): BorderColorResolution {
+  if (borderColor === "STANDARD" && isBoxStyleNamed(style)) {
+    return { className: styleBorderColorMap[style] }
   }
-  if (effectiveBorderColor === "ACCENT" || effectiveBorderColor === "POSITIVE" || effectiveBorderColor === "NEGATIVE") {
-    return { className: resolveColorClass(effectiveBorderColor, 'border') }
+  if (isLocalBorderColorNamed(borderColor)) {
+    return { className: borderColorMap[borderColor] }
   }
-  if (isPaletteColor(effectiveBorderColor)) {
-    return { className: resolveColorClass(effectiveBorderColor, 'border') }
+  if (borderColor === "ACCENT" || borderColor === "POSITIVE" || borderColor === "NEGATIVE") {
+    return { className: resolveColorClass(borderColor, 'border') }
   }
-  return { inlineStyle: { borderColor: effectiveBorderColor } }
+  if (isPaletteColor(borderColor)) {
+    return { className: resolveColorClass(borderColor, 'border') }
+  }
+  return { inlineStyle: { borderColor } }
 }
 
 /**
@@ -181,7 +204,7 @@ export interface BoxLayoutProps {
   label?: string
   /** Components and layouts to display within the box */
   children?: React.ReactNode
-  /** Determines the box header color. If "INFO" or "ERROR", also affects border + label text color. Accepts a hex color (optional 2-digit alpha suffix) or a semantic value. */
+  /** Determines the box header color. A semantic value also sets the border color unless borderColor is set; "INFO" and "ERROR" also set the label text color. Accepts a hex color (optional 2-digit alpha suffix) or a semantic value. */
   style?: BoxStyle
   /** Determines whether the layout is displayed. When false, the layout is hidden and not evaluated. */
   showWhen?: boolean
@@ -209,7 +232,7 @@ export interface BoxLayoutProps {
   labelHeadingTag?: BoxHeadingTag
   /** Determines the box border thickness */
   borderWeight?: BoxBorderWeight
-  /** Determines the border color. If style is "INFO" or "ERROR", defaults to match the style color. Accepts a hex color (optional 2-digit alpha suffix) or a semantic value. */
+  /** Determines the border color. When left at "STANDARD", a semantic style sets a matching border color. Accepts a hex color (optional 2-digit alpha suffix) or a semantic value. */
   borderColor?: BoxBorderColor
   /** Determines the font weight of the label */
   labelFontWeight?: BoxLabelFontWeight
@@ -279,11 +302,6 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
 
   const contentId = `${generatedId}-content`
   const hasHeader = !!label || isCollapsible
-  const isInfoOrError = style === "INFO" || style === "ERROR"
-  // Only overrides when the caller left borderColor at its default — an
-  // explicit borderColor always wins.
-  const effectiveBorderColor: BoxBorderColor =
-    borderColor === "STANDARD" && isInfoOrError ? style : borderColor
   const resolvedHeadingTag = labelHeadingTag || defaultHeadingTagForSize(labelSize)
   const HeadingEl = resolvedHeadingTag.toLowerCase() as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
   // A collapsible box with no label has nothing to title, so its toggle
@@ -300,7 +318,7 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
   }
 
   const headerColors = resolveHeaderColors(style)
-  const borderResolution = resolveBorderColor(effectiveBorderColor)
+  const borderResolution = resolveBorderColor(borderColor, style)
 
   // Typography classes shared by the collapsible (<button> inside <HeadingEl>,
   // or inside a plain <div> when there's no label) and non-collapsible
