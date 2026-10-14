@@ -124,3 +124,27 @@ describe('EmptyStatePopover - accessibility', () => {
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
   })
 })
+
+describe('EmptyState - image', () => {
+  it('draws the NO_DATA illustration when no image is given', () => {
+    const { container } = render(<EmptyState title="Nothing here" />)
+    expect(container.querySelectorAll('svg .sw-ill-tile')).toHaveLength(8)
+    expect(container.querySelector('svg')).toHaveClass('sw-illustration-animated')
+  })
+
+  it('draws the illustration it is given, without animation when asked', () => {
+    const { container } = render(
+      <EmptyState title="No triggers" image={{ imageType: 'illustration', illustration: 'TRIGGERS', showAnimation: false }} />
+    )
+    expect(container.querySelectorAll('svg .sw-ill-arrow')).toHaveLength(3)
+    expect(container.querySelector('svg')).not.toHaveClass('sw-illustration-animated')
+  })
+
+  it('accepts the other image types, such as a web image', () => {
+    const { container } = render(
+      <EmptyState title="No photos" image={{ source: 'https://example.com/empty.png', altText: 'An empty frame' }} />
+    )
+    expect(screen.getByAltText('An empty frame')).toHaveAttribute('src', 'https://example.com/empty.png')
+    expect(container.querySelector('svg.sw-illustration-animated')).toBeNull()
+  })
+})

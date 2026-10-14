@@ -4,7 +4,6 @@ import { ButtonWidget } from '../../components/Button/ButtonWidget'
 import type { ButtonWidgetProps } from '../../components/Button/ButtonWidget'
 import { ImageField } from '../../components/Image/ImageField'
 import type { ImageFieldImage } from '../../components/Image/ImageField'
-import { NoDataIllustration, TestCasesIllustration } from '../../components/Image/illustrations'
 import { RichTextDisplayField } from '../../components/RichText/RichTextDisplayField'
 import { TextItem } from '../../components/RichText/TextItem'
 import type { SAILMarginSize } from '../../types/sail'
@@ -18,18 +17,18 @@ import { ChevronDown } from 'lucide-react'
  * This is a pattern, not a library component: nothing here is exported from
  * `@pglevy/sailwind`. Copy the file into your project and adjust it. SAIL has no empty
  * state, so every option below is a choice made by this pattern, not a SAIL parameter.
- * The picture is an ImageField image, so it can be anything ImageField shows. By default it is
- * the library's `NoDataIllustration`, an SVG image that animates in; the words do not move. The
- * empty state has no animation setting of its own: to turn a pre-baked illustration's animation
- * off, give the image `componentProps: { showAnimation: false }`.
+ * The picture is an `image` field: any of ImageField's image types (an illustration, a web
+ * image, a document image). By default it is the `NO_DATA` illustration, which animates in; the
+ * words do not move. The empty state has no animation setting of its own: to turn an
+ * illustration's animation off, give the image `showAnimation: false`.
  *
  * Variants
  * - `size="LARGE"` fills a panel; `size="SMALL"` is compact enough for a popover
- * - `illustration` is the picture, as an ImageField image: for example
- *   `{ imageType: 'svg', component: TriggersIllustration }`, or a web or document image. The
- *   words are placed to suit the pre-baked illustrations, which are 400 × 176 with their centre
- *   in the middle and nothing below 57 units from it; a picture of another shape needs
- *   `LAYOUT` and `CENTRE` below adjusted.
+ * - `image` is the picture, as one of ImageField's images: for example
+ *   `{ imageType: 'illustration', illustration: 'TRIGGERS' }`, or a web or document image. The
+ *   words are placed to suit the illustrations, which are 400 × 176 with their centre in the
+ *   middle and nothing below 57 units from it; a picture of another shape needs `LAYOUT` and
+ *   `CENTRE` below adjusted.
  * - `primaryButtons` and `secondaryButtons` add a call to action: one button, or a group of
  *   them. Leave both out for none. They are named and ordered as in Appian's
  *   a!buttonLayout (see ButtonLayout below). In a SMALL empty state a group shares the row
@@ -43,9 +42,8 @@ import { ChevronDown } from 'lucide-react'
 
 export type EmptyStateSize = 'SMALL' | 'LARGE'
 
-// Defined once so the image keeps the same identity from one render to the next
-const NO_DATA_IMAGE: ImageFieldImage = { imageType: 'svg', component: NoDataIllustration }
-const TEST_CASES_IMAGE: ImageFieldImage = { imageType: 'svg', component: TestCasesIllustration }
+const NO_DATA_IMAGE: ImageFieldImage = { imageType: 'illustration', illustration: 'NO_DATA' }
+const TEST_CASES_IMAGE: ImageFieldImage = { imageType: 'illustration', illustration: 'TEST_CASES' }
 
 /**
  * The picture's width at each size, the gap under its centre to the words, and the space under
@@ -93,8 +91,8 @@ export interface EmptyStateProps {
   title: string
   /** Second line: why it is worth adding, or how to add it */
   description?: string
-  /** The picture at the top, as an image for ImageField. Defaults to the NoDataIllustration. */
-  illustration?: ImageFieldImage
+  /** The picture at the top: any of ImageField's image types. Defaults to the NO_DATA illustration. */
+  image?: ImageFieldImage
   /** LARGE fills a panel; SMALL fits a popover */
   size?: EmptyStateSize
   /**
@@ -181,7 +179,7 @@ export const ButtonLayout: React.FC<{
 export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
-  illustration = NO_DATA_IMAGE,
+  image = NO_DATA_IMAGE,
   size = 'LARGE',
   primaryButtons,
   secondaryButtons,
@@ -207,7 +205,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         className="pointer-events-none absolute inset-x-0 top-0 mx-auto"
         style={{ width: `min(100%, ${width}px)`, maskImage: FADE, WebkitMaskImage: FADE }}
       >
-        <ImageField images={[illustration]} size="FIT" align="CENTER" marginBelow="NONE" />
+        <ImageField images={[image]} size="FIT" align="CENTER" marginBelow="NONE" />
       </div>
 
       {/* The words start under the centre of the picture, wherever the picture has scaled to */}
@@ -307,7 +305,7 @@ export const EmptyStatePopover: React.FC<{
         >
           <EmptyState
             size="SMALL"
-            illustration={TEST_CASES_IMAGE}
+            image={TEST_CASES_IMAGE}
             title="No test cases yet"
             description="Fill in the fields, then save what you typed as a test case. It will be here whenever you want to try the template again."
             primaryButtons={primaryButtons}
