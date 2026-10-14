@@ -2,15 +2,14 @@ import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
 import { EmptyState, EmptyStatePopover } from '../../pages/patterns/EmptyState'
-import { HistoryIllustration, NoDataIllustration, TestCasesIllustration, TriggersIllustration } from '../../components/Image/illustrations'
+import type { ImageFieldImage } from '../../components/Image/ImageField'
+import { ILLUSTRATIONS as SPECS } from '../../components/Image/illustrations/illustrationSpecs'
+import type { IllustrationName } from '../../components/Image/illustrations/illustrationSpecs'
 
-/** The pre-baked illustrations, as images for ImageField */
-const ILLUSTRATIONS = {
-  TEST_CASES: { imageType: 'svg' as const, component: TestCasesIllustration },
-  TRIGGERS: { imageType: 'svg' as const, component: TriggersIllustration },
-  HISTORY: { imageType: 'svg' as const, component: HistoryIllustration },
-  NO_DATA: { imageType: 'svg' as const, component: NoDataIllustration },
-}
+/** Every illustration, as an image for the empty state's `image` */
+const ILLUSTRATIONS = Object.fromEntries(
+  (Object.keys(SPECS) as IllustrationName[]).map((illustration) => [illustration, { imageType: 'illustration', illustration }])
+) as Record<IllustrationName, ImageFieldImage>
 
 /** Holds a story to a width, since an empty state fills the container it is in */
 const inWidth = (width: number) =>
@@ -29,7 +28,7 @@ const meta = {
   parameters: { layout: 'centered' },
   args: { title: 'Nothing here yet' },
   argTypes: {
-    illustration: { control: 'select', options: Object.keys(ILLUSTRATIONS), mapping: ILLUSTRATIONS },
+    image: { control: 'select', options: Object.keys(ILLUSTRATIONS), mapping: ILLUSTRATIONS },
     size: { control: 'select', options: ['SMALL', 'LARGE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
   },
@@ -43,7 +42,7 @@ export const LargeWithCallToAction: Story = {
   args: {
     title: 'No triggers yet',
     description: 'A trigger starts another process when an instance of this model completes.',
-    illustration: ILLUSTRATIONS.TRIGGERS,
+    image: ILLUSTRATIONS.TRIGGERS,
     size: 'LARGE',
     primaryButtons: [{ label: 'Create Trigger', color: 'ACCENT' }],
   },
@@ -55,7 +54,7 @@ export const LargeWithButtonGroup: Story = {
   args: {
     title: 'No triggers yet',
     description: 'A trigger starts another process when an instance of this model completes.',
-    illustration: ILLUSTRATIONS.TRIGGERS,
+    image: ILLUSTRATIONS.TRIGGERS,
     size: 'LARGE',
     primaryButtons: [{ label: 'Create Trigger', color: 'ACCENT' }],
     secondaryButtons: [{ label: 'Learn more', color: 'ACCENT' }],
@@ -67,7 +66,7 @@ export const LargeWithoutCallToAction: Story = {
   args: {
     title: 'No version history',
     description: 'Versions are listed here once the model has been published.',
-    illustration: ILLUSTRATIONS.HISTORY,
+    image: ILLUSTRATIONS.HISTORY,
     size: 'LARGE',
   },
 }
@@ -77,7 +76,7 @@ export const SmallWithCallToAction: Story = {
   args: {
     title: 'No test cases yet',
     description: 'Save the values you have entered to run them again later.',
-    illustration: ILLUSTRATIONS.TEST_CASES,
+    image: ILLUSTRATIONS.TEST_CASES,
     size: 'SMALL',
     primaryButtons: [{ label: 'Save as test case', color: 'ACCENT', width: 'FILL' }],
   },
@@ -89,7 +88,7 @@ export const SmallWithButtonGroup: Story = {
   args: {
     title: 'No test cases yet',
     description: 'Save the values you have entered to run them again later.',
-    illustration: ILLUSTRATIONS.TEST_CASES,
+    image: ILLUSTRATIONS.TEST_CASES,
     size: 'SMALL',
     primaryButtons: [{ label: 'Save as test case', color: 'ACCENT' }],
     secondaryButtons: [{ label: 'Not now', color: 'ACCENT' }],
@@ -101,7 +100,7 @@ export const SmallWithoutCallToAction: Story = {
   args: {
     title: 'No test cases yet',
     description: 'Set an instance as a test case and it will be listed here.',
-    illustration: ILLUSTRATIONS.TEST_CASES,
+    image: ILLUSTRATIONS.TEST_CASES,
     size: 'SMALL',
   },
 }
@@ -161,7 +160,7 @@ export const ButtonOrder: Story = {
   args: {
     title: 'No documents yet',
     description: 'Upload a document, or start from one you already have.',
-    illustration: ILLUSTRATIONS.NO_DATA,
+    image: ILLUSTRATIONS.NO_DATA,
     primaryButtons: [
       { label: 'Upload document', color: 'ACCENT' },
       { label: 'Scan', color: 'ACCENT', style: 'OUTLINE' },
@@ -183,7 +182,7 @@ export const FillsItsContainer: Story = {
           <EmptyState
             title={`${width}px wide`}
             description="The empty state fills the container it is in."
-            illustration={ILLUSTRATIONS.NO_DATA}
+            image={ILLUSTRATIONS.NO_DATA}
             size={width === 320 ? 'SMALL' : 'LARGE'}
             primaryButtons={[{ label: 'Action', color: 'ACCENT' }]}
           />
@@ -201,25 +200,25 @@ export const Illustrations: Story = {
       <EmptyState
         title="NO_DATA"
         description="Nothing to show, in general: an empty tray ringed by what would fill it."
-        illustration={ILLUSTRATIONS.NO_DATA}
+        image={ILLUSTRATIONS.NO_DATA}
         marginBelow="STANDARD"
       />
       <EmptyState
         title="HISTORY"
         description="Things from the past, ringed round a clock face."
-        illustration={ILLUSTRATIONS.HISTORY}
+        image={ILLUSTRATIONS.HISTORY}
         marginBelow="STANDARD"
       />
       <EmptyState
         title="TRIGGERS"
         description="A step in a flow, with what leads in and what it starts."
-        illustration={ILLUSTRATIONS.TRIGGERS}
+        image={ILLUSTRATIONS.TRIGGERS}
         marginBelow="STANDARD"
       />
       <EmptyState
         title="TEST_CASES"
         description="The centre joined to the data it is tried with."
-        illustration={ILLUSTRATIONS.TEST_CASES}
+        image={ILLUSTRATIONS.TEST_CASES}
       />
     </div>
   ),
@@ -232,7 +231,7 @@ export const Sizes: Story = {
       <EmptyState
         title="Large"
         description="The text is the same size in both."
-        illustration={ILLUSTRATIONS.TEST_CASES}
+        image={ILLUSTRATIONS.TEST_CASES}
         size="LARGE"
         primaryButtons={[{ label: 'Action', color: 'ACCENT' }]}
         marginBelow="STANDARD"
@@ -241,7 +240,7 @@ export const Sizes: Story = {
         <EmptyState
           title="Small"
           description="The text is the same size in both."
-          illustration={ILLUSTRATIONS.TEST_CASES}
+          image={ILLUSTRATIONS.TEST_CASES}
           size="SMALL"
           primaryButtons={[{ label: 'Action', color: 'ACCENT', width: 'FILL' }]}
         />
