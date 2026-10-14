@@ -11,6 +11,23 @@ const ILLUSTRATIONS = Object.fromEntries(
   (Object.keys(SPECS) as IllustrationName[]).map((illustration) => [illustration, { imageType: 'illustration', illustration }])
 ) as Record<IllustrationName, ImageFieldImage>
 
+/** Document images, from the demo images that ship with Storybook */
+const DOCUMENT_IMAGES = {
+  'Case management studio': { document: 'images/case-management-studio.webp', altText: 'Case management studio' },
+  'Process modeler': { document: 'images/process-modeler.webp', altText: 'Process modeler' },
+  'Data fabric': { document: 'images/data-fabric.webp', altText: 'Data fabric' },
+  'My health site': { document: 'images/my-health-site.png', altText: 'My health site' },
+} satisfies Record<string, ImageFieldImage>
+
+/**
+ * Everything the `image` control offers: every illustration and every document image. The empty
+ * state takes any of ImageField's image types, so a web or user image works the same way.
+ */
+const IMAGE_OPTIONS: Record<string, ImageFieldImage> = {
+  ...Object.fromEntries(Object.entries(ILLUSTRATIONS).map(([name, image]) => [`Illustration: ${name}`, image])),
+  ...Object.fromEntries(Object.entries(DOCUMENT_IMAGES).map(([name, image]) => [`Document image: ${name}`, image])),
+}
+
 /** Holds a story to a width, since an empty state fills the container it is in */
 const inWidth = (width: number) =>
   function InWidth(Story: React.ComponentType) {
@@ -28,7 +45,7 @@ const meta = {
   parameters: { layout: 'centered' },
   args: { title: 'Nothing here yet' },
   argTypes: {
-    image: { control: 'select', options: Object.keys(ILLUSTRATIONS), mapping: ILLUSTRATIONS },
+    image: { control: 'select', options: Object.keys(IMAGE_OPTIONS), mapping: IMAGE_OPTIONS },
     size: { control: 'select', options: ['SMALL', 'LARGE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
   },
@@ -247,4 +264,26 @@ export const Sizes: Story = {
       </div>
     </div>
   ),
+}
+
+/** The picture can be a document image instead of an illustration. It sits above the words, held to a height. */
+export const WithDocumentImage: Story = {
+  decorators: [inWidth(520)],
+  args: {
+    title: 'No models yet',
+    description: 'Create a process model to see it here.',
+    image: DOCUMENT_IMAGES['Process modeler'],
+    primaryButtons: [{ label: 'Create model', color: 'ACCENT' }],
+  },
+}
+
+export const SmallWithDocumentImage: Story = {
+  decorators: [inWidth(320)],
+  args: {
+    title: 'No sites yet',
+    description: 'Create a site to see it here.',
+    image: DOCUMENT_IMAGES['My health site'],
+    size: 'SMALL',
+    primaryButtons: [{ label: 'Create site', color: 'ACCENT', width: 'FILL' }],
+  },
 }
