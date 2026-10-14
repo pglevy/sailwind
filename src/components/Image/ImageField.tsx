@@ -5,22 +5,23 @@ import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape } from '..
 import type { DocumentImageProps } from './DocumentImage'
 import type { UserImageProps } from './UserImage'
 import type { WebImageProps } from './WebImage'
-import type { SvgImageProps } from './SvgImage'
+import type { IllustrationImageProps } from './IllustrationImage'
+import { Illustration } from './illustrations/Illustration'
 import { alignMap, shapeMap } from '../../utils/sailMaps'
 import { resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 import { useI18n, KEYS } from '../../i18n'
 
 // Union type for all image types supported by ImageField
-export type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps | SvgImageProps
+export type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps | IllustrationImageProps
 
 // Type guard to check if an image is a UserImage
 function isUserImage(image: ImageFieldImage): image is UserImageProps {
   return 'imageType' in image && image.imageType === 'user'
 }
 
-// Type guard to check if an image is an SvgImage
-function isSvgImage(image: ImageFieldImage): image is SvgImageProps {
-  return 'imageType' in image && image.imageType === 'svg'
+// Type guard to check if an image is an IllustrationImage
+function isIllustrationImage(image: ImageFieldImage): image is IllustrationImageProps {
+  return 'imageType' in image && image.imageType === 'illustration'
 }
 
 // Type guard to check if an image is a WebImage
@@ -54,7 +55,7 @@ export interface ImageFieldProps {
   instructions?: string
   /** Help tooltip text (max 500 characters) */
   helpTooltip?: string
-  /** Array of images to display (document, user, web and SVG images) */
+  /** Array of images to display (document, user, web and illustration images) */
   images: ImageFieldImage[]
   /** Controls visibility of the component */
   showWhen?: boolean
@@ -163,7 +164,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   ].filter(Boolean).join(' ')
 
   // Filter visible images
-  const visibleImages = images.filter(img => img.showWhen !== false)
+  const visibleImages = images.filter(img => !('showWhen' in img) || img.showWhen !== false)
 
   // Render images
   const imagesElement = (
@@ -238,42 +239,17 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           )
         }
 
-        // Check if this is an SVG image (a component reference, not a URL). Not in SAIL.
-        if (isSvgImage(imageProps)) {
-          const { component: SvgComponent, componentProps, altText, caption, link } = imageProps
-
-          const svgElement = (
-            <div
-              className="relative"
-              title={caption}
-              {...(altText ? { role: 'img', 'aria-label': altText } : { 'aria-hidden': true })}
-            >
-              <SvgComponent {...componentProps} className={getImageClasses()} />
+        // Check if this is an illustration image. Decorative, so it has no alt text or link. Not in SAIL.
+        if (isIllustrationImage(imageProps)) {
+          return (
+            <div key={index} className="relative">
+              <Illustration
+                name={imageProps.illustration}
+                showAnimation={imageProps.showAnimation}
+                className={getImageClasses()}
+              />
             </div>
           )
-
-          if (link) {
-            return (
-              <div
-                key={index}
-                className="cursor-pointer"
-                role="button"
-                tabIndex={0}
-                aria-label={altText || t(KEYS.imageOpenLinked)}
-                onClick={() => link()}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    link()
-                  }
-                }}
-              >
-                {svgElement}
-              </div>
-            )
-          }
-
-          return <React.Fragment key={index}>{svgElement}</React.Fragment>
         }
 
         // Check if this is a web image

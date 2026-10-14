@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ImageField } from './ImageField'
-import { HistoryIllustration, NoDataIllustration, TestCasesIllustration, TriggersIllustration } from './illustrations'
+import { ILLUSTRATIONS } from './illustrations/illustrationSpecs'
+import type { IllustrationName } from './illustrations/illustrationSpecs'
 
 const meta = {
   title: 'Components/Image',
@@ -229,65 +230,32 @@ export const ShapeCircle: Story = {
 }
 
 /**
- * An SVG image is a reference to a component, not a URL, so the component keeps full control of
- * its own style and animation. Not in SAIL. These are the pre-baked illustrations; more will be
- * added over time, and any component that renders an `<svg>` and puts the `className` it is
- * given on it can be used the same way.
+ * Pre-baked line drawings, for the picture at the top of an empty state or a panel with nothing
+ * in it. Not in SAIL. An illustration image has two parameters, `illustration` (which picture)
+ * and `showAnimation` (whether it draws itself in, on by default), and takes its size from the
+ * field's `size`. It is decorative, so put the words that say what it means beside it. The outer
+ * rings run past each picture's edge, so the pictures sit in something that clips here.
+ *
+ * Ringed round a centre: TEST_CASES, TRIGGERS, HISTORY, NO_DATA, PROCESS_MODELS, RECORD_TYPES,
+ * INTERFACES, EXPRESSION_RULES, AI_SKILLS, AI_AGENTS, CASES, DASHBOARDS, DOCUMENT_PROCESSING,
+ * INTEGRATIONS. Lists: TASK_LIST, SEARCH_RESULTS, DOCUMENT_LIST. Conversations: CONVERSATION,
+ * AI_CHAT, COMMENTS.
  */
-export const SvgIllustration: Story = {
+export const Illustration: Story = {
   args: {
     labelPosition: 'COLLAPSED',
-    images: [{ imageType: 'svg', component: TriggersIllustration, altText: 'A step that starts two others' }],
-    size: 'LARGE',
-    align: 'CENTER',
-  },
-}
-
-export const SvgIllustrations: Story = {
-  args: {
-    labelPosition: 'COLLAPSED',
-    images: [
-      { imageType: 'svg', component: TestCasesIllustration },
-      { imageType: 'svg', component: TriggersIllustration },
-      { imageType: 'svg', component: HistoryIllustration },
-      { imageType: 'svg', component: NoDataIllustration },
-    ],
+    images: (Object.keys(ILLUSTRATIONS) as IllustrationName[]).map((illustration) => ({
+      imageType: 'illustration' as const,
+      illustration,
+    })),
     size: 'MEDIUM_PLUS',
     align: 'CENTER',
   },
   decorators: [
     (Story) => (
-      // The outer rings run past each picture's edge, so the pictures sit in something that clips
       <div className="overflow-hidden rounded-sm border border-gray-200 bg-white p-4">
         <Story />
       </div>
     ),
   ],
-}
-
-/** Turn the animation of a pre-baked illustration off with `componentProps`. */
-export const SvgWithoutAnimation: Story = {
-  args: {
-    labelPosition: 'COLLAPSED',
-    images: [{ imageType: 'svg', component: TriggersIllustration, componentProps: { showAnimation: false } }],
-    size: 'LARGE',
-    align: 'CENTER',
-  },
-}
-
-const CustomSvg = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-    <circle cx="50" cy="50" r="40" className="fill-blue-100 stroke-blue-500" strokeWidth="4" />
-    <path d="M 30 52 L 45 67 L 72 36" className="fill-none stroke-blue-700" strokeWidth="6" strokeLinecap="round" />
-  </svg>
-)
-
-/** Any component works, so a project can bring its own illustration, styled and animated as it likes. */
-export const SvgCustomComponent: Story = {
-  args: {
-    labelPosition: 'COLLAPSED',
-    images: [{ imageType: 'svg', component: CustomSvg, altText: 'Done' }],
-    size: 'SMALL_PLUS',
-    align: 'CENTER',
-  },
 }
