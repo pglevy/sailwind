@@ -2,14 +2,14 @@ import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
 import { EmptyState, EmptyStatePopover } from '../../pages/patterns/EmptyState'
-import type { ImageFieldImage } from '../../components/Image/ImageField'
+import type { EmptyStateImage } from '../../pages/patterns/EmptyState'
 import { ILLUSTRATIONS as SPECS } from '../../components/Image/illustrations/illustrationSpecs'
 import type { IllustrationName } from '../../components/Image/illustrations/illustrationSpecs'
 
 /** Every illustration, as an image for the empty state's `image` */
 const ILLUSTRATIONS = Object.fromEntries(
   (Object.keys(SPECS) as IllustrationName[]).map((illustration) => [illustration, { imageType: 'illustration', illustration }])
-) as Record<IllustrationName, ImageFieldImage>
+) as Record<IllustrationName, EmptyStateImage>
 
 /** Document images, from the demo images that ship with Storybook */
 const DOCUMENT_IMAGES = {
@@ -17,13 +17,13 @@ const DOCUMENT_IMAGES = {
   'Process modeler': { document: 'images/process-modeler.webp', altText: 'Process modeler' },
   'Data fabric': { document: 'images/data-fabric.webp', altText: 'Data fabric' },
   'My health site': { document: 'images/my-health-site.png', altText: 'My health site' },
-} satisfies Record<string, ImageFieldImage>
+} satisfies Record<string, EmptyStateImage>
 
 /**
  * Everything the `image` control offers: every illustration and every document image. The empty
- * state takes any of ImageField's image types, so a web or user image works the same way.
+ * state also takes a web image, which works the same way as a document image.
  */
-const IMAGE_OPTIONS: Record<string, ImageFieldImage> = {
+const IMAGE_OPTIONS: Record<string, EmptyStateImage> = {
   ...Object.fromEntries(Object.entries(ILLUSTRATIONS).map(([name, image]) => [`Illustration: ${name}`, image])),
   ...Object.fromEntries(Object.entries(DOCUMENT_IMAGES).map(([name, image]) => [`Document image: ${name}`, image])),
 }
@@ -135,11 +135,11 @@ export const InAPopover: Story = {
   render: () => <EmptyStatePopover />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const trigger = canvas.getByRole('button', { name: 'Fill with test data' })
+    const trigger = canvas.getByRole('button', { name: 'Saved filters' })
     await expect(trigger).toHaveAttribute('aria-expanded', 'false')
     await userEvent.click(trigger)
     await expect(trigger).toHaveAttribute('aria-expanded', 'true')
-    await expect(canvas.getByText('No test cases yet')).toBeInTheDocument()
+    await expect(canvas.getByText('No saved filters yet')).toBeInTheDocument()
   },
 }
 
@@ -155,14 +155,14 @@ export const InAPopoverWithButtonGroup: Story = {
   ],
   render: () => (
     <EmptyStatePopover
-      primaryButtons={[{ label: 'Save as test case', color: 'ACCENT' }]}
+      primaryButtons={[{ label: 'Save filters', color: 'ACCENT' }]}
       secondaryButtons={[{ label: 'Not now', color: 'ACCENT' }]}
     />
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('button', { name: 'Fill with test data' }))
-    await expect(canvas.getByRole('button', { name: 'Save as test case' })).toBeInTheDocument()
+    await userEvent.click(canvas.getByRole('button', { name: 'Saved filters' }))
+    await expect(canvas.getByRole('button', { name: 'Save filters' })).toBeInTheDocument()
     await expect(canvas.getByRole('button', { name: 'Not now' })).toBeInTheDocument()
   },
 }
@@ -209,7 +209,7 @@ export const FillsItsContainer: Story = {
   ),
 }
 
-/** Every picture, each with the kind of message it suits. The pictures themselves are documented under Components/Image. */
+/** Four of the pictures, each with the kind of message it suits. The pictures themselves are documented under Components/Image. */
 export const Illustrations: Story = {
   decorators: [inWidth(520)],
   render: () => (
