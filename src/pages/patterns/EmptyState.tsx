@@ -24,11 +24,12 @@ import { ChevronDown } from 'lucide-react'
  *
  * Variants
  * - `size="LARGE"` fills a panel; `size="SMALL"` is compact enough for a popover
- * - `image` is the picture, as one of ImageField's images: for example
- *   `{ imageType: 'illustration', illustration: 'TRIGGERS' }`, or a web or document image. The
- *   words are placed to suit the illustrations, which are 400 × 176 with their centre in the
- *   middle and nothing below 57 units from it; a picture of another shape needs `LAYOUT` and
- *   `CENTRE` below adjusted.
+ * - `image` is the picture, as one of ImageField's images: an illustration
+ *   (`{ imageType: 'illustration', illustration: 'TRIGGERS' }`), or a document, web or user
+ *   image. An illustration sits behind the words, which are placed to suit its shape (400 × 176,
+ *   centre in the middle, nothing below 57 units from it). Any other image can be any shape, so
+ *   it sits above the words, in the flow, at its natural proportions and no taller than 160px
+ *   (LARGE) or 112px (SMALL).
  * - `primaryButtons` and `secondaryButtons` add a call to action: one button, or a group of
  *   them. Leave both out for none. They are named and ordered as in Appian's
  *   a!buttonLayout (see ButtonLayout below). In a SMALL empty state a group shares the row
@@ -81,6 +82,16 @@ const useIsWide = () =>
 
 /** The picture's centre sits this far down it, as a share of its width (88 of 400) */
 const CENTRE = 0.22
+
+/**
+ * The tallest a picture that is not an illustration may be at each size. An illustration has a
+ * fixed shape the words are laid out around; a document, web or user image can be any shape, so
+ * it sits above the words and is held to a height instead.
+ */
+const IMAGE_MAX_HEIGHT: Record<EmptyStateSize, string> = {
+  SMALL: '[&_img]:max-h-28',
+  LARGE: '[&_img]:max-h-40',
+}
 
 /* -------------------------------------------------------------------------- */
 /* The pattern                                                                 */
@@ -190,6 +201,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   if (!showWhen) return null
   const { width, gap, bottom } = LAYOUT[size]
+  const isIllustration = 'imageType' in image && image.imageType === 'illustration'
 
   return (
     <CardLayout
@@ -199,19 +211,27 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       marginBelow={marginBelow}
       className="w-full overflow-hidden text-center"
     >
-      {/* The picture, behind the words. It fills the width it is given, up to its own size, and
-          fades out toward the bottom so nothing in it runs through the words. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto"
-        style={{ width: `min(100%, ${width}px)`, maskImage: FADE, WebkitMaskImage: FADE }}
-      >
-        <ImageField images={[image]} size="FIT" align="CENTER" marginBelow="NONE" />
-      </div>
+      {isIllustration ? (
+        /* An illustration sits behind the words. It fills the width it is given, up to its own
+           size, and fades out toward the bottom so nothing in it runs through the words. */
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 mx-auto"
+          style={{ width: `min(100%, ${width}px)`, maskImage: FADE, WebkitMaskImage: FADE }}
+        >
+          <ImageField images={[image]} size="FIT" align="CENTER" marginBelow="NONE" />
+        </div>
+      ) : (
+        /* Any other image sits above the words, in the flow, held to a height */
+        <div className={`px-4 pt-6 ${IMAGE_MAX_HEIGHT[size]} [&_img]:w-auto`}>
+          <ImageField images={[image]} size="FIT" align="CENTER" marginBelow="NONE" />
+        </div>
+      )}
 
-      {/* The words start under the centre of the picture, wherever the picture has scaled to */}
+      {/* The words start under the centre of an illustration, wherever it has scaled to, or
+          under any other image */}
       <div
         className={`relative px-4 ${bottom}`}
-        style={{ paddingTop: `calc(min(100%, ${width}px) * ${CENTRE} + ${gap}px)` }}
+        style={isIllustration ? { paddingTop: `calc(min(100%, ${width}px) * ${CENTRE} + ${gap}px)` } : { paddingTop: 20 }}
       >
         <RichTextDisplayField
           align="CENTER"

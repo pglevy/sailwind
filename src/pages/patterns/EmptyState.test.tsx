@@ -140,6 +140,29 @@ describe('EmptyState - image', () => {
     expect(container.querySelector('svg')).not.toHaveClass('sw-illustration-animated')
   })
 
+  it('puts a document image above the words, in the flow, rather than behind them', () => {
+    const { container } = render(
+      <EmptyState title="No documents" image={{ document: 'images/process-modeler.webp', altText: 'A process model' }} />
+    )
+    const img = screen.getByAltText('A process model')
+    expect(img).toHaveAttribute('src', 'images/process-modeler.webp')
+    // No illustration, and nothing positioned over the words
+    expect(container.querySelector('svg.sw-illustration-animated')).toBeNull()
+    expect(img.closest('.absolute')).toBeNull()
+    // Held to a height so a tall image cannot swamp the words
+    expect(img.closest('[class*="max-h-"]')).not.toBeNull()
+  })
+
+  it('holds a document image to a smaller height in a SMALL empty state', () => {
+    render(<EmptyState title="No documents" size="SMALL" image={{ document: 'a.png', altText: 'A' }} />)
+    expect(screen.getByAltText('A').closest('[class*="max-h-28"]')).not.toBeNull()
+  })
+
+  it('keeps an illustration behind the words', () => {
+    const { container } = render(<EmptyState title="No data" image={{ imageType: 'illustration', illustration: 'NO_DATA' }} />)
+    expect(container.querySelector('svg')!.closest('.absolute')).not.toBeNull()
+  })
+
   it('accepts the other image types, such as a web image', () => {
     const { container } = render(
       <EmptyState title="No photos" image={{ source: 'https://example.com/empty.png', altText: 'An empty frame' }} />
