@@ -21,6 +21,9 @@ const TILE_ICON = 14
 const CENTRE_HALF = 24
 const CENTRE_ICON = 20
 
+/** The soft shadow under the centre tile, and under the card that matters in a list or conversation */
+const CARD_SHADOW = 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))'
+
 /** Rings out from the centre of the picture, nearest first */
 const Rings: React.FC<{ rings: { r: number; opacity: number }[] }> = ({ rings }) => (
   <>
@@ -127,7 +130,7 @@ const RadialPicture: React.FC<{ spec: RadialSpec }> = ({ spec }) => {
           rx="4"
           className={`fill-white ${spec.accent ? 'stroke-blue-200' : 'stroke-gray-200'}`}
           strokeWidth="1.5"
-          style={{ filter: 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))' }}
+          style={{ filter: CARD_SHADOW }}
         />
         <CentreIcon
           x={-CENTRE_ICON / 2}
@@ -174,7 +177,7 @@ const StackPicture: React.FC<{ spec: StackSpec }> = ({ spec }) => (
               rx={item.radius}
               className={item.accent ? 'fill-white stroke-blue-200' : 'fill-white stroke-gray-200'}
               strokeWidth={item.accent ? '1.5' : '1'}
-              style={item.accent ? { filter: 'drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))' } : undefined}
+              style={item.accent ? { filter: CARD_SHADOW } : undefined}
             />
 
             {BadgeIcon && (

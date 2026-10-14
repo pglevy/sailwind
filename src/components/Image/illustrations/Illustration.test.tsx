@@ -47,12 +47,38 @@ describe("illustration image - animation", () => {
 });
 
 describe("illustration image - ImageField", () => {
-  it("does not draw an illustration whose image has showWhen false", () => {
+  it("does not draw an illustration whose image has showWhen false, and still draws one without it", () => {
     const { container } = render(
-      <ImageField images={[{ imageType: "illustration", illustration: "NO_DATA" }, { document: "a.png", showWhen: false }]} />
+      <ImageField
+        images={[
+          { imageType: "illustration", illustration: "NO_DATA" },
+          { imageType: "illustration", illustration: "HISTORY", showWhen: false },
+          { document: "a.png", showWhen: false },
+        ]}
+      />
     );
     expect(container.querySelectorAll("svg.sw-illustration-animated")).toHaveLength(1);
     expect(container.querySelector("img")).toBeNull();
+  });
+
+  it("applies only the size to an illustration, not style, shape or isThumbnail", () => {
+    const { container } = render(
+      <ImageField images={[{ imageType: "illustration", illustration: "NO_DATA" }]} size="LARGE" style="AVATAR" shape="ROUNDED" isThumbnail />
+    );
+    const svg = svgOf(container);
+    expect(svg).toHaveClass("w-96");
+    for (const cls of ["rounded-full", "rounded-md", "cursor-pointer", "object-cover", "hover:opacity-80"]) expect(svg).not.toHaveClass(cls);
+  });
+
+  it("clips the rings at the edge of the picture so they never spill over what is beside it", () => {
+    const { container } = drawn("NO_DATA");
+    expect(svgOf(container).parentElement).toHaveClass("overflow-hidden");
+  });
+
+  it("draws nothing for an image type it does not know, rather than a broken image", () => {
+    const { container } = render(<ImageField images={[{ imageType: "mystery" } as never]} />);
+    expect(container.querySelector("img")).toBeNull();
+    expect(container.querySelector("svg")).toBeNull();
   });
 
   it("draws an illustration alongside other image types", () => {
