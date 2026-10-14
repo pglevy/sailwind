@@ -265,3 +265,91 @@
     z-index: 1;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Illustration (src/components/Illustration)                          */
+/*                                                                      */
+/* The picture settles in when it appears. Every rule is scoped to     */
+/* .sw-illustration-animated, which Illustration only adds when        */
+/* showAnimation is on, so nothing here touches a consumer's own       */
+/* markup. `scale` and `translate` are used rather than `transform`,   */
+/* which the tiles already spend on their place in the picture, and    */
+/* `transform-box: fill-box` makes SVG shapes scale from their own     */
+/* centre. Delays are set inline, per element.                         */
+/* ------------------------------------------------------------------ */
+@keyframes sw-ill-centre-in {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+@keyframes sw-ill-ring-in {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+
+@keyframes sw-ill-tile-in {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+/* pathLength is 1 on every line, so one dash the length of the line can be slid off it */
+@keyframes sw-ill-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sw-ill-arrow-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .sw-illustration-animated .sw-ill-centre,
+  .sw-illustration-animated .sw-ill-ring,
+  .sw-illustration-animated .sw-ill-tile {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .sw-illustration-animated .sw-ill-centre {
+    animation: sw-ill-centre-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .sw-illustration-animated .sw-ill-ring {
+    animation: sw-ill-ring-in 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .sw-illustration-animated .sw-ill-tile {
+    animation: sw-ill-tile-in 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .sw-illustration-animated .sw-ill-line {
+    stroke-dasharray: 1;
+    animation: sw-ill-line-draw 480ms cubic-bezier(0.45, 0, 0.2, 1) backwards;
+  }
+
+  .sw-illustration-animated .sw-ill-arrow {
+    animation: sw-ill-arrow-in 120ms ease-out backwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-illustration-animated .sw-ill-centre,
+  .sw-illustration-animated .sw-ill-ring,
+  .sw-illustration-animated .sw-ill-tile,
+  .sw-illustration-animated .sw-ill-line,
+  .sw-illustration-animated .sw-ill-arrow {
+    animation: none;
+  }
+}
