@@ -23,6 +23,25 @@ const BUTTONS = {
   secondaryButtons: [{ label: 'Skip' }, { label: 'Learn more' }],
 }
 
+describe('ButtonLayout - keys', () => {
+  it('keeps the same button element when the window changes and the order flips', () => {
+    setWidth(true)
+    const { rerender } = render(<ButtonLayout size="STANDARD" {...BUTTONS} />)
+    const upload = screen.getByRole('button', { name: 'Upload' })
+    setWidth(false)
+    rerender(<ButtonLayout size="STANDARD" {...BUTTONS} />)
+    expect(screen.getByRole('button', { name: 'Upload' })).toBe(upload)
+  })
+
+  it('does not warn about repeated labels', () => {
+    setWidth(true)
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    render(<ButtonLayout size="STANDARD" primaryButtons={[{ label: 'OK' }, { label: 'OK' }]} />)
+    expect(error).not.toHaveBeenCalled()
+    error.mockRestore()
+  })
+})
+
 describe('ButtonLayout - order', () => {
   it('in a row, goes from the least prominent button to the most prominent', () => {
     setWidth(true)
@@ -86,7 +105,7 @@ describe('EmptyState', () => {
 })
 
 describe('EmptyStatePopover - accessibility', () => {
-  const trigger = () => screen.getByRole('button', { name: 'Fill with test data' })
+  const trigger = () => screen.getByRole('button', { name: 'Saved filters' })
 
   it('is a disclosure, not a menu', () => {
     render(<EmptyStatePopover />)
@@ -94,13 +113,13 @@ describe('EmptyStatePopover - accessibility', () => {
     expect(trigger()).toHaveAttribute('aria-expanded', 'false')
     fireEvent.click(trigger())
     expect(trigger()).toHaveAttribute('aria-expanded', 'true')
-    expect(trigger()).toHaveAttribute('aria-controls', screen.getByRole('region', { name: 'Fill with test data' }).id)
+    expect(trigger()).toHaveAttribute('aria-controls', screen.getByRole('region', { name: 'Saved filters' }).id)
   })
 
   it('closes on Escape and returns focus to the button that opened it, even from inside the panel', () => {
     render(<EmptyStatePopover />)
     fireEvent.click(trigger())
-    const inside = screen.getByRole('button', { name: 'Save as test case' })
+    const inside = screen.getByRole('button', { name: 'Save filters' })
     inside.focus()
     expect(inside).toHaveFocus()
 
@@ -109,6 +128,25 @@ describe('EmptyStatePopover - accessibility', () => {
     expect(screen.queryByRole('region')).not.toBeInTheDocument()
     expect(trigger()).toHaveAttribute('aria-expanded', 'false')
     expect(trigger()).toHaveFocus()
+  })
+
+  it('closes when focus moves out of it', () => {
+    render(
+      <div>
+        <EmptyStatePopover />
+        <button>Elsewhere</button>
+      </div>
+    )
+    fireEvent.click(trigger())
+    expect(screen.getByRole('region')).toBeInTheDocument()
+    fireEvent.focusIn(screen.getByRole('button', { name: 'Elsewhere' }))
+    expect(screen.queryByRole('region')).not.toBeInTheDocument()
+  })
+
+  it('names the panel with the button that opened it', () => {
+    render(<EmptyStatePopover />)
+    fireEvent.click(trigger())
+    expect(screen.getByRole('region')).toHaveAttribute('aria-labelledby', trigger().id)
   })
 
   it('closes on a press outside it', () => {
@@ -163,7 +201,7 @@ describe('EmptyState - image', () => {
     expect(container.querySelector('svg')!.closest('.absolute')).not.toBeNull()
   })
 
-  it('accepts the other image types, such as a web image', () => {
+  it('accepts a web image', () => {
     const { container } = render(
       <EmptyState title="No photos" image={{ source: 'https://example.com/empty.png', altText: 'An empty frame' }} />
     )

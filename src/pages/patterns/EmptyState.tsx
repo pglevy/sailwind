@@ -3,7 +3,7 @@ import { CardLayout } from '../../components/Card/CardLayout'
 import { ButtonWidget } from '../../components/Button/ButtonWidget'
 import type { ButtonWidgetProps } from '../../components/Button/ButtonWidget'
 import { ImageField } from '../../components/Image/ImageField'
-import type { ImageFieldImage } from '../../components/Image/ImageField'
+import type { DocumentImageProps, IllustrationImageProps, WebImageProps } from '../../components/Image'
 import { RichTextDisplayField } from '../../components/RichText/RichTextDisplayField'
 import { TextItem } from '../../components/RichText/TextItem'
 import type { SAILMarginSize } from '../../types/sail'
@@ -17,16 +17,15 @@ import { ChevronDown } from 'lucide-react'
  * This is a pattern, not a library component: nothing here is exported from
  * `@pglevy/sailwind`. Copy the file into your project and adjust it. SAIL has no empty
  * state, so every option below is a choice made by this pattern, not a SAIL parameter.
- * The picture is an `image` field: any of ImageField's image types (an illustration, a web
- * image, a document image). By default it is the `NO_DATA` illustration, which animates in; the
+ * The picture is an `image` field: an illustration, a document image or a web image (the
+ * ImageField image types that make sense here). By default it is the `NO_DATA` illustration, which animates in; the
  * words do not move. The empty state has no animation setting of its own: to turn an
  * illustration's animation off, give the image `showAnimation: false`.
  *
  * Variants
  * - `size="LARGE"` fills a panel; `size="SMALL"` is compact enough for a popover
  * - `image` is the picture, as one of ImageField's images: an illustration
- *   (`{ imageType: 'illustration', illustration: 'TRIGGERS' }`), or a document, web or user
- *   image. An illustration sits behind the words, which are placed to suit its shape (400 × 176,
+ *   (`{ imageType: 'illustration', illustration: 'TRIGGERS' }`), or a document or web image. An illustration sits behind the words, which are placed to suit its shape (400 × 176,
  *   centre in the middle, nothing below 57 units from it). Any other image can be any shape, so
  *   it sits above the words, in the flow, at its natural proportions and no taller than 160px
  *   (LARGE) or 112px (SMALL).
@@ -43,8 +42,14 @@ import { ChevronDown } from 'lucide-react'
 
 export type EmptyStateSize = 'SMALL' | 'LARGE'
 
-const NO_DATA_IMAGE: ImageFieldImage = { imageType: 'illustration', illustration: 'NO_DATA' }
-const TEST_CASES_IMAGE: ImageFieldImage = { imageType: 'illustration', illustration: 'TEST_CASES' }
+/**
+ * The pictures an empty state can take. A user image is left out: it is drawn as a round avatar
+ * with no height of its own to hold, so it cannot be fitted above the words the way a
+ * document or web image is.
+ */
+export type EmptyStateImage = DocumentImageProps | WebImageProps | IllustrationImageProps
+
+const NO_DATA_IMAGE: EmptyStateImage = { imageType: 'illustration', illustration: 'NO_DATA' }
 
 /**
  * The picture's width at each size, the gap under its centre to the words, and the space under
@@ -102,8 +107,8 @@ export interface EmptyStateProps {
   title: string
   /** Second line: why it is worth adding, or how to add it */
   description?: string
-  /** The picture at the top: any of ImageField's image types. Defaults to the NO_DATA illustration. */
-  image?: ImageFieldImage
+  /** The picture at the top: an illustration, a document image or a web image. Defaults to the NO_DATA illustration. */
+  image?: EmptyStateImage
   /** LARGE fills a panel; SMALL fits a popover */
   size?: EmptyStateSize
   /**
@@ -162,6 +167,17 @@ export const ButtonLayout: React.FC<{
   if (leastToMost.length === 0) return null
 
   const ordered = isWide ? leastToMost : [...leastToMost].reverse()
+
+  // Keyed by label, not position: the order flips with the window, and a button that has
+  // focus has to stay the same button when it moves. A repeated label is numbered.
+  const seen: Record<string, number> = {}
+  const keys = new Map<(typeof leastToMost)[number], string>()
+  for (const button of leastToMost) {
+    const label = String(button.label ?? '')
+    seen[label] = (seen[label] ?? 0) + 1
+    keys.set(button, `${label}#${seen[label]}`)
+  }
+  const keyOf = (button: (typeof leastToMost)[number]) => keys.get(button)
   const sharesRow = share && isWide && ordered.length > 1
 
   return (
@@ -171,9 +187,9 @@ export const ButtonLayout: React.FC<{
       aria-label={accessibilityText}
       className={`mt-4 flex gap-1 ${isWide ? 'flex-row flex-wrap items-start justify-center' : 'flex-col items-stretch'}`}
     >
-      {ordered.map((button, index) => (
+      {ordered.map((button) => (
         <ButtonWidget
-          key={index}
+          key={keyOf(button)}
           size={size}
           {...button}
           className={sharesRow ? `flex-1 ${button.className ?? ''}` : button.className}
@@ -274,13 +290,14 @@ export const EmptyStatePopover: React.FC<{
   primaryButtons?: ButtonWidgetProps[]
   secondaryButtons?: ButtonWidgetProps[]
 }> = ({
-  primaryButtons = [{ label: 'Save as test case', color: 'ACCENT' }],
+  primaryButtons = [{ label: 'Save filters', color: 'ACCENT' }],
   secondaryButtons,
 }) => {
   const [open, setOpen] = React.useState(false)
   const rootRef = React.useRef<HTMLDivElement>(null)
   const triggerRef = React.useRef<HTMLButtonElement>(null)
   const panelId = React.useId()
+  const triggerId = React.useId()
 
   React.useEffect(() => {
     if (!open) return
@@ -293,11 +310,17 @@ export const EmptyStatePopover: React.FC<{
     const onPointerDown = (event: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false)
     }
+    // Tabbing out of the panel closes it too, as it would for a menu
+    const onFocusIn = (event: FocusEvent) => {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false)
+    }
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('focusin', onFocusIn)
     return () => {
       document.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('focusin', onFocusIn)
     }
   }, [open])
 
@@ -306,6 +329,7 @@ export const EmptyStatePopover: React.FC<{
       {/* A native button rather than ButtonWidget, which has no way to carry aria-expanded and
           aria-controls. It is drawn to match a SMALL OUTLINE ButtonWidget. */}
       <button
+        id={triggerId}
         ref={triggerRef}
         type="button"
         aria-expanded={open}
@@ -313,21 +337,21 @@ export const EmptyStatePopover: React.FC<{
         onClick={() => setOpen(current => !current)}
         className="inline-flex items-center gap-1.5 rounded-sm border border-blue-500 bg-white px-3 py-2 text-sm leading-none font-medium text-blue-500 cursor-pointer hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-blue-700"
       >
-        Fill with test data
+        Saved filters
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
       </button>
       {open && (
         <div
           id={panelId}
           role="region"
-          aria-label="Fill with test data"
+          aria-labelledby={triggerId}
           className="absolute left-0 top-full z-10 mt-1 w-80 overflow-hidden rounded-sm border border-gray-200 bg-white shadow-md"
         >
           <EmptyState
             size="SMALL"
-            image={TEST_CASES_IMAGE}
-            title="No test cases yet"
-            description="Fill in the fields, then save what you typed as a test case. It will be here whenever you want to try the template again."
+            image={NO_DATA_IMAGE}
+            title="No saved filters yet"
+            description="Choose some filters, then save them to come back to this view whenever you like."
             primaryButtons={primaryButtons}
             secondaryButtons={secondaryButtons}
             showBorder={false}
