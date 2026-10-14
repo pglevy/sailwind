@@ -363,7 +363,7 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
   // mid-animation. It tracks `shape`, not the border, so it holds with
   // showBorder={false} + showShadow too. Rounding just the header, instead of
   // overflow-hidden on the outer container, avoids clipping other content
-  // that must render outside the box's bounds — e.g. WithDropdownContent's
+  // that must render outside the box's bounds — e.g. WithFormContent's
   // open dropdown menu.
   const isSettledClosed = isCollapsible && !isOpen && !isAnimating
   const headerShapeClass = isSettledClosed ? shapeMap[shape] : headerTopShapeMap[shape]

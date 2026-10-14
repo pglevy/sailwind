@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { userEvent, within, expect } from "storybook/test";
 import { BoxLayout } from "./BoxLayout";
@@ -6,6 +7,8 @@ import { HeadingField } from "../Heading/HeadingField";
 import { RichTextDisplayField } from "../RichText/RichTextDisplayField";
 import { TextItem } from "../RichText/TextItem";
 import { DropdownField } from "../Dropdown/DropdownField";
+import { TextField } from "../TextField/TextField";
+import { ParagraphField } from "../ParagraphField/ParagraphField";
 
 const meta = {
   title: "Components/Box",
@@ -175,7 +178,7 @@ export const Shapes: Story = {
     // reported bug. Checked via computed top-corner radius matching the
     // outer box's, rather than overflow-hidden on the outer container,
     // which would also clip content (e.g. an open dropdown) meant to render
-    // outside the box's bounds — see WithDropdownContent below. A collapsed
+    // outside the box's bounds — see WithFormContent below. A collapsed
     // box's header is also its bottom edge, so its bottom-corner radius must
     // match the outer box's too.
     const grid = canvasElement.querySelector(".grid.grid-cols-3") as HTMLElement;
@@ -288,7 +291,7 @@ export const WithCardContent: Story = {
     label: "Project Summary",
     padding: "STANDARD",
     children: (
-      <CardLayout padding="STANDARD" showShadow={true}>
+      <CardLayout padding="STANDARD" style="#F5F5F5" showBorder={false}>
         <HeadingField text="Q3 Results" size="MEDIUM" marginBelow="STANDARD" />
         <RichTextDisplayField
           value={[<TextItem text="Revenue is up 12% quarter over quarter." />]}
@@ -298,23 +301,41 @@ export const WithCardContent: Story = {
   },
 };
 
-export const WithDropdownContent: Story = {
+export const WithFormContent: Story = {
   args: {
-    label: "Filters",
+    label: "Request Details",
     isCollapsible: true,
     isInitiallyCollapsed: false,
     padding: "STANDARD",
-    children: (
-      <DropdownField
-        label="Status"
-        choiceLabels={["Open", "In Progress", "Closed"]}
-        choiceValues={["OPEN", "IN_PROGRESS", "CLOSED"]}
-      />
-    ),
+    children: null,
+  },
+  render: (args) => {
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    return (
+      <div className="w-96">
+        <BoxLayout {...args}>
+          <TextField label="Title" value={title} saveInto={setTitle} />
+          <ParagraphField
+            label="Description"
+            value={description}
+            saveInto={setDescription}
+          />
+          {/* Keep the dropdown last: the play function checks that its open
+              menu, which extends past the box's bottom edge, isn't clipped. */}
+          <DropdownField
+            label="Priority"
+            choiceLabels={["Low", "Medium", "High"]}
+            choiceValues={["LOW", "MEDIUM", "HIGH"]}
+            marginBelow="NONE"
+          />
+        </BoxLayout>
+      </div>
+    );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole("button", { name: /status/i });
+    const trigger = canvas.getByRole("button", { name: /priority/i });
     await userEvent.click(trigger);
     const listbox = canvas.getByRole("listbox");
     await expect(listbox).toBeVisible();
