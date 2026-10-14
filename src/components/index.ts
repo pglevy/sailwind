@@ -16,6 +16,9 @@ export * from './Heading'
 // MessageBanner components
 export * from './MessageBanner'
 
+// Illustration components (not in SAIL)
+export * from './Illustration'
+
 // Milestone components
 export * from './Milestone'
 
