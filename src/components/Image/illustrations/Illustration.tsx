@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ILLUSTRATIONS } from './illustrationSpecs'
-import type { IllustrationName, RadialSpec, StackSpec } from './illustrationSpecs'
+import type { IllustrationName, IllustrationTile, RadialSpec, StackSpec } from './illustrationSpecs'
 
 export interface IllustrationProps {
   /** Which illustration to draw */
@@ -20,6 +20,47 @@ const TILE_HALF = 13
 const TILE_ICON = 14
 const CENTRE_HALF = 24
 const CENTRE_ICON = 20
+
+/** Rings out from the centre of the picture, nearest first */
+const Rings: React.FC<{ rings: { r: number; opacity: number }[] }> = ({ rings }) => (
+  <>
+    {rings.map((ring, index) => (
+      <circle
+        key={ring.r}
+        className="sw-ill-ring fill-none stroke-gray-200"
+        r={ring.r}
+        opacity={ring.opacity}
+        strokeWidth="1"
+        style={{ animationDelay: `${40 + index * 60}ms` }}
+      />
+    ))}
+  </>
+)
+
+/** Small tiles with an icon each. `sequence` times them one by one; without it they settle in together. */
+const Tiles: React.FC<{ tiles: IllustrationTile[]; sequence?: number[] }> = ({ tiles, sequence }) => (
+  <>
+    {tiles.map((tile, index) => {
+      const TileIcon = tile.icon
+      return (
+        <g key={index} transform={`translate(${tile.x} ${tile.y})`}>
+          <g className="sw-ill-tile" opacity={tile.opacity} style={{ animationDelay: `${sequence ? sequence[index] : 120 + index * 45}ms` }}>
+            <rect
+              x={-TILE_HALF}
+              y={-TILE_HALF}
+              width={TILE_HALF * 2}
+              height={TILE_HALF * 2}
+              rx="4"
+              className={`${tile.tint ? 'fill-gray-100' : 'fill-white'} stroke-gray-200`}
+              strokeWidth="1"
+            />
+            <TileIcon x={-TILE_ICON / 2} y={-TILE_ICON / 2} size={TILE_ICON} className="stroke-gray-500" />
+          </g>
+        </g>
+      )
+    })}
+  </>
+)
 
 /** A picture ringed round a centre tile */
 const RadialPicture: React.FC<{ spec: RadialSpec }> = ({ spec }) => {
@@ -56,16 +97,7 @@ const RadialPicture: React.FC<{ spec: RadialSpec }> = ({ spec }) => {
         </defs>
       )}
 
-      {spec.rings.map((ring, index) => (
-        <circle
-          key={ring.r}
-          className="sw-ill-ring fill-none stroke-gray-200"
-          r={ring.r}
-          opacity={ring.opacity}
-          strokeWidth="1"
-          style={{ animationDelay: `${40 + index * 60}ms` }}
-        />
-      ))}
+      <Rings rings={spec.rings} />
 
       {spec.lines.map((path, index) => (
         <path
@@ -84,29 +116,7 @@ const RadialPicture: React.FC<{ spec: RadialSpec }> = ({ spec }) => {
         />
       ))}
 
-      {spec.tiles.map((tile, index) => {
-        const TileIcon = tile.icon
-        return (
-          <g key={index} transform={`translate(${tile.x} ${tile.y})`}>
-            <g
-              className="sw-ill-tile"
-              opacity={tile.opacity}
-              style={{ animationDelay: `${sequence ? sequence.tiles[index] : 120 + index * 45}ms` }}
-            >
-              <rect
-                x={-TILE_HALF}
-                y={-TILE_HALF}
-                width={TILE_HALF * 2}
-                height={TILE_HALF * 2}
-                rx="4"
-                className="fill-white stroke-gray-200"
-                strokeWidth="1"
-              />
-              <TileIcon x={-TILE_ICON / 2} y={-TILE_ICON / 2} size={TILE_ICON} className="stroke-gray-500" />
-            </g>
-          </g>
-        )
-      })}
+      <Tiles tiles={spec.tiles} sequence={sequence?.tiles} />
 
       <g className="sw-ill-centre" style={sequence ? { animationDelay: `${sequence.centre}ms` } : undefined}>
         <rect
@@ -135,12 +145,17 @@ const BADGE = 20
 const BADGE_ICON = 12
 const BAR_HEIGHT = 5
 const BAR_GAP = 6
+/** When the first card arrives, and how long after one the next follows, in milliseconds */
+const CARD_START = 120
+const CARD_STEP = 160
 const AVATAR_R = 10
 const AVATAR_GAP = 6
 
 /** A list or a conversation: lightly drawn cards with lines of text standing in for words */
 const StackPicture: React.FC<{ spec: StackSpec }> = ({ spec }) => (
   <>
+    {spec.rings && <Rings rings={spec.rings} />}
+    {spec.tiles && <Tiles tiles={spec.tiles} />}
     {spec.items.map((item, index) => {
       const BadgeIcon = item.badge?.icon
       const AvatarIcon = item.avatar?.icon
@@ -152,7 +167,7 @@ const StackPicture: React.FC<{ spec: StackSpec }> = ({ spec }) => (
 
       return (
         <g key={index} transform={`translate(${item.x} ${item.y})`}>
-          <g className="sw-ill-tile" opacity={item.opacity} style={{ animationDelay: `${120 + index * 110}ms` }}>
+          <g className="sw-ill-card" opacity={item.opacity} style={{ animationDelay: `${CARD_START + index * CARD_STEP}ms` }}>
             <rect
               width={item.width}
               height={item.height}
@@ -189,18 +204,27 @@ const StackPicture: React.FC<{ spec: StackSpec }> = ({ spec }) => (
             {item.bars.map((width, barIndex) => (
               <rect
                 key={barIndex}
+                // Each line is written after its card has arrived, one after another
+                className={`sw-ill-bar ${barIndex === 0 ? 'fill-gray-200' : 'fill-gray-100'}`}
+                style={{ animationDelay: `${CARD_START + index * CARD_STEP + 200 + barIndex * 90}ms` }}
                 x={textStart}
                 y={textTop + barIndex * (BAR_HEIGHT + BAR_GAP)}
                 width={width}
                 height={BAR_HEIGHT}
                 rx={BAR_HEIGHT / 2}
-                className={barIndex === 0 ? 'fill-gray-200' : 'fill-gray-100'}
               />
             ))}
 
             {item.typing &&
               [0, 1, 2].map((dot) => (
-                <circle key={dot} cx={item.width / 2 + (dot - 1) * 10} cy={item.height / 2} r="2.5" className="fill-gray-300" />
+                <circle
+                  key={dot}
+                  cx={item.width / 2 + (dot - 1) * 10}
+                  cy={item.height / 2}
+                  r="2.5"
+                  className="sw-ill-dot fill-gray-300"
+                  style={{ animationDelay: `${CARD_START + index * CARD_STEP + 300 + dot * 160}ms` }}
+                />
               ))}
 
             {TrailingIcon && (

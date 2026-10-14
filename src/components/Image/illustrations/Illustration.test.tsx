@@ -1,5 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ImageField } from "../ImageField";
 import { ILLUSTRATIONS } from "./illustrationSpecs";
 import type { IllustrationName, IllustrationSpec, RadialSpec, StackSpec } from "./illustrationSpecs";
@@ -62,9 +64,38 @@ describe("illustration image - ImageField", () => {
   });
 });
 
+describe("illustrations - every one is animated", () => {
+  // The animation lives in CSS, keyed on these classes, so each picture must carry at least one
+  const ANIMATED = ".sw-ill-tile, .sw-ill-centre, .sw-ill-ring, .sw-ill-line, .sw-ill-card, .sw-ill-bar, .sw-ill-dot";
+
+  it.each(ALL)("%s carries animated parts, and none when showAnimation is false", (name) => {
+    const on = drawn(name);
+    expect(svgOf(on.container)).toHaveClass("sw-illustration-animated");
+    expect(on.container.querySelectorAll(ANIMATED).length).toBeGreaterThan(0);
+    on.unmount();
+    const off = drawn(name, false);
+    expect(svgOf(off.container)).not.toHaveClass("sw-illustration-animated");
+  });
+});
+
+describe("illustrations - animation styles", () => {
+  const css = readFileSync(join(process.cwd(), "src/index.css"), "utf8");
+
+  // The classes the drawing puts on its parts only animate if index.css has a rule for each
+  it.each(["sw-ill-centre", "sw-ill-ring", "sw-ill-tile", "sw-ill-line", "sw-ill-arrow", "sw-ill-card", "sw-ill-bar", "sw-ill-dot"])(
+    "%s has an animation, and one that is switched off for reduced motion",
+    (cls) => {
+      const rule = new RegExp(`\\.sw-illustration-animated \\.${cls}\\s*\\{[^}]*animation:`);
+      expect(css).toMatch(rule);
+      const reduced = css.slice(css.indexOf("prefers-reduced-motion: reduce", css.indexOf("sw-ill-centre-in")));
+      expect(reduced).toContain(`.sw-illustration-animated .${cls}`);
+    }
+  );
+});
+
 describe("illustrations - specs", () => {
   it("has the pre-baked set", () => {
-    expect(Object.keys(ILLUSTRATIONS)).toHaveLength(20);
+    expect(Object.keys(ILLUSTRATIONS)).toHaveLength(21);
     expect(STACKS).toHaveLength(6);
   });
 
@@ -127,6 +158,23 @@ describe("illustrations - specs", () => {
     expect(delays).toEqual([...delays].sort((a, b) => a - b));
   });});
 
+describe("illustrations - users", () => {
+  it("draws five rings and a scatter of person tiles round a user-plus tile", () => {
+    const { container } = drawn("USERS");
+    expect(container.querySelectorAll(".sw-ill-ring")).toHaveLength(5);
+    expect(container.querySelectorAll(".sw-ill-tile").length).toBeGreaterThanOrEqual(8);
+    expect(container.querySelectorAll(".sw-ill-centre")).toHaveLength(1);
+    // Some tiles are tinted so they read as different people
+    expect(container.querySelectorAll(".sw-ill-tile rect.fill-gray-100").length).toBeGreaterThan(0);
+    expect(container.querySelectorAll(".sw-ill-tile rect.fill-white").length).toBeGreaterThan(0);
+  });
+
+  it("scatters its tiles rather than setting them on a ring or a grid", () => {
+    const radii = ILLUSTRATIONS.USERS.kind === "STACK" ? [] : ILLUSTRATIONS.USERS.tiles.map((t) => Math.round(Math.hypot(t.x, t.y) / 8));
+    expect(new Set(radii).size).toBeGreaterThan(4);
+  });
+});
+
 describe("illustrations - lists and conversations", () => {
   it.each(STACKS)("%s keeps every item inside the picture and clear of the words below", (_name, spec) => {
     expect(spec.items.length).toBeGreaterThan(0);
@@ -154,10 +202,27 @@ describe("illustrations - lists and conversations", () => {
     }
   });
 
-  it.each(STACKS)("%s draws one card per item, with no rings or connectors", (name, spec) => {
+  it.each(STACKS)("%s draws one card per item, with no centre tile or connectors", (name, spec) => {
     const { container } = drawn(name);
-    expect(container.querySelectorAll(".sw-ill-tile")).toHaveLength(spec.items.length);
-    expect(container.querySelectorAll(".sw-ill-ring, .sw-ill-line, .sw-ill-centre")).toHaveLength(0);
+    expect(container.querySelectorAll(".sw-ill-card")).toHaveLength(spec.items.length);
+    expect(container.querySelectorAll(".sw-ill-line, .sw-ill-centre")).toHaveLength(0);
+    // Rings and floating tiles only where the picture has them
+    expect(container.querySelectorAll(".sw-ill-ring")).toHaveLength(spec.rings?.length ?? 0);
+    expect(container.querySelectorAll(".sw-ill-tile")).toHaveLength(spec.tiles?.length ?? 0);
+  });
+
+  it.each(STACKS.filter(([, spec]) => spec.tiles))("%s keeps its floating tiles inside the picture, clear of the cards", (_name, spec) => {
+    const cards = spec.items;
+    for (const tile of spec.tiles!) {
+      expect(Math.abs(tile.x) + 13).toBeLessThanOrEqual(200);
+      expect(tile.y - 13).toBeGreaterThanOrEqual(-88);
+      expect(tile.y + 13).toBeLessThanOrEqual(57);
+      for (const card of cards) {
+        const apart =
+          tile.x + 13 <= card.x || tile.x - 13 >= card.x + card.width || tile.y + 13 <= card.y || tile.y - 13 >= card.y + card.height;
+        expect(apart).toBe(true);
+      }
+    }
   });
 
   it("gives every card the semi-rounded corners of a tile, in a list or a conversation", () => {
@@ -172,7 +237,7 @@ describe("illustrations - lists and conversations", () => {
 
   it("colours the cards as the ringed pictures are coloured: grey, with the accent only on the one that matters", () => {
     const { container } = drawn("CONVERSATION");
-    const rects = [...container.querySelectorAll<SVGRectElement>(".sw-ill-tile > rect:first-child")];
+    const rects = [...container.querySelectorAll<SVGRectElement>(".sw-ill-card > rect:first-child")];
     expect(rects.filter((rect) => rect.classList.contains("stroke-blue-200"))).toHaveLength(1);
     expect(rects.filter((rect) => rect.classList.contains("stroke-gray-200"))).toHaveLength(2);
     // Same white fill as every other tile, not a blue wash
@@ -181,24 +246,48 @@ describe("illustrations - lists and conversations", () => {
 
   it("settles its items in one after another, from the top", () => {
     const { container } = drawn("TASK_LIST");
-    const delays = [...container.querySelectorAll<SVGGElement>(".sw-ill-tile")].map((tile) =>
+    const delays = [...container.querySelectorAll<SVGGElement>(".sw-ill-card")].map((tile) =>
       parseInt(tile.style.animationDelay, 10)
     );
     expect(delays).toEqual([...delays].sort((a, b) => a - b));
     expect(new Set(delays).size).toBe(delays.length);
   });
 
-  it("shows three dots for someone typing", () => {
+  it("shows three dots for someone typing, each pulsing in turn", () => {
     const { container } = drawn("AI_CHAT");
-    expect(container.querySelectorAll("circle[r='2.5']")).toHaveLength(3);
+    const dots = [...container.querySelectorAll<SVGCircleElement>("circle.sw-ill-dot")];
+    expect(dots).toHaveLength(3);
+    const delays = dots.map((dot) => parseInt(dot.style.animationDelay, 10));
+    expect(delays).toEqual([...delays].sort((a, b) => a - b));
+    expect(new Set(delays).size).toBe(3);
+  });
+
+  it("writes each line of text in after its card has arrived", () => {
+    const { container } = drawn("TASK_LIST");
+    const cards = [...container.querySelectorAll<SVGGElement>(".sw-ill-card")];
+    for (const card of cards) {
+      const cardDelay = parseInt(card.style.animationDelay, 10);
+      const bars = [...card.querySelectorAll<SVGRectElement>(".sw-ill-bar")].map((bar) => parseInt(bar.style.animationDelay, 10));
+      expect(bars.length).toBeGreaterThan(0);
+      for (const bar of bars) expect(bar).toBeGreaterThan(cardDelay);
+      expect(bars).toEqual([...bars].sort((a, b) => a - b));
+    }
+  });
+
+  it.each(STACKS)("%s is animated: every card, and every line of text in it, has a delay set", (name) => {
+    const { container } = drawn(name);
+    const animated = container.querySelectorAll(".sw-ill-card, .sw-ill-bar, .sw-ill-dot");
+    expect(animated.length).toBeGreaterThan(0);
+    for (const el of animated) expect((el as SVGElement).style.animationDelay).toMatch(/^\d+ms$/);
   });
 
   it("puts the speaker's avatar on the side the bubble speaks from", () => {
-    const { container } = drawn("CONVERSATION");
-    const [first, second] = [...container.querySelectorAll<SVGGElement>(".sw-ill-tile")];
+    const { container } = drawn("AI_CHAT");
+    const [first, second] = [...container.querySelectorAll<SVGGElement>(".sw-ill-card")];
     const bubbleWidth = (g: SVGGElement) => Number(g.querySelector("rect")!.getAttribute("width"));
     const avatarX = (g: SVGGElement) => Number(g.querySelector("circle")!.getAttribute("cx"));
-    expect(avatarX(first)).toBeLessThan(0);
-    expect(avatarX(second)).toBeGreaterThan(bubbleWidth(second));
+    // The question is asked from the right, the answer comes from the left
+    expect(avatarX(first)).toBeGreaterThan(bubbleWidth(first));
+    expect(avatarX(second)).toBeLessThan(0);
   });
 });

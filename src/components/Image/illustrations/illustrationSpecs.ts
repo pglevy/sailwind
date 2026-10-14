@@ -3,7 +3,7 @@ import {
   Equal, FileCheck, FileJson, FileSearch, FileText, Files, Filter, FlaskConical, Flag, Folder, FolderKanban, GitBranch, Globe, Hash, History,
   Image as ImageIcon, Inbox, Layers, LayoutDashboard, Link2, ListChecks, Mail, MessageSquare, Network, Play, Plug, Receipt, Rows3, ScanText, Search, Send,
   Server, Sigma, Sparkles, SquareCheck, SquareFunction, SquareStack, Table2, Tag, Tags, TextCursorInput, ToggleLeft, Type, Users, Variable,
-  Webhook, Workflow, Wrench, Zap, Gauge, Activity, ChevronRight, Square, User, Ellipsis, Bookmark,
+  Webhook, Workflow, Wrench, Zap, Gauge, Activity, ChevronRight, Square, User, Ellipsis, Bookmark, UserPlus, UserRound, CircleUser,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -33,6 +33,7 @@ export type IllustrationName =
   | 'CONVERSATION'
   | 'AI_CHAT'
   | 'COMMENTS'
+  | 'USERS'
 
 /** A small tile in the picture: where it sits from the centre, its icon and how strongly it shows */
 export interface IllustrationTile {
@@ -40,6 +41,8 @@ export interface IllustrationTile {
   y: number
   icon: LucideIcon
   opacity: number
+  /** Filled a soft grey rather than white, so a scatter of tiles reads as different people */
+  tint?: boolean
 }
 
 /**
@@ -104,6 +107,10 @@ export interface StackItem {
 export interface StackSpec {
   kind: 'STACK'
   items: StackItem[]
+  /** Rings behind the cards, centred on the picture, as in a ringed picture */
+  rings?: { r: number; opacity: number }[]
+  /** Small tiles floating round the cards, as in a ringed picture */
+  tiles?: IllustrationTile[]
 }
 
 export type IllustrationSpec = RadialSpec | StackSpec
@@ -416,13 +423,22 @@ export const ILLUSTRATIONS: Record<IllustrationName, IllustrationSpec> = {
       row(8, 0.5, { badge: { icon: Files, shape: 'TILE' }, bars: [132, 76], trailingIcon: Ellipsis }),
     ],
   },
-  /** A conversation between two people, one speaking from each side */
+  /** A conversation: three messages from three people, the one that matters outlined, with more people around them */
   CONVERSATION: {
     kind: 'STACK',
+    rings: RADIAL_RINGS,
+    tiles: [
+      { x: -150, y: -44, icon: UserRound, opacity: 0.9, tint: true },
+      { x: -164, y: 12, icon: User, opacity: 0.6 },
+      { x: -128, y: 44, icon: CircleUser, opacity: 0.4, tint: true },
+      { x: 146, y: -44, icon: User, opacity: 0.6 },
+      { x: 158, y: 8, icon: UserRound, opacity: 0.9, tint: true },
+      { x: 124, y: 44, icon: CircleUser, opacity: 0.4 },
+    ],
     items: [
-      bubble('START', -72, 150, 30, 0.95, { avatar: { icon: User, side: 'START' }, bars: [104, 62] }),
-      bubble('END', -34, 130, 30, 0.9, { accent: true, avatar: { icon: User, side: 'END' }, bars: [88, 48] }),
-      bubble('START', 4, 112, 30, 0.6, { avatar: { icon: User, side: 'START' }, bars: [78, 40] }),
+      row(-54, 0.95, { x: -100, width: 200, badge: { icon: User, shape: 'AVATAR' }, bars: [88, 52], trailingIcon: Ellipsis }),
+      row(-18, 0.95, { x: -100, width: 200, accent: true, badge: { icon: User, shape: 'AVATAR' }, bars: [100, 60], trailingIcon: Ellipsis }),
+      row(18, 0.95, { x: -100, width: 200, badge: { icon: User, shape: 'AVATAR' }, bars: [80, 48], trailingIcon: Ellipsis }),
     ],
   },
   /** A chat with an assistant: a short question, a longer answer, and the assistant still writing */
@@ -442,5 +458,25 @@ export const ILLUSTRATIONS: Record<IllustrationName, IllustrationSpec> = {
       row(-28, 0.75, { x: -106, width: 236, accent: true, badge: { icon: User, shape: 'AVATAR' }, bars: [128, 70], trailingIcon: Bookmark }),
       row(12, 0.5, { x: -130, width: 260, badge: { icon: User, shape: 'AVATAR' }, bars: [140, 76] }),
     ],
+  },
+  /** People: a user to add in the centre, with the people already known scattered across the rings */
+  USERS: {
+    centreIcon: UserPlus,
+    accent: false,
+    rings: [...RADIAL_RINGS, { r: 178, opacity: 0.12 }],
+    tiles: [
+      { x: -70, y: -58, icon: UserRound, opacity: 0.95, tint: true },
+      { x: 56, y: -52, icon: User, opacity: 0.9 },
+      { x: -108, y: 30, icon: CircleUser, opacity: 0.85, tint: true },
+      { x: 92, y: -4, icon: UserRound, opacity: 0.9, tint: true },
+      { x: -46, y: 40, icon: User, opacity: 0.8 },
+      { x: -150, y: -34, icon: UserRound, opacity: 0.6 },
+      { x: 130, y: 38, icon: CircleUser, opacity: 0.6, tint: true },
+      { x: 152, y: -40, icon: User, opacity: 0.4 },
+      { x: -182, y: 2, icon: CircleUser, opacity: 0.35, tint: true },
+      { x: 180, y: -64, icon: UserRound, opacity: 0.3 },
+    ],
+    lines: [],
+    arrows: false,
   },
 }
