@@ -57,10 +57,8 @@ export const KEYS = {
   imageOpenLinked: 'image.openLinked',
   /** ReadOnlyGrid: default empty-state message. */
   gridEmptyMessage: 'grid.emptyMessage',
-  /** BoxLayout: expand-control aria-label when currently collapsed. */
-  boxLayoutExpand: 'boxLayout.expand',
-  /** BoxLayout: expand-control aria-label when currently expanded (collapse action). */
-  boxLayoutCollapse: 'boxLayout.collapse',
+  /** BoxLayout: accessible name for the expand/collapse button when the box has no label. Fixed text; open/closed state is conveyed by aria-expanded. */
+  boxLayoutToggleContent: 'boxLayout.toggleContent',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */

@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
 import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 import { mergeClasses } from '../../utils/classNames'
-import { marginAboveMap, marginBelowMap, paddingMap, shapeMap, headerTopShapeMap } from '../../utils/sailMaps'
+import { marginAboveMap, marginBelowMap, paddingMap, shapeMap } from '../../utils/sailMaps'
 import { useI18n, KEYS } from '../../i18n'
 
 /** Must stay in sync with the `duration-200` Tailwind class on the content wrapper. */
@@ -18,6 +18,8 @@ export type BoxLabelSize = "LARGE_PLUS" | "LARGE" | "MEDIUM_PLUS" | "MEDIUM" | "
 export type BoxHeadingTag = "H1" | "H2" | "H3" | "H4" | "H5" | "H6"
 export type BoxBorderWeight = "THIN" | "MEDIUM" | "THICK"
 export type BoxLabelFontWeight = "LIGHT" | "REGULAR" | "SEMI_BOLD" | "BOLD"
+// SAIL's boxLayout has no CIRCLE shape, so BoxLayout accepts only the other three.
+export type BoxShape = Exclude<SAILShape, 'CIRCLE'>
 
 // Component-local only, never exported, and never reusing BoxStyle/BoxBorderColor
 // as a name — a local `type BoxStyle = ...` would shadow the exported, branded
@@ -85,6 +87,14 @@ const labelSizeMap: Record<BoxLabelSize, string> = {
   MEDIUM_PLUS: 'text-xl',
   LARGE: 'text-2xl',
   LARGE_PLUS: 'text-3xl',
+}
+
+// Top-corner-only counterpart to shapeMap for the header row, so a colored
+// header background doesn't square off past the outer rounded border.
+const headerTopShapeMap: Record<BoxShape, string> = {
+  SQUARED: 'rounded-t-none',
+  SEMI_ROUNDED: 'rounded-t-sm',
+  ROUNDED: 'rounded-t-md',
 }
 
 /** labelSize -> default labelHeadingTag, pinned to HeadingField's getDefaultHeadingTag table. */
@@ -185,8 +195,8 @@ export interface BoxLayoutProps {
   accessibilityText?: string
   /** Determines the space between the box edges and its contents */
   padding?: SAILPadding
-  /** Determines the box shape */
-  shape?: SAILShape
+  /** Determines the box shape: "SQUARED", "SEMI_ROUNDED", or "ROUNDED" */
+  shape?: BoxShape
   /** Determines how much space is added above the layout */
   marginAbove?: SAILMarginSize
   /** Determines whether the box has an outer border */
@@ -276,7 +286,9 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
     borderColor === "STANDARD" && isInfoOrError ? style : borderColor
   const resolvedHeadingTag = labelHeadingTag || defaultHeadingTagForSize(labelSize)
   const HeadingEl = resolvedHeadingTag.toLowerCase() as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-  const toggleLabel = isOpen ? t(KEYS.boxLayoutCollapse) : t(KEYS.boxLayoutExpand)
+  // A collapsible box with no label has nothing to title, so its toggle
+  // button isn't wrapped in a heading (an empty heading is an a11y error).
+  const ToggleWrapper = label ? HeadingEl : 'div'
 
   const handleToggle = () => {
     setIsOpen((o) => !o)
@@ -290,8 +302,9 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
   const headerColors = resolveHeaderColors(style)
   const borderResolution = resolveBorderColor(effectiveBorderColor)
 
-  // Typography classes shared by both the collapsible (<button> inside
-  // <HeadingEl>) and non-collapsible (<HeadingEl> alone) branches.
+  // Typography classes shared by the collapsible (<button> inside <HeadingEl>,
+  // or inside a plain <div> when there's no label) and non-collapsible
+  // (<HeadingEl> alone) branches.
   const headingTypographyClasses = [
     labelSizeMap[labelSize],
     labelFontWeightMap[labelFontWeight],
@@ -301,6 +314,13 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
 
   const outerClasses = mergeClasses([
     'flex flex-col',
+    // A collapsible box's height depends on whether it's open, so h-fit keeps
+    // a grid or flex row from stretching it to a taller sibling, which would
+    // leave an empty band below a collapsed header. height: fit-content
+    // doesn't affect width, unlike self-start in a flex column. Non-collapsible
+    // boxes keep the default stretch, like CardLayout. A consumer's h-*
+    // className overrides it through mergeClasses.
+    isCollapsible ? 'h-fit' : '',
     shapeMap[shape],
     marginAboveMap[marginAbove],
     marginBelowMap[marginBelow],
@@ -310,15 +330,31 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
 
   const outerInlineStyle = showBorder ? borderResolution.inlineStyle : undefined
 
-  // The header row's padding is fixed regardless of the `padding` prop — only
+  // The header's padding is fixed regardless of the `padding` prop — only
   // the content/body area scales with `padding`. The header's label/chevron
-  // are chrome, not `contents`. headerTopShapeMap rounds the header's own top
-  // corners to match the outer shape, so its background doesn't square off
-  // past the outer border on SEMI_ROUNDED/ROUNDED (SQUARED's rounded-t-none
-  // is a no-op). Rounding just the header, instead of overflow-hidden on the
-  // outer container, avoids clipping other content that must render outside
-  // the box's bounds — e.g. WithDropdownContent's open dropdown menu.
-  const headerRowClasses = ['px-3 py-2', headerTopShapeMap[shape], headerColors.bgClassName].filter(Boolean).join(' ')
+  // are chrome, not `contents`. When collapsible, the padding lives on the
+  // toggle button instead of the row, so the whole header row is clickable;
+  // non-collapsible headers keep it on the row.
+  //
+  // The header rounds its own corners to match the outer shape, so its
+  // background doesn't square off past the outer border on SEMI_ROUNDED/
+  // ROUNDED (SQUARED is a no-op). Normally only the top corners are rounded.
+  // Once a collapsible box has settled closed, the content row is 0px tall,
+  // so the header is the box's bottom edge too and gets full rounding. That
+  // switch waits until the close transition ends so the corners don't jump
+  // mid-animation. It tracks `shape`, not the border, so it holds with
+  // showBorder={false} + showShadow too. Rounding just the header, instead of
+  // overflow-hidden on the outer container, avoids clipping other content
+  // that must render outside the box's bounds — e.g. WithDropdownContent's
+  // open dropdown menu.
+  const isSettledClosed = isCollapsible && !isOpen && !isAnimating
+  const headerShapeClass = isSettledClosed ? shapeMap[shape] : headerTopShapeMap[shape]
+  const headerRowClasses = [isCollapsible ? '' : 'px-3 py-2', headerShapeClass, headerColors.bgClassName].filter(Boolean).join(' ')
+  // Same shape class as the row so the inset focus ring follows its corners.
+  const toggleButtonClasses = [
+    'w-full flex items-center justify-between gap-2 px-3 py-2 text-start text-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset',
+    headerShapeClass,
+  ].filter(Boolean).join(' ')
 
   // Present whenever the box is not fully settled open: either closed/closing
   // or actively mid-transition in either direction. Dropped only once open AND
@@ -339,23 +375,29 @@ export const BoxLayout: React.FC<BoxLayoutProps> = ({
       {hasHeader && (
         <div className={headerRowClasses} style={headerColors.bgInlineStyle}>
           {isCollapsible ? (
-            <HeadingEl className={headingTypographyClasses} style={headingInlineStyle}>
+            <ToggleWrapper className={headingTypographyClasses} style={headingInlineStyle}>
+              {/* Open/closed state is conveyed by aria-expanded only, so the
+                  button's (and heading's) accessible name doesn't change on
+                  toggle. With a label, the name is the label plus any
+                  accessibilityText (sr-only, same as the non-collapsible
+                  heading). With no label, a fixed aria-label names the
+                  button. */}
               <button
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={contentId}
+                aria-label={label ? undefined : (accessibilityText || t(KEYS.boxLayoutToggleContent))}
                 onClick={handleToggle}
-                className="w-full flex items-center justify-between gap-2 text-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                className={toggleButtonClasses}
               >
-                <span>{label}</span>
-                {accessibilityText && <span className="sr-only"> {accessibilityText}</span>}
-                <span className="sr-only"> {toggleLabel}</span>
+                {label && <span>{label}</span>}
+                {label && accessibilityText && <span className="sr-only"> {accessibilityText}</span>}
                 <ChevronDown
                   aria-hidden="true"
-                  className={isOpen ? 'size-4 shrink-0 transition-transform rotate-0' : 'size-4 shrink-0 transition-transform -rotate-90'}
+                  className={isOpen ? 'size-4 shrink-0 ms-auto transition-transform rotate-0' : 'size-4 shrink-0 ms-auto transition-transform -rotate-90'}
                 />
               </button>
-            </HeadingEl>
+            </ToggleWrapper>
           ) : (
             <HeadingEl className={headingTypographyClasses} style={headingInlineStyle}>
               {label}

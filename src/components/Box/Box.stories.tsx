@@ -66,6 +66,19 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const button = canvas.getByRole("button", { name: /account details/i });
     await expect(button).toHaveAttribute("aria-expanded", "false");
+    // The heading's name is the label alone; open/closed state comes from
+    // aria-expanded, so the name doesn't change on toggle.
+    await expect(canvas.getByRole("heading", { name: "Account Details" })).toBeInTheDocument();
+    // The whole header row is the click target: the button fills it, so a
+    // point inside the header's padding hits the button.
+    const headerRow = button.parentElement!.parentElement as HTMLElement;
+    const buttonRect = button.getBoundingClientRect();
+    const headerRect = headerRow.getBoundingClientRect();
+    await expect(buttonRect.height).toBe(headerRect.height);
+    await expect(buttonRect.width).toBe(headerRect.width);
+    await expect(
+      document.elementFromPoint(headerRect.left + 4, headerRect.top + 4)
+    ).toBe(button);
     // Regression check: while settled closed, the content wrapper must be a
     // true zero-height row, not just visually hidden text — a sliver of
     // cut-off content peeking out below the header was the reported bug.
@@ -74,6 +87,7 @@ export const Default: Story = {
     await expect(wrapper.getBoundingClientRect().height).toBe(0);
     await userEvent.click(button);
     await expect(button).toHaveAttribute("aria-expanded", "true");
+    await expect(canvas.getByRole("heading", { name: "Account Details" })).toBeInTheDocument();
     await expect(
       canvas.getByText(/this content is collapsed by default/i)
     ).toBeVisible();
@@ -123,6 +137,35 @@ export const Shapes: Story = {
       <BoxLayout label="Rounded" shape="ROUNDED" padding="STANDARD">
         <p className="text-xs text-gray-700">8px radius</p>
       </BoxLayout>
+      <BoxLayout
+        label="Semi Rounded, collapsed"
+        shape="SEMI_ROUNDED"
+        isCollapsible
+        isInitiallyCollapsed
+        padding="STANDARD"
+      >
+        <p className="text-xs text-gray-700">4px radius</p>
+      </BoxLayout>
+      <BoxLayout
+        label="Rounded, collapsed"
+        shape="ROUNDED"
+        isCollapsible
+        isInitiallyCollapsed
+        padding="STANDARD"
+      >
+        <p className="text-xs text-gray-700">8px radius</p>
+      </BoxLayout>
+      <BoxLayout
+        label="Rounded, no border, collapsed"
+        shape="ROUNDED"
+        showBorder={false}
+        showShadow
+        isCollapsible
+        isInitiallyCollapsed
+        padding="STANDARD"
+      >
+        <p className="text-xs text-gray-700">8px radius</p>
+      </BoxLayout>
     </div>
   ),
   play: async ({ canvasElement }) => {
@@ -132,15 +175,32 @@ export const Shapes: Story = {
     // reported bug. Checked via computed top-corner radius matching the
     // outer box's, rather than overflow-hidden on the outer container,
     // which would also clip content (e.g. an open dropdown) meant to render
-    // outside the box's bounds — see WithDropdownContent below.
-    const boxes = Array.from(
-      canvasElement.querySelectorAll(".grid.grid-cols-3 > div")
-    ) as HTMLElement[];
+    // outside the box's bounds — see WithDropdownContent below. A collapsed
+    // box's header is also its bottom edge, so its bottom-corner radius must
+    // match the outer box's too.
+    const grid = canvasElement.querySelector(".grid.grid-cols-3") as HTMLElement;
+    // The grid keeps its default stretch on purpose (no items-start), so the
+    // height check below tests BoxLayout's own h-fit, not this story's CSS.
+    await expect(getComputedStyle(grid).alignItems).toBe("normal");
+    const boxes = Array.from(grid.querySelectorAll(":scope > div")) as HTMLElement[];
     for (const box of boxes) {
       const header = box.firstElementChild as HTMLElement;
-      const outerRadius = getComputedStyle(box).borderTopLeftRadius;
-      const headerRadius = getComputedStyle(header).borderTopLeftRadius;
-      await expect(headerRadius).toBe(outerRadius);
+      const outerStyle = getComputedStyle(box);
+      const headerStyle = getComputedStyle(header);
+      await expect(headerStyle.borderTopLeftRadius).toBe(outerStyle.borderTopLeftRadius);
+      if (box.querySelector('button[aria-expanded="false"]')) {
+        await expect(headerStyle.borderBottomLeftRadius).toBe(
+          outerStyle.borderBottomLeftRadius
+        );
+        // A collapsed box must be exactly as tall as its header, even when a
+        // taller sibling sets the grid row height.
+        const borderY =
+          parseFloat(outerStyle.borderTopWidth) + parseFloat(outerStyle.borderBottomWidth);
+        await expect(box.getBoundingClientRect().height).toBeCloseTo(
+          header.getBoundingClientRect().height + borderY,
+          0
+        );
+      }
     }
   },
 };
@@ -266,14 +326,14 @@ export const WithDropdownContent: Story = {
   },
 };
 
-// Demonstrates that collapsed content doesn't take up layout space and that
-// its header button is focusable. The behavioral proof that native Tab
-// navigation actually skips the collapsed, `inert` content (rather than just
-// looking collapsed) lives in BoxLayout.browser.test.tsx, which uses
-// vitest/browser's real-Chromium userEvent.tab(). That API is only available
-// inside Vitest's own browser-mode test runner, not in a module Storybook's
-// plain dev server loads, so it can't live here or in this file's play
-// functions without breaking `pnpm run storybook` for every Box story.
+// Demonstrates that keyboard focus never enters collapsed, `inert` content.
+// The play function runs in real Chromium (the storybook Vitest project), and
+// Chromium refuses focus on inert content. storybook/test's userEvent.tab() is
+// simulated: it picks the next focusable element in JS and calls .focus() on
+// it, without checking `inert`. So rather than asserting where Tab lands, this
+// asserts that focus never moves into the collapsed content, which only holds
+// because the browser blocks focus there. Expanding the box and tabbing again
+// is the positive control.
 export const CollapsedTabSkip: Story = {
   args: {
     label: "Collapsed Section",
@@ -297,9 +357,32 @@ export const CollapsedTabSkip: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const headerButton = canvas.getByRole("button", {
-      name: /collapsed section/i,
+      name: "Collapsed Section",
     });
+    const content = document.getElementById(
+      headerButton.getAttribute("aria-controls")!
+    )!;
+    const innerButton = within(content).getByText("Inside collapsed content");
+
     headerButton.focus();
     await expect(headerButton).toHaveFocus();
+
+    // Native inert focus blocking: the browser refuses to focus it.
+    innerButton.focus();
+    await expect(innerButton).not.toHaveFocus();
+    await expect(headerButton).toHaveFocus();
+
+    // Tab from the header never moves focus into the collapsed content.
+    headerButton.focus();
+    await userEvent.tab();
+    await expect(innerButton).not.toHaveFocus();
+    await expect(content.contains(document.activeElement)).toBe(false);
+
+    // Positive control: once expanded, the same Tab reaches the inner button.
+    await userEvent.click(headerButton);
+    await expect(headerButton).toHaveAttribute("aria-expanded", "true");
+    headerButton.focus();
+    await userEvent.tab();
+    await expect(innerButton).toHaveFocus();
   },
 };

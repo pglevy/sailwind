@@ -324,20 +324,220 @@ describe("BoxLayout - accessibilityText", () => {
   });
 });
 
-describe("BoxLayout - i18n", () => {
-  it("renders the English default expand/collapse sr-only text with no LocaleProvider", async () => {
+describe("BoxLayout - toggle accessible name", () => {
+  it("names the button and heading with the label only, and keeps that name stable across toggles", async () => {
     const user = userEvent.setup();
+    render(
+      <BoxLayout label="Section" isCollapsible={true} isInitiallyCollapsed={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    const button = screen.getByRole("button", { name: "Section" });
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("heading", { name: "Section" })).toBeInTheDocument();
+
+    await user.click(button);
+    expect(screen.getByRole("button", { name: "Section" })).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("heading", { name: "Section" })).toBeInTheDocument();
+    expect(screen.queryByText("Expand")).not.toBeInTheDocument();
+    expect(screen.queryByText("Collapse")).not.toBeInTheDocument();
+  });
+
+  it("with no label, renders the toggle without a heading and names it with fixed default text", async () => {
+    const user = userEvent.setup();
+    render(
+      <BoxLayout isCollapsible={true} isInitiallyCollapsed={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    const button = screen.getByRole("button", { name: "Show or hide content" });
+    expect(button).toHaveAttribute("aria-expanded", "false");
+
+    await user.click(button);
+    expect(screen.getByRole("button", { name: "Show or hide content" })).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("with no label, uses accessibilityText as the toggle button's name", () => {
+    render(
+      <BoxLayout isCollapsible={true} accessibilityText="Billing details">
+        <p>Body</p>
+      </BoxLayout>
+    );
+    expect(screen.getByRole("button")).toHaveAccessibleName("Billing details");
+  });
+
+  it("with a label, appends accessibilityText to the button and heading name, and keeps it stable across toggles", async () => {
+    const user = userEvent.setup();
+    render(
+      <BoxLayout label="Section" isCollapsible={true} accessibilityText="Extra context">
+        <p>Body</p>
+      </BoxLayout>
+    );
+    // jsdom's name computation (dom-accessibility-api) trims each child
+    // element's text, so it drops the sr-only span's leading space and
+    // reports "SectionExtra context". Real browsers keep the space; the
+    // textContent check below proves it's in the DOM.
+    const name = /^Section ?Extra context$/;
+    const button = screen.getByRole("button", { name });
+    expect(button.textContent).toBe("Section Extra context");
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(button).not.toHaveAttribute("aria-describedby");
+    expect(button).not.toHaveAccessibleDescription();
+
+    const heading = screen.getByRole("heading", { name });
+    expect(heading.querySelector(".sr-only")?.textContent).toContain("Extra context");
+    expect(screen.getByText("Section")).toBeVisible();
+
+    await user.click(button);
+    expect(screen.getByRole("button", { name })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("heading", { name })).toBeInTheDocument();
+  });
+});
+
+describe("BoxLayout - collapsed header corner radius", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("gives a settled-collapsed header full rounding so its bottom corners match the outer shape", () => {
+    const { container } = render(
+      <BoxLayout label="Section" shape="ROUNDED" isCollapsible={true} isInitiallyCollapsed={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    const header = (container.firstChild as HTMLElement).firstElementChild as HTMLElement;
+    expect(header.className.split(" ")).toContain("rounded-md");
+    expect(header.className.split(" ")).not.toContain("rounded-t-md");
+  });
+
+  it("keeps full rounding with showBorder=false and showShadow", () => {
+    const { container } = render(
+      <BoxLayout
+        label="Section"
+        shape="ROUNDED"
+        showBorder={false}
+        showShadow={true}
+        isCollapsible={true}
+        isInitiallyCollapsed={true}
+      >
+        <p>Body</p>
+      </BoxLayout>
+    );
+    const header = (container.firstChild as HTMLElement).firstElementChild as HTMLElement;
+    expect(header.className.split(" ")).toContain("rounded-md");
+  });
+
+  it("waits for the close transition to end before switching to full rounding, and drops it immediately on open", () => {
+    vi.useFakeTimers();
+    const { container } = render(
+      <BoxLayout label="Section" shape="ROUNDED" isCollapsible={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    const header = (container.firstChild as HTMLElement).firstElementChild as HTMLElement;
+    const button = screen.getByRole("button", { name: "Section" });
+    expect(header.className.split(" ")).toContain("rounded-t-md");
+
+    // Fire the click directly (not via userEvent) to avoid its internal
+    // timers while fake timers are active.
+    act(() => {
+      button.click();
+    });
+    expect(header.className.split(" ")).toContain("rounded-t-md");
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    expect(header.className.split(" ")).toContain("rounded-md");
+    expect(header.className.split(" ")).not.toContain("rounded-t-md");
+
+    act(() => {
+      button.click();
+    });
+    expect(header.className.split(" ")).toContain("rounded-t-md");
+    expect(header.className.split(" ")).not.toContain("rounded-md");
+  });
+});
+
+describe("BoxLayout - emits no empty or undefined class tokens", () => {
+  const shapes = ["SQUARED", "SEMI_ROUNDED", "ROUNDED"] as const;
+  const states: Array<[string, { isCollapsible?: boolean; isInitiallyCollapsed?: boolean }]> = [
+    ["collapsible, open", { isCollapsible: true }],
+    ["collapsible, settled closed", { isCollapsible: true, isInitiallyCollapsed: true }],
+    ["not collapsible", {}],
+  ];
+  const cases = shapes.flatMap((shape) =>
+    states.map(([state, props]) => ({ shape, state, props }))
+  );
+
+  it.each(cases)("shape=$shape, $state: no element gets an \"undefined\" or empty class token", ({ shape, props }) => {
+    const { container } = render(
+      <BoxLayout label="Section" shape={shape} {...props}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    // getAttribute, not className: the chevron is an SVG, whose className
+    // is an SVGAnimatedString object rather than a string.
+    const classAttrs = Array.from(container.querySelectorAll("[class]")).map(
+      (el) => el.getAttribute("class") ?? ""
+    );
+    for (const cls of classAttrs) {
+      const tokens = cls.split(" ");
+      expect(tokens).not.toContain("undefined");
+      // Array.join turns an unfiltered undefined entry into "", which shows
+      // up as a trailing or doubled space, i.e. an empty token.
+      expect(tokens).not.toContain("");
+    }
+  });
+});
+
+describe("BoxLayout - height in stretching parents", () => {
+  it("adds h-fit to a collapsible box (open), so a grid or flex row can't stretch it", () => {
+    const { container } = render(
+      <BoxLayout label="Section" isCollapsible={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    expect((container.firstChild as HTMLElement).className.split(" ")).toContain("h-fit");
+  });
+
+  it("adds h-fit to a collapsible box that starts collapsed", () => {
     const { container } = render(
       <BoxLayout label="Section" isCollapsible={true} isInitiallyCollapsed={true}>
         <p>Body</p>
       </BoxLayout>
     );
-    const srOnlySpans = Array.from(container.querySelectorAll(".sr-only"));
-    expect(srOnlySpans.some((el) => el.textContent?.trim() === "Expand")).toBe(true);
+    expect((container.firstChild as HTMLElement).className.split(" ")).toContain("h-fit");
+  });
 
-    const button = screen.getByRole("button", { name: /section/i });
-    await user.click(button);
-    const srOnlySpansAfter = Array.from(container.querySelectorAll(".sr-only"));
-    expect(srOnlySpansAfter.some((el) => el.textContent?.trim() === "Collapse")).toBe(true);
+  it("leaves a non-collapsible box at the default stretch, like CardLayout", () => {
+    const { container } = render(<BoxLayout label="Section">Body</BoxLayout>);
+    expect((container.firstChild as HTMLElement).className.split(" ")).not.toContain("h-fit");
+  });
+});
+
+describe("BoxLayout - header click target", () => {
+  it("puts the header padding on the toggle button, not the row, when collapsible", () => {
+    const { container } = render(
+      <BoxLayout label="Section" isCollapsible={true}>
+        <p>Body</p>
+      </BoxLayout>
+    );
+    const header = (container.firstChild as HTMLElement).firstElementChild as HTMLElement;
+    const headerClasses = header.className.split(" ");
+    expect(headerClasses).not.toContain("px-3");
+    expect(headerClasses).not.toContain("py-2");
+
+    const buttonClasses = screen.getByRole("button", { name: "Section" }).className.split(" ");
+    expect(buttonClasses).toEqual(
+      expect.arrayContaining(["px-3", "py-2", "w-full", "text-start", "focus-visible:ring-inset"])
+    );
+  });
+
+  it("keeps the header padding on the row when not collapsible", () => {
+    const { container } = render(<BoxLayout label="Section">Body</BoxLayout>);
+    const header = (container.firstChild as HTMLElement).firstElementChild as HTMLElement;
+    expect(header.className.split(" ")).toEqual(expect.arrayContaining(["px-3", "py-2"]));
   });
 });
