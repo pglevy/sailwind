@@ -267,10 +267,10 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Illustration (src/components/Illustration)                          */
+/* Pre-baked illustrations (src/components/Image/illustrations)       */
 /*                                                                      */
 /* The picture settles in when it appears. Every rule is scoped to     */
-/* .sw-illustration-animated, which Illustration only adds when        */
+/* .sw-illustration-animated, which the illustrations only add when   */
 /* showAnimation is on, so nothing here touches a consumer's own       */
 /* markup. `scale` and `translate` are used rather than `transform`,   */
 /* which the tiles already spend on their place in the picture, and    */
