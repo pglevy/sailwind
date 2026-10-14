@@ -9,6 +9,8 @@ export interface IllustrationImageProps {
   illustration: IllustrationName
   /** Whether the illustration draws itself in when it appears */
   showAnimation?: boolean
+  /** Controls visibility of the image, as for the other image types */
+  showWhen?: boolean
 }
 
 /**
@@ -18,5 +20,7 @@ export interface IllustrationImageProps {
  * that gets processed by ImageField for rendering
  *
  * Use this for one of the pre-baked line drawings, such as the picture at the top of an empty
- * state. It is decorative, and takes its size from ImageField's `size`.
+ * state. It is decorative, so it has no altText, caption or link, and it takes its size from
+ * ImageField's `size` alone: `style`, `shape` and `isThumbnail` do not apply to it. Its outer
+ * rings are clipped at the edge of the picture, so it never spills over what is beside it.
  */

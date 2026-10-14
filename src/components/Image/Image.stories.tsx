@@ -233,8 +233,9 @@ export const ShapeCircle: Story = {
  * Pre-baked line drawings, for the picture at the top of an empty state or a panel with nothing
  * in it. Not in SAIL. An illustration image has two parameters, `illustration` (which picture)
  * and `showAnimation` (whether it draws itself in, on by default), and takes its size from the
- * field's `size`. It is decorative, so put the words that say what it means beside it. The outer
- * rings run past each picture's edge, so the pictures sit in something that clips here.
+ * field's `size` alone. It is decorative, so put the words that say what it means beside it. The
+ * field clips each picture's outer rings at its edge, so they never spill over what is beside it.
+ * (`showWhen` hides it, as for any image.)
  *
  * Ringed round a centre: TEST_CASES, TRIGGERS, HISTORY, NO_DATA, PROCESS_MODELS, RECORD_TYPES,
  * INTERFACES, EXPRESSION_RULES, AI_SKILLS, AI_AGENTS, CASES, DASHBOARDS, DOCUMENT_PROCESSING,

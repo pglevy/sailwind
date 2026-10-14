@@ -24,6 +24,11 @@ function isIllustrationImage(image: ImageFieldImage): image is IllustrationImage
   return 'imageType' in image && image.imageType === 'illustration'
 }
 
+// Type guard to check if an image is a DocumentImage
+function isDocumentImage(image: ImageFieldImage): image is DocumentImageProps {
+  return 'document' in image
+}
+
 // Type guard to check if an image is a WebImage
 function isWebImage(image: ImageFieldImage): image is WebImageProps {
   return 'source' in image
@@ -164,7 +169,7 @@ export const ImageField: React.FC<ImageFieldProps> = ({
   ].filter(Boolean).join(' ')
 
   // Filter visible images
-  const visibleImages = images.filter(img => !('showWhen' in img) || img.showWhen !== false)
+  const visibleImages = images.filter(img => img.showWhen !== false)
 
   // Render images
   const imagesElement = (
@@ -239,14 +244,16 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           )
         }
 
-        // Check if this is an illustration image. Decorative, so it has no alt text or link. Not in SAIL.
+        // Check if this is an illustration image. Decorative, so it has no alt text or link, and
+        // only its size applies (not style, shape or isThumbnail). Its outer rings run past the
+        // picture's box, so the box clips them. Not in SAIL.
         if (isIllustrationImage(imageProps)) {
           return (
-            <div key={index} className="relative">
+            <div key={index} className="relative overflow-hidden">
               <Illustration
                 name={imageProps.illustration}
                 showAnimation={imageProps.showAnimation}
-                className={getImageClasses()}
+                className={sizeMap[size]}
               />
             </div>
           )
@@ -299,6 +306,9 @@ export const ImageField: React.FC<ImageFieldProps> = ({
             </div>
           )
         }
+
+        // Anything else must be a document image; an image type this does not know draws nothing
+        if (!isDocumentImage(imageProps)) return null
 
         // Render document image (standard approach)
         const imageSrc = imageProps.document
