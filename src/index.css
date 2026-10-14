@@ -314,6 +314,34 @@
   }
 }
 
+/* The cards of a list or conversation slide up into place one after another */
+@keyframes sw-ill-card-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+/* The lines of text in a card draw in from the left, as if being written */
+@keyframes sw-ill-bar-in {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* Someone typing: each dot lifts and settles. It runs three times, about 3.6s in all. */
+@keyframes sw-ill-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    translate: 0 0;
+  }
+  40% {
+    opacity: 1;
+    translate: 0 -2px;
+  }
+}
+
 @layer utilities {
   .sw-illustration-animated .sw-ill-centre,
   .sw-illustration-animated .sw-ill-ring,
@@ -342,6 +370,20 @@
   .sw-illustration-animated .sw-ill-arrow {
     animation: sw-ill-arrow-in 120ms ease-out backwards;
   }
+
+  .sw-illustration-animated .sw-ill-card {
+    animation: sw-ill-card-in 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .sw-illustration-animated .sw-ill-bar {
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: sw-ill-bar-in 380ms cubic-bezier(0.45, 0, 0.2, 1) backwards;
+  }
+
+  .sw-illustration-animated .sw-ill-dot {
+    animation: sw-ill-dot-pulse 1200ms ease-in-out 3 backwards;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -349,7 +391,10 @@
   .sw-illustration-animated .sw-ill-ring,
   .sw-illustration-animated .sw-ill-tile,
   .sw-illustration-animated .sw-ill-line,
-  .sw-illustration-animated .sw-ill-arrow {
+  .sw-illustration-animated .sw-ill-arrow,
+  .sw-illustration-animated .sw-ill-card,
+  .sw-illustration-animated .sw-ill-bar,
+  .sw-illustration-animated .sw-ill-dot {
     animation: none;
   }
 }
