@@ -237,6 +237,7 @@ const SiteNavItem: React.FC<{
     page.children?.some((c) => c.isSelected) ?? false
   )
   const groupId = React.useId()
+  const groupRef = React.useRef<HTMLDivElement>(null)
 
   const IconComponent = page.icon
   const hasChildren = page.isGroup || (page.children && page.children.length > 0)
@@ -245,6 +246,13 @@ const SiteNavItem: React.FC<{
   // room for them, so the subtree is not rendered there at all.
   const showChildren = Boolean(hasChildren && page.children?.length && !isCollapsed)
   const isOpen = expanded && showChildren
+
+  // Keep a closed group out of the tab order. `inert` is set on the element directly rather
+  // than as a prop: React 18 doesn't know the attribute and drops it with a warning, and
+  // React 19 treats `inert=""` as false, so no single prop value works on both.
+  React.useEffect(() => {
+    groupRef.current?.toggleAttribute('inert', !isOpen)
+  }, [isOpen, showChildren])
 
   const handleClick = () => {
     if (hasChildren) {
@@ -311,17 +319,17 @@ const SiteNavItem: React.FC<{
         Children: the wrapper is a grid whose single row animates between 0fr and 1fr,
         so the subtree slides open to its natural height without a hardcoded max-height.
         The inner list needs min-h-0 + overflow-hidden for the row to be able to shrink.
-        Collapsed content stays mounted so it can animate out, so it is marked inert and
-        aria-hidden to keep it out of the tab order and off screen readers.
+        Collapsed content stays mounted so it can animate out, so it is marked inert (see the
+        effect above) and aria-hidden to keep it out of the tab order and off screen readers.
       */}
       {showChildren && (
         <div
           id={groupId}
+          ref={groupRef}
           className={`grid transition-[grid-template-rows,opacity] ${EXPAND_TRANSITION} ${
             isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
           }`}
           aria-hidden={!isOpen}
-          inert={!isOpen}
         >
           <ul className="list-none m-0 p-0 pl-4 min-h-0 overflow-hidden">
             {page.children!.map((child) => (
