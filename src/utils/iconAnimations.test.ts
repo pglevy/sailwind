@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import * as LucideIcons from "lucide-react";
 import {
   alternatingAnimations,
+  applyIconAnimation,
   getIconAnimation,
   iconAnimationDescriptions,
   iconAnimationTargets,
@@ -231,5 +234,71 @@ describe("animation registry", () => {
 
   it("only asks for pathLength normalization on the stroke-drawing animations", () => {
     expect([...strokeDrawAnimations].sort()).toEqual(["draw", "slash"]);
+  });
+});
+
+describe("getIconAnimation - rule order", () => {
+  it("lets a pie chart turn instead of grow like other charts", () => {
+    expect(getIconAnimation("chart-pie")).toBe("spin");
+    expect(getIconAnimation("chart-bar")).toBe("grow");
+  });
+
+  it("lets direction outrank the object being moved", () => {
+    expect(getIconAnimation("cloud-download")).toBe("nudge-down");
+    expect(getIconAnimation("download-cloud")).toBe("nudge-down");
+    expect(getIconAnimation("file-down")).toBe("nudge-down");
+    expect(getIconAnimation("hard-drive-upload")).toBe("nudge-up");
+    expect(getIconAnimation("folder-up")).toBe("nudge-up");
+    // An object with no direction keeps its own motion
+    expect(getIconAnimation("cloud")).toBe("drift");
+    expect(getIconAnimation("file-text")).toBe("flip");
+  });
+});
+
+describe("applyIconAnimation", () => {
+  const svgFrom = (markup: string) => {
+    const host = document.createElement("div");
+    host.innerHTML = `<svg>${markup}</svg>`;
+    return host.querySelector("svg") as SVGSVGElement;
+  };
+
+  it("puts whole-icon animations on the svg and removes them on cleanup", () => {
+    const svg = svgFrom('<path d="M0 0" />');
+    const cleanup = applyIconAnimation(svg, "refresh-cw");
+    expect(svg).toHaveClass("sw-icon-spin");
+    cleanup();
+    expect(svg).not.toHaveClass("sw-icon-spin");
+  });
+
+  it("puts part animations on the shapes, staggered, and draw animations get pathLength", () => {
+    const svg = svgFrom('<path d="M0 0" /><path d="M1 1" /><path d="M2 2" />');
+    const cleanup = applyIconAnimation(svg, "check-circle-2", "draw");
+    const [a, b, c] = Array.from(svg.querySelectorAll("path"));
+    expect(a).toHaveClass("sw-icon-draw");
+    expect(b).toHaveClass("sw-icon-draw", "sw-icon-draw-2");
+    expect(c).toHaveClass("sw-icon-draw", "sw-icon-draw-3");
+    expect(a).toHaveAttribute("pathLength", "1");
+    cleanup();
+    expect(svg.querySelector("[class*='sw-icon-']")).toBeNull();
+    expect(a).not.toHaveAttribute("pathLength");
+  });
+
+  it("sends alternating shapes in from the other side", () => {
+    const svg = svgFrom('<rect /><rect /><line />');
+    applyIconAnimation(svg, "align-center-vertical");
+    const [a, b] = Array.from(svg.querySelectorAll("rect"));
+    expect(a).toHaveClass("sw-icon-align-center-x");
+    expect(b).toHaveClass("sw-icon-align-center-x-alt");
+  });
+});
+
+describe("icon animation CSS", () => {
+  const css = readFileSync(join(__dirname, "..", "index.css"), "utf8");
+
+  it("turns motion off only for the icon shapes it animates, not every svg in a group", () => {
+    const start = css.indexOf("@media (prefers-reduced-motion: reduce)", css.indexOf("Icon hover animations"));
+    const block = css.slice(start, css.indexOf("}\n  }", start));
+    expect(block).toContain('[class*="sw-icon-"]');
+    expect(block).not.toMatch(/\.group:hover svg/);
   });
 });

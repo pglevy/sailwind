@@ -4,11 +4,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import * as LucideIcons from 'lucide-react'
 import { Icon } from './Icon'
 import {
-  alternatingAnimations,
+  applyIconAnimation,
   getIconAnimation,
   iconAnimationDescriptions,
   iconAnimationTargets,
-  strokeDrawAnimations,
   toIconSlug,
   type IconAnimation,
 } from '../../utils/iconAnimations'
@@ -240,15 +239,11 @@ export const InRichText: Story = {
    Hover animations — concept-matched, one for every Lucide icon
    ──────────────────────────────────────────────────────────────── */
 
-const GEOMETRY_SELECTOR = 'path, circle, line, rect, polyline, polygon, ellipse'
-
 /**
  * Renders a Lucide icon with the hover animation that matches its concept.
  *
- * The animation classes go on the geometry Lucide renders for us, so they are attached
- * after mount. Which shapes get the class depends on the animation (see
- * `iconAnimationTargets`), and `draw`/`slash` also need `pathLength="1"` so one dash
- * covers the whole path.
+ * The animation classes go on the geometry Lucide renders for us, so `applyIconAnimation`
+ * attaches them after mount. This is the same call a prototype would make.
  *
  * The animation is triggered by the `group` class on the wrapper, so the same CSS works
  * when the hover target is a whole nav row rather than the icon itself.
@@ -264,48 +259,7 @@ const AnimatedIcon: React.FC<{
 
   useEffect(() => {
     const svg = hostRef.current?.querySelector('svg')
-    if (!svg) return
-
-    const target = iconAnimationTargets[resolved]
-    const className = `sw-icon-${resolved}`
-
-    // Whole-icon animations (spin, nudge, swing…) go on the <svg> itself
-    if (target === 'icon') {
-      svg.classList.add(className)
-      return () => svg.classList.remove(className)
-    }
-
-    const parts = Array.from(svg.querySelectorAll(GEOMETRY_SELECTOR))
-    // Align icons move the objects being arranged, not the guide line: that means the
-    // rects when the icon has any, and otherwise the lines themselves (align-left etc.)
-    const objects = svg.querySelectorAll('rect').length
-      ? Array.from(svg.querySelectorAll('rect'))
-      : parts
-    const shapes =
-      target === 'last' ? parts.slice(-1)
-      : target === 'lastTwo' ? parts.slice(-2)
-      : target === 'accessory' ? parts.slice(1)
-      : target === 'objects' ? objects
-      : parts
-
-    const alternating = alternatingAnimations.has(resolved)
-
-    shapes.forEach((shape, index) => {
-      if (strokeDrawAnimations.has(resolved)) shape.setAttribute('pathLength', '1')
-      // Converging animations send every other shape in from the opposite side
-      shape.classList.add(alternating && index % 2 === 1 ? `${className}-alt` : className)
-      // Stagger the 2nd and 3rd shapes onward for the sequenced animations
-      if (index > 0 && !alternating && (target === 'parts' || target === 'accessory' || target === 'objects')) {
-        shape.classList.add(`${className}-${Math.min(index + 1, 3)}`)
-      }
-    })
-
-    return () => {
-      shapes.forEach((shape) => {
-        shape.classList.remove(className, `${className}-alt`, `${className}-2`, `${className}-3`)
-        shape.removeAttribute('pathLength')
-      })
-    }
+    return svg ? applyIconAnimation(svg, name, resolved) : undefined
   }, [name, resolved])
 
   if (!LucideComponent) return null

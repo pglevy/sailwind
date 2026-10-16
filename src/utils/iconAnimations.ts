@@ -8,6 +8,19 @@
  *
  * The CSS lives in `src/index.css` as `.sw-icon-*` utilities, triggered by Tailwind's
  * `group` class on the hover target. All of it stops under `prefers-reduced-motion`.
+ *
+ * To use it on an icon: put `group` on whatever should trigger the hover (the icon, a
+ * button, a nav row), render the Lucide icon, and call {@link applyIconAnimation} on its
+ * `<svg>` once it is mounted:
+ *
+ * ```tsx
+ * const host = useRef<HTMLSpanElement>(null)
+ * useEffect(() => {
+ *   const svg = host.current?.querySelector('svg')
+ *   return svg ? applyIconAnimation(svg, 'bell') : undefined
+ * }, [])
+ * return <button className="group"><span ref={host}><Bell aria-hidden="true" /></span></button>
+ * ```
  */
 
 export type IconAnimation =
@@ -197,6 +210,11 @@ const rules: ReadonlyArray<readonly [RegExp, IconAnimation]> = [
   [/^(indent-increase|list-start)($|-)/, 'align-right'],
   [/^(indent-decrease|list-end)($|-)/, 'align-left'],
 
+  // ── Transfers: the direction outranks the object being moved ───────────────
+  // `cloud-download` and `file-up` would otherwise take the cloud's or file's own motion.
+  [/^((cloud|file|folder|hard-drive|monitor|smartphone)-(download|down)|download-cloud)$/, 'nudge-down'],
+  [/^((cloud|file|folder|hard-drive|monitor|smartphone)-(upload|up)|upload-cloud)$/, 'nudge-up'],
+
   // ── Rotation ───────────────────────────────────────────────────────────────
   [/(^|-)(cog|settings|settings-2|loader|loader-circle|refresh-cw|refresh-ccw|rotate-cw|rotate-ccw|rotate-3d|recycle|repeat|infinity|orbit|atom|fan|windmill|tornado|lasso|compass|disc|disc-2|disc-3|circle-dashed|circle-dot-dashed|loader-pinwheel|life-buoy|ship-wheel|steering-wheel|gauge|drum|hard-drive|rotate-cw-square|rotate-ccw-square)($|-)/, 'spin'],
   [/^(rotate|refresh)($|-)/, 'spin'],
@@ -248,12 +266,10 @@ const rules: ReadonlyArray<readonly [RegExp, IconAnimation]> = [
   [/^(list|text|table|rows|heading|notepad)($|-)/, 'pile'],
 
   // ── Charts ─────────────────────────────────────────────────────────────────
+  // Pie charts turn rather than grow, so this has to come before the generic `chart` rule
+  [/(^|-)(chart-pie|pie-chart|chart-donut|donut|circle-percent|loader-2)($|-)/, 'spin'],
   [/(^|-)(chart-bar|chart-column|chart-area|chart-line|chart-spline|chart-candlestick|chart-no-axes-column|chart-no-axes-combined|bar-chart|area-chart|line-chart|trending-up|trending-down|trending-up-down|signal-high|signal-low|signal-medium|activity-log)($|-)/, 'grow'],
   [/^(chart|bar-chart|area-chart|line-chart)($|-)/, 'grow'],
-  [/(^|-)(chart-pie|pie-chart|chart-donut|donut|circle-percent|loader-2)($|-)/, 'spin'],
-
-  // ── Covers that open ───────────────────────────────────────────────────────
-  [/^(file|folder|book|mail|calendar|clipboard|notebook)($|-)/, 'flip'],
 
   // ── Landing and locating ───────────────────────────────────────────────────
   [/(^|-)(map-pin|map-pinned|pin|pin-off|navigation|navigation-2|locate|locate-fixed|locate-off|crosshair|goal|target|flag|flag-triangle-left|flag-triangle-right|milestone|tent|anchor|magnet|paperclip|bookmark|bookmark-plus|bookmark-minus|bookmark-check|bookmark-x)($|-)/, 'drop'],
@@ -307,4 +323,65 @@ export function getIconAnimation(iconName: string): IconAnimation {
     if (pattern.test(slug)) return animation
   }
   return 'draw'
+}
+
+const GEOMETRY_SELECTOR = 'path, circle, line, rect, polyline, polygon, ellipse'
+
+/**
+ * Attach the hover animation for an icon to the `<svg>` Lucide rendered. Returns a function
+ * that removes everything it added, which is what a React effect should return.
+ *
+ * The `sw-icon-*` classes go on the geometry inside the SVG (or on the SVG itself for
+ * whole-icon motion), because that is what the CSS animates. Which shapes get the class
+ * depends on the animation (see {@link iconAnimationTargets}), and `draw`/`slash` also need
+ * `pathLength="1"` so one dash covers the whole path. Nothing plays until the element has a
+ * Tailwind `group` ancestor that is hovered or focused.
+ *
+ * @param svg The rendered icon
+ * @param icon A Lucide name (`Bell`, `bell`) used to pick the animation
+ * @param animation Force a particular animation instead of picking one from the name
+ */
+export function applyIconAnimation(
+  svg: SVGElement,
+  icon: string,
+  animation: IconAnimation = getIconAnimation(icon)
+): () => void {
+  const target = iconAnimationTargets[animation]
+  const className = `sw-icon-${animation}`
+
+  // Whole-icon animations (spin, nudge, swing…) go on the <svg> itself
+  if (target === 'icon') {
+    svg.classList.add(className)
+    return () => svg.classList.remove(className)
+  }
+
+  const parts = Array.from(svg.querySelectorAll(GEOMETRY_SELECTOR))
+  // Align icons move the objects being arranged, not the guide line: that means the
+  // rects when the icon has any, and otherwise the lines themselves (align-left etc.)
+  const rects = Array.from(svg.querySelectorAll('rect'))
+  const shapes =
+    target === 'last' ? parts.slice(-1)
+    : target === 'lastTwo' ? parts.slice(-2)
+    : target === 'accessory' ? parts.slice(1)
+    : target === 'objects' ? (rects.length ? rects : parts)
+    : parts
+
+  const alternating = alternatingAnimations.has(animation)
+
+  shapes.forEach((shape, index) => {
+    if (strokeDrawAnimations.has(animation)) shape.setAttribute('pathLength', '1')
+    // Converging animations send every other shape in from the opposite side
+    shape.classList.add(alternating && index % 2 === 1 ? `${className}-alt` : className)
+    // Stagger the 2nd and 3rd shapes onward for the sequenced animations
+    if (index > 0 && !alternating && (target === 'parts' || target === 'accessory' || target === 'objects')) {
+      shape.classList.add(`${className}-${Math.min(index + 1, 3)}`)
+    }
+  })
+
+  return () => {
+    shapes.forEach((shape) => {
+      shape.classList.remove(className, `${className}-alt`, `${className}-2`, `${className}-3`)
+      shape.removeAttribute('pathLength')
+    })
+  }
 }

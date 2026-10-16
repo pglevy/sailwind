@@ -708,10 +708,8 @@
 
   /* Motion is decorative — never play it for users who ask for less */
   @media (prefers-reduced-motion: reduce) {
-    .group:hover svg,
-    .group:hover svg *,
-    .group:focus-visible svg,
-    .group:focus-visible svg * {
+    .group:hover [class*="sw-icon-"],
+    .group:focus-visible [class*="sw-icon-"] {
       animation: none !important;
       stroke-dasharray: none !important;
     }
