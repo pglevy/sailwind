@@ -119,28 +119,41 @@ export function contrastRatio(foreground: string, background: string): number {
 }
 
 /**
- * Darkens a color until it meets a WCAG contrast ratio against the given background,
+ * Shifts a color just far enough to meet a WCAG contrast ratio against the given background,
  * so brand colors stay recognizable when used as text.
  *
- * Light accent colors (yellow, amber, light palette steps) are unreadable as text on
- * white; this returns a darker shade of the same hue instead of failing contrast.
+ * On a light background the color is darkened (toward black); on a dark one it is lightened
+ * (toward white). Light accent colors (yellow, amber, light palette steps) are unreadable as
+ * text on white, and dark ones are unreadable on near-black; this returns the closest shade of
+ * the same color that passes instead. A color that already passes is returned unchanged
+ * (as lowercase #rrggbb). If even pure black or white can't reach the ratio against this
+ * background (a mid-tone surface with a high `minRatio`), whichever of the two contrasts more
+ * is returned.
  */
 export function getAccessibleTextColor(
   hex: string,
   background: string = '#FFFFFF',
   minRatio: number = 4.5
 ): string {
-  let [r, g, b] = hexChannels(hex)
-  const toHex = (n: number) => n.toString(16).padStart(2, '0')
+  const toHex = (n: number) => Math.round(n).toString(16).padStart(2, '0')
+  const [r, g, b] = hexChannels(hex)
+  const at = (target: number, t: number) =>
+    `#${toHex(r + (target - r) * t)}${toHex(g + (target - g) * t)}${toHex(b + (target - b) * t)}`
 
-  for (let i = 0; i < 24; i++) {
-    const candidate = `#${toHex(r)}${toHex(g)}${toHex(b)}`
-    if (contrastRatio(candidate, background) >= minRatio) return candidate
-    if (r === 0 && g === 0 && b === 0) break
-    r = Math.floor(r * 0.85)
-    g = Math.floor(g * 0.85)
-    b = Math.floor(b * 0.85)
+  if (contrastRatio(at(0, 0), background) >= minRatio) return at(0, 0)
+
+  // Move away from the background: toward whichever extreme contrasts with it more
+  const target = contrastRatio('#000000', background) >= contrastRatio('#ffffff', background) ? 0 : 255
+  const extreme = at(target, 1)
+  if (contrastRatio(extreme, background) < minRatio) return extreme
+
+  // Contrast only grows toward the extreme, so binary-search the smallest shift that passes
+  let low = 0
+  let high = 1
+  for (let i = 0; i < 12; i++) {
+    const mid = (low + high) / 2
+    if (contrastRatio(at(target, mid), background) >= minRatio) high = mid
+    else low = mid
   }
-
-  return '#000000'
+  return at(target, high)
 }

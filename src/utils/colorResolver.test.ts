@@ -58,9 +58,37 @@ describe("getAccessibleTextColor", () => {
     });
   });
 
-  it("supports a custom minimum ratio and background", () => {
-    const onDark = getAccessibleTextColor("#FFD948", "#FFFFFF", 7);
-    expect(contrastRatio(onDark, "#FFFFFF")).toBeGreaterThanOrEqual(7);
+  it("supports a custom minimum ratio on white", () => {
+    const adjusted = getAccessibleTextColor("#FFD948", "#FFFFFF", 7);
+    expect(contrastRatio(adjusted, "#FFFFFF")).toBeGreaterThanOrEqual(7);
+  });
+
+  it("only shifts as far as needed, landing close to the requested ratio", () => {
+    const ratio = contrastRatio(getAccessibleTextColor("#FFD948"), "#FFFFFF");
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
+    expect(ratio).toBeLessThan(4.6);
+  });
+
+  it("lightens instead of darkening on a dark background", () => {
+    const adjusted = getAccessibleTextColor("#555555", "#000000");
+    expect(contrastRatio(adjusted, "#000000")).toBeGreaterThanOrEqual(4.5);
+    expect(adjusted).not.toBe("#000000");
+    // Lighter than where it started
+    expect(parseInt(adjusted.slice(1, 3), 16)).toBeGreaterThan(0x55);
+  });
+
+  it("meets the requested ratio on a range of dark backgrounds", () => {
+    const backgrounds = ["#000000", "#111827", "#1F2937", "#2322F0", "#357A38"];
+    const colors = ["#555555", "#2322F0", "#357A38", "#FFD948", "#B561FF"];
+    backgrounds.forEach((background) => {
+      colors.forEach((color) => {
+        expect(contrastRatio(getAccessibleTextColor(color, background), background)).toBeGreaterThanOrEqual(4.5);
+      });
+    });
+  });
+
+  it("returns whichever of black and white contrasts more when neither reaches the ratio", () => {
+    expect(getAccessibleTextColor("#777777", "#777777", 7)).toBe("#000000");
   });
 
   it("expands shorthand hex values", () => {
