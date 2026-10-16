@@ -16,7 +16,7 @@ export type DialogWidth = "NARROW" | "MEDIUM" | "MEDIUM_PLUS" | "WIDE" | "FIT"
 export type DialogHeight = "AUTO" | "FIT" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 
 /**
- * Surface treatment for the dialog.
+ * Surface treatment for the dialog. Not in SAIL.
  *
  * - `STANDARD` — opaque white card (the default)
  * - `GLASS` — glassmorphism: translucent surface with a blurred backdrop.
@@ -49,7 +49,7 @@ export interface DialogFieldProps {
   width?: DialogWidth
   /** Height of the dialog */
   height?: DialogHeight
-  /** Surface treatment: opaque (STANDARD) or translucent glassmorphism (GLASS) */
+  /** Surface treatment: opaque (STANDARD) or translucent glassmorphism (GLASS). Not in SAIL. */
   background?: DialogBackground
   /** Whether to show the close button */
   showCloseButton?: boolean

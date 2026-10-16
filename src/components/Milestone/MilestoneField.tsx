@@ -10,7 +10,7 @@ import { useI18n, KEYS } from '../../i18n'
 type Orientation = "HORIZONTAL" | "VERTICAL"
 
 /**
- * Step indicator styles.
+ * Step indicator styles. `NUMBERED` and `MINIMAL` are not in SAIL.
  *
  * - `LINE` (default) — original Sailwind style, kept as the default so existing projects don't change.
  * - `NUMBERED` — numbered/checked circles joined by progress connectors,
@@ -48,21 +48,22 @@ export interface MilestoneFieldProps {
   accessibilityText?: string
   /** Determines the fill color of the current step */
   color?: Color
-  /** Determines the fill color of completed steps (NUMBERED and MINIMAL styles) */
+  /** Determines the fill color of completed steps (NUMBERED and MINIMAL styles). Not in SAIL. */
   completedColor?: Color
   /** Determines how much space is added above the layout */
   marginAbove?: SAILMarginSize
   /** Determines how much space is added below the layout */
   marginBelow?: SAILMarginSize
-  /** Determines the style of the milestone steps */
+  /** Determines the style of the milestone steps. The NUMBERED and MINIMAL values are not in SAIL. */
   stepStyle?: StepStyle
-  /** NUMBERED style only: show the "STEP n" caption above each step label */
+  /** NUMBERED style only: show the "STEP n" caption above each step label. Not in SAIL. */
   showStepNumbers?: boolean
-  /** NUMBERED style only: show status text ("Completed"/"In Progress"/"Pending") below each label */
+  /** NUMBERED style only: show status text ("Completed"/"In Progress"/"Pending") below each label. Not in SAIL. */
   showStepStatus?: boolean
   /**
    * Status wording used for visible status text and screen reader announcements.
    * Defaults come from the locale bundle; override for different terminology.
+   * Not in SAIL.
    */
   statusLabels?: { completed?: string; current?: string; future?: string }
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
