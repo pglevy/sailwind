@@ -111,15 +111,15 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   }
 
   // Surface (glassmorphism) mappings.
-  // Both variants degrade to an opaque surface when the user asks for reduced
-  // transparency or is in forced-colors mode, so text never sits on a busy blur.
-  const reducedTransparency = '[@media(prefers-reduced-transparency:reduce)]'
-
+  // Both variants degrade to an opaque surface when the user asks for reduced transparency
+  // or is in forced-colors mode, so text never sits on a busy blur.
+  // Every class is written out in full: Tailwind only generates classes it can find as
+  // complete strings in the source, so none of these can be assembled from a template.
   const overlayBackgroundMap: Record<DialogBackground, string> = {
     STANDARD: 'bg-black/50',
     GLASS: [
       'bg-black/40 backdrop-blur-sm',
-      `${reducedTransparency}:bg-black/60 ${reducedTransparency}:backdrop-blur-none`,
+      '[@media(prefers-reduced-transparency:reduce)]:bg-black/60 [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none',
       'forced-colors:bg-black/60 forced-colors:backdrop-blur-none'
     ].join(' ')
   }
@@ -130,7 +130,8 @@ export const DialogField: React.FC<DialogFieldProps> = ({
       // 70% white keeps body text (gray-900) above 6:1 contrast over any backdrop
       'bg-white/70 backdrop-blur-xl backdrop-saturate-150',
       'border border-white/60 shadow-2xl ring-1 ring-black/5',
-      `${reducedTransparency}:bg-white ${reducedTransparency}:backdrop-blur-none ${reducedTransparency}:backdrop-saturate-100 ${reducedTransparency}:border-gray-200`,
+      '[@media(prefers-reduced-transparency:reduce)]:bg-white [@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none',
+      '[@media(prefers-reduced-transparency:reduce)]:backdrop-saturate-100 [@media(prefers-reduced-transparency:reduce)]:border-gray-200',
       'forced-colors:bg-[Canvas] forced-colors:backdrop-blur-none forced-colors:border-[CanvasText]'
     ].join(' ')
   }

@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { DialogField } from "./DialogField";
 
 describe("DialogField - visibility", () => {
@@ -241,5 +243,25 @@ describe("DialogField - background", () => {
       </DialogField>
     );
     expect(screen.getByText("Readable").className).toContain("text-gray-900");
+  });
+});
+
+describe("DialogField - generated CSS", () => {
+  it("writes every glass fallback class out in full, so Tailwind can find it in the source", () => {
+    // Tailwind only generates classes it finds as complete strings. A class assembled from a
+    // template string renders in the DOM but never reaches the built CSS.
+    const source = readFileSync(join(__dirname, "DialogField.tsx"), "utf8");
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Body</p>
+      </DialogField>
+    );
+    const fallbacks = Array.from(document.querySelectorAll("[class]"))
+      .flatMap((el) => (el.getAttribute("class") ?? "").split(/\s+/))
+      .filter((token) => token.includes("prefers-reduced-transparency"));
+
+    expect(fallbacks.length).toBeGreaterThanOrEqual(5);
+    fallbacks.forEach((token) => expect(source).toContain(token));
+    expect(source).not.toContain("${reducedTransparency}");
   });
 });
