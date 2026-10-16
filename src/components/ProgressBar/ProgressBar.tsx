@@ -5,6 +5,7 @@ import { isPaletteColor, resolveColorClass } from '../../utils/colorResolver'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
+import { useI18n, KEYS } from '../../i18n'
 
 export type ProgressBarColor = "ACCENT" | "POSITIVE" | "NEGATIVE" | "WARN" | SAILColorInput
 export type ProgressBarStyle = "THIN" | "THICK"
@@ -56,12 +57,20 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   // Generate unique ID for accessibility
   const progressId = React.useId()
 
+  // Locale-aware translation for the library default aria-label
+  const { t } = useI18n()
+
   // Visibility control
   if (!showWhen) return null
 
   // Clamp percentage between 0 and 100 for display, but show actual value in text
   const clampedPercentage = Math.max(0, Math.min(100, percentage))
   const displayPercentage = Math.round(percentage)
+
+  // Consumer-supplied text (accessibilityText/label) passes through untouched;
+  // only the library default falls back to the externalized string, which the
+  // default en-US bundle maps back to "Progress" (byte-for-byte compatible).
+  const resolvedAriaLabel = accessibilityText || label || t(KEYS.progressBarLabel)
 
   const styleMap: Record<ProgressBarStyle, { height: string; textSize: string }> = {
     THIN: { height: 'h-2', textSize: 'text-sm' },
@@ -127,7 +136,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           className={progressBarClasses}
           value={clampedPercentage}
           max={100}
-          aria-label={accessibilityText || label || "Progress"}
+          aria-label={resolvedAriaLabel}
         >
           <Progress.Indicator
             className={progressIndicatorClasses}

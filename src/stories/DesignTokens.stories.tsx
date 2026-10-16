@@ -1,22 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import sourceTokens from '../../tokens/tokens.json'
+import { addDerivedTokens } from '../utils/derivedTokens'
 
-// Augment the source tokens with semantic color aliases (same logic as generate-tokens.ts)
-// so this story doesn't need to import from public/ (which Vite warns about).
-const tokens = {
-  ...sourceTokens,
-  color: {
-    ...sourceTokens.color,
-    black: { $value: '#171717', $type: 'color', $description: 'Black — sourced from studio grey-1000' },
-    semantic: {
-      accent:      { $value: '{color.blue.500}',  $type: 'color', $description: 'SAILSemanticColor.ACCENT' },
-      positive:    { $value: '{color.green.500}',  $type: 'color', $description: 'SAILSemanticColor.POSITIVE' },
-      destructive: { $value: '{color.red.500}',   $type: 'color', $description: 'SAILSemanticColor.NEGATIVE' },
-      secondary:   { $value: '{color.gray.700}',  $type: 'color', $description: 'SAILSemanticColor.SECONDARY' },
-      standard:    { $value: '{color.gray.900}',  $type: 'color', $description: 'SAILSemanticColor.STANDARD' },
-    },
-  },
-}
+// Add the derived tokens (black, semantic aliases) with the same function
+// generate-tokens.ts uses, so this page always matches the published tokens.json
+// and what components render. Reading the source avoids importing from public/
+// (which Vite warns about).
+const tokens = addDerivedTokens(sourceTokens)
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -111,14 +101,6 @@ function ColorPalette() {
 
 // ─── Semantic colors ─────────────────────────────────────────────────────────
 
-const SEMANTIC_LABELS: Record<string, string> = {
-  accent: 'ACCENT',
-  positive: 'POSITIVE',
-  destructive: 'NEGATIVE',
-  secondary: 'SECONDARY',
-  standard: 'STANDARD',
-}
-
 function SemanticColors() {
   return (
     <div>
@@ -144,7 +126,7 @@ function SemanticColors() {
               }}>
                 <span style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: light ? '#222' : '#fff' }}>{hex}</span>
               </div>
-              <div style={{ marginTop: 6, fontFamily: 'Open Sans, sans-serif', fontSize: 13, fontWeight: 600, color: '#222' }}>{SEMANTIC_LABELS[key] ?? key}</div>
+              <div style={{ marginTop: 6, fontFamily: 'Open Sans, sans-serif', fontSize: 13, fontWeight: 600, color: '#222' }}>{key.toUpperCase()}</div>
               <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#6C6C75' }}>{aliasLabel}</div>
             </div>
           )

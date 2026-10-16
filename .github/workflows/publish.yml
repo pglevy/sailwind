@@ -48,7 +48,7 @@ jobs:
           body: |
             ## Changes in ${{ github.ref_name }}
             
-            See [CHANGELOG](https://github.com/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ github.ref_name }}) for details.
+            See the [full diff](https://github.com/${{ github.repository }}/compare/${{ steps.prev_tag.outputs.tag }}...${{ github.ref_name }}) for details.
             
             ### Installation
             ```bash

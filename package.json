@@ -30,7 +30,7 @@
     "ui-components"
   ],
   "author": "Philip Levy",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/pglevy/sailwind.git"
@@ -47,7 +47,7 @@
     "generate:css": "tsx scripts/generate-css.ts",
     "build:theme": "tsx scripts/generate-theme.ts",
     "token-server": "tsx scripts/token-server.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
@@ -62,7 +62,9 @@
     "test": "vitest --run",
     "test-storybook": "vitest --run --project=storybook",
     "test:unit": "vitest --run --project=unit",
-    "a11y-audit": "node scripts/a11y-audit.cjs"
+    "a11y-audit": "node scripts/a11y-audit.cjs",
+    "validate:designer-bundles": "node scripts/validate-designer-bundles.mjs",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm test && pnpm run validate:designer-bundles && pnpm run build:lib"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

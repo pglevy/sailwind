@@ -15,6 +15,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+// For stories that use a custom `render` and don't use args, so required props aren't needed
+type RenderStory = StoryObj<typeof ChatPanel>
 
 export const Default: Story = {
   args: {
@@ -89,7 +91,7 @@ export const NoHeader: Story = {
   },
 }
 
-export const Interactive: Story = {
+export const Interactive: RenderStory = {
   render: () => {
     const [messages, setMessages] = React.useState<{ role: 'user' | 'assistant'; text: string }[]>([
       { role: 'assistant', text: 'Hi there! How can I help you today?' },

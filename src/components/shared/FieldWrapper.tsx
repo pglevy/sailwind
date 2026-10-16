@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { FieldLabel } from './FieldLabel'
+import { useLocale } from '../../i18n'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
@@ -59,10 +60,21 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
 
   const containerClasses = mergeClasses(sailClasses, className)
 
+  // RTL / Text_Direction consumption pattern (Requirement 9.1):
+  // Read the active reading direction from the nearest LocaleProvider and apply
+  // it to the outermost wrapper element. The attribute is emitted CONDITIONALLY —
+  // `'rtl'` for RTL locales, `undefined` (i.e. no `dir` attribute at all) for
+  // LTR. Because v1 ships only en-us (LTR), this produces zero DOM change for the
+  // shipped locale: no `dir` attribute is rendered. Do NOT hardcode `dir="ltr"`.
+  // This wires the direction signal into the DOM; full layout mirroring
+  // (spacing/margins) is intentionally out of scope for v1.
+  const { direction } = useLocale()
+  const dir = direction === 'RTL' ? 'rtl' : undefined
+
   // ADJACENT layout: label and input side-by-side
   if (labelPosition === "ADJACENT") {
     return (
-      <div className={containerClasses}>
+      <div className={containerClasses} dir={dir}>
         <div className="flex items-center gap-4">
           <FieldLabel
             label={label}
@@ -93,7 +105,7 @@ export const FieldWrapper: React.FC<FieldWrapperProps> = ({
 
   // Default layout: label above input (ABOVE, COLLAPSED, JUSTIFIED)
   return (
-    <div className={containerClasses}>
+    <div className={containerClasses} dir={dir}>
       <FieldLabel
         label={label}
         labelPosition={labelPosition}

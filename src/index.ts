@@ -19,3 +19,6 @@ export * from './types/sail'
 // Export color utilities
 export { resolveColorClass, isSemanticColor, isPaletteColor, semanticColorClasses } from './utils/colorResolver'
 export { paletteColorMap, paletteHexMap } from './types/palette-colors.generated'
+
+// Export i18n public API (LocaleProvider, hooks, formatters, key catalog, types)
+export * from './i18n'

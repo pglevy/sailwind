@@ -15,6 +15,13 @@
       "connectionTimeout": 30000,
       "disabled": true,
       "autoApprove": ["*"]
+    },
+    "appian-public-docs": {
+      "type": "http",
+      "url": "https://appian-docs-public.mcp.kapa.ai",
+      "autoApprove": [
+        "search_appian_knowledge_sources"
+      ]
     }
   }
 }

@@ -11,6 +11,8 @@ const meta = {
 
 export default meta
 type Story = StoryObj<typeof meta>
+// For stories that use a custom `render` and don't use args, so required props aren't needed
+type RenderStory = StoryObj<typeof FileCard>
 
 export const Default: Story = {
   args: { fileName: 'document.pdf', fileSize: 1024 * 250 },
@@ -50,7 +52,7 @@ export const LongFileNameReadOnly: Story = {
   },
 }
 
-export const MultipleFilesInMessage: Story = {
+export const MultipleFilesInMessage: RenderStory = {
   render: () => (
     <div className="space-y-2 w-80">
       <FileCard fileName="requirements.pdf" fileSize={1024 * 250} />
@@ -60,7 +62,7 @@ export const MultipleFilesInMessage: Story = {
   ),
 }
 
-export const MultipleFilesInInput: Story = {
+export const MultipleFilesInInput: RenderStory = {
   render: () => (
     <div className="flex flex-wrap gap-2 max-w-md">
       <FileCard fileName="document.pdf" fileSize={1024 * 250} showRemove onRemove={fn()} />
