@@ -40,7 +40,8 @@ appian-plugin/i18n/designer/
 ├── progressBar/  progressBar_en_US.properties
 ├── readOnlyGrid/ readOnlyGrid_en_US.properties
 ├── stampField/   stampField_en_US.properties
-└── imageField/   imageField_en_US.properties
+├── imageField/   imageField_en_US.properties
+└── boxLayout/    boxLayout_en_US.properties
 ```
 
 Additional languages are added by copying a bundle to `<rule-name>_<code>.properties`

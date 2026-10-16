@@ -77,6 +77,8 @@ export const KEYS = {
   milestoneCurrentStep: 'milestone.currentStep',
   /** MilestoneField: screen reader summary when the active index is out of range — `{0} steps.` */
   milestoneStepCount: 'milestone.stepCount',
+  /** BoxLayout: accessible name for the expand/collapse button when the box has no label. Fixed text; open/closed state is conveyed by aria-expanded. */
+  boxLayoutToggleContent: 'boxLayout.toggleContent',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */
