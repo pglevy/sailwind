@@ -49,6 +49,7 @@ const EXPECTED: Record<TranslationKey, string> = {
   "progressBar.label": "Progress",
   "image.openLinked": "Open linked image",
   "grid.emptyMessage": "No items available",
+  "boxLayout.toggleContent": "Show or hide content",
 };
 
 /** The full library key catalog, as the dotted `.properties` key strings. */
