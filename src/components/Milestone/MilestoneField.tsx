@@ -5,17 +5,19 @@ import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../ty
 import { mergeClasses } from '../../utils/classNames'
 import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor, getAccessibleTextColor } from '../../utils/colorResolver'
 import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
+import { useI18n, KEYS } from '../../i18n'
 
 type Orientation = "HORIZONTAL" | "VERTICAL"
 
 /**
  * Step indicator styles.
  *
- * - `NUMBERED` (default) — numbered/checked circles joined by progress connectors,
+ * - `LINE` (default) — original Sailwind style, kept as the default so existing projects don't change.
+ * - `NUMBERED` — numbered/checked circles joined by progress connectors,
  *   with an optional "STEP n" caption and status text under each label.
  * - `MINIMAL` — compact chevron-separated row; only the current step is highlighted
  *   as a pill and completed steps get a check.
- * - `LINE` / `DOT` / `CHEVRON` — original Sailwind styles, kept for compatibility.
+ * - `DOT` / `CHEVRON` — the other original Sailwind styles.
  */
 type StepStyle = "LINE" | "CHEVRON" | "DOT" | "NUMBERED" | "MINIMAL"
 
@@ -60,17 +62,11 @@ export interface MilestoneFieldProps {
   showStepStatus?: boolean
   /**
    * Status wording used for visible status text and screen reader announcements.
-   * Override for different terminology or localization.
+   * Defaults come from the locale bundle; override for different terminology.
    */
   statusLabels?: { completed?: string; current?: string; future?: string }
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
-}
-
-const DEFAULT_STATUS_LABELS = {
-  completed: 'Completed',
-  current: 'In Progress',
-  future: 'Pending'
 }
 
 /** Fallback fills for semantic colors that aren't in the shared semantic map */
@@ -117,18 +113,24 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   completedColor = "POSITIVE",
   marginAbove = "NONE",
   marginBelow = "STANDARD",
-  stepStyle = "NUMBERED",
+  stepStyle = "LINE",
   showStepNumbers = true,
   showStepStatus = true,
   statusLabels,
   className: classNameProp
 }) => {
   const fieldId = React.useId()
+  const { t } = useI18n()
 
   // Visibility control
   if (!showWhen) return null
 
-  const status = { ...DEFAULT_STATUS_LABELS, ...statusLabels }
+  const status = {
+    completed: t(KEYS.milestoneStepCompleted),
+    current: t(KEYS.milestoneStepCurrent),
+    future: t(KEYS.milestoneStepFuture),
+    ...statusLabels
+  }
 
   // Map semantic colors to Tailwind classes
   const getColorClasses = (colorValue: Color) => {
@@ -248,7 +250,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
     <div className={orientation === "HORIZONTAL" ? 'mt-2 pr-4' : 'pb-6'}>
       {showStepNumbers && (
         <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-700">
-          {`Step ${index + 1}`}
+          {t(KEYS.milestoneStepNumber, index + 1)}
         </p>
       )}
       <p
@@ -498,7 +500,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
               }
             }}
             className="w-full rounded-sm text-left transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-            aria-label={`${step}, ${statusFor(state)}, step ${index + 1} of ${steps.length}`}
+            aria-label={t(KEYS.milestoneStepLabel, step, statusFor(state), index + 1, steps.length)}
           >
             {content}
           </button>
@@ -534,12 +536,12 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
 
   // Screen reader summary of overall position
   const progressSummary = (() => {
-    if (active === null) return `Not started. ${steps.length} steps.`
-    if (active === -1) return `All ${steps.length} steps completed.`
+    if (active === null) return t(KEYS.milestoneNotStarted, steps.length)
+    if (active === -1) return t(KEYS.milestoneAllCompleted, steps.length)
     if (active >= 0 && active < steps.length) {
-      return `Step ${active + 1} of ${steps.length}: ${steps[active]}.`
+      return t(KEYS.milestoneCurrentStep, active + 1, steps.length, steps[active])
     }
-    return `${steps.length} steps.`
+    return t(KEYS.milestoneStepCount, steps.length)
   })()
 
   const separatorIcon = orientation === "HORIZONTAL"
@@ -559,7 +561,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
       <div
         id={fieldId}
         role="group"
-        aria-label={accessibilityText || label || "Progress"}
+        aria-label={accessibilityText || label || t(KEYS.milestoneProgress)}
         className={orientation === "HORIZONTAL" ? "relative" : undefined}
       >
         <p className="sr-only">{progressSummary}</p>
@@ -585,7 +587,9 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
         )}
 
         {/* Steps list — an ordered list so position is announced by assistive tech */}
-        <ol className={`list-none p-0 m-0 ${listClasses}`}>
+        {/* role="list" is explicit because Safari/VoiceOver drops list semantics from lists
+            styled with list-none, which would lose the "2 of 5" announcement */}
+        <ol role="list" className={`list-none p-0 m-0 ${listClasses}`}>
           {steps.map((step, index) => (
             stepStyle === "MINIMAL" && index > 0 ? (
               <React.Fragment key={index}>

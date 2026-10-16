@@ -57,6 +57,26 @@ export const KEYS = {
   imageOpenLinked: 'image.openLinked',
   /** ReadOnlyGrid: default empty-state message. */
   gridEmptyMessage: 'grid.emptyMessage',
+  /** MilestoneField: status text for a completed step. */
+  milestoneStepCompleted: 'milestone.stepCompleted',
+  /** MilestoneField: status text for the current step. */
+  milestoneStepCurrent: 'milestone.stepCurrent',
+  /** MilestoneField: status text for a step not yet reached. */
+  milestoneStepFuture: 'milestone.stepFuture',
+  /** MilestoneField: "STEP n" caption above a step label — `Step {0}`. */
+  milestoneStepNumber: 'milestone.stepNumber',
+  /** MilestoneField: aria-label of a linked step — `{0}, {1}, step {2} of {3}` (label, status, position, total). */
+  milestoneStepLabel: 'milestone.stepLabel',
+  /** MilestoneField: default aria-label of the step group. */
+  milestoneProgress: 'milestone.progress',
+  /** MilestoneField: screen reader summary when no step is active — `Not started. {0} steps.` */
+  milestoneNotStarted: 'milestone.notStarted',
+  /** MilestoneField: screen reader summary when every step is done — `All {0} steps completed.` */
+  milestoneAllCompleted: 'milestone.allCompleted',
+  /** MilestoneField: screen reader summary of the current step — `Step {0} of {1}: {2}.` */
+  milestoneCurrentStep: 'milestone.currentStep',
+  /** MilestoneField: screen reader summary when the active index is out of range — `{0} steps.` */
+  milestoneStepCount: 'milestone.stepCount',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */

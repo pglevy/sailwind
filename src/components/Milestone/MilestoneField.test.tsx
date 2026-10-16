@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { MilestoneField } from "./MilestoneField";
+import { LocaleProvider } from "../../i18n";
 
 const steps = ["Card Details", "Form Review", "Authenticate OTP", "Create Code"];
 
@@ -168,5 +169,68 @@ describe("MilestoneField - step numbering", () => {
       <MilestoneField steps={steps} active={1} stepStyle="NUMBERED" showStepNumbers={false} />
     );
     expect(screen.queryByText("Step 1")).not.toBeInTheDocument();
+  });
+});
+
+describe("MilestoneField - defaults", () => {
+  it("keeps LINE as the default step style so existing projects don't change", () => {
+    render(<MilestoneField steps={steps} active={1} />);
+    // LINE has no "Step n" captions, no status text beside the label, and numbers its circles
+    expect(screen.queryByText("Step 1")).not.toBeInTheDocument();
+    expect(document.querySelector(".rounded-full.border-2")).not.toBeNull();
+  });
+});
+
+describe("MilestoneField - list role", () => {
+  it("sets role=list explicitly, since list-none drops list semantics in Safari/VoiceOver", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} />);
+    const list = container.querySelector("ol");
+    expect(list).toHaveClass("list-none");
+    expect(list).toHaveAttribute("role", "list");
+  });
+});
+
+describe("MilestoneField - localization", () => {
+  it("reads its default wording from the locale bundle, in English with no provider", () => {
+    render(<MilestoneField steps={steps} active={1} stepStyle="NUMBERED" />);
+    expect(screen.getByText("Step 1")).toBeInTheDocument();
+    expect(screen.getByText("In Progress")).toBeInTheDocument();
+    expect(screen.getByText("Step 2 of 4: Form Review.")).toBeInTheDocument();
+  });
+
+  it("builds the screen reader summaries from interpolated phrases", () => {
+    const { rerender } = render(<MilestoneField steps={steps} active={null} />);
+    expect(screen.getByText("Not started. 4 steps.")).toBeInTheDocument();
+    rerender(<MilestoneField steps={steps} active={-1} />);
+    expect(screen.getByText("All 4 steps completed.")).toBeInTheDocument();
+    rerender(<MilestoneField steps={steps} active={9} />);
+    expect(screen.getByText("4 steps.")).toBeInTheDocument();
+  });
+
+  it("names the group Progress when it has no label", () => {
+    render(<MilestoneField steps={steps} active={1} />);
+    expect(screen.getByRole("group", { name: "Progress" })).toBeInTheDocument();
+  });
+
+  it("still lets statusLabels override the bundle wording", () => {
+    render(
+      <MilestoneField
+        steps={steps}
+        active={1}
+        stepStyle="NUMBERED"
+        statusLabels={{ current: "Working" }}
+      />
+    );
+    expect(screen.getByText("Working")).toBeInTheDocument();
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+  });
+
+  it("renders without a LocaleProvider and inside one", () => {
+    render(
+      <LocaleProvider locale="en-US">
+        <MilestoneField steps={steps} active={1} stepStyle="NUMBERED" />
+      </LocaleProvider>
+    );
+    expect(screen.getByText("Step 1")).toBeInTheDocument();
   });
 });
