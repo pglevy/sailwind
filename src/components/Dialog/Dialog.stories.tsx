@@ -4,6 +4,7 @@ import { userEvent, within, expect } from 'storybook/test'
 import { DialogField } from './DialogField'
 import { ButtonWidget } from '../Button/ButtonWidget'
 import { TextField } from '../TextField/TextField'
+import { ToggleField } from '../Toggle/ToggleField'
 
 const meta = {
   title: 'Components/Dialog',
@@ -13,6 +14,7 @@ const meta = {
   argTypes: {
     width: { control: 'select', options: ['NARROW', 'MEDIUM', 'MEDIUM_PLUS', 'WIDE', 'FIT'] },
     height: { control: 'select', options: ['AUTO', 'FIT', 'SHORT', 'MEDIUM', 'TALL'] },
+    background: { control: 'inline-radio', options: ['STANDARD', 'GLASS'] },
   },
 } satisfies Meta<typeof DialogField>
 
@@ -234,5 +236,156 @@ export const FullWidthFit: Story = {
         This dialog uses FIT width to take up most of the screen width while still showing some content underneath.
       </p>
     ),
+  },
+}
+
+/** Decorative backdrop so the blur behind a GLASS dialog is actually visible. */
+const GlassBackdrop = () => (
+  <div
+    aria-hidden="true"
+    className="fixed inset-0 -z-10 bg-[linear-gradient(135deg,#2322F0_0%,#B561FF_35%,#E21496_65%,#FFC107_100%)]"
+  >
+    <div className="absolute left-[12%] top-[18%] h-56 w-56 rounded-full bg-white/30 blur-2xl" />
+    <div className="absolute right-[10%] bottom-[12%] h-72 w-72 rounded-full bg-cyan-500/40 blur-2xl" />
+    <div className="absolute left-[45%] top-[55%] h-40 w-40 rounded-full bg-yellow-500/50 blur-xl" />
+  </div>
+)
+
+/**
+ * Glassmorphism with an in-dialog switch so you can compare the new translucent
+ * surface against the current opaque one without leaving the dialog.
+ *
+ * Accessibility notes:
+ * - The surface stays at 70% white, keeping `gray-900` body text above 6:1 contrast
+ *   over any backdrop.
+ * - Content you place inside a GLASS dialog should use strong foreground colors
+ *   (`text-gray-900`, solid buttons). Muted text such as `text-gray-700` can drop
+ *   below 4.5:1 when the backdrop behind the glass is dark.
+ * - Glass automatically falls back to an opaque surface for
+ *   `prefers-reduced-transparency: reduce` and forced-colors (high contrast) mode.
+ * - The switch is a real labeled control (`ToggleField`), so it is reachable by
+ *   keyboard and announced as "Glassmorphism, switch".
+ */
+export const BackgroundToggle: Story = {
+  args: {
+    children: null,
+    title: 'Dialog background',
+  },
+  render: () => {
+    const [open, setOpen] = useState(false)
+    const [glass, setGlass] = useState(true)
+
+    return (
+      <>
+        {open && <GlassBackdrop />}
+        <DialogField
+          open={open}
+          onOpenChange={setOpen}
+          background={glass ? 'GLASS' : 'STANDARD'}
+          trigger={
+            <button className={`${btnOutline} border-blue-500 text-blue-500 bg-white hover:bg-blue-100`}>
+              Open Dialog
+            </button>
+          }
+          title="Dialog background"
+          description={
+            glass
+              ? 'New: glassmorphism — translucent surface with a blurred backdrop.'
+              : 'Current: opaque white surface with a solid border.'
+          }
+          width="MEDIUM_PLUS"
+          height="FIT"
+        >
+          <div className="space-y-4">
+            <ToggleField
+              choiceLabel="Glassmorphism"
+              value={glass}
+              saveInto={setGlass}
+              helpTooltip="Switch between the current opaque dialog and the new glass surface"
+              marginBelow="NONE"
+            />
+            <p className="text-sm text-gray-900">
+              Now showing: <strong>{glass ? 'GLASS (new)' : 'STANDARD (current)'}</strong>
+            </p>
+            <p className="text-sm text-gray-900">
+              Glass falls back to an opaque surface when the operating system requests
+              reduced transparency or high contrast, so content stays readable.
+            </p>
+            <div className="flex justify-end gap-2 pt-2">
+              <ButtonWidget
+                label="Close"
+                style="SOLID"
+                color="SECONDARY"
+                saveInto={() => setOpen(false)}
+              />
+            </div>
+          </div>
+        </DialogField>
+      </>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(document.body)
+    await userEvent.click(canvas.getByRole('button', { name: /open dialog/i }))
+    await expect(body.getByRole('dialog')).toHaveAttribute('data-background', 'glass')
+    await userEvent.click(body.getByRole('switch', { name: /glassmorphism/i }))
+    await expect(body.getByRole('dialog')).toHaveAttribute('data-background', 'standard')
+    await userEvent.click(body.getByRole('switch', { name: /glassmorphism/i }))
+    await expect(body.getByRole('dialog')).toHaveAttribute('data-background', 'glass')
+
+    await userEvent.click(body.getByRole('button', { name: 'Close' }))
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument()
+  },
+}
+
+/**
+ * The glass surface on its own, without the switch. Controlled by `open`/`onOpenChange`
+ * so the header close button works — a dialog given a hard-coded `open={true}` renders
+ * a close button that cannot close anything.
+ */
+export const GlassDialog: Story = {
+  args: {
+    children: null,
+    title: 'Glass',
+  },
+  render: () => {
+    const [open, setOpen] = useState(false)
+
+    return (
+      <>
+        {open && <GlassBackdrop />}
+        <DialogField
+          open={open}
+          onOpenChange={setOpen}
+          background="GLASS"
+          trigger={
+            <button className={`${btnOutline} border-blue-500 text-blue-500 bg-white hover:bg-blue-100`}>
+              Open Glass Dialog
+            </button>
+          }
+          title="Payment details"
+          description="Your card is charged when the order ships."
+          width="MEDIUM"
+          height="AUTO"
+          showCloseButton={true}
+        >
+          <p className="text-sm text-gray-900">
+            A translucent surface over a blurred backdrop, with a soft border and shadow
+            to keep the panel edges legible.
+          </p>
+        </DialogField>
+      </>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(document.body)
+
+    await userEvent.click(canvas.getByRole('button', { name: /open glass dialog/i }))
+    await expect(body.getByRole('dialog')).toHaveAttribute('data-background', 'glass')
+
+    await userEvent.click(body.getByRole('button', { name: /close/i }))
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument()
   },
 }

@@ -49,6 +49,16 @@ const EXPECTED: Record<TranslationKey, string> = {
   "progressBar.label": "Progress",
   "image.openLinked": "Open linked image",
   "grid.emptyMessage": "No items available",
+  "milestone.stepCompleted": "Completed",
+  "milestone.stepCurrent": "In Progress",
+  "milestone.stepFuture": "Pending",
+  "milestone.stepNumber": "Step {0}",
+  "milestone.stepLabel": "{0}, {1}, step {2} of {3}",
+  "milestone.progress": "Progress",
+  "milestone.notStarted": "Not started. {0} steps.",
+  "milestone.allCompleted": "All {0} steps completed.",
+  "milestone.currentStep": "Step {0} of {1}: {2}.",
+  "milestone.stepCount": "{0} steps.",
   "boxLayout.toggleContent": "Show or hide content",
 };
 

@@ -18,6 +18,8 @@ export * from './types/sail'
 
 // Export color utilities
 export { resolveColorClass, isSemanticColor, isPaletteColor, semanticColorClasses } from './utils/colorResolver'
+export { getIconAnimation, applyIconAnimation } from './utils/iconAnimations'
+export type { IconAnimation } from './utils/iconAnimations'
 export { paletteColorMap, paletteHexMap } from './types/palette-colors.generated'
 
 // Export i18n public API (LocaleProvider, hooks, formatters, key catalog, types)

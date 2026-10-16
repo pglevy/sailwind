@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { DialogField } from "./DialogField";
 
 describe("DialogField - visibility", () => {
@@ -192,5 +194,74 @@ describe("DialogField - width/height classes", () => {
       );
       expect(document.body.innerHTML).toContain(expectedClass);
     });
+  });
+});
+
+describe("DialogField - background", () => {
+  it("defaults to the STANDARD opaque surface", () => {
+    render(
+      <DialogField open={true} title="T">
+        <p>Content</p>
+      </DialogField>
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("data-background", "standard");
+    expect(dialog.className).toContain("bg-white");
+    expect(dialog.className).not.toContain("backdrop-blur-xl");
+  });
+
+  it("applies the translucent glass surface when background is GLASS", () => {
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("data-background", "glass");
+    expect(dialog.className).toContain("bg-white/70");
+    expect(dialog.className).toContain("backdrop-blur-xl");
+  });
+
+  it("falls back to an opaque surface for reduced transparency and forced colors", () => {
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    const className = screen.getByRole("dialog").className;
+    expect(className).toContain("[@media(prefers-reduced-transparency:reduce)]:bg-white");
+    expect(className).toContain(
+      "[@media(prefers-reduced-transparency:reduce)]:backdrop-blur-none"
+    );
+    expect(className).toContain("forced-colors:backdrop-blur-none");
+  });
+
+  it("keeps the description at full-strength text color on glass", () => {
+    render(
+      <DialogField open={true} title="T" description="Readable" background="GLASS">
+        <p>Content</p>
+      </DialogField>
+    );
+    expect(screen.getByText("Readable").className).toContain("text-gray-900");
+  });
+});
+
+describe("DialogField - generated CSS", () => {
+  it("writes every glass fallback class out in full, so Tailwind can find it in the source", () => {
+    // Tailwind only generates classes it finds as complete strings. A class assembled from a
+    // template string renders in the DOM but never reaches the built CSS.
+    const source = readFileSync(join(__dirname, "DialogField.tsx"), "utf8");
+    render(
+      <DialogField open={true} title="T" background="GLASS">
+        <p>Body</p>
+      </DialogField>
+    );
+    const fallbacks = Array.from(document.querySelectorAll("[class]"))
+      .flatMap((el) => (el.getAttribute("class") ?? "").split(/\s+/))
+      .filter((token) => token.includes("prefers-reduced-transparency"));
+
+    expect(fallbacks.length).toBeGreaterThanOrEqual(5);
+    fallbacks.forEach((token) => expect(source).toContain(token));
+    expect(source).not.toContain("${reducedTransparency}");
   });
 });
