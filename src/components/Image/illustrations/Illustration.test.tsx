@@ -46,6 +46,15 @@ describe("illustration image - animation", () => {
   });
 });
 
+describe("illustration image - unknown name", () => {
+  it("draws nothing, rather than throwing, for a name that is not in the list", () => {
+    const unknown = "NOT_AN_ILLUSTRATION" as IllustrationName;
+    expect(() => drawn(unknown)).not.toThrow();
+    const { container } = drawn(unknown);
+    expect(container.querySelector("svg")).toBeNull();
+  });
+});
+
 describe("illustration image - ImageField", () => {
   it("does not draw an illustration whose image has showWhen false, and still draws one without it", () => {
     const { container } = render(

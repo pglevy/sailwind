@@ -267,6 +267,9 @@ const StackPicture: React.FC<{ spec: StackSpec }> = ({ spec }) => (
  */
 export const Illustration: React.FC<IllustrationProps> = ({ name, showAnimation = true, className }) => {
   const spec = ILLUSTRATIONS[name]
+  // A name that is not in the list (a typo, or a value from outside TypeScript) draws nothing
+  // rather than throwing, so one bad name cannot blank the whole page
+  if (!spec) return null
 
   return (
     <svg

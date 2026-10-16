@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { ButtonLayout, EmptyState, EmptyStatePopover } from './EmptyState'
+import type { EmptyStateImage } from './EmptyState'
 
 /** Pretends the window is wide (a row of buttons) or narrow (a stack) */
 const setWidth = (wide: boolean) => {
@@ -176,6 +177,13 @@ describe('EmptyState - image', () => {
     )
     expect(container.querySelectorAll('svg .sw-ill-arrow')).toHaveLength(3)
     expect(container.querySelector('svg')).not.toHaveClass('sw-illustration-animated')
+  })
+
+  it('still shows the words, and draws no picture, for an illustration name that is not in the list', () => {
+    const image = { imageType: 'illustration', illustration: 'NOT_AN_ILLUSTRATION' } as unknown as EmptyStateImage
+    const { container } = render(<EmptyState title="Nothing here" image={image} />)
+    expect(screen.getByText('Nothing here')).toBeInTheDocument()
+    expect(container.querySelector('svg')).toBeNull()
   })
 
   it('puts a document image above the words, in the flow, rather than behind them', () => {
