@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ImageField } from './ImageField'
+import { ILLUSTRATIONS } from './illustrations/illustrationSpecs'
+import type { IllustrationName } from './illustrations/illustrationSpecs'
 
 const meta = {
   title: 'Components/Image',
@@ -225,4 +227,36 @@ export const ShapeCircle: Story = {
     size: 'SMALL_PLUS',
     shape: 'CIRCLE',
   },
+}
+
+/**
+ * Pre-baked line drawings, for the picture at the top of an empty state or a panel with nothing
+ * in it. Not in SAIL. An illustration image has two parameters, `illustration` (which picture)
+ * and `showAnimation` (whether it draws itself in, on by default), and takes its size from the
+ * field's `size` alone. It is decorative, so put the words that say what it means beside it. The
+ * field clips each picture's outer rings at its edge, so they never spill over what is beside it.
+ * (`showWhen` hides it, as for any image.)
+ *
+ * Ringed round a centre: TEST_CASES, TRIGGERS, HISTORY, NO_DATA, PROCESS_MODELS, RECORD_TYPES,
+ * INTERFACES, EXPRESSION_RULES, AI_SKILLS, AI_AGENTS, CASES, DASHBOARDS, DOCUMENT_PROCESSING,
+ * INTEGRATIONS, USERS. Lists: TASK_LIST, SEARCH_RESULTS, DOCUMENT_LIST. Conversations:
+ * CONVERSATION, AI_CHAT, COMMENTS.
+ */
+export const Illustration: Story = {
+  args: {
+    labelPosition: 'COLLAPSED',
+    images: (Object.keys(ILLUSTRATIONS) as IllustrationName[]).map((illustration) => ({
+      imageType: 'illustration' as const,
+      illustration,
+    })),
+    size: 'MEDIUM_PLUS',
+    align: 'CENTER',
+  },
+  decorators: [
+    (Story) => (
+      <div className="overflow-hidden rounded-sm border border-gray-200 bg-white p-4">
+        <Story />
+      </div>
+    ),
+  ],
 }
