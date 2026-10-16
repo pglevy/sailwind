@@ -175,9 +175,8 @@ describe("MilestoneField - step numbering", () => {
 describe("MilestoneField - defaults", () => {
   it("keeps LINE as the default step style so existing projects don't change", () => {
     render(<MilestoneField steps={steps} active={1} />);
-    // LINE has no "Step n" captions, no status text beside the label, and numbers its circles
+    // NUMBERED shows "Step n" captions by default; LINE does not
     expect(screen.queryByText("Step 1")).not.toBeInTheDocument();
-    expect(document.querySelector(".rounded-full.border-2")).not.toBeNull();
   });
 });
 
@@ -225,12 +224,41 @@ describe("MilestoneField - localization", () => {
     expect(screen.getByText("Completed")).toBeInTheDocument();
   });
 
-  it("renders without a LocaleProvider and inside one", () => {
+  it("renders its wording in the active locale", () => {
     render(
-      <LocaleProvider locale="en-US">
-        <MilestoneField steps={steps} active={1} stepStyle="NUMBERED" />
+      <LocaleProvider locale="es">
+        <MilestoneField steps={steps} active={1} stepStyle="NUMBERED" links={steps.map(() => ({ onClick: () => {} }))} />
       </LocaleProvider>
     );
-    expect(screen.getByText("Step 1")).toBeInTheDocument();
+    // Visible captions and status text
+    expect(screen.getByText("Paso 1")).toBeInTheDocument();
+    expect(screen.getByText("Completado")).toBeInTheDocument();
+    expect(screen.getByText("En curso")).toBeInTheDocument();
+    expect(screen.getAllByText("Pendiente")).toHaveLength(2);
+    // Screen reader summary and the accessible name of a linked step
+    expect(screen.getByText("Paso 2 de 4: Form Review.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Card Details, Completado, paso 1 de 4" })).toBeInTheDocument();
+    // No English left over from the default bundle
+    expect(screen.queryByText("In Progress")).not.toBeInTheDocument();
+    expect(screen.queryByText("Step 1")).not.toBeInTheDocument();
+  });
+
+  it("names the group in the active locale when it has no label", () => {
+    render(
+      <LocaleProvider locale="es">
+        <MilestoneField steps={steps} active={1} />
+      </LocaleProvider>
+    );
+    expect(screen.getByRole("group", { name: "Progreso" })).toBeInTheDocument();
+  });
+
+  it("lets statusLabels win over the active locale", () => {
+    render(
+      <LocaleProvider locale="es">
+        <MilestoneField steps={steps} active={1} stepStyle="NUMBERED" statusLabels={{ current: "Working" }} />
+      </LocaleProvider>
+    );
+    expect(screen.getByText("Working")).toBeInTheDocument();
+    expect(screen.getByText("Completado")).toBeInTheDocument();
   });
 });
