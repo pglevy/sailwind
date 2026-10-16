@@ -2,6 +2,7 @@ import * as React from 'react'
 import { CardLayout } from '../../components/Card/CardLayout'
 import { ButtonWidget } from '../../components/Button/ButtonWidget'
 import type { ButtonWidgetProps } from '../../components/Button/ButtonWidget'
+import { HeadingField } from '../../components/Heading/HeadingField'
 import { ImageField } from '../../components/Image/ImageField'
 import type { DocumentImageProps, IllustrationImageProps, WebImageProps } from '../../components/Image'
 import { RichTextDisplayField } from '../../components/RichText/RichTextDisplayField'
@@ -35,8 +36,9 @@ import { ChevronDown } from 'lucide-react'
  *   equally; in a LARGE one the buttons keep their own widths and sit together.
  * - The card fills the width of whatever it is in
  *
- * Text is the same in every variant: the first line is `TextItem` STANDARD and STRONG, the
- * second STANDARD in SECONDARY. Only the picture changes size: LARGE draws it 400px wide,
+ * Text is the same in every variant: the first line is a `HeadingField` (MEDIUM, SEMI_BOLD, so
+ * it is a heading to a screen reader), the second `TextItem` STANDARD in SECONDARY, with the
+ * snug line height rather than RichTextDisplayField's relaxed one. Only the picture changes size: LARGE draws it 400px wide,
  * SMALL 260px, and either shrinks to fit a narrower container.
  */
 
@@ -249,17 +251,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         className={`relative px-4 ${bottom}`}
         style={isIllustration ? { paddingTop: `calc(min(100%, ${width}px) * ${CENTRE} + ${gap}px)` } : { paddingTop: 20 }}
       >
-        <RichTextDisplayField
-          align="CENTER"
-          marginBelow="NONE"
-          value={[<TextItem key="primary" text={title} style="STRONG" />]}
-        />
+        <HeadingField text={title} size="MEDIUM" fontWeight="SEMI_BOLD" align="CENTER" marginBelow="NONE" />
         {description && (
           <RichTextDisplayField
             align="CENTER"
             marginAbove="EVEN_LESS"
             marginBelow="NONE"
-            className="mx-auto max-w-sm"
+            className="mx-auto max-w-sm [&>div]:leading-snug"
             value={[<TextItem key="secondary" text={description} color="SECONDARY" />]}
           />
         )}

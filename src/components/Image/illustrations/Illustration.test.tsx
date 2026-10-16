@@ -46,6 +46,19 @@ describe("illustration image - animation", () => {
   });
 });
 
+describe("illustration image - arrowheads", () => {
+  it("points each line at an arrowhead whose id is safe in url(#id), as React 18's colon ids are not", () => {
+    const { container } = drawn("TRIGGERS");
+    const lines = container.querySelectorAll("path[marker-end]");
+    expect(lines.length).toBeGreaterThan(0);
+    for (const line of lines) {
+      const id = /^url\(#(.+)\)$/.exec(line.getAttribute("marker-end") ?? "")?.[1] ?? "";
+      expect(id).toMatch(/^[a-zA-Z0-9_-]+$/);
+      expect(container.querySelector(`marker[id="${id}"]`)).not.toBeNull();
+    }
+  });
+});
+
 describe("illustration image - unknown name", () => {
   it("draws nothing, rather than throwing, for a name that is not in the list", () => {
     const unknown = "NOT_AN_ILLUSTRATION" as IllustrationName;

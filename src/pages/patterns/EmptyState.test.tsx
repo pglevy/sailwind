@@ -103,6 +103,12 @@ describe('EmptyState', () => {
     render(<EmptyState title="No items" />)
     expect(screen.queryByText('Add one to start')).not.toBeInTheDocument()
   })
+
+  it('makes the title a heading, and lays the second line out at a snug line height', () => {
+    render(<EmptyState title="No items" description="Add one to start" />)
+    expect(screen.getByRole('heading', { name: 'No items' })).toBeInTheDocument()
+    expect(screen.getByText('Add one to start').closest('[class*="leading-snug"]')).not.toBeNull()
+  })
 })
 
 describe('EmptyStatePopover - accessibility', () => {

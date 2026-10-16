@@ -67,7 +67,9 @@ const Tiles: React.FC<{ tiles: IllustrationTile[]; sequence?: number[] }> = ({ t
 
 /** A picture ringed round a centre tile */
 const RadialPicture: React.FC<{ spec: RadialSpec }> = ({ spec }) => {
-  const markerId = React.useId()
+  // React 18's useId gives ids like ":r0:", and React 19's contain other punctuation. A colon in
+  // url(#id) can stop the arrowhead being found, so keep only characters that are safe there.
+  const markerId = `sw-ill-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   const sequence = spec.sequence
   const CentreIcon = spec.centreIcon
 
