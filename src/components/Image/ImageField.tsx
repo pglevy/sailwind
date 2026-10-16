@@ -5,16 +5,28 @@ import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape } from '..
 import type { DocumentImageProps } from './DocumentImage'
 import type { UserImageProps } from './UserImage'
 import type { WebImageProps } from './WebImage'
+import type { IllustrationImageProps } from './IllustrationImage'
+import { Illustration } from './illustrations/Illustration'
 import { alignMap, shapeMap } from '../../utils/sailMaps'
 import { resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 import { useI18n, KEYS } from '../../i18n'
 
 // Union type for all image types supported by ImageField
-type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps
+export type ImageFieldImage = DocumentImageProps | UserImageProps | WebImageProps | IllustrationImageProps
 
 // Type guard to check if an image is a UserImage
 function isUserImage(image: ImageFieldImage): image is UserImageProps {
   return 'imageType' in image && image.imageType === 'user'
+}
+
+// Type guard to check if an image is an IllustrationImage
+function isIllustrationImage(image: ImageFieldImage): image is IllustrationImageProps {
+  return 'imageType' in image && image.imageType === 'illustration'
+}
+
+// Type guard to check if an image is a DocumentImage
+function isDocumentImage(image: ImageFieldImage): image is DocumentImageProps {
+  return 'document' in image
 }
 
 // Type guard to check if an image is a WebImage
@@ -48,7 +60,7 @@ export interface ImageFieldProps {
   instructions?: string
   /** Help tooltip text (max 500 characters) */
   helpTooltip?: string
-  /** Array of images to display (supports both document and user images) */
+  /** Array of images to display (document, user, web and illustration images) */
   images: ImageFieldImage[]
   /** Controls visibility of the component */
   showWhen?: boolean
@@ -232,6 +244,21 @@ export const ImageField: React.FC<ImageFieldProps> = ({
           )
         }
 
+        // Check if this is an illustration image. Decorative, so it has no alt text or link, and
+        // only its size applies (not style, shape or isThumbnail). Its outer rings run past the
+        // picture's box, so the box clips them. Not in SAIL.
+        if (isIllustrationImage(imageProps)) {
+          return (
+            <div key={index} className="relative overflow-hidden">
+              <Illustration
+                name={imageProps.illustration}
+                showAnimation={imageProps.showAnimation}
+                className={sizeMap[size]}
+              />
+            </div>
+          )
+        }
+
         // Check if this is a web image
         if (isWebImage(imageProps)) {
           const imageClasses = getImageClasses()
@@ -279,6 +306,9 @@ export const ImageField: React.FC<ImageFieldProps> = ({
             </div>
           )
         }
+
+        // Anything else must be a document image; an image type this does not know draws nothing
+        if (!isDocumentImage(imageProps)) return null
 
         // Render document image (standard approach)
         const imageSrc = imageProps.document
