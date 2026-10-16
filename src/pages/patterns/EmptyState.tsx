@@ -251,7 +251,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         className={`relative px-4 ${bottom}`}
         style={isIllustration ? { paddingTop: `calc(min(100%, ${width}px) * ${CENTRE} + ${gap}px)` } : { paddingTop: 20 }}
       >
-        <HeadingField text={title} size="MEDIUM" fontWeight="SEMI_BOLD" align="CENTER" marginBelow="NONE" />
+        <HeadingField text={title} size="MEDIUM" fontWeight="SEMI_BOLD" align="CENTER" marginBelow="NONE" className="leading-tight" />
         {description && (
           <RichTextDisplayField
             align="CENTER"
