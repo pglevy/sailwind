@@ -255,7 +255,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         {description && (
           <RichTextDisplayField
             align="CENTER"
-            marginAbove="EVEN_LESS"
+            marginAbove="NONE"
             marginBelow="NONE"
             className="mx-auto max-w-sm [&>div]:leading-snug"
             value={[<TextItem key="secondary" text={description} color="SECONDARY" />]}
