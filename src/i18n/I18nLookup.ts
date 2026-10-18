@@ -36,6 +36,42 @@ function interpolate(template: string, args: readonly unknown[]): string {
 }
 
 /**
+ * Whether `target` has its own (non-inherited) property `property`. Uses
+ * `Object.prototype.hasOwnProperty.call` so it works on null-prototype objects
+ * without relying on ES2022 `Object.hasOwn`.
+ */
+function hasOwn(target: object, property: string): boolean {
+  return Object.prototype.hasOwnProperty.call(target, property)
+}
+
+/**
+ * Read `bundle[locale][key]`, counting only own, string-valued entries.
+ *
+ * Plain objects inherit members from `Object.prototype`, so a plain read with a
+ * locale or key such as `toString` or `constructor` returns a function or object
+ * instead of `undefined` (#173). Inherited members and non-string values are
+ * treated as missing, so the caller falls through to the next tier.
+ */
+function readEntry(
+  bundle: I18nBundle,
+  locale: string,
+  key: string
+): string | undefined {
+  if (!hasOwn(bundle, locale)) {
+    return undefined
+  }
+  const entries: unknown = bundle[locale]
+  if (typeof entries !== 'object' || entries === null) {
+    return undefined
+  }
+  if (!hasOwn(entries, key)) {
+    return undefined
+  }
+  const value: unknown = (entries as Record<string, unknown>)[key]
+  return typeof value === 'string' ? value : undefined
+}
+
+/**
  * Resolve a single key against a bundle for an already-normalized locale,
  * applying the fallback chain and interpolating any positional arguments.
  *
@@ -44,6 +80,10 @@ function interpolate(template: string, args: readonly unknown[]): string {
  *   2. Language-only match    — `bundle[lang][key]`, `lang = locale.split('-')[0]`
  *   3. Default locale match   — `bundle['en-us'][key]`
  *   4. Otherwise              — the key unchanged
+ *
+ * Only own, string-valued entries count (see {@link readEntry}). Inherited
+ * members (`toString`, `constructor`, …) and non-string values are treated as
+ * missing (#173).
  *
  * An empty/absent key short-circuits to `''` (Requirement 2.5).
  */
@@ -59,7 +99,7 @@ function resolve(
   }
 
   // 1. Exact locale match.
-  const exact = bundle[locale]?.[key]
+  const exact = readEntry(bundle, locale, key)
   if (exact !== undefined) {
     return interpolate(exact, args)
   }
@@ -67,14 +107,14 @@ function resolve(
   // 2. Language-only match (e.g., `en` derived from `en-us`).
   const lang = locale.split('-')[0]
   if (lang && lang !== locale) {
-    const langValue = bundle[lang]?.[key]
+    const langValue = readEntry(bundle, lang, key)
     if (langValue !== undefined) {
       return interpolate(langValue, args)
     }
   }
 
   // 3. Default_Locale match.
-  const defaultValue = bundle[DEFAULT_LOCALE]?.[key]
+  const defaultValue = readEntry(bundle, DEFAULT_LOCALE, key)
   if (defaultValue !== undefined) {
     return interpolate(defaultValue, args)
   }
@@ -108,7 +148,10 @@ function resolve(
  *    the supplied arguments, leaving tokens with missing/null/undefined
  *    arguments unchanged (Requirement 2.7–2.8).
  *
- * The lookup never throws for any locale or key input (Requirement 1.7).
+ * The lookup never throws for any locale or key input (Requirement 1.7). Only
+ * own, string-valued bundle entries count: inherited members (`toString`,
+ * `constructor`, …) and non-string values are treated as missing, so they fall
+ * back like any absent key (#173).
  *
  * @param bundle - The in-memory Translation_Bundle (normalized locale → key →
  *   value).

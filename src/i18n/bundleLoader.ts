@@ -52,11 +52,16 @@ function decodeUnicodeEscapes(value: string): string {
  * - Decode `\uXXXX` escapes in the value (Requirement 3.5, 3.8).
  * - Exclude any key containing the `.##CONTEXT##` marker (Requirement 3.4).
  * - Duplicate keys within a file follow last-write-wins.
+ * - The result is a null-prototype map, so a key such as `__proto__` is stored
+ *   as a normal entry (#173).
  *
  * Never throws: non-string content yields an empty map.
  */
 function parseProperties(content: string): Record<string, string> {
-  const result: Record<string, string> = {}
+  // Null-prototype maps (here and in `loadI18nBundle`): assigning `__proto__`
+  // to a plain `{}` hits the prototype setter and drops the entry, and plain
+  // objects expose inherited names like `toString` (#173).
+  const result: Record<string, string> = Object.create(null)
   if (typeof content !== 'string') {
     return result
   }
@@ -167,7 +172,7 @@ function deriveLocale(fileName: string): string | null {
 export function loadI18nBundle(
   files: Record<string, string>
 ): I18nLookupFunction {
-  const bundle: I18nBundle = {}
+  const bundle: I18nBundle = Object.create(null)
 
   for (const [path, content] of Object.entries(files)) {
     const fileName = path.slice(path.lastIndexOf('/') + 1)
@@ -177,7 +182,7 @@ export function loadI18nBundle(
     }
 
     const parsed = parseProperties(content)
-    const target = bundle[locale] ?? (bundle[locale] = {})
+    const target = bundle[locale] ?? (bundle[locale] = Object.create(null))
     for (const [key, value] of Object.entries(parsed)) {
       // Last-write-wins across files resolving to the same locale.
       target[key] = value
