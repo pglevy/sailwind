@@ -44,6 +44,17 @@ const arbKey = fc
   .string({ minLength: 1, maxLength: 12 })
   .map((s) => "k_" + s.replace(/[{}]/g, ""));
 
+/** Names inherited from `Object.prototype`. `fc.string()` only produces these
+ *  occasionally, so they're mixed into the key and locale arbitraries to cover
+ *  them on every run (#173). */
+const arbPrototypeName = fc.constantFrom(
+  "toString",
+  "constructor",
+  "__proto__",
+  "valueOf",
+  "hasOwnProperty"
+);
+
 // =============================================================================
 // Property 1: Lookup fallback determinism
 // Feature: component-i18n, Property 1: Lookup fallback determinism
@@ -133,12 +144,26 @@ describe("Property 1: Lookup fallback determinism", () => {
   it("never throws and always returns a string for any bundle, locale, key, and args", () => {
     const arbLocale = fc.oneof(
       fc.string(),
-      fc.constantFrom("en-US", "fr_CA", "EN", "  en - us  ", "zh-Hant-TW", "123", "", "   ")
+      fc.constantFrom(
+        "en-US",
+        "fr_CA",
+        "EN",
+        "  en - us  ",
+        "zh-Hant-TW",
+        "123",
+        "",
+        "   ",
+        // Already normalized: generated bundles otherwise rarely contain a
+        // real default tier.
+        "en-us"
+      ),
+      arbPrototypeName
     );
+    const arbEntryKey = fc.oneof(fc.string(), arbPrototypeName);
     const arbBundle = fc.dictionary(
       arbLocale,
       // Values may contain `{n}` placeholders to exercise the interpolation path.
-      fc.dictionary(fc.string(), fc.string(), { maxKeys: 5 }),
+      fc.dictionary(arbEntryKey, fc.string(), { maxKeys: 5 }),
       { maxKeys: 5 }
     );
 
@@ -146,7 +171,7 @@ describe("Property 1: Lookup fallback determinism", () => {
       fc.property(
         arbBundle,
         arbLocale,
-        fc.string(),
+        arbEntryKey,
         fc.array(fc.anything(), { maxLength: 6 }),
         (bundle, locale, key, args) => {
           const lookup = I18nLookup(bundle as I18nBundle);
