@@ -92,6 +92,7 @@ export const ButtonSizes: Story = {
 export const HexColorsSolid: Story = {
   // Known a11y failure, exempted until fixed:
   // - color-contrast (palette SOLID always uses white text): https://github.com/pglevy/sailwind/issues/185
+  // - color-contrast (story's light VIOLET_300/ORANGE_300/PINK_300 shades): https://github.com/pglevy/sailwind/issues/168
   parameters: { a11y: { test: 'todo' } },
   render: () => (
     <ButtonArrayLayout
