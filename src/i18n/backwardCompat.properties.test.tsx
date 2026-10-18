@@ -60,6 +60,7 @@ const EXPECTED: Record<TranslationKey, string> = {
   "milestone.currentStep": "Step {0} of {1}: {2}.",
   "milestone.stepCount": "{0} steps.",
   "boxLayout.toggleContent": "Show or hide content",
+  "recordView.moreActions": "More actions",
 };
 
 /** The full library key catalog, as the dotted `.properties` key strings. */
