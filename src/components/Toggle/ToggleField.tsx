@@ -3,6 +3,7 @@ import * as Switch from '@radix-ui/react-switch'
 import { Info } from 'lucide-react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILMarginSize } from '../../types/sail'
+import { useI18n, KEYS } from '../../i18n'
 
 /**
  * Displays a toggle (switch) for boolean input
@@ -61,6 +62,8 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
   choicePosition = "START",
   className
 }) => {
+  const { t } = useI18n()
+
   // Visibility control
   if (!showWhen) return null
 
@@ -132,10 +135,17 @@ export const ToggleField: React.FC<ToggleFieldProps> = ({
       ].join(' ')}
     >
       {choiceLabel}
-      {required && <span className="text-red-700" aria-label="required">*</span>}
+      {required && <span className="text-red-700" aria-label={t(KEYS.fieldRequired)}>*</span>}
       {helpTooltip && (
-        <span className="text-gray-700 cursor-help inline-flex items-center" title={helpTooltip} aria-label="help">
-          <Info size={14} />
+        // role="img" makes aria-label valid on this icon-only span (#185). title
+        // stays the hover tooltip and becomes the image's accessible description.
+        <span
+          role="img"
+          className="text-gray-700 cursor-help inline-flex items-center"
+          title={helpTooltip}
+          aria-label={t(KEYS.fieldHelp)}
+        >
+          <Info size={14} aria-hidden="true" />
         </span>
       )}
     </label>
