@@ -30,7 +30,12 @@ export default defineConfig({
           include: ['src/**/*.test.{ts,tsx}'],
         },
       },
-      // Storybook component + a11y tests
+      // Storybook component + a11y tests.
+      // addon-vitest applies the project annotations (addons, then
+      // .storybook/preview.tsx) itself, the same way the Storybook UI does.
+      // Don't add a setup file that calls setProjectAnnotations: it turns that
+      // off, and a wrong order lets the a11y addon's default `test: 'todo'`
+      // override preview's `test: 'error'`, so violations stop failing (#186).
       {
         extends: true,
         plugins: [
@@ -50,7 +55,6 @@ export default defineConfig({
             provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },
-          setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },
     ],

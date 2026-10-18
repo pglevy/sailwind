@@ -106,7 +106,13 @@ All components must meet WCAG 2.2 AA. In practice:
 - Animation respects `prefers-reduced-motion`.
 - Prefer Radix primitives for complex interactive components (dialogs, menus, tabs, tooltips). They handle most of this for you.
 
-Storybook's accessibility checks run as part of `pnpm test`, and violations fail the build. Automated checks catch a lot but not everything, so try new interactions with a keyboard, and with a screen reader if you can.
+Storybook's accessibility checks (axe) run on every story as part of `pnpm test`, and violations fail the tests and CI. `pnpm test-storybook` runs just the Storybook tests.
+
+Some known failures are exempted per story with `parameters: { a11y: { test: 'todo' } }` and a comment naming the rule and linking the issue that tracks the fix. The story still shows the violation in the Accessibility panel, but the test passes. New exemptions should be rare. Fix the violation if you can, and if you can't, explain why in the comment. Remove the exemption when the fix lands.
+
+The Accessibility panel's "Inconclusive" items are checks axe couldn't decide. They never fail tests, so review them yourself.
+
+Automated checks catch a lot but not everything, so try new interactions with a keyboard, and with a screen reader if you can.
 
 ### User-facing text and i18n
 
@@ -175,6 +181,7 @@ pnpm exec playwright install chromium   # needed for Storybook tests
 pnpm run storybook         # Develop in Storybook at http://localhost:6006
 pnpm run check             # Everything CI runs: typecheck, lint, tests, designer bundles, library build
 pnpm run test:unit         # Unit tests only (faster)
+pnpm run test-storybook    # Storybook interaction and accessibility tests only
 pnpm run typecheck         # TypeScript
 pnpm run lint              # ESLint
 pnpm run build:lib         # Build the npm package into dist/

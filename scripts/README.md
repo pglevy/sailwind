@@ -212,16 +212,6 @@ node scripts/visual-check.cjs '{
 - Timestamp-based filenames prevent overwriting
 
 
-## A11y Audit
+## Accessibility checks
 
-Runs axe-core against every story in a running Storybook instance to find accessibility violations.
-
-```bash
-# Requires Storybook running (default: http://localhost:6006)
-pnpm run a11y-audit
-
-# Or specify a custom URL
-node scripts/a11y-audit.cjs http://localhost:9009
-```
-
-The script fetches the story index from `/index.json`, visits each story's iframe, injects axe-core, and reports violations grouped by rule. Exit code 1 if any violations are found.
+There's no separate a11y script. `pnpm test-storybook` runs axe on every story and fails on violations, and it's part of `pnpm test` and CI. To look at one story, use the Accessibility panel in `pnpm run storybook`. See [Accessibility](../CONTRIBUTING.md#accessibility) in CONTRIBUTING.

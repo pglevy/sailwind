@@ -330,4 +330,8 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const AllTokens: Story = {}
+export const AllTokens: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (swatch labels, inline code): https://github.com/pglevy/sailwind/issues/168
+  parameters: { a11y: { test: 'todo' } },
+}
