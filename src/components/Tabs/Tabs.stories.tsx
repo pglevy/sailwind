@@ -199,6 +199,10 @@ export const VerticalOrientation: Story = {
 
 export const NavigationOnly: Story = {
   name: 'Navigation Only (No Content Panels)',
+  // Known a11y failures, exempted until fixed:
+  // - aria-valid-attr-value (tab aria-controls, no panel): https://github.com/pglevy/sailwind/issues/185
+  // - color-contrast (story's helper caption): https://github.com/pglevy/sailwind/issues/168
+  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
@@ -238,6 +242,9 @@ export const NavigationOnly: Story = {
 
 export const NavigationOnlyVertical: Story = {
   name: 'Navigation Only — Vertical Sidebar',
+  // Known a11y failure, exempted until fixed:
+  // - aria-valid-attr-value (tab aria-controls, no panel): https://github.com/pglevy/sailwind/issues/185
+  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
@@ -277,6 +284,9 @@ export const NavigationOnlyVertical: Story = {
 
 export const DensityComparison: Story = {
   name: 'Density — STANDARD vs DENSE',
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (story's "Density:" captions): https://github.com/pglevy/sailwind/issues/168
+  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
@@ -333,6 +343,9 @@ export const FullWidthSeparator: Story = {
 
 export const LightBackground: Story = {
   name: 'Light Background (Non-White)',
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (inactive tabs use opacity-70): https://github.com/pglevy/sailwind/issues/185
+  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',

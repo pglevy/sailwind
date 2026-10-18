@@ -233,6 +233,8 @@ If you add a parameter to a component that has a folder in `appian-plugin/i18n/d
 
 Run `pnpm run check` before considering work complete. It runs the same checks as CI: typecheck, lint, unit and Storybook tests (including accessibility), designer bundle validation, and the library build.
 
+An axe violation in any story fails the Storybook tests. Fix it rather than exempting it. Known failures are exempted per story with `parameters: { a11y: { test: 'todo' } }` and a comment naming the rule and linking the tracking issue. Ask the contributor before adding a new exemption. Keep exemptions at the story level: don't exempt a whole file or globally, and don't turn off axe rules. The Accessibility panel's "Inconclusive" items never fail tests, so point them out for human review.
+
 New behavior needs tests, and new props, values, or states need a story. Stories that open overlays should start closed and open from a trigger.
 
 ## Resources

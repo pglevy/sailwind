@@ -241,7 +241,9 @@ export const BorderAndShadow: Story = {
 
 export const VerticalAlignment: Story = {
   args: { children: null },
-  parameters: { layout: "padded" },
+  // Known a11y failures, exempted until fixed:
+  // - color-contrast (inline code), heading-order (h1 price, then h4): https://github.com/pglevy/sailwind/issues/168
+  parameters: { layout: "padded", a11y: { test: "todo" } },
   render: () => (
     <div className="space-y-8">
       <div>

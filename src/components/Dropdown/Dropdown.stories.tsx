@@ -55,6 +55,9 @@ export const Default: Story = {
 }
 
 export const NoDefaultSelection: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (placeholder text): https://github.com/pglevy/sailwind/issues/185
+  parameters: { a11y: { test: 'todo' } },
   args: {
     label: 'Country',
     choiceLabels: ['United States', 'Canada', 'Mexico', 'United Kingdom'],
@@ -186,6 +189,9 @@ export const MultipleDefault: Story = {
 }
 
 export const MultipleNoDefault: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (placeholder text): https://github.com/pglevy/sailwind/issues/185
+  parameters: { a11y: { test: 'todo' } },
   args: {
     label: 'Skills',
     instructions: 'Select all applicable skills',
@@ -210,6 +216,9 @@ export const MultipleNoDefault: Story = {
 }
 
 export const MultipleWithSearch: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (placeholder text): https://github.com/pglevy/sailwind/issues/185
+  parameters: { a11y: { test: 'todo' } },
   args: {
     label: 'Language',
     instructions: 'Select all languages you speak',

@@ -62,7 +62,6 @@
     "test": "vitest --run",
     "test-storybook": "vitest --run --project=storybook",
     "test:unit": "vitest --run --project=unit",
-    "a11y-audit": "node scripts/a11y-audit.cjs",
     "validate:designer-bundles": "node scripts/validate-designer-bundles.mjs",
     "check": "pnpm run typecheck && pnpm run lint && pnpm test && pnpm run validate:designer-bundles && pnpm run build:lib"
   },
