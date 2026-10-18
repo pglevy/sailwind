@@ -119,8 +119,8 @@ export const CollapsedNav: Story = {
 }
 
 export const MinimalRecord: Story = {
-  // Known a11y failures, exempted until fixed:
-  // - aria-valid-attr-value (tab aria-controls, no panel), color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
   parameters: { a11y: { test: 'todo' } },
   args: {
     displayName: 'My Application',
@@ -134,8 +134,8 @@ export const MinimalRecord: Story = {
 }
 
 export const NoActions: Story = {
-  // Known a11y failures, exempted until fixed:
-  // - aria-valid-attr-value (tab aria-controls, no panel), color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
   parameters: { a11y: { test: 'todo' } },
   args: {
     displayName: 'My Application',

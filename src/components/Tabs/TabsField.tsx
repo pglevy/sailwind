@@ -165,6 +165,11 @@ export const TabsField: React.FC<TabsFieldProps> = ({
   // Determine if content panels should render
   const hasContent = !navigationOnly && tabs.some(tab => tab.content != null)
 
+  // Radix points every trigger's aria-controls at its panel id. With no panels
+  // rendered that id doesn't exist (axe aria-valid-attr-value, #185). Radix
+  // spreads trigger props after its own, so an explicit undefined removes it.
+  const triggerPanelProps = hasContent ? {} : { 'aria-controls': undefined }
+
   // Active indicator color
   const getIndicatorColor = (): string => {
     const semanticMap: Record<string, string> = {
@@ -297,6 +302,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                     key={tab.value}
                     value={tab.value}
                     disabled={tab.disabled}
+                    {...triggerPanelProps}
                     className={[
                       'group relative',
                       triggerSizeClasses,
@@ -341,6 +347,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                   key={tab.value}
                   value={tab.value}
                   disabled={tab.disabled}
+                  {...triggerPanelProps}
                   className={[
                     triggerSizeClasses,
                     'relative bg-transparent border-0 cursor-default select-none',
