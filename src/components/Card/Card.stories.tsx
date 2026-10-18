@@ -241,15 +241,13 @@ export const BorderAndShadow: Story = {
 
 export const VerticalAlignment: Story = {
   args: { children: null },
-  // Known a11y failures, exempted until fixed:
-  // - color-contrast (inline code), heading-order (h1 price, then h4): https://github.com/pglevy/sailwind/issues/168
-  parameters: { layout: "padded", a11y: { test: "todo" } },
+  parameters: { layout: "padded" },
   render: () => (
     <div className="space-y-8">
       <div>
         <p className="text-sm text-gray-600 mb-3">
-          Cards use <code className="bg-gray-100 px-1 rounded text-xs">flex flex-col</code> internally.
-          Put <code className="bg-gray-100 px-1 rounded text-xs">mt-auto</code> on your footer element to pin it to the bottom when cards stretch to equal height.
+          Cards use <code className="bg-gray-100 px-1 rounded text-xs text-gray-700">flex flex-col</code> internally.
+          Put <code className="bg-gray-100 px-1 rounded text-xs text-gray-700">mt-auto</code> on your footer element to pin it to the bottom when cards stretch to equal height.
         </p>
       </div>
 
@@ -304,8 +302,8 @@ export const VerticalAlignment: Story = {
         <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-2">Variable feature list, button at bottom</p>
         <div className="grid grid-cols-3 gap-4">
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Starter" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
-            <HeadingField text="$9/mo" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
+            <HeadingField text="Starter" size="SMALL" headingTag="H3" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
+            <RichTextDisplayField value={[<TextItem text="$9/mo" size="LARGE" style="STRONG" />]} marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ 5 projects</li>
               <li>✓ Basic analytics</li>
@@ -316,8 +314,8 @@ export const VerticalAlignment: Story = {
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Professional" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
-            <HeadingField text="$29/mo" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
+            <HeadingField text="Professional" size="SMALL" headingTag="H3" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
+            <RichTextDisplayField value={[<TextItem text="$29/mo" size="LARGE" style="STRONG" />]} marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ Unlimited projects</li>
               <li>✓ Advanced analytics</li>
@@ -331,8 +329,8 @@ export const VerticalAlignment: Story = {
           </CardLayout>
 
           <CardLayout padding="STANDARD" showBorder={true} marginBelow="NONE">
-            <HeadingField text="Enterprise" size="SMALL" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
-            <HeadingField text="Custom" size="LARGE" fontWeight="BOLD" marginBelow="LESS" />
+            <HeadingField text="Enterprise" size="SMALL" headingTag="H3" fontWeight="SEMI_BOLD" color="SECONDARY" marginBelow="NONE" />
+            <RichTextDisplayField value={[<TextItem text="Custom" size="LARGE" style="STRONG" />]} marginBelow="LESS" />
             <ul className="text-sm text-gray-600 space-y-1.5">
               <li>✓ Everything in Pro</li>
               <li>✓ SSO & SAML</li>

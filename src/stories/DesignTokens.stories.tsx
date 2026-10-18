@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import sourceTokens from '../../tokens/tokens.json'
 import { addDerivedTokens } from '../utils/derivedTokens'
+import { getContrastColor } from '../utils/colorResolver'
 
 // Add the derived tokens (black, semantic aliases) with the same function
 // generate-tokens.ts uses, so this page always matches the published tokens.json
@@ -19,14 +20,6 @@ function resolveAlias(value: string): string {
   let node: any = tokens
   for (const p of parts) node = node?.[p]
   return node?.['$value'] ?? value
-}
-
-function isLight(hex: string): boolean {
-  const c = hex.replace('#', '')
-  const r = parseInt(c.slice(0, 2), 16)
-  const g = parseInt(c.slice(2, 4), 16)
-  const b = parseInt(c.slice(4, 6), 16)
-  return (r * 299 + g * 587 + b * 114) / 1000 > 155
 }
 
 // ─── sub-components ─────────────────────────────────────────────────────────
@@ -70,7 +63,7 @@ function ColorPalette() {
               <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
                 {STEPS.map(step => {
                   const hex: string = familyTokens[step]?.['$value'] ?? '#ccc'
-                  const light = isLight(hex)
+                  const labelColor = getContrastColor(hex)
                   return (
                     <div
                       key={step}
@@ -85,8 +78,8 @@ function ColorPalette() {
                         gap: 4,
                       }}
                     >
-                      <span style={{ fontSize: 10, fontWeight: 700, color: light ? '#222' : '#fff', fontFamily: 'monospace' }}>{step}</span>
-                      <span style={{ fontSize: 9, color: light ? '#444' : 'rgba(255,255,255,0.8)', fontFamily: 'monospace', wordBreak: 'break-all', textAlign: 'center' }}>{hex}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: labelColor, fontFamily: 'monospace' }}>{step}</span>
+                      <span style={{ fontSize: 9, color: labelColor, fontFamily: 'monospace', wordBreak: 'break-all', textAlign: 'center' }}>{hex}</span>
                     </div>
                   )
                 })}
@@ -109,7 +102,7 @@ function SemanticColors() {
         {Object.entries(tokens.color.semantic).map(([key, token]) => {
           const raw = token['$value'] as string
           const hex = resolveAlias(raw)
-          const light = isLight(hex)
+          const labelColor = getContrastColor(hex)
           // Extract alias path like "blue-500" from "{color.blue.500}"
           const aliasMatch = raw.match(/^\{color\.(.+)\}$/)
           const aliasLabel = aliasMatch ? aliasMatch[1].replace('.', '-') : raw
@@ -124,7 +117,7 @@ function SemanticColors() {
                 justifyContent: 'center',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
               }}>
-                <span style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: light ? '#222' : '#fff' }}>{hex}</span>
+                <span style={{ fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: labelColor }}>{hex}</span>
               </div>
               <div style={{ marginTop: 6, fontFamily: 'Open Sans, sans-serif', fontSize: 13, fontWeight: 600, color: '#222' }}>{key.toUpperCase()}</div>
               <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#6C6C75' }}>{aliasLabel}</div>
@@ -306,7 +299,7 @@ function DesignTokensPage() {
       <h1 style={{ fontSize: 28, fontWeight: 700, color: '#222', margin: '0 0 4px' }}>Design Tokens</h1>
       <p style={{ color: '#6C6C75', fontSize: 14, margin: '0 0 8px' }}>
         Aurora color palette, semantic mappings, typography, spacing, and gradients — sourced from{' '}
-        <code style={{ fontFamily: 'monospace', background: '#EDEDF2', padding: '1px 5px', borderRadius: 4 }}>tokens/tokens.json</code>
+        <code style={{ fontFamily: 'monospace', background: '#EDEDF2', color: '#222', padding: '1px 5px', borderRadius: 4 }}>tokens/tokens.json</code>
       </p>
       <hr style={{ border: 'none', borderTop: '1px solid #E0E0E0', margin: '20px 0 0' }} />
       <ColorPalette />
@@ -330,8 +323,4 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const AllTokens: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (swatch labels, inline code): https://github.com/pglevy/sailwind/issues/168
-  parameters: { a11y: { test: 'todo' } },
-}
+export const AllTokens: Story = {}

@@ -89,31 +89,25 @@ export const ButtonSizes: Story = {
   ),
 }
 
-export const HexColorsSolid: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (palette SOLID always uses white text): https://github.com/pglevy/sailwind/issues/185
-  // - color-contrast (story's light VIOLET_300/ORANGE_300/PINK_300 shades): https://github.com/pglevy/sailwind/issues/168
-  parameters: { a11y: { test: 'todo' } },
+export const PaletteColorsSolid: Story = {
+  // Palette SOLID buttons always use white text (#185), so these shades are dark enough for 4.5:1.
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_300' },
-        { label: 'Custom Orange', style: 'SOLID', color: 'ORANGE_300' },
-        { label: 'Custom Pink', style: 'SOLID', color: 'PINK_300' },
+        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_500' },
+        { label: 'Custom Orange', style: 'SOLID', color: 'ORANGE_800' },
+        { label: 'Custom Pink', style: 'SOLID', color: 'PINK_600' },
       ]}
     />
   ),
 }
 
-export const HexColorsOutline: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (ORANGE_700 outline shade): https://github.com/pglevy/sailwind/issues/168
-  parameters: { a11y: { test: 'todo' } },
+export const PaletteColorsOutline: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
         { label: 'Custom Violet', style: 'OUTLINE', color: 'VIOLET_700' },
-        { label: 'Custom Orange', style: 'OUTLINE', color: 'ORANGE_700' },
+        { label: 'Custom Orange', style: 'OUTLINE', color: 'ORANGE_800' },
         { label: 'Custom Pink', style: 'OUTLINE', color: 'PINK_700' },
       ]}
     />
