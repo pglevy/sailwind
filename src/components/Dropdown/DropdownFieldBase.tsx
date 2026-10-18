@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
 import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { ChevronDown, X, Search } from 'lucide-react'
+import { useI18n, KEYS } from '../../i18n'
 
 type SearchDisplay = "AUTO" | "ON" | "OFF"
 
@@ -88,6 +89,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   const [searchTerm, setSearchTerm] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { t } = useI18n()
 
   // Determine if search should be shown
   const shouldShowSearch =
@@ -184,6 +186,11 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   // Show required message
   const showRequiredMessage = required && selectedValues.length === 0 && requiredMessage
 
+  // The open listbox needs its own accessible name (axe aria-input-field-name, #185).
+  // FieldLabel's <label> has no id to reference, so use the text FieldLabel
+  // shows or announces: the label, or accessibilityText when there is none.
+  const listboxName = label || accessibilityText || undefined
+
   // Render the dropdown field
   const dropdownElement = (
     <div ref={dropdownRef} className="relative">
@@ -252,10 +259,10 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
           )}
 
           {/* Options list */}
-          <div className="overflow-y-auto max-h-48" role="listbox">
+          <div className="overflow-y-auto max-h-48" role="listbox" aria-label={listboxName}>
             {filteredChoices.length === 0 ? (
               <div className="px-3 py-2 text-sm text-gray-500">
-                No results found
+                {t(KEYS.dropdownNoResults)}
               </div>
             ) : (
               filteredChoices.map(({ label: choiceLabel, value: choiceValue }) => {

@@ -304,3 +304,44 @@ describe("MultipleDropdownField - multi-select behavior", () => {
     expect(checkboxes[2]).not.toBeChecked(); // Blue
   });
 });
+
+// ─── Listbox accessible name (#185) ──────────────────────────────────────────
+
+describe("DropdownField - listbox accessible name", () => {
+  it("uses the visible label (ABOVE)", async () => {
+    const user = userEvent.setup();
+    render(<DropdownField {...choices} label="Favorite Color" />);
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByRole("listbox")).toHaveAccessibleName("Favorite Color");
+  });
+
+  it("uses the label when labelPosition is ADJACENT", async () => {
+    const user = userEvent.setup();
+    render(<DropdownField {...choices} label="Favorite Color" labelPosition="ADJACENT" />);
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByRole("listbox")).toHaveAccessibleName("Favorite Color");
+  });
+
+  it("uses the label when labelPosition is COLLAPSED", async () => {
+    const user = userEvent.setup();
+    render(<DropdownField {...choices} label="Favorite Color" labelPosition="COLLAPSED" />);
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByRole("listbox")).toHaveAccessibleName("Favorite Color");
+  });
+
+  it("falls back to accessibilityText when there is no label", async () => {
+    const user = userEvent.setup();
+    render(
+      <DropdownField {...choices} labelPosition="COLLAPSED" accessibilityText="Color picker" />
+    );
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByRole("listbox")).toHaveAccessibleName("Color picker");
+  });
+
+  it("names the MultipleDropdownField listbox too", async () => {
+    const user = userEvent.setup();
+    render(<MultipleDropdownField {...choices} label="Colors" />);
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByRole("listbox")).toHaveAccessibleName("Colors");
+  });
+});
