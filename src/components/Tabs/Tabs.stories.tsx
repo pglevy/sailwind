@@ -199,9 +199,8 @@ export const VerticalOrientation: Story = {
 
 export const NavigationOnly: Story = {
   name: 'Navigation Only (No Content Panels)',
-  // Known a11y failures, exempted until fixed:
+  // Known a11y failure, exempted until fixed:
   // - aria-valid-attr-value (tab aria-controls, no panel): https://github.com/pglevy/sailwind/issues/185
-  // - color-contrast (story's helper caption): https://github.com/pglevy/sailwind/issues/168
   parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
@@ -231,7 +230,7 @@ export const NavigationOnly: Story = {
           <p className="text-base text-gray-700">
             Active route: <strong>{activeTab}</strong>
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-700 mt-1">
             Content is rendered externally — no content panels in the tab component.
           </p>
         </div>
@@ -284,9 +283,6 @@ export const NavigationOnlyVertical: Story = {
 
 export const DensityComparison: Story = {
   name: 'Density — STANDARD vs DENSE',
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (story's "Density:" captions): https://github.com/pglevy/sailwind/issues/168
-  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
@@ -301,11 +297,11 @@ export const DensityComparison: Story = {
     return (
       <div className="space-y-8" style={{ width: 480 }}>
         <div>
-          <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Density: STANDARD (default)</p>
+          <p className="text-xs text-gray-700 mb-2 uppercase tracking-wide">Density: STANDARD (default)</p>
           <TabsField tabs={tabs} defaultValue="one" density="STANDARD" />
         </div>
         <div>
-          <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Density: DENSE</p>
+          <p className="text-xs text-gray-700 mb-2 uppercase tracking-wide">Density: DENSE</p>
           <TabsField tabs={tabs} defaultValue="one" density="DENSE" />
         </div>
       </div>

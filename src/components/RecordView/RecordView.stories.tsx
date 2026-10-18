@@ -71,7 +71,7 @@ const recordViews = [
   { label: 'Summary', content: (
     <div className="p-6">
       <CardLayout padding="STANDARD">
-        <HeadingField text="Overview" size="MEDIUM" marginBelow="LESS" fontWeight="SEMI_BOLD" />
+        <HeadingField text="Overview" size="MEDIUM" headingTag="H2" marginBelow="LESS" fontWeight="SEMI_BOLD" />
         <RichTextDisplayField value={["This is the summary view content."]} />
       </CardLayout>
     </div>
@@ -79,7 +79,7 @@ const recordViews = [
   { label: 'Details', content: (
     <div className="p-6">
       <CardLayout padding="STANDARD">
-        <HeadingField text="Record Details" size="MEDIUM" marginBelow="LESS" fontWeight="SEMI_BOLD" />
+        <HeadingField text="Record Details" size="MEDIUM" headingTag="H2" marginBelow="LESS" fontWeight="SEMI_BOLD" />
         <RichTextDisplayField value={["This is the details view content."]} />
       </CardLayout>
     </div>
@@ -96,7 +96,6 @@ const recordViews = [
 export const Default: Story = {
   // Known a11y failures, exempted until fixed:
   // - aria-allowed-attr (More actions trigger), color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
-  // - heading-order (story's "Overview" heading): https://github.com/pglevy/sailwind/issues/168
   parameters: { a11y: { test: 'todo' } },
   args: {
     displayName: 'My Application',
@@ -112,7 +111,6 @@ export const Default: Story = {
 export const CollapsedNav: Story = {
   // Known a11y failures, exempted until fixed:
   // - aria-allowed-attr (More actions trigger), color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
-  // - heading-order (story's "Overview" heading): https://github.com/pglevy/sailwind/issues/168
   parameters: { a11y: { test: 'todo' } },
   args: {
     ...Default.args,
@@ -153,7 +151,6 @@ export const NoActions: Story = {
 export const ManyActions: Story = {
   // Known a11y failures, exempted until fixed:
   // - aria-allowed-attr (More actions trigger), color-contrast (placeholder content): https://github.com/pglevy/sailwind/issues/185
-  // - heading-order (story's "Overview" heading): https://github.com/pglevy/sailwind/issues/168
   parameters: { a11y: { test: 'todo' } },
   args: {
     displayName: 'My Application',
