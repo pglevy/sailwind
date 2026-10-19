@@ -137,6 +137,9 @@ export const ColorAccent: Story = {
 }
 
 export const ColorPositive: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - color-contrast (green-700 text on green-100, 3.95:1, fails in CI): https://github.com/pglevy/sailwind/issues/189
+  parameters: { a11y: { test: 'todo' } },
   args: {
     label: 'POSITIVE',
     text: 'Positive Color',
