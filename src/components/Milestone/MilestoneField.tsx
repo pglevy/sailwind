@@ -497,7 +497,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
             type="button"
             onClick={() => {
               if (link.onClick) {
-                link.onClick()
+                link.onClick(link.value)
               } else {
                 link.saveInto?.(link.value)
               }

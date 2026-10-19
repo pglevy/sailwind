@@ -81,11 +81,11 @@ export const StampField: React.FC<StampFieldProps> = ({
   // A link with showWhen false counts as no link
   const link = linkProp?.showWhen === false ? undefined : linkProp
 
-  // onClick takes precedence; otherwise pass the link's value to saveInto
+  // onClick takes precedence over saveInto; either one receives the link's value
   const activateLink = () => {
     if (!link) return
     if (link.onClick) {
-      link.onClick()
+      link.onClick(link.value)
     } else {
       link.saveInto?.(link.value)
     }

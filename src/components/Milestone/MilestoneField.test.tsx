@@ -138,15 +138,16 @@ describe("MilestoneField - linked steps", () => {
     ).toBeInTheDocument();
   });
 
-  it("calls the link handler when a step is activated by keyboard", async () => {
+  it("calls the link handler with the link value when a step is activated by keyboard", async () => {
     const onClick = vi.fn();
     render(
-      <MilestoneField steps={steps} active={1} links={[{ onClick }]} stepStyle="MINIMAL" />
+      <MilestoneField steps={steps} active={1} links={[{ onClick, value: "a" }]} stepStyle="MINIMAL" />
     );
     const button = screen.getByRole("button", { name: /card details/i });
     button.focus();
     await userEvent.keyboard("{Enter}");
     expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledWith("a");
   });
 
   it("supports saveInto as the link handler", async () => {
@@ -154,6 +155,16 @@ describe("MilestoneField - linked steps", () => {
     render(<MilestoneField steps={steps} active={1} links={[{ saveInto, value: "a" }]} />);
     await userEvent.click(screen.getByRole("button", { name: /card details/i }));
     expect(saveInto).toHaveBeenCalledWith("a");
+  });
+
+  it("calls onClick instead of saveInto when a link has both", async () => {
+    const onClick = vi.fn();
+    const saveInto = vi.fn();
+    render(<MilestoneField steps={steps} active={1} links={[{ onClick, saveInto, value: "a" }]} />);
+    await userEvent.click(screen.getByRole("button", { name: /card details/i }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick).toHaveBeenCalledWith("a");
+    expect(saveInto).not.toHaveBeenCalled();
   });
   it("leaves a step unlinked when its link has showWhen false", async () => {
     const saveInto = vi.fn();
