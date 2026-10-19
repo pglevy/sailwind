@@ -48,7 +48,7 @@
     "build:theme": "tsx scripts/generate-theme.ts",
     "token-server": "tsx scripts/token-server.ts",
     "typecheck": "tsc -b",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "pnpm run generate:css && storybook build",
