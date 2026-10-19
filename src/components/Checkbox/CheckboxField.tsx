@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy, SAILAny } from '../../types/sail'
 import { legacyAlignMap } from '../../utils/sailMaps'
 
 type ChoiceLayout = "STACKED" | "COMPACT"
@@ -24,15 +24,15 @@ export interface CheckboxFieldProps {
   /** Array of options for the user to select */
   choiceLabels: any[]
   /** Array of values associated with the corresponding choices */
-  choiceValues: any[]
+  choiceValues: SAILAny[]
   /** Values of choices to display as selected */
-  value?: any[]
+  value?: SAILAny[]
   /** Validation errors to display below the field */
   validations?: string[]
   /** Callback when the user changes the selections */
-  saveInto?: (value: any[]) => void
+  saveInto?: (value: SAILAny[]) => void
   /** Callback when the user changes the selections (React-style alias for saveInto) */
-  onChange?: (value: any[]) => void
+  onChange?: (value: SAILAny[]) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -54,7 +54,7 @@ export interface CheckboxFieldProps {
   /** Determines space between options */
   spacing?: Spacing
   /** Data source (record type) - not implemented in prototype */
-  data?: any
+  data?: SAILAny
   /** Sort configurations - not implemented in prototype */
   sort?: any[]
   /** Space added above component */
@@ -116,7 +116,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
     EVEN_MORE: 'gap-6'
   }
 
-  const handleChange = (choiceValue: any, checked: boolean) => {
+  const handleChange = (choiceValue: SAILAny, checked: boolean) => {
     const handler = onChange || saveInto
     if (!handler) return
 

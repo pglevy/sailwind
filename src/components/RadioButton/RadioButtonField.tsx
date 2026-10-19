@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny } from '../../types/sail'
 
 type ChoiceLayout = "STACKED" | "COMPACT"
 type ChoiceStyle = "STANDARD" | "CARDS"
@@ -23,15 +23,15 @@ export interface RadioButtonFieldProps {
   /** Array of options for the user to select */
   choiceLabels: any[]
   /** Array of values associated with the corresponding choices */
-  choiceValues: any[]
+  choiceValues: SAILAny[]
   /** Value of choice to display as selected */
-  value?: any
+  value?: SAILAny
   /** Validation errors to display below the field */
   validations?: string[]
   /** Callback when the user changes the selection */
-  saveInto?: (value: any) => void
+  saveInto?: (value: SAILAny) => void
   /** Callback when the user changes the selection (React-style alias for saveInto) */
-  onChange?: (value: any) => void
+  onChange?: (value: SAILAny) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -51,7 +51,7 @@ export interface RadioButtonFieldProps {
   /** Determines space between options */
   spacing?: Spacing
   /** Data source (record type) - not implemented in prototype */
-  data?: any
+  data?: SAILAny
   /** Sort configurations - not implemented in prototype */
   sort?: any[]
   /** Space added above component */
@@ -112,7 +112,7 @@ export const RadioButtonField: React.FC<RadioButtonFieldProps> = ({
     EVEN_MORE: 'gap-6'
   }
 
-  const handleChange = (choiceValue: any) => {
+  const handleChange = (choiceValue: SAILAny) => {
     const handler = onChange || saveInto
     if (!handler) return
     handler(choiceValue)

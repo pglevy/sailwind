@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useRef, useEffect } from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny } from '../../types/sail'
 import { ChevronDown, X, Search } from 'lucide-react'
 import { useI18n, KEYS } from '../../i18n'
 
@@ -25,15 +25,15 @@ interface DropdownFieldBaseProps {
   /** Array of options for the user to select */
   choiceLabels: any[]
   /** Array of values associated with the corresponding choices */
-  choiceValues: any[]
+  choiceValues: SAILAny[]
   /** Current selected value(s) */
-  value?: any
+  value?: SAILAny
   /** Validation errors to display below the field */
   validations?: string[]
   /** Callback when selection changes */
-  saveInto?: (value: any) => void
+  saveInto?: (value: SAILAny) => void
   /** Callback when selection changes (React-style alias for saveInto) */
-  onChange?: (value: any) => void
+  onChange?: (value: SAILAny) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -47,7 +47,7 @@ interface DropdownFieldBaseProps {
   /** Determines when search box displays */
   searchDisplay?: SearchDisplay
   /** Data source (record type) - not implemented in prototype */
-  data?: any
+  data?: SAILAny
   /** Sort configurations - not implemented in prototype */
   sort?: any[]
   /** Space added above component */
@@ -155,7 +155,7 @@ export const DropdownFieldBase: React.FC<DropdownFieldBaseProps> = ({
   }
 
   // Handle selection
-  const handleSelect = (choiceValue: any) => {
+  const handleSelect = (choiceValue: SAILAny) => {
     const handler = onChange || saveInto
     if (!handler || disabled) return
 

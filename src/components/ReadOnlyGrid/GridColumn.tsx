@@ -1,5 +1,5 @@
 import React from "react";
-import type { SAILAlign, SAILGridColumnWidth, SAILColorInput } from "../../types/sail";
+import type { SAILAlign, SAILGridColumnWidth, SAILColorInput, SAILAny } from "../../types/sail";
 
 /**
  * Props for the GridColumn component.
@@ -14,15 +14,15 @@ export interface GridColumnProps {
   /**
    * Display value for each cell. Can be:
    * - A string field name to look up on each row object
-   * - A function (row: any, index: number) => React.ReactNode
+   * - A function (row, index) => React.ReactNode
    */
-  value?: string | ((row: any, index: number) => React.ReactNode);
+  value?: string | ((row: SAILAny, index: number) => React.ReactNode);
   /** Alignment for header and cell content */
   align?: SAILAlign;
   /** Column width */
   width?: SAILGridColumnWidth;
   /** Background color for cells — hex color or semantic name */
-  backgroundColor?: SAILColorInput | ((row: any) => string);
+  backgroundColor?: SAILColorInput | ((row: SAILAny) => string);
   /** Whether this column is visible. Defaults to true. */
   showWhen?: boolean;
   /** Additional text for screen readers */

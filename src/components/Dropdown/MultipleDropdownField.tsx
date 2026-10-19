@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { DropdownFieldBase } from './DropdownFieldBase'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny } from '../../types/sail'
 
 type SearchDisplay = "AUTO" | "ON" | "OFF"
 
@@ -22,15 +22,15 @@ export interface MultipleDropdownFieldProps {
   /** Array of options for the user to select */
   choiceLabels: any[]
   /** Array of values associated with the corresponding choices */
-  choiceValues: any[]
+  choiceValues: SAILAny[]
   /** Values of choices to display as selected */
-  value?: any[]
+  value?: SAILAny[]
   /** Validation errors to display below the field */
   validations?: string[]
   /** Callback when the user changes the selections */
-  saveInto?: (value: any[] | null) => void
+  saveInto?: (value: SAILAny[] | null) => void
   /** Callback when the user changes the selections (React-style alias for saveInto) */
-  onChange?: (value: any[] | null) => void
+  onChange?: (value: SAILAny[] | null) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -46,7 +46,7 @@ export interface MultipleDropdownFieldProps {
   /** Determines when a search box displays above options */
   searchDisplay?: SearchDisplay
   /** Data source (record type) - not implemented in prototype */
-  data?: any
+  data?: SAILAny
   /** Sort configurations - not implemented in prototype */
   sort?: any[]
   /** Space added above component */

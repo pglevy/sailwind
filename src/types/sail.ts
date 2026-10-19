@@ -74,6 +74,13 @@ export type SAILColor = SAILSemanticColor | _PaletteColor
 export type SAILColorInput = SAILColor | (string & {})
 
 /**
+ * SAIL "Any Type". SAIL params such as value, saveInto, choiceValues, data
+ * and fv!row accept any data type, so Sailwind mirrors that on purpose.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- intentional
+export type SAILAny = any
+
+/**
  * Sort configuration for grid columns
  */
 export interface SortInfo {
