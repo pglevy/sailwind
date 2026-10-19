@@ -4,7 +4,14 @@ import { expect, userEvent, within } from 'storybook/test'
 import { ReadOnlyGrid } from './ReadOnlyGrid'
 import { GridColumn } from './GridColumn'
 
-const employees = [
+interface Employee {
+  id: number
+  name: string
+  department: string
+  salary: number
+  startDate: string
+}
+const employees: Employee[] = [
   { id: 1, name: "Alice Johnson", department: "Engineering", salary: 95000, startDate: "2020-03-15" },
   { id: 2, name: "Bob Smith", department: "Marketing", salary: 72000, startDate: "2019-07-22" },
   { id: 3, name: "Charlie Brown", department: "Engineering", salary: 88000, startDate: "2021-01-10" },
@@ -281,12 +288,12 @@ export const ComputedColumns: Story = {
       <GridColumn label="Name" value="name" />
       <GridColumn
         label="Formatted Salary"
-        value={(row: any) => `${row.salary.toLocaleString()}`}
+        value={(row: Employee) => `${row.salary.toLocaleString()}`}
         align="END"
       />
       <GridColumn
         label="Tenure"
-        value={(row: any) => {
+        value={(row: Employee) => {
           const years = new Date().getFullYear() - new Date(row.startDate).getFullYear()
           return `${years} yr${years !== 1 ? 's' : ''}`
         }}
@@ -294,7 +301,7 @@ export const ComputedColumns: Story = {
       />
       <GridColumn
         label="Senior?"
-        value={(row: any) => (row.salary >= 90000 ? '✅ Yes' : '—')}
+        value={(row: Employee) => (row.salary >= 90000 ? '✅ Yes' : '—')}
         align="CENTER"
       />
     </ReadOnlyGrid>

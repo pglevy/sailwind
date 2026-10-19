@@ -136,7 +136,7 @@ export const MessageBanner: React.FC<MessageBannerProps> = ({
   }
 
   // ARIA attributes for screen reader behavior
-  const ariaAttributes: Record<string, any> = {}
+  const ariaAttributes: Pick<React.HTMLAttributes<HTMLDivElement>, 'role' | 'aria-live'> = {}
   if (announceBehavior === "DISPLAY_AND_ANNOUNCE" || announceBehavior === "ANNOUNCE_ONLY") {
     ariaAttributes.role = "status"
     ariaAttributes["aria-live"] = "polite"

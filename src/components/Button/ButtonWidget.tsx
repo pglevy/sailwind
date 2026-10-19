@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { SAILSize, SAILColorInput, SAILAny } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
@@ -259,7 +260,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join('')
 
-    const IconComponent = (LucideIcons as any)[iconName]
+    const IconComponent = (LucideIcons as unknown as Record<string, LucideIcon | undefined>)[iconName]
 
     if (!IconComponent) {
       console.warn(`Icon "${icon}" not found in Lucide icons`)

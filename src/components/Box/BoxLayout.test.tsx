@@ -1,7 +1,7 @@
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { BoxLayout } from "./BoxLayout";
+import { BoxLayout, type BoxLabelSize, type BoxShape } from "./BoxLayout";
 
 describe("BoxLayout - visibility", () => {
   it("returns null when showWhen is false", () => {
@@ -46,7 +46,7 @@ describe("BoxLayout - default rendering", () => {
 });
 
 describe("BoxLayout - labelHeadingTag default-by-labelSize mapping", () => {
-  const cases: Array<[string, number]> = [
+  const cases: Array<[BoxLabelSize, number]> = [
     ["LARGE_PLUS", 1],
     ["LARGE", 1],
     ["MEDIUM_PLUS", 2],
@@ -57,7 +57,7 @@ describe("BoxLayout - labelHeadingTag default-by-labelSize mapping", () => {
 
   cases.forEach(([labelSize, level]) => {
     it(`labelSize="${labelSize}" defaults to an H${level} heading`, () => {
-      render(<BoxLayout label="Title" labelSize={labelSize as any} />);
+      render(<BoxLayout label="Title" labelSize={labelSize} />);
       expect(screen.getByRole("heading", { level })).toBeInTheDocument();
     });
   });
@@ -201,7 +201,7 @@ describe("BoxLayout - collapsed content has zero rendered height", () => {
 });
 
 describe("BoxLayout - header corner radius matches outer shape", () => {
-  const cases: Array<[string, string]> = [
+  const cases: Array<[BoxShape, string]> = [
     ["SQUARED", "rounded-t-none"],
     ["SEMI_ROUNDED", "rounded-t-sm"],
     ["ROUNDED", "rounded-t-md"],
@@ -209,7 +209,7 @@ describe("BoxLayout - header corner radius matches outer shape", () => {
 
   cases.forEach(([shape, expectedClass]) => {
     it(`shape="${shape}" gives the header row ${expectedClass}, matching the outer shape's radius`, () => {
-      const { container } = render(<BoxLayout label="Section" shape={shape as any} />);
+      const { container } = render(<BoxLayout label="Section" shape={shape} />);
       const root = container.firstChild as HTMLElement;
       const header = root.firstElementChild as HTMLElement;
       expect(header.className).toContain(expectedClass);
