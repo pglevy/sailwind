@@ -44,9 +44,6 @@ export const Unchecked: Story = {
 }
 
 export const WithHelpTooltip: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - aria-prohibited-attr (help icon span): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: 'todo' } },
   args: {
     choiceLabel: 'Auto-save',
     helpTooltip: 'Automatically save changes every 30 seconds',

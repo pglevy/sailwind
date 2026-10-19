@@ -79,6 +79,10 @@ export const KEYS = {
   milestoneStepCount: 'milestone.stepCount',
   /** BoxLayout: accessible name for the expand/collapse button when the box has no label. Fixed text; open/closed state is conveyed by aria-expanded. */
   boxLayoutToggleContent: 'boxLayout.toggleContent',
+  /** RecordView: accessible name and tooltip of the overflow ("More actions") menu trigger. */
+  recordViewMoreActions: 'recordView.moreActions',
+  /** DropdownField / MultipleDropdownField: message shown when a search matches no options. */
+  dropdownNoResults: 'dropdown.noResults',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */

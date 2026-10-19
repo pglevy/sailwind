@@ -3,10 +3,12 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { SiteNav } from '../SiteNav'
 import type { SiteNavPage } from '../SiteNav'
 import type { SAILSemanticColor } from '../../types/sail'
+import { Ellipsis } from 'lucide-react'
 import { ButtonArrayLayout } from '../Button/ButtonArrayLayout'
-import { ButtonWidget } from '../Button/ButtonWidget'
 import { TabsField } from '../Tabs'
 import { HeadingField } from '../Heading/HeadingField'
+import { buttonIconOnlySizeMap } from '../../utils/sailMaps'
+import { useI18n, KEYS } from '../../i18n'
 
 /** Active tab color */
 const ACTIVE_TAB_COLOR = 'ACCENT'
@@ -76,8 +78,27 @@ export interface RecordViewProps {
 /** Maximum number of action buttons shown before overflow */
 const MAX_VISIBLE_ACTIONS = 3
 
+/**
+ * Classes for the overflow ("More actions") trigger: exactly what ButtonWidget
+ * renders for an icon-only OUTLINE / ACCENT / SMALL button, in the same order.
+ * The Radix trigger must be the <button> itself (#185) and ButtonWidget can't
+ * be an asChild target, so its classes are mirrored here. RecordView.test.tsx
+ * fails if they drift from ButtonWidget.
+ */
+const overflowTriggerClasses = [
+  'inline-flex items-center justify-center gap-1',
+  'font-medium transition-colors h-auto rounded-sm',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+  buttonIconOnlySizeMap.SMALL,
+  'w-auto',
+  'border border-blue-500 text-blue-500 bg-white hover:bg-blue-50',
+  'cursor-pointer',
+].join(' ')
+
 /** Renders record action buttons with overflow dropdown. */
 const RecordActions: React.FC<{ actions: RecordAction[] }> = ({ actions }) => {
+  const { t } = useI18n()
+  const moreActionsLabel = t(KEYS.recordViewMoreActions)
   const visibleActions = actions.slice(0, MAX_VISIBLE_ACTIONS)
   const overflowActions = actions.slice(MAX_VISIBLE_ACTIONS)
 
@@ -95,18 +116,16 @@ const RecordActions: React.FC<{ actions: RecordAction[] }> = ({ actions }) => {
       />
       {overflowActions.length > 0 && (
         <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <div>
-              <ButtonWidget
-                icon="ellipsis"
-                style="OUTLINE"
-                color="ACCENT"
-                size="SMALL"
-                accessibilityText="More actions"
-                tooltip="More actions"
-              />
-            </div>
-          </DropdownMenu.Trigger>
+          {/* Plain wrapper keeps the trigger's box, baseline and menu anchor as before. */}
+          <div>
+            <DropdownMenu.Trigger
+              className={overflowTriggerClasses}
+              aria-label={moreActionsLabel}
+              title={moreActionsLabel}
+            >
+              <Ellipsis size={14} aria-hidden="true" />
+            </DropdownMenu.Trigger>
+          </div>
           <DropdownMenu.Portal>
             <DropdownMenu.Content
               className="bg-white border border-gray-200 rounded-sm shadow-lg z-10 min-w-48"

@@ -199,9 +199,6 @@ export const VerticalOrientation: Story = {
 
 export const NavigationOnly: Story = {
   name: 'Navigation Only (No Content Panels)',
-  // Known a11y failure, exempted until fixed:
-  // - aria-valid-attr-value (tab aria-controls, no panel): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
@@ -241,9 +238,6 @@ export const NavigationOnly: Story = {
 
 export const NavigationOnlyVertical: Story = {
   name: 'Navigation Only — Vertical Sidebar',
-  // Known a11y failure, exempted until fixed:
-  // - aria-valid-attr-value (tab aria-controls, no panel): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',
