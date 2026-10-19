@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useRef, useEffect } from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILAny } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny, SortInfo } from '../../types/sail'
 import { ChevronDown, X, Search } from 'lucide-react'
 import { useI18n, KEYS } from '../../i18n'
 
@@ -22,8 +22,11 @@ interface DropdownFieldBaseProps {
   disabled?: boolean
   /** Text to display when nothing is selected */
   placeholder?: string
-  /** Array of options for the user to select */
-  choiceLabels: any[]
+  /**
+   * Array of options for the user to select. SAIL types this as List of Variant
+   * to allow record-type references; Sailwind takes a flat list of text or numbers.
+   */
+  choiceLabels: (string | number)[]
   /** Array of values associated with the corresponding choices */
   choiceValues: SAILAny[]
   /** Current selected value(s) */
@@ -49,7 +52,7 @@ interface DropdownFieldBaseProps {
   /** Data source (record type) - not implemented in prototype */
   data?: SAILAny
   /** Sort configurations - not implemented in prototype */
-  sort?: any[]
+  sort?: SortInfo[]
   /** Space added above component */
   marginAbove?: SAILMarginSize
   /** Space added below component */

@@ -81,6 +81,23 @@ export type SAILColorInput = SAILColor | (string & {})
 export type SAILAny = any
 
 /**
+ * Link that saves a value when clicked. Maps to SAIL a!dynamicLink().
+ * Used by components with a `link` or `links` param, such as MilestoneField and StampField.
+ */
+export interface SAILDynamicLink {
+  /** Text shown as the link name. MilestoneField and StampField display their own step or stamp text instead. */
+  label?: string
+  /** Value passed to saveInto when the link is clicked */
+  value?: SAILAny
+  /** Called with `value` when the link is clicked */
+  saveInto?: (value?: SAILAny) => void
+  /** When false, the link is treated as absent. Default: true */
+  showWhen?: boolean
+  /** Called when the link is clicked, instead of saveInto. Not in SAIL. */
+  onClick?: () => void
+}
+
+/**
  * Sort configuration for grid columns
  */
 export interface SortInfo {

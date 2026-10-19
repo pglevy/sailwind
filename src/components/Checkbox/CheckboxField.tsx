@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { FieldWrapper } from '../shared/FieldWrapper'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy, SAILAny } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlignLegacy, SAILAny, SortInfo } from '../../types/sail'
 import { legacyAlignMap } from '../../utils/sailMaps'
 
 type ChoiceLayout = "STACKED" | "COMPACT"
@@ -21,8 +21,11 @@ export interface CheckboxFieldProps {
   required?: boolean
   /** Determines if the field should display as grayed out */
   disabled?: boolean
-  /** Array of options for the user to select */
-  choiceLabels: any[]
+  /**
+   * Array of options for the user to select. SAIL types this as List of Variant
+   * to allow record-type references; Sailwind takes a flat list of text or numbers.
+   */
+  choiceLabels: (string | number)[]
   /** Array of values associated with the corresponding choices */
   choiceValues: SAILAny[]
   /** Values of choices to display as selected */
@@ -56,7 +59,7 @@ export interface CheckboxFieldProps {
   /** Data source (record type) - not implemented in prototype */
   data?: SAILAny
   /** Sort configurations - not implemented in prototype */
-  sort?: any[]
+  sort?: SortInfo[]
   /** Space added above component */
   marginAbove?: SAILMarginSize
   /** Space added below component */

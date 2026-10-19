@@ -155,6 +155,20 @@ describe("MilestoneField - linked steps", () => {
     await userEvent.click(screen.getByRole("button", { name: /card details/i }));
     expect(saveInto).toHaveBeenCalledWith("a");
   });
+  it("leaves a step unlinked when its link has showWhen false", async () => {
+    const saveInto = vi.fn();
+    render(
+      <MilestoneField
+        steps={steps}
+        active={1}
+        links={[{ saveInto, value: "a", showWhen: false }, { saveInto, value: "b" }]}
+      />
+    );
+    expect(screen.queryByRole("button", { name: /card details/i })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+    await userEvent.click(screen.getByText("Card Details"));
+    expect(saveInto).not.toHaveBeenCalled();
+  });
 });
 
 describe("MilestoneField - step numbering", () => {

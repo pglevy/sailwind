@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColorInput, SAILDynamicLink } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
@@ -37,8 +37,8 @@ export interface StampFieldProps {
   showWhen?: boolean
   /** Additional text to be announced by screen readers */
   accessibilityText?: string
-  /** Link to apply to the stamp */
-  link?: any
+  /** Link to apply to the stamp. A link with showWhen false leaves the stamp unlinked. */
+  link?: SAILDynamicLink
   /** Determines how much space is added above the layout */
   marginAbove?: SAILMarginSize
   /** Determines how much space is added below the layout */
@@ -67,7 +67,7 @@ export const StampField: React.FC<StampFieldProps> = ({
   tooltip,
   showWhen = true,
   accessibilityText,
-  link,
+  link: linkProp,
   marginAbove = "NONE",
   marginBelow = "NONE",
   shape = "ROUNDED",
@@ -77,6 +77,19 @@ export const StampField: React.FC<StampFieldProps> = ({
 
   // Visibility control
   if (!showWhen) return null
+
+  // A link with showWhen false counts as no link
+  const link = linkProp?.showWhen === false ? undefined : linkProp
+
+  // onClick takes precedence; otherwise pass the link's value to saveInto
+  const activateLink = () => {
+    if (!link) return
+    if (link.onClick) {
+      link.onClick()
+    } else {
+      link.saveInto?.(link.value)
+    }
+  }
 
   const sizeMap: Record<StampSize, { container: string; text: string; icon: string }> = {
     TINY: { container: 'w-6 h-6', text: 'text-xs', icon: 'text-xs' },
@@ -281,10 +294,10 @@ export const StampField: React.FC<StampFieldProps> = ({
   )
 
   const wrappedStamp = link ? (
-    <div onClick={() => link?.onClick?.()} onKeyDown={(e) => {
+    <div onClick={activateLink} onKeyDown={(e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
-        link?.onClick?.()
+        activateLink()
       }
     }}>
       {stampElement}

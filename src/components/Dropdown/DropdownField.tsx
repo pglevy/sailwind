@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { DropdownFieldBase } from './DropdownFieldBase'
-import type { SAILLabelPosition, SAILMarginSize, SAILAny } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny, SortInfo } from '../../types/sail'
 
 type SearchDisplay = "AUTO" | "ON" | "OFF"
 
@@ -19,8 +19,11 @@ export interface DropdownFieldProps {
   required?: boolean
   /** Determines if the field should display as grayed out */
   disabled?: boolean
-  /** Array of options for the user to select */
-  choiceLabels: any[]
+  /**
+   * Array of options for the user to select. SAIL types this as List of Variant
+   * to allow record-type references; Sailwind takes a flat list of text or numbers.
+   */
+  choiceLabels: (string | number)[]
   /** Array of values associated with the corresponding choices */
   choiceValues: SAILAny[]
   /** Text to display when nothing is selected and value is null */
@@ -48,7 +51,7 @@ export interface DropdownFieldProps {
   /** Data source (record type) - not implemented in prototype */
   data?: SAILAny
   /** Sort configurations - not implemented in prototype */
-  sort?: any[]
+  sort?: SortInfo[]
   /** Space added above component */
   marginAbove?: SAILMarginSize
   /** Space added below component */
