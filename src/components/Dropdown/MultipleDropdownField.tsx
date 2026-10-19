@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { DropdownFieldBase } from './DropdownFieldBase'
-import type { SAILLabelPosition, SAILMarginSize } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILAny, SortInfo } from '../../types/sail'
 
 type SearchDisplay = "AUTO" | "ON" | "OFF"
 
@@ -19,18 +19,21 @@ export interface MultipleDropdownFieldProps {
   disabled?: boolean
   /** Text to display in the field when it is empty */
   placeholder?: string
-  /** Array of options for the user to select */
-  choiceLabels: any[]
+  /**
+   * Array of options for the user to select. SAIL types this as List of Variant
+   * to allow record-type references; Sailwind takes a flat list of text or numbers.
+   */
+  choiceLabels: (string | number)[]
   /** Array of values associated with the corresponding choices */
-  choiceValues: any[]
+  choiceValues: SAILAny[]
   /** Values of choices to display as selected */
-  value?: any[]
+  value?: SAILAny[]
   /** Validation errors to display below the field */
   validations?: string[]
   /** Callback when the user changes the selections */
-  saveInto?: (value: any[] | null) => void
+  saveInto?: (value: SAILAny[] | null) => void
   /** Callback when the user changes the selections (React-style alias for saveInto) */
-  onChange?: (value: any[] | null) => void
+  onChange?: (value: SAILAny[] | null) => void
   /** Validation group name (no spaces) */
   validationGroup?: string
   /** Custom message when field is required and not provided */
@@ -46,9 +49,9 @@ export interface MultipleDropdownFieldProps {
   /** Determines when a search box displays above options */
   searchDisplay?: SearchDisplay
   /** Data source (record type) - not implemented in prototype */
-  data?: any
+  data?: SAILAny
   /** Sort configurations - not implemented in prototype */
-  sort?: any[]
+  sort?: SortInfo[]
   /** Space added above component */
   marginAbove?: SAILMarginSize
   /** Space added below component */

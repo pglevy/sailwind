@@ -136,6 +136,8 @@ src/components/
 
 Common SAIL types are in `src/types/sail.ts`. Component-specific types can be defined inline.
 
+Use `SAILAny` for SAIL "Any Type" params (`value`, `saveInto`, `choiceValues`, `data`) and a real type for everything else. Don't swap callback `any`s for `unknown`: under `strictFunctionTypes`, `saveInto={setState}` stops type-checking.
+
 ### Component Mapping Pattern
 
 ```tsx

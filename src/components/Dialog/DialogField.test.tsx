@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { DialogField } from "./DialogField";
+import { DialogField, type DialogWidth, type DialogHeight } from "./DialogField";
 
 describe("DialogField - visibility", () => {
   it("returns null when showWhen is false", () => {
@@ -160,7 +160,7 @@ describe("DialogField - keyboard / outside click", () => {
 
 describe("DialogField - width/height classes", () => {
   // Radix Dialog renders into a portal (document.body), not container
-  const widthCases: Array<[string, string]> = [
+  const widthCases: Array<[DialogWidth, string]> = [
     ["NARROW", "max-w-sm"],
     ["MEDIUM", "max-w-md"],
     ["MEDIUM_PLUS", "max-w-lg"],
@@ -170,7 +170,7 @@ describe("DialogField - width/height classes", () => {
   widthCases.forEach(([width, expectedClass]) => {
     it(`width="${width}" applies ${expectedClass}`, () => {
       render(
-        <DialogField open={true} title="T" width={width as any}>
+        <DialogField open={true} title="T" width={width}>
           <p>Content</p>
         </DialogField>
       );
@@ -179,7 +179,7 @@ describe("DialogField - width/height classes", () => {
     });
   });
 
-  const heightCases: Array<[string, string]> = [
+  const heightCases: Array<[DialogHeight, string]> = [
     ["SHORT", "h-[300px]"],
     ["MEDIUM", "h-[500px]"],
     ["TALL", "h-[700px]"],
@@ -188,7 +188,7 @@ describe("DialogField - width/height classes", () => {
   heightCases.forEach(([height, expectedClass]) => {
     it(`height="${height}" applies ${expectedClass}`, () => {
       render(
-        <DialogField open={true} title="T" height={height as any}>
+        <DialogField open={true} title="T" height={height}>
           <p>Content</p>
         </DialogField>
       );

@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
+import { useState } from 'react'
 import { StampField } from './StampField'
 
 const meta = {
@@ -86,5 +88,29 @@ export const WithLabelAndInstructions: Story = {
     size: 'LARGE',
     backgroundColor: 'NEGATIVE',
     helpTooltip: 'High priority items require immediate attention',
+  },
+}
+
+/** Dynamic link (a!dynamicLink): clicking the stamp, or pressing Enter or Space, passes `value` to `saveInto`. */
+export const WithLink: Story = {
+  render: () => {
+    const [saved, setSaved] = useState<string | null>(null)
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <StampField
+          icon="star"
+          backgroundColor="ACCENT"
+          tooltip="Mark as favorite"
+          accessibilityText="Mark as favorite"
+          link={{ value: 'FAVORITE', saveInto: setSaved }}
+        />
+        <p className="text-sm text-gray-700">Saved value: {saved ?? 'None'}</p>
+      </div>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('button', { name: 'Mark as favorite' }))
+    await expect(canvas.getByText('Saved value: FAVORITE')).toBeInTheDocument()
   },
 }

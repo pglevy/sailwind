@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as LucideIcons from 'lucide-react'
-import type { SAILSize, SAILColorInput } from '../../types/sail'
+import type { LucideIcon } from 'lucide-react'
+import type { SAILSize, SAILColorInput, SAILAny } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 import { buttonSizeMap, buttonIconOnlySizeMap } from '../../utils/sailMaps'
@@ -55,11 +56,11 @@ export interface ButtonWidgetProps {
   /** Loading indicator on press */
   loadingIndicator?: boolean
   /** Value associated with this button */
-  value?: any
+  value?: SAILAny
   /** Click handler (maps to saveInto in SAIL) */
-  saveInto?: (value?: any) => void
+  saveInto?: (value?: SAILAny) => void
   /** Click handler (React-style alias for saveInto) */
-  onClick?: (value?: any) => void
+  onClick?: (value?: SAILAny) => void
   /** Additional Tailwind classes for prototype-specific styling (not part of SAIL API) */
   className?: string
 }
@@ -259,7 +260,7 @@ export const ButtonWidget: React.FC<ButtonWidgetProps> = ({
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join('')
 
-    const IconComponent = (LucideIcons as any)[iconName]
+    const IconComponent = (LucideIcons as unknown as Record<string, LucideIcon | undefined>)[iconName]
 
     if (!IconComponent) {
       console.warn(`Icon "${icon}" not found in Lucide icons`)

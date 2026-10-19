@@ -37,3 +37,6 @@ dist-ssr
 # Storybook
 *storybook.log
 storybook-static
+
+# Git worktrees for parallel branches
+.worktrees

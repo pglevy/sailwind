@@ -4,6 +4,7 @@ import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { ReadOnlyGrid } from "./ReadOnlyGrid";
 import { GridColumn } from "./GridColumn";
+import type { SAILGridHeight } from "../../types/sail";
 
 // --- Shared arbitraries ---
 
@@ -11,7 +12,14 @@ const FIELD_NAMES = ["name", "age", "email", "city", "score"] as const;
 type FieldName = (typeof FIELD_NAMES)[number];
 
 /** Generate a single data row with values for all known fields */
-const arbRow: fc.Arbitrary<Record<string, any>> = fc.record({
+interface TestRow {
+  name: string;
+  age: number;
+  email: string;
+  city: string;
+  score: number;
+}
+const arbRow: fc.Arbitrary<TestRow> = fc.record({
   name: fc.string({ minLength: 1, maxLength: 20 }).map((s) => s.replace(/\s+/g, "_")),
   age: fc.integer({ min: 0, max: 120 }),
   email: fc.emailAddress(),
@@ -160,7 +168,7 @@ describe("Property 2: Cell value resolution", () => {
     fc.assert(
       fc.property(arbDataArray, (data) => {
         // Function accessor that concatenates index and name field
-        const accessor = (row: any, index: number) =>
+        const accessor = (row: TestRow, index: number) =>
           `row${index}_${row.name}`;
 
         const { unmount } = render(
@@ -800,7 +808,7 @@ describe("Property 12: Alternate row shading pattern", () => {
 // Validates: Requirements 7.5
 // =============================================================================
 describe("Property 13: Fixed height constrains grid body", () => {
-  const heightMap: Record<string, string> = {
+  const heightMap: Record<Exclude<SAILGridHeight, "AUTO">, string> = {
     SHORT: "max-h-40",
     SHORT_PLUS: "max-h-52",
     MEDIUM: "max-h-64",
@@ -819,7 +827,7 @@ describe("Property 13: Fixed height constrains grid body", () => {
         fc.array(arbRow, { minLength: 1, maxLength: 10 }),
         (height, data) => {
           const { unmount, container } = render(
-            <ReadOnlyGrid data={data} height={height as any} pageSize={data.length}>
+            <ReadOnlyGrid data={data} height={height} pageSize={data.length}>
               <GridColumn label="Name" value="name" />
             </ReadOnlyGrid>
           );

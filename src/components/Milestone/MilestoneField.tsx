@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { FieldLabel } from '../shared/FieldLabel'
-import type { SAILLabelPosition, SAILMarginSize, SAILColorInput } from '../../types/sail'
+import type { SAILLabelPosition, SAILMarginSize, SAILColorInput, SAILDynamicLink } from '../../types/sail'
 import { mergeClasses } from '../../utils/classNames'
 import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor, getAccessibleTextColor } from '../../utils/colorResolver'
 import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
@@ -32,8 +32,8 @@ export interface MilestoneFieldProps {
   instructions?: string
   /** Array of labels describing the sequence of steps */
   steps: string[]
-  /** Array of links to apply to the steps */
-  links?: any[]
+  /** Array of links to apply to the steps. A link with showWhen false leaves its step unlinked. */
+  links?: SAILDynamicLink[]
   /** Index of the current step. When null, all steps are future. When -1, all steps are completed */
   active?: number | null
   /** Determines where the label appears */
@@ -477,7 +477,8 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   // Render one list item, wrapping in a button when the step is linked
   const renderStep = (step: string, index: number) => {
     const state = getStepState(index)
-    const link = links[index]
+    // A link with showWhen false counts as no link
+    const link = links[index]?.showWhen === false ? undefined : links[index]
     const content = renderStepContent(step, index, state)
 
     const itemClasses = [
@@ -495,9 +496,10 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
           <button
             type="button"
             onClick={() => {
-              const handler = link.onClick || link.saveInto
-              if (handler && typeof handler === 'function') {
-                handler(link.value)
+              if (link.onClick) {
+                link.onClick(link.value)
+              } else {
+                link.saveInto?.(link.value)
               }
             }}
             className="w-full rounded-sm text-left transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"

@@ -16,10 +16,9 @@ function resolveAlias(value: string): string {
   const match = value.match(/^\{(.+)\}$/)
   if (!match) return value
   const parts = match[1].split('.')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let node: any = tokens
-  for (const p of parts) node = node?.[p]
-  return node?.['$value'] ?? value
+  let node: unknown = tokens
+  for (const p of parts) node = (node as Record<string, unknown> | undefined)?.[p]
+  return (node as { $value?: string } | undefined)?.['$value'] ?? value
 }
 
 // ─── sub-components ─────────────────────────────────────────────────────────
@@ -44,9 +43,10 @@ function SubTitle({ children }: { children: React.ReactNode }) {
 
 // Derive color families and steps dynamically from tokens
 const COLOR_FAMILIES = Object.keys(tokens.color).filter(k => k !== 'semantic' && k !== 'black')
+// Color families keyed by step, e.g. colorFamilies.blue["500"].$value
+const colorFamilies = tokens.color as unknown as Record<string, Record<string, { $value?: string }> | undefined>
 const STEPS = Object.keys(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (tokens.color as any)[COLOR_FAMILIES[0]] ?? {}
+  colorFamilies[COLOR_FAMILIES[0]] ?? {}
 ).sort((a, b) => Number(a) - Number(b))
 
 function ColorPalette() {
@@ -55,8 +55,7 @@ function ColorPalette() {
       <SectionTitle>Color Palette</SectionTitle>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(600px, 1fr))', gap: 24 }}>
         {COLOR_FAMILIES.map(family => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const familyTokens = (tokens.color as any)[family]
+          const familyTokens = colorFamilies[family] ?? {}
           return (
             <div key={family}>
               <SubTitle>{family}</SubTitle>

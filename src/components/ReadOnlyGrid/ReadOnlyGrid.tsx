@@ -11,6 +11,7 @@ import type {
   SAILMarginSize,
   SAILGridHeight,
   SortInfo,
+  SAILAny,
 } from "../../types/sail";
 
 export interface ReadOnlyGridProps {
@@ -25,7 +26,7 @@ export interface ReadOnlyGridProps {
   /** Text to display when no data is available */
   emptyGridMessage?: string;
   /** The data array to display */
-  data?: Record<string, any>[];
+  data?: Record<string, SAILAny>[];
   /** GridColumn children defining the columns */
   children?: React.ReactNode;
   /** Maximum rows per page. Default: 10 */
@@ -80,7 +81,7 @@ function extractColumns(children: React.ReactNode): GridColumnProps[] {
 /** Resolve a cell value from a row using the column's value accessor */
 function resolveValue(
   value: GridColumnProps["value"],
-  row: Record<string, any>,
+  row: Record<string, SAILAny>,
   rowIndex: number
 ): React.ReactNode {
   if (value === undefined || value === null) {
@@ -103,7 +104,7 @@ function resolveValue(
 /** Resolve background color for a cell */
 function resolveBgColor(
   backgroundColor: GridColumnProps["backgroundColor"],
-  row: Record<string, any>
+  row: Record<string, SAILAny>
 ): { className?: string; style?: React.CSSProperties } {
   if (!backgroundColor) return {};
   const colorValue =
@@ -245,8 +246,8 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const sortedRows = React.useMemo(() => {
     if (!sortField) return indexedRows;
     return [...indexedRows].sort((a, b) => {
-      const aVal = (a as Record<string, any>)[sortField];
-      const bVal = (b as Record<string, any>)[sortField];
+      const aVal = (a as Record<string, SAILAny>)[sortField];
+      const bVal = (b as Record<string, SAILAny>)[sortField];
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return sortAscending ? -1 : 1;
       if (bVal == null) return sortAscending ? 1 : -1;
@@ -294,7 +295,7 @@ export const ReadOnlyGrid: React.FC<ReadOnlyGridProps> = ({
   const pageRows = sortedRows.slice(startIndex, endIndex);
 
   // Row identifier: use row.id if it exists, otherwise use original index
-  const getRowId = (row: Record<string, any>): string | number => {
+  const getRowId = (row: Record<string, SAILAny>): string | number => {
     return row.id !== undefined ? row.id : row.__originalIndex;
   };
 
