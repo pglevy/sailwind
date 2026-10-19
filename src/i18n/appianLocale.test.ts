@@ -15,7 +15,7 @@
  *   Library. A small `LocaleProbe` component reads `useI18n()` and exposes the
  *   active locale via a `data-testid` so the provider's resolved value can be
  *   asserted from the DOM.
- * - The global `Appian` object is injected/cleared via `(globalThis as any)` so
+ * - The global `Appian` object is injected/cleared via `(globalThis as { Appian?: unknown })` so
  *   tests can set an arbitrary (including throwing) `getLocale` without matching
  *   the ambient type, and `afterEach` deletes it so no test leaks into another.
  * - v1 supports only `'en-us'`. `'en-US'` normalizes to `'en-us'`, which IS

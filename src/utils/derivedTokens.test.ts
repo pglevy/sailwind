@@ -9,10 +9,9 @@ const tokens = addDerivedTokens(sourceTokens)
 function resolveAlias(ref: string): string | undefined {
   const m = ref.match(/^\{(.+)\}$/)
   if (!m) return undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let node: any = tokens
-  for (const p of m[1].split('.')) node = node?.[p]
-  return node?.$value
+  let node: unknown = tokens
+  for (const p of m[1].split('.')) node = (node as Record<string, unknown> | undefined)?.[p]
+  return (node as { $value?: string } | undefined)?.$value
 }
 
 const semanticNames = Object.keys(semanticPaletteColors) as SAILSemanticColor[]
