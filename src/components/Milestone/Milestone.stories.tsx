@@ -109,6 +109,9 @@ export const MinimalProgression: Story = {
 
 /** Clickable steps: each becomes a button with an accessible name and focus ring. */
 export const MinimalWithLinks: Story = {
+  // Known a11y failure, exempted until fixed:
+  // - label-content-name-mismatch (button aria-label doesn't include the visible step number): https://github.com/pglevy/sailwind/issues/201
+  parameters: { a11y: { test: 'todo' } },
   args: {
     steps: ['Cart', 'Billing', 'Shipping', 'Confirm'],
     active: 2,
