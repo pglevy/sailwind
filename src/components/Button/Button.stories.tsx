@@ -94,7 +94,7 @@ export const PaletteColorsSolid: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
-        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_500' },
+        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_600' },
         { label: 'Custom Orange', style: 'SOLID', color: 'ORANGE_800' },
         { label: 'Custom Pink', style: 'SOLID', color: 'PINK_600' },
       ]}
