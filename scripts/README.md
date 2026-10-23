@@ -39,20 +39,6 @@ pnpm run build:tokens
 
 Runs generate-tokens then validate. Also runs automatically as part of `pnpm run build:lib`.
 
-### Token Editor
-
-A standalone visual editor for design tokens:
-
-```bash
-pnpm run token-server      # Start at http://localhost:3001
-```
-
-Serves a full-page editor UI for colors, typography, and spacing. Edits are saved back to `tokens/tokens.json` and CSS is regenerated automatically. Run alongside Storybook — saving in the editor triggers HMR in Storybook.
-
-Files:
-- `scripts/token-server.ts` — HTTP server with `GET/POST /api/tokens/tokens`
-- `scripts/token-editor.html` — Self-contained editor UI (no build step)
-
 ---
 
 ## Visual Check Scripts

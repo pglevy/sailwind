@@ -185,7 +185,6 @@ pnpm run test-storybook    # Storybook interaction and accessibility tests only
 pnpm run typecheck         # TypeScript
 pnpm run lint              # ESLint
 pnpm run build:lib         # Build the npm package into dist/
-pnpm run token-server      # Visual token editor at http://localhost:3001
 ```
 
 ### Project structure
@@ -203,7 +202,7 @@ src/
 ├── utils/                  # Shared helpers (color resolution, SAIL maps)
 └── index.css               # Tailwind v4 theme (partly generated from tokens)
 appian-plugin/i18n/         # Appian design-time translation bundles
-scripts/                    # Token generation, validation, and the token editor
+scripts/                    # Token generation and validation
 ```
 
 ### Component architecture
@@ -279,7 +278,7 @@ Commit generated files after running the build. CI runs `pnpm run build:lib` and
 
 > ⚠️ **Do not remove `public/tokens.json` from the repo.** External tools (Kiro skills, Aurora) fetch tokens at runtime from the jsdelivr CDN, which serves this path from `main`.
 
-The token editor (`pnpm run token-server`) lets you edit tokens in the browser. Saving writes to `tokens/tokens.json` and regenerates the CSS, which Storybook picks up automatically. See `scripts/README.md` for the full pipeline.
+See `scripts/README.md` for the full pipeline.
 
 ### Publishing
 
