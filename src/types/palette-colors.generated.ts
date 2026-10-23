@@ -76,6 +76,16 @@ export type SAILPaletteColor =
   | 'RED_800'
   | 'RED_900'
   | 'RED_950'
+  | 'BURNT_ORANGE_50'
+  | 'BURNT_ORANGE_100'
+  | 'BURNT_ORANGE_200'
+  | 'BURNT_ORANGE_300'
+  | 'BURNT_ORANGE_400'
+  | 'BURNT_ORANGE_500'
+  | 'BURNT_ORANGE_600'
+  | 'BURNT_ORANGE_700'
+  | 'BURNT_ORANGE_800'
+  | 'BURNT_ORANGE_900'
   | 'ORANGE_50'
   | 'ORANGE_100'
   | 'ORANGE_200'
@@ -324,6 +334,16 @@ export const paletteColorMap: Record<SAILPaletteColor, { bg: string; text: strin
   'RED_800': { bg: 'bg-red-800', text: 'text-red-800', border: 'border-red-800' },
   'RED_900': { bg: 'bg-red-900', text: 'text-red-900', border: 'border-red-900' },
   'RED_950': { bg: 'bg-red-950', text: 'text-red-950', border: 'border-red-950' },
+  'BURNT_ORANGE_50': { bg: 'bg-burnt-orange-50', text: 'text-burnt-orange-50', border: 'border-burnt-orange-50' },
+  'BURNT_ORANGE_100': { bg: 'bg-burnt-orange-100', text: 'text-burnt-orange-100', border: 'border-burnt-orange-100' },
+  'BURNT_ORANGE_200': { bg: 'bg-burnt-orange-200', text: 'text-burnt-orange-200', border: 'border-burnt-orange-200' },
+  'BURNT_ORANGE_300': { bg: 'bg-burnt-orange-300', text: 'text-burnt-orange-300', border: 'border-burnt-orange-300' },
+  'BURNT_ORANGE_400': { bg: 'bg-burnt-orange-400', text: 'text-burnt-orange-400', border: 'border-burnt-orange-400' },
+  'BURNT_ORANGE_500': { bg: 'bg-burnt-orange-500', text: 'text-burnt-orange-500', border: 'border-burnt-orange-500' },
+  'BURNT_ORANGE_600': { bg: 'bg-burnt-orange-600', text: 'text-burnt-orange-600', border: 'border-burnt-orange-600' },
+  'BURNT_ORANGE_700': { bg: 'bg-burnt-orange-700', text: 'text-burnt-orange-700', border: 'border-burnt-orange-700' },
+  'BURNT_ORANGE_800': { bg: 'bg-burnt-orange-800', text: 'text-burnt-orange-800', border: 'border-burnt-orange-800' },
+  'BURNT_ORANGE_900': { bg: 'bg-burnt-orange-900', text: 'text-burnt-orange-900', border: 'border-burnt-orange-900' },
   'ORANGE_50': { bg: 'bg-orange-50', text: 'text-orange-50', border: 'border-orange-50' },
   'ORANGE_100': { bg: 'bg-orange-100', text: 'text-orange-100', border: 'border-orange-100' },
   'ORANGE_200': { bg: 'bg-orange-200', text: 'text-orange-200', border: 'border-orange-200' },
@@ -572,6 +592,16 @@ export const paletteHexMap: Record<SAILPaletteColor, string> = {
   'RED_800': '#991B1B',
   'RED_900': '#7F1D1D',
   'RED_950': '#450A0A',
+  'BURNT_ORANGE_50': '#FEEEE9',
+  'BURNT_ORANGE_100': '#FCCBBC',
+  'BURNT_ORANGE_200': '#FAA88F',
+  'BURNT_ORANGE_300': '#F78562',
+  'BURNT_ORANGE_400': '#F56235',
+  'BURNT_ORANGE_500': '#FF5722',
+  'BURNT_ORANGE_600': '#DC491B',
+  'BURNT_ORANGE_700': '#AB3915',
+  'BURNT_ORANGE_800': '#7A290F',
+  'BURNT_ORANGE_900': '#491809',
   'ORANGE_50': '#FFF7ED',
   'ORANGE_100': '#FFEDD5',
   'ORANGE_200': '#FED7AA',
@@ -671,17 +701,17 @@ export const paletteHexMap: Record<SAILPaletteColor, string> = {
   'SKY_800': '#075985',
   'SKY_900': '#0C4A6E',
   'SKY_950': '#082F49',
-  'BLUE_50': '#EFF6FF',
-  'BLUE_100': '#DBEAFE',
-  'BLUE_200': '#BFDBFE',
-  'BLUE_300': '#93C5FD',
-  'BLUE_400': '#60A5FA',
-  'BLUE_500': '#3B82F6',
-  'BLUE_600': '#2563EB',
-  'BLUE_700': '#1D4ED8',
-  'BLUE_800': '#1E40AF',
-  'BLUE_900': '#1E3A8A',
-  'BLUE_950': '#172554',
+  'BLUE_50': '#E9E9FE',
+  'BLUE_100': '#BDBDFB',
+  'BLUE_200': '#9191F8',
+  'BLUE_300': '#6564F5',
+  'BLUE_400': '#3938F2',
+  'BLUE_500': '#2322F0',
+  'BLUE_600': '#201FD8',
+  'BLUE_700': '#1918A8',
+  'BLUE_800': '#121178',
+  'BLUE_900': '#0A0A48',
+  'BLUE_950': '#050524',
   'INDIGO_50': '#EEF2FF',
   'INDIGO_100': '#E0E7FF',
   'INDIGO_200': '#C7D2FE',
