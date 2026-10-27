@@ -52,6 +52,9 @@ export * from './Toggle'
 // ButtonToggle components (button-style on/off toggle)
 export * from './ButtonToggle'
 
+// FileUpload components (a!fileUploadField)
+export * from './FileUpload'
+
 // Slider components (new SAIL)
 export * from './Slider'
 
