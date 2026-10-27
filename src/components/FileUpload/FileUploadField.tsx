@@ -161,6 +161,10 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
   const isFull = maxSelections !== undefined && value.length >= maxSelections
   const canUpload = !disabled && !isFull
 
+  // Focus is only moved when it was already in this field, so dropping files
+  // while working in another field doesn't pull the user away
+  const focusIsInside = () => !!containerRef.current?.contains(document.activeElement)
+
   const handleChange = (newValue: FileUploadFile[]) => {
     const handler = onChange || saveInto
     if (handler) {
@@ -199,8 +203,8 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
     setUploadErrors(errors)
     if (toAdd.length > 0) {
       const newValue = [...value, ...toAdd]
-      // The upload button goes away when the limit is reached
-      if (maxSelections !== undefined && newValue.length >= maxSelections) {
+      // The drop zone goes away when the limit is reached
+      if (maxSelections !== undefined && newValue.length >= maxSelections && focusIsInside()) {
         pendingFocus.current = newValue.length - 1
       }
       handleChange(newValue)
@@ -209,7 +213,9 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 
   const removeFile = (index: number) => {
     if (disabled) return
-    pendingFocus.current = value.length > 1 ? index : 'upload'
+    if (focusIsInside()) {
+      pendingFocus.current = value.length > 1 ? index : 'upload'
+    }
     setUploadErrors([])
     handleChange(value.filter((_, i) => i !== index))
   }
@@ -239,7 +245,7 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
     addFiles(Array.from(e.dataTransfer.files))
   }
 
-  // Pasting works while focus is inside the drop zone (i.e. on the upload button)
+  // Pasting works while focus is on the drop zone or the upload button
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     const pasted = Array.from(e.clipboardData.files)
     if (pasted.length > 0) {
@@ -273,13 +279,16 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
     // Disabled uses a muted surface rather than opacity so the placeholder keeps readable contrast
     disabled
       ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
-      : isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-400 bg-white'
+      : isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-400 bg-white focus:border-blue-500',
+    'focus:outline-none'
   ].join(' ')
 
-  // The drop zone is not focusable or clickable itself: the upload button is the
-  // keyboard control, and dragging/pasting are shortcuts on top of it
+  // The upload button is the keyboard control. The drop zone takes focus on click
+  // (tabIndex -1, so no extra tab stop) so users can click it and paste files
   const dropZone = !isFull && (
     <div
+      data-drop-zone
+      tabIndex={disabled ? undefined : -1}
       className={dropZoneClasses}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -330,7 +339,19 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
   // Show required message
   const showRequiredMessage = required && !value.length && requiredMessage
 
+  // The group is named by the label plus "required", since aria-required isn't
+  // allowed on a group. accessibilityText is extra description, not a
+  // replacement name, unless there's no label.
+  const nameId = `${inputId}-name`
+  const requiredId = `${inputId}-required`
+  const accessibilityTextId = `${inputId}-accessibility-text`
+  const groupName = label || accessibilityText
+  const labelledBy = [
+    groupName && nameId,
+    required && requiredId
+  ].filter(Boolean).join(' ') || undefined
   const describedBy = [
+    label && accessibilityText && accessibilityTextId,
     instructions && `${inputId}-instructions`,
     showValidations && `${inputId}-error`
   ].filter(Boolean).join(' ') || undefined
@@ -339,9 +360,12 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
     <div
       ref={containerRef}
       role="group"
-      aria-label={accessibilityText || label}
+      aria-labelledby={labelledBy}
       aria-describedby={describedBy}
     >
+      {groupName && <span id={nameId} hidden>{groupName}</span>}
+      {required && <span id={requiredId} hidden>{t(KEYS.fieldRequired)}</span>}
+      {label && accessibilityText && <span id={accessibilityTextId} hidden>{accessibilityText}</span>}
       <input
         ref={inputRef}
         id={inputId}

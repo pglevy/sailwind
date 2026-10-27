@@ -70,6 +70,21 @@ describe("FileUploadField - rendering", () => {
     expect(screen.getByRole("group", { name: "Documents" })).toHaveAccessibleDescription("PDF only");
   });
 
+  it("keeps the label as the name and adds accessibilityText to the description", () => {
+    render(<FileUploadField label="Documents" accessibilityText="Signed forms" instructions="PDF only" />);
+    expect(screen.getByRole("group", { name: "Documents" })).toHaveAccessibleDescription("Signed forms PDF only");
+  });
+
+  it("names the group with accessibilityText when there is no label", () => {
+    render(<FileUploadField accessibilityText="Signed forms" />);
+    expect(screen.getByRole("group", { name: "Signed forms" })).toBeInTheDocument();
+  });
+
+  it("includes the required state in the group name", () => {
+    render(<FileUploadField label="Documents" required />);
+    expect(screen.getByRole("group", { name: "Documents required" })).toBeInTheDocument();
+  });
+
   it("lists the files in value with their size", () => {
     render(<FileUploadField label="Documents" value={[{ name: "policy.pdf", size: 2048 }]} />);
     expect(screen.getByText("policy.pdf")).toBeInTheDocument();
@@ -118,15 +133,19 @@ describe("FileUploadField - adding files", () => {
     expect(onSave).toHaveBeenCalledWith([file]);
   });
 
-  it("adds pasted files", () => {
+  it("adds files pasted after clicking the drop zone", async () => {
     const onSave = vi.fn();
     render(<Controlled onSave={onSave} />);
     const file = makeFile("pasted.png");
-    const zone = getDropZone();
-    const paste = createEvent.paste(zone);
-    Object.defineProperty(paste, "clipboardData", { value: { files: [file] } });
 
-    fireEvent(zone, paste);
+    // Clicking the placeholder text focuses the drop zone, so the paste lands there
+    await userEvent.click(screen.getByText("Drop or paste files here"));
+    expect(getDropZone()).toHaveFocus();
+
+    const focused = document.activeElement as HTMLElement;
+    const paste = createEvent.paste(focused);
+    Object.defineProperty(paste, "clipboardData", { value: { files: [file] } });
+    fireEvent(focused, paste);
 
     expect(onSave).toHaveBeenCalledWith([file]);
   });
@@ -256,12 +275,30 @@ describe("FileUploadField - maxSelections", () => {
   it("hides the drop zone once the limit is reached and focuses the last file", async () => {
     render(<Controlled maxSelections={1} />);
 
-    // A change event alone, as after the native picker closes. userEvent.upload
-    // also simulates clicking the hidden input, which moves focus to <body>.
+    // As after the native picker closes: focus is back on the upload button and
+    // the input fires change. userEvent.upload also simulates clicking the
+    // hidden input, which moves focus to <body>.
+    screen.getByRole("button", { name: "Upload" }).focus();
     fireEvent.change(getInput(), { target: { files: [makeFile("only.pdf")] } });
 
     expect(screen.queryByRole("button", { name: "Upload" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Remove only.pdf" })).toHaveFocus();
+  });
+
+  it("leaves focus alone when files are dropped while another field has focus", () => {
+    render(
+      <>
+        <input aria-label="Other field" />
+        <Controlled maxSelections={1} />
+      </>
+    );
+    const other = screen.getByRole("textbox", { name: "Other field" });
+    other.focus();
+
+    drop(getDropZone(), [makeFile("only.pdf")]);
+
+    expect(screen.getByText("only.pdf")).toBeInTheDocument();
+    expect(other).toHaveFocus();
   });
 
   it("allows uploads again after a file is removed", async () => {
@@ -295,7 +332,7 @@ describe("FileUploadField - states", () => {
 
   it("shows the required indicator and requiredMessage when empty", () => {
     render(<FileUploadField label="Documents" required requiredMessage="Attach at least one file" />);
-    expect(screen.getByLabelText("required")).toHaveTextContent("*");
+    expect(screen.getByLabelText("required", { selector: "span" })).toHaveTextContent("*");
     expect(screen.getByText("Attach at least one file")).toBeInTheDocument();
   });
 

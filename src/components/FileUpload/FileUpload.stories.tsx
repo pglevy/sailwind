@@ -60,6 +60,14 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Remove quote.pdf' }))
     await expect(canvas.queryByText('quote.pdf')).not.toBeInTheDocument()
     await expect(canvas.getByRole('button', { name: 'Upload' })).toHaveFocus()
+
+    // Click the drop zone, then paste a file from the clipboard
+    await userEvent.click(canvas.getByText('Drop or paste files here'))
+    await expect(zone).toHaveFocus()
+    const clipboard = new DataTransfer()
+    clipboard.items.add(makeFile('pasted.png'))
+    await userEvent.paste(clipboard)
+    await expect(await canvas.findByText('pasted.png')).toBeVisible()
   },
 }
 
