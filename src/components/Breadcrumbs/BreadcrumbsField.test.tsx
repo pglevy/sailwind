@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { BreadcrumbsField, type BreadcrumbItem } from "./BreadcrumbsField";
+import { LocaleProvider } from "../../i18n";
 
 // No right-to-left locale ships yet (LocaleProvider falls back to en-us), so
 // the reading direction is mocked to exercise the RTL branch.
@@ -38,6 +39,35 @@ describe("BreadcrumbsField - structure and accessibility", () => {
   it("uses accessibilityText as the navigation name when provided", () => {
     render(<BreadcrumbsField items={trail} accessibilityText="Folder path" />);
     expect(screen.getByRole("navigation", { name: "Folder path" })).toBeInTheDocument();
+  });
+
+  it("merges className onto the navigation root alongside the margin classes", () => {
+    render(<BreadcrumbsField items={trail} className="custom-class mb-10" />);
+    const nav = screen.getByRole("navigation");
+    expect(nav).toHaveClass("custom-class");
+    // mergeClasses lets the override win over the default marginBelow (mb-4)
+    expect(nav).toHaveClass("mb-10");
+    expect(nav).not.toHaveClass("mb-4");
+  });
+
+  it("resolves the default label through LocaleProvider", () => {
+    // The Spanish bundle has no breadcrumbs.label entry yet, so an "es" locale
+    // falls back to the English default rather than a translation.
+    render(
+      <LocaleProvider locale="es">
+        <BreadcrumbsField items={trail} />
+      </LocaleProvider>
+    );
+    expect(screen.getByRole("navigation", { name: "Breadcrumbs" })).toBeInTheDocument();
+  });
+
+  it("prefers accessibilityText over the localized label", () => {
+    render(
+      <LocaleProvider locale="es">
+        <BreadcrumbsField items={trail} accessibilityText="Ruta de carpetas" />
+      </LocaleProvider>
+    );
+    expect(screen.getByRole("navigation", { name: "Ruta de carpetas" })).toBeInTheDocument();
   });
 
   it("renders an ordered list with one item per level", () => {
@@ -90,6 +120,52 @@ describe("BreadcrumbsField - links", () => {
     expect(onHome).toHaveBeenCalledTimes(1);
   });
 
+  it("ignores Cmd/Ctrl/Shift/Alt-click on function links so the browser handles them", () => {
+    const onHome = vi.fn();
+    render(<BreadcrumbsField items={[{ text: "Home", link: onHome }, { text: "Current" }]} />);
+    const home = screen.getByRole("link", { name: "Home" });
+    for (const modifier of ["metaKey", "ctrlKey", "shiftKey", "altKey"] as const) {
+      // fireEvent returns false when preventDefault was called
+      expect(fireEvent.click(home, { [modifier]: true })).toBe(true);
+    }
+    expect(onHome).not.toHaveBeenCalled();
+  });
+
+  it("ignores middle-click on function links", () => {
+    const onHome = vi.fn();
+    render(<BreadcrumbsField items={[{ text: "Home", link: onHome }, { text: "Current" }]} />);
+    expect(fireEvent.click(screen.getByRole("link", { name: "Home" }), { button: 1 })).toBe(true);
+    expect(onHome).not.toHaveBeenCalled();
+  });
+
+  it("prevents default and calls the function on a plain primary click", () => {
+    const onHome = vi.fn();
+    render(<BreadcrumbsField items={[{ text: "Home", link: onHome }, { text: "Current" }]} />);
+    expect(fireEvent.click(screen.getByRole("link", { name: "Home" }))).toBe(false);
+    expect(onHome).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not queue a focus handoff when a modified click is ignored", () => {
+    // The parent shrinks items only when the function runs; a modified click must
+    // not leave a pending key that a later unrelated render could act on.
+    const folders = ["Home", "Docs", "Now"];
+    const Nav = () => {
+      const [depth, setDepth] = useState(folders.length);
+      const items = folders.slice(0, depth).map((text, i) => ({ text, link: () => setDepth(i + 1) }));
+      return <BreadcrumbsField items={items} />;
+    };
+    render(<Nav />);
+    fireEvent.click(screen.getByRole("link", { name: "Docs" }), { ctrlKey: true });
+    expect(screen.getByRole("link", { name: "Docs" })).toBeInTheDocument();
+    expect(document.body).toHaveFocus();
+  });
+
+  it("renders an empty-string link as plain text, not an anchor", () => {
+    render(<BreadcrumbsField items={[{ text: "Archive", link: "" }, { text: "Current" }]} />);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.getByText("Archive")).not.toHaveAttribute("aria-current");
+  });
+
   it("renders ancestors without a link as plain text", () => {
     render(<BreadcrumbsField items={[{ text: "Archive" }, { text: "Current" }]} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
@@ -124,8 +200,23 @@ describe("BreadcrumbsField - separators", () => {
     localeState.direction = "RTL";
     const { container } = render(<BreadcrumbsField items={trail} separator="CHEVRON" />);
     expect(screen.getByRole("navigation")).toHaveAttribute("dir", "rtl");
-    expect(container.querySelector("svg.lucide-chevron-left")).not.toBeNull();
-    expect(container.querySelector("svg.lucide-chevron-right")).toBeNull();
+    const separators = getSeparators(container);
+    expect(separators).toHaveLength(2);
+    separators.forEach(separator => expect(separator).toHaveAttribute("data-separator-direction", "left"));
+  });
+
+  it("points the chevron right in left-to-right locales", () => {
+    const { container } = render(<BreadcrumbsField items={trail} separator="CHEVRON" />);
+    getSeparators(container).forEach(separator =>
+      expect(separator).toHaveAttribute("data-separator-direction", "right")
+    );
+  });
+
+  it("does not set a chevron direction on slash separators", () => {
+    const { container } = render(<BreadcrumbsField items={trail} />);
+    getSeparators(container).forEach(separator =>
+      expect(separator).not.toHaveAttribute("data-separator-direction")
+    );
   });
 
   it("does not set dir in left-to-right locales", () => {
@@ -158,6 +249,23 @@ describe("BreadcrumbsField - visibility", () => {
     );
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
     expect(screen.queryByText("Hidden")).not.toBeInTheDocument();
+  });
+
+  it("hides whitespace-only text without leaving a stray separator", () => {
+    const { container } = render(
+      <BreadcrumbsField items={[{ text: "Home", link: "/home" }, { text: "   " }, { text: "Current" }]} />
+    );
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+    expect(getSeparators(container)).toHaveLength(1);
+  });
+
+  it("makes the previous item the current page when the last item has whitespace-only text", () => {
+    const { container } = render(
+      <BreadcrumbsField items={[{ text: "Home", link: "/home" }, { text: "Docs", link: "/docs" }, { text: " \t " }]} />
+    );
+    expect(screen.getByText("Docs")).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("link", { name: "Docs" })).not.toBeInTheDocument();
+    expect(getSeparators(container)).toHaveLength(1);
   });
 
   it("treats the last visible item as the current page when the last item is hidden", () => {

@@ -67,6 +67,44 @@ export const LongTrail: Story = {
   ),
 }
 
+/** `accessibilityText` sets the navigation landmark's name. Use it to tell trails apart when a page has more than one. Inspect the nav element: its aria-label is "Project files". */
+export const CustomAccessibilityText: Story = {
+  args: {
+    accessibilityText: 'Project files',
+  },
+}
+
+/**
+ * Ancestors without a `link` render as plain text. Look for: "Home" and "Policies"
+ * are links (blue, underlined on hover), while "Archive" is plain text.
+ */
+export const MixedLinkedAndUnlinked: Story = {
+  args: {
+    items: [
+      { text: 'Home', link: '#home' },
+      { text: 'Archive' },
+      { text: 'Policies', link: '#policies' },
+      { text: '2026 Travel Policy' },
+    ],
+  },
+}
+
+/**
+ * An item with `showWhen={false}` is left out of the trail. Look for: the item
+ * "Documents" is configured but hidden, so the trail reads Home / Policies / 2026 Travel Policy
+ * with no extra separator.
+ */
+export const HiddenItem: Story = {
+  args: {
+    items: [
+      { text: 'Home', link: '#home' },
+      { text: 'Documents', link: '#documents', showWhen: false },
+      { text: 'Policies', link: '#policies' },
+      { text: '2026 Travel Policy' },
+    ],
+  },
+}
+
 const folders = ['Home', 'Documents', 'Policies', '2026 Travel Policy']
 
 /**

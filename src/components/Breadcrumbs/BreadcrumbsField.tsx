@@ -17,13 +17,20 @@ export type BreadcrumbsSeparator = "SLASH" | "CHEVRON"
  * One level in the breadcrumb hierarchy.
  */
 export interface BreadcrumbItem {
-  /** Display text for this level */
+  /** Display text for this level. Text that is empty after trimming hides the level. */
   text: string
   /**
    * Where this level navigates to. A string renders a standard link with that
    * `href` (like TagItem's `link`). A function runs on click (like TextItem's
    * `link`), for prototypes that navigate with state or a router.
+   * An empty string counts as no link, so the level renders as plain text.
    * Ignored on the last visible item, which is always the current page.
+   *
+   * Function links render `href="#"` (like TextItem) and only intercept plain
+   * primary clicks and keyboard activation. Cmd/Ctrl/Shift/Alt-click and
+   * middle-click are left to the browser, so the function does not run and the
+   * browser opens its default new tab or window at `#`. Use a string link when
+   * a real destination matters.
    *
    * Focus: when activating a function link makes that item the last visible
    * one (for example, `items` shrinks to end at the clicked level), the item
@@ -42,6 +49,10 @@ export interface BreadcrumbItem {
  * Props for the BreadcrumbsField component.
  * Not in SAIL as a component: SAIL builds breadcrumbs from a rich text field
  * (the Breadcrumbs pattern). This component renders the same styling.
+ *
+ * Because it is navigation and not a form field, it intentionally has no
+ * `label`, `labelPosition`, `instructions`, or `helpTooltip` props. Use
+ * `accessibilityText` to name the navigation landmark.
  */
 export interface BreadcrumbsFieldProps {
   /** Levels from the top of the hierarchy down to the current page. The last visible item is the current page. */
@@ -102,7 +113,10 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
 
   if (!showWhen) return null
 
-  const visibleItems = items.filter(item => item.showWhen !== false && item.text)
+  // The one place items are filtered. Hidden levels (showWhen=false, or text that is
+  // empty once trimmed) are dropped here, so the separators and the current page
+  // (the last visible item) are all derived from this list.
+  const visibleItems = items.filter(item => item.showWhen !== false && item.text.trim() !== '')
   if (visibleItems.length === 0) return null
 
   // Stable keys from the item text so earlier items are not remounted when later
@@ -129,7 +143,8 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
 
   const renderAncestor = (item: BreadcrumbItem, key: string) => {
     const { link, text } = item
-    if (typeof link === 'string') {
+    // An empty string is no link: <a href=""> would point at the current page
+    if (typeof link === 'string' && link !== '') {
       return <a href={link} className={linkClasses}>{text}</a>
     }
     if (typeof link === 'function') {
@@ -138,6 +153,8 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
           href="#"
           className={linkClasses}
           onClick={(e) => {
+            // Leave modified and non-primary clicks to the browser (new tab, etc.)
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
             e.preventDefault()
             pendingFocusKey.current = key
             link()
@@ -179,7 +196,11 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
                 renderAncestor(item, key)
               )}
               {!isCurrent && (
-                <span aria-hidden="true" className={separatorClasses}>
+                <span
+                  aria-hidden="true"
+                  className={separatorClasses}
+                  data-separator-direction={separator === "CHEVRON" ? (isRtl ? 'left' : 'right') : undefined}
+                >
                   {separator === "CHEVRON" ? <ChevronIcon size={14} /> : '/'}
                 </span>
               )}
