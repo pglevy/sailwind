@@ -62,6 +62,7 @@ const EXPECTED: Record<TranslationKey, string> = {
   "boxLayout.toggleContent": "Show or hide content",
   "recordView.moreActions": "More actions",
   "dropdown.noResults": "No results found",
+  "breadcrumbs.label": "Breadcrumbs",
 };
 
 /** The full library key catalog, as the dotted `.properties` key strings. */

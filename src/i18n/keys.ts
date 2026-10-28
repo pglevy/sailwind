@@ -83,6 +83,8 @@ export const KEYS = {
   recordViewMoreActions: 'recordView.moreActions',
   /** DropdownField / MultipleDropdownField: message shown when a search matches no options. */
   dropdownNoResults: 'dropdown.noResults',
+  /** BreadcrumbsField: default accessible name of the breadcrumb navigation. */
+  breadcrumbsLabel: 'breadcrumbs.label',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */
