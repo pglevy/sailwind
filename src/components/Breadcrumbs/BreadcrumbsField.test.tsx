@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { BreadcrumbsField, type BreadcrumbItem } from "./BreadcrumbsField";
 import { LocaleProvider } from "../../i18n";
 
@@ -397,5 +398,296 @@ describe("BreadcrumbsField - focus management", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
     expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
+  });
+});
+
+describe("BreadcrumbsField - truncation", () => {
+  // jsdom has no layout, so widths are mocked: the <ol> reports containerWidth and every other
+  // element reports 10px per character of its text. With a slash separator the fixture's <li> widths
+  // are Home 50, Shared 70, Ops 40, Contracts 100, Renewals 90, Current 70 (total 420, separator 10).
+  // The "…" <li> (text "…/") is 20 wide.
+  let containerWidth = 500;
+  const observerCallbacks: Array<() => void> = [];
+  const disconnect = vi.fn();
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        private callback: () => void;
+        constructor(callback: () => void) {
+          this.callback = callback;
+        }
+        observe() {
+          observerCallbacks.push(this.callback);
+        }
+        unobserve() {}
+        disconnect = disconnect;
+      }
+    );
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      const width = this.tagName === "OL" ? containerWidth : (this.textContent ?? "").length * 10;
+      return {
+        width, height: 20, top: 0, left: 0, right: width, bottom: 20, x: 0, y: 0, toJSON() {},
+      } as DOMRect;
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    observerCallbacks.length = 0;
+    disconnect.mockClear();
+    containerWidth = 500;
+  });
+
+  const resizeTo = (width: number) =>
+    act(() => {
+      containerWidth = width;
+      observerCallbacks.forEach(callback => callback());
+    });
+
+  const names = ["Home", "Shared", "Ops", "Contracts", "Renewals"];
+  const longTrail: BreadcrumbItem[] = [
+    ...names.map(text => ({ text, link: `#${text.toLowerCase()}` })),
+    { text: "Current" },
+  ];
+  const showHidden = () => screen.queryByRole("button", { name: "Show hidden levels" });
+  const linkNames = () => screen.queryAllByRole("link").map(link => link.textContent);
+
+  it("shows the full trail with no ellipsis when it fits", () => {
+    for (const width of [500, 421]) {
+      containerWidth = width;
+      const { unmount } = render(<BreadcrumbsField items={longTrail} />);
+      expect(showHidden()).not.toBeInTheDocument();
+      expect(linkNames()).toEqual(names);
+      unmount();
+    }
+  });
+
+  it("collapses as soon as the trail is one pixel too wide", () => {
+    containerWidth = 420;
+    render(<BreadcrumbsField items={longTrail} />);
+    expect(showHidden()).toBeInTheDocument();
+  });
+
+  it("keeps the root, the nearest levels that fit, and the current page", () => {
+    containerWidth = 335;
+    const { container } = render(<BreadcrumbsField items={longTrail} />);
+    expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
+    expect(showHidden()).toBeInTheDocument();
+    // Hidden levels are not in the DOM, so they are neither tab stops nor screen reader text
+    expect(screen.queryByText("Shared")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ops")).not.toBeInTheDocument();
+    expect(container.querySelectorAll('[aria-current]')).toHaveLength(1);
+    expect(screen.getByText("Current")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("list")).toHaveClass("flex-nowrap");
+    // Every item but the last has a hidden separator, including the one holding the "…"
+    const items = container.querySelectorAll("li");
+    expect(items).toHaveLength(5);
+    items.forEach((item, index) => {
+      const separator = item.querySelector(':scope > [aria-hidden="true"]');
+      if (index < items.length - 1) expect(separator).not.toBeNull();
+      else expect(separator).toBeNull();
+    });
+  });
+
+  it("renders the ellipsis as a button with a localized accessible name", () => {
+    containerWidth = 335;
+    render(<BreadcrumbsField items={longTrail} />);
+    const button = screen.getByRole("button", { name: "Show hidden levels" });
+    expect(button).toHaveAttribute("type", "button");
+    expect(button).toHaveClass("focus-visible:ring-2");
+    expect(button).not.toHaveAttribute("tabindex");
+    expect(button.querySelector('[aria-hidden="true"]')).toHaveTextContent("…");
+  });
+
+  it("falls back to the English button name in other locales and ignores accessibilityText", () => {
+    containerWidth = 335;
+    render(
+      <LocaleProvider locale="es">
+        <BreadcrumbsField items={longTrail} accessibilityText="Ruta" />
+      </LocaleProvider>
+    );
+    expect(screen.getByRole("button", { name: "Show hidden levels" })).toBeInTheDocument();
+  });
+
+  it("keeps root, ellipsis and current page when nothing else fits, and truncates the current page", () => {
+    containerWidth = 120;
+    render(<BreadcrumbsField items={longTrail} />);
+    expect(linkNames()).toEqual(["Home"]);
+    expect(showHidden()).toBeInTheDocument();
+    const current = screen.getByText("Current");
+    expect(current).toHaveClass("truncate");
+    expect(current).not.toHaveAttribute("title");
+  });
+
+  it("never collapses fewer than three levels", () => {
+    containerWidth = 10;
+    render(<BreadcrumbsField items={[{ text: "Alpha", link: "#a" }, { text: "Beta" }]} />);
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("never collapses a single level", () => {
+    containerWidth = 10;
+    render(<BreadcrumbsField items={[{ text: "Home" }]} />);
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+  });
+
+  it("reveals every level on click, wraps, and focuses the first revealed level", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    render(<BreadcrumbsField items={longTrail} />);
+    await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(linkNames()).toEqual(names);
+    expect(screen.getByRole("list")).toHaveClass("flex-wrap");
+    expect(screen.getByRole("link", { name: "Shared" })).toHaveFocus();
+  });
+
+  it("focuses a plain-text first revealed level", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    const items = longTrail.map((item, index) => (index === 1 ? { text: item.text } : item));
+    render(<BreadcrumbsField items={items} />);
+    await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
+    const revealed = screen.getByText("Shared");
+    expect(revealed).toHaveAttribute("tabindex", "-1");
+    expect(revealed).toHaveFocus();
+  });
+
+  it("can be operated from the keyboard", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    render(<BreadcrumbsField items={longTrail} />);
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Home" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Show hidden levels" })).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("link", { name: "Shared" })).toHaveFocus();
+  });
+
+  it("stays expanded while the container narrows, and collapses again after it has fit", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    render(<BreadcrumbsField items={longTrail} />);
+    await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
+    resizeTo(120);
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(linkNames()).toEqual(names);
+    resizeTo(500);
+    expect(linkNames()).toEqual(names);
+    resizeTo(335);
+    expect(showHidden()).toBeInTheDocument();
+    expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
+  });
+
+  it("resets the expansion and collapses again when the levels change", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    const { rerender } = render(<BreadcrumbsField items={longTrail} />);
+    await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
+    expect(showHidden()).not.toBeInTheDocument();
+    rerender(
+      <BreadcrumbsField items={longTrail.map(item => (item.text === "Shared" ? { ...item, text: "Shared Drives" } : item))} />
+    );
+    expect(showHidden()).toBeInTheDocument();
+    expect(screen.queryByText("Shared Drives")).not.toBeInTheDocument();
+  });
+
+  it("re-evaluates when the container is resized", () => {
+    render(<BreadcrumbsField items={longTrail} />);
+    expect(showHidden()).not.toBeInTheDocument();
+    resizeTo(335);
+    expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
+    resizeTo(500);
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(linkNames()).toEqual(names);
+  });
+
+  it("shows the full trail while the container has no width, then measures once it does", () => {
+    containerWidth = 0;
+    render(<BreadcrumbsField items={longTrail} />);
+    expect(showHidden()).not.toBeInTheDocument();
+    expect(linkNames()).toEqual(names);
+    resizeTo(335);
+    expect(showHidden()).toBeInTheDocument();
+  });
+
+  it("attaches the resize observer when the trail first becomes visible", () => {
+    const { rerender } = render(<BreadcrumbsField items={longTrail} showWhen={false} />);
+    expect(observerCallbacks).toHaveLength(0);
+    rerender(<BreadcrumbsField items={longTrail} />);
+    expect(observerCallbacks).toHaveLength(1);
+    resizeTo(335);
+    expect(showHidden()).toBeInTheDocument();
+  });
+
+  it("moves focus to the ellipsis when a resize collapses the focused level", () => {
+    render(<BreadcrumbsField items={longTrail} />);
+    screen.getByRole("link", { name: "Contracts" }).focus();
+    resizeTo(120);
+    expect(screen.getByRole("button", { name: "Show hidden levels" })).toHaveFocus();
+  });
+
+  it("does not move focus when a resize collapses levels that are not focused", () => {
+    render(<BreadcrumbsField items={longTrail} />);
+    screen.getByRole("link", { name: "Home" }).focus();
+    resizeTo(120);
+    expect(screen.getByRole("link", { name: "Home" })).toHaveFocus();
+  });
+
+  it("hands focus to the new current page when a collapsed level is activated", async () => {
+    const user = userEvent.setup();
+    containerWidth = 335;
+    const Nav = () => {
+      const [depth, setDepth] = useState(longTrail.length);
+      const items = longTrail.slice(0, depth).map((item, index) => ({
+        text: item.text,
+        link: () => setDepth(index + 1),
+      }));
+      return <BreadcrumbsField items={items} />;
+    };
+    render(<Nav />);
+    expect(document.body).toHaveFocus();
+    await user.click(screen.getByRole("link", { name: "Renewals" }));
+    const current = screen.getByText("Renewals");
+    expect(current).toHaveAttribute("aria-current", "page");
+    expect(current).toHaveFocus();
+  });
+
+  it("keeps the chevron direction on every separator, including the one beside the ellipsis", () => {
+    localeState.direction = "RTL";
+    containerWidth = 300;
+    const { container } = render(<BreadcrumbsField items={longTrail} separator="CHEVRON" />);
+    expect(showHidden()).toBeInTheDocument();
+    const separators = getSeparators(container);
+    expect(separators).toHaveLength(4);
+    separators.forEach(separator => expect(separator).toHaveAttribute("data-separator-direction", "left"));
+  });
+
+  it("still evaluates on mount, without later resize updates, when ResizeObserver is unavailable", () => {
+    vi.stubGlobal("ResizeObserver", undefined);
+    containerWidth = 335;
+    render(<BreadcrumbsField items={longTrail} />);
+    expect(showHidden()).toBeInTheDocument();
+    resizeTo(500);
+    expect(showHidden()).toBeInTheDocument();
+  });
+
+  it("disconnects the resize observer on unmount", () => {
+    const { unmount } = render(<BreadcrumbsField items={longTrail} />);
+    expect(disconnect).not.toHaveBeenCalled();
+    unmount();
+    expect(disconnect).toHaveBeenCalled();
+  });
+
+  it("renders every level and no ellipsis on the server", () => {
+    const html = renderToString(<BreadcrumbsField items={longTrail} />);
+    for (const { text } of longTrail) expect(html).toContain(text);
+    expect(html).not.toContain("Show hidden levels");
   });
 });

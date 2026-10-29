@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { BreadcrumbsField } from './BreadcrumbsField'
 import type { BreadcrumbItem } from './BreadcrumbsField'
 import { HeadingField } from '../Heading/HeadingField'
@@ -40,31 +40,108 @@ export const ChevronSeparator: Story = {
   },
 }
 
-/** A single item shows only the current page, with no separator. */
-export const SingleLevel: Story = {
-  args: {
-    items: [{ text: 'Home' }],
-  },
-}
+const longTrailItems: BreadcrumbItem[] = [
+  { text: 'Home', link: '#home' },
+  { text: 'Shared Drives', link: '#shared' },
+  { text: 'Operations', link: '#operations' },
+  { text: 'Vendor Management', link: '#vendors' },
+  { text: 'Contracts', link: '#contracts' },
+  { text: 'Renewals', link: '#renewals' },
+  { text: 'Master Services Agreement Renewal' },
+]
 
-/** Long trails wrap onto the next line instead of overflowing. */
+/**
+ * When the whole trail does not fit on one line, the middle levels collapse into a "…" button.
+ * The first level and the current page always stay visible, along with as many of the nearest
+ * levels as fit. Look for the trail staying on one line, with "…" between Home and the last levels.
+ */
 export const LongTrail: Story = {
   args: {
-    items: [
-      { text: 'Home', link: '#home' },
-      { text: 'Shared Drives', link: '#shared' },
-      { text: 'Operations', link: '#operations' },
-      { text: 'Vendor Management', link: '#vendors' },
-      { text: 'Contracts', link: '#contracts' },
-      { text: 'Renewals', link: '#renewals' },
-      { text: 'Master Services Agreement Renewal' },
-    ],
+    items: longTrailItems,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('button', { name: 'Show hidden levels' })).toBeInTheDocument()
+    await expect(canvas.queryByRole('link', { name: 'Shared Drives' })).not.toBeInTheDocument()
+  },
+  render: (args) => (
+    <div className="max-w-2xl">
+      <BreadcrumbsField {...args} />
+    </div>
+  ),
+}
+
+/**
+ * When even the first level, "…", and the current page do not fit, the current page text
+ * truncates with an ellipsis. Select "…" to read the full trail.
+ */
+export const NarrowTrail: Story = {
+  args: {
+    items: longTrailItems,
+  },
+  render: (args) => (
+    <div className="max-w-xs">
+      <BreadcrumbsField {...args} />
+    </div>
+  ),
+}
+
+/**
+ * Select "…" to show every level. The trail wraps onto more lines as needed and focus moves to
+ * the first level that was hidden.
+ */
+export const ExpandHiddenLevels: Story = {
+  args: {
+    items: longTrailItems,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('button', { name: 'Show hidden levels' }))
+    await expect(canvas.queryByRole('button', { name: 'Show hidden levels' })).not.toBeInTheDocument()
+    for (const name of ['Home', 'Shared Drives', 'Operations', 'Vendor Management', 'Contracts', 'Renewals']) {
+      await expect(canvas.getByRole('link', { name })).toBeVisible()
+    }
+    await expect(canvas.getByRole('link', { name: 'Shared Drives' })).toHaveFocus()
   },
   render: (args) => (
     <div className="max-w-sm">
       <BreadcrumbsField {...args} />
     </div>
   ),
+}
+
+const trailWidths = {
+  narrow: 'max-w-xs',
+  wide: 'max-w-3xl',
+} as const
+
+/**
+ * The trail re-evaluates whenever its container changes width. Select Narrow to collapse the middle
+ * levels into "…", and Wide to show the whole trail again.
+ */
+export const ResizableTrail: Story = {
+  args: {
+    items: longTrailItems.slice(0, 5).map((item, index) => (index === 4 ? { text: item.text } : item)),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('button', { name: 'Narrow' }))
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Show hidden levels' })).toBeInTheDocument())
+    await userEvent.click(canvas.getByRole('button', { name: 'Wide' }))
+    await waitFor(() => expect(canvas.queryByRole('button', { name: 'Show hidden levels' })).not.toBeInTheDocument())
+  },
+  render: function ResizableTrailStory(args) {
+    const [width, setWidth] = useState<keyof typeof trailWidths>('wide')
+    return (
+      <div>
+        <div className={trailWidths[width]}>
+          <BreadcrumbsField {...args} />
+        </div>
+        <ButtonWidget label="Narrow" style="OUTLINE" size="SMALL" onClick={() => setWidth('narrow')} />
+        <ButtonWidget label="Wide" style="OUTLINE" size="SMALL" onClick={() => setWidth('wide')} />
+      </div>
+    )
+  },
 }
 
 const folders = ['Home', 'Documents', 'Policies', '2026 Travel Policy']

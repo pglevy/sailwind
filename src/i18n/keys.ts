@@ -85,6 +85,8 @@ export const KEYS = {
   dropdownNoResults: 'dropdown.noResults',
   /** BreadcrumbsField: default accessible name of the breadcrumb navigation. */
   breadcrumbsLabel: 'breadcrumbs.label',
+  /** BreadcrumbsField: accessible name of the "…" button that expands the collapsed middle levels. */
+  breadcrumbsShowHidden: 'breadcrumbs.showHidden',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */
