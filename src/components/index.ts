@@ -78,6 +78,8 @@ export * from './Paging'
 
 // SiteNav component
 export * from './SiteNav'
+// Breadcrumbs components
+export * from './Breadcrumbs'
 
 // RecordView template
 export * from './RecordView'
