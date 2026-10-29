@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
@@ -409,13 +409,18 @@ describe("BreadcrumbsField - truncation", () => {
   let containerWidth = 500;
   const observerCallbacks: Array<() => void> = [];
   const disconnect = vi.fn();
+  const constructed = vi.fn();
 
   beforeEach(() => {
+    // Testing Library unmounts after this file's afterEach, so clear calls left by the previous test
+    disconnect.mockClear();
+    constructed.mockClear();
     vi.stubGlobal(
       "ResizeObserver",
       class {
         private callback: () => void;
         constructor(callback: () => void) {
+          constructed();
           this.callback = callback;
         }
         observe() {
@@ -438,6 +443,7 @@ describe("BreadcrumbsField - truncation", () => {
     vi.restoreAllMocks();
     observerCallbacks.length = 0;
     disconnect.mockClear();
+    constructed.mockClear();
     containerWidth = 500;
   });
 
@@ -689,5 +695,154 @@ describe("BreadcrumbsField - truncation", () => {
     const html = renderToString(<BreadcrumbsField items={longTrail} />);
     for (const { text } of longTrail) expect(html).toContain(text);
     expect(html).not.toContain("Show hidden levels");
+  });
+
+  describe("overflow", () => {
+    it("defaults to COLLAPSE, so a narrow container still collapses when overflow is omitted", () => {
+      containerWidth = 335;
+      render(<BreadcrumbsField items={longTrail} />);
+      expect(showHidden()).toBeInTheDocument();
+      cleanup();
+      render(<BreadcrumbsField items={longTrail} overflow="COLLAPSE" />);
+      expect(showHidden()).toBeInTheDocument();
+      expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
+    });
+
+    it("WRAP renders every level in a wrapping list with no ellipsis, even in a narrow container", () => {
+      containerWidth = 120;
+      const { container } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      expect(showHidden()).not.toBeInTheDocument();
+      expect(linkNames()).toEqual(names);
+      expect(screen.getAllByRole("listitem")).toHaveLength(longTrail.length);
+      expect(screen.getByRole("list")).toHaveClass("flex-wrap");
+      expect(screen.getByRole("list")).not.toHaveClass("flex-nowrap");
+      const current = screen.getByText("Current");
+      expect(current).toHaveAttribute("aria-current", "page");
+      expect(current).not.toHaveClass("truncate");
+      expect(current).not.toHaveClass("focus-visible:ring-inset");
+      expect(container.querySelectorAll('li[class*="shrink-0"], li[class*="min-w-0"]')).toHaveLength(0);
+    });
+
+    it("WRAP does no measuring work", () => {
+      const fontsReady = vi.fn();
+      Object.defineProperty(document, "fonts", { configurable: true, value: { ready: { then: fontsReady } } });
+      try {
+        containerWidth = 120;
+        render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+        expect(constructed).not.toHaveBeenCalled();
+        expect(observerCallbacks).toHaveLength(0);
+        expect(Element.prototype.getBoundingClientRect).not.toHaveBeenCalled();
+        expect(fontsReady).not.toHaveBeenCalled();
+      } finally {
+        Reflect.deleteProperty(document, "fonts");
+      }
+    });
+
+    it("COLLAPSE observes the container and waits for web fonts", () => {
+      const fontsReady = vi.fn();
+      Object.defineProperty(document, "fonts", { configurable: true, value: { ready: { then: fontsReady } } });
+      try {
+        render(<BreadcrumbsField items={longTrail} />);
+        expect(constructed).toHaveBeenCalledTimes(1);
+        expect(observerCallbacks).toHaveLength(1);
+        expect(fontsReady).toHaveBeenCalledTimes(1);
+      } finally {
+        Reflect.deleteProperty(document, "fonts");
+      }
+    });
+
+    it("expands to the full wrapping trail and disconnects the observer when switching COLLAPSE to WRAP", () => {
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} />);
+      expect(showHidden()).toBeInTheDocument();
+      expect(disconnect).not.toHaveBeenCalled();
+      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      expect(showHidden()).not.toBeInTheDocument();
+      expect(linkNames()).toEqual(names);
+      expect(screen.getByRole("list")).toHaveClass("flex-wrap");
+      expect(screen.getByText("Current")).not.toHaveClass("truncate");
+      expect(disconnect).toHaveBeenCalledTimes(1);
+      // The disconnected observer no longer drives the layout
+      const callbacks = observerCallbacks.length;
+      resizeTo(120);
+      expect(showHidden()).not.toBeInTheDocument();
+      expect(observerCallbacks).toHaveLength(callbacks);
+    });
+
+    it("measures again and collapses when switching WRAP to COLLAPSE", () => {
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      expect(showHidden()).not.toBeInTheDocument();
+      rerender(<BreadcrumbsField items={longTrail} />);
+      expect(showHidden()).toBeInTheDocument();
+      expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
+      expect(constructed).toHaveBeenCalledTimes(1);
+      resizeTo(500);
+      expect(showHidden()).not.toBeInTheDocument();
+    });
+
+    it("collapses again after a round trip, even if the trail was expanded before", async () => {
+      const user = userEvent.setup();
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} />);
+      await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
+      expect(showHidden()).not.toBeInTheDocument();
+      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={longTrail} />);
+      expect(showHidden()).toBeInTheDocument();
+    });
+
+    it("measures the current trail when the levels changed while WRAP was active", () => {
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} />);
+      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      const renamed = longTrail.map(item => (item.text === "Contracts" ? { ...item, text: "Terms" } : item));
+      rerender(<BreadcrumbsField items={renamed} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={renamed} />);
+      expect(showHidden()).toBeInTheDocument();
+      expect(linkNames()).toEqual(["Home", "Ops", "Terms", "Renewals"]);
+    });
+
+    it("keeps focus on a level when switching to WRAP", () => {
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} />);
+      screen.getByRole("link", { name: "Contracts" }).focus();
+      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      expect(screen.getByRole("link", { name: "Contracts" })).toHaveFocus();
+    });
+
+    it("moves focus to the ellipsis when switching to COLLAPSE removes the focused level", () => {
+      containerWidth = 335;
+      const { rerender } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      screen.getByRole("link", { name: "Ops" }).focus();
+      rerender(<BreadcrumbsField items={longTrail} />);
+      expect(screen.getByRole("button", { name: "Show hidden levels" })).toHaveFocus();
+    });
+
+    it("still hands focus to the new current page after a function link is activated in WRAP", async () => {
+      const user = userEvent.setup();
+      containerWidth = 335;
+      const Nav = () => {
+        const [depth, setDepth] = useState(longTrail.length);
+        const items = longTrail.slice(0, depth).map((item, index) => ({
+          text: item.text,
+          link: () => setDepth(index + 1),
+        }));
+        return <BreadcrumbsField items={items} overflow="WRAP" />;
+      };
+      render(<Nav />);
+      await user.click(screen.getByRole("link", { name: "Renewals" }));
+      const current = screen.getByText("Renewals");
+      expect(current).toHaveAttribute("aria-current", "page");
+      expect(current).toHaveFocus();
+    });
+
+    it("renders the full trail on the server with WRAP", () => {
+      const html = renderToString(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      for (const { text } of longTrail) expect(html).toContain(text);
+      expect(html).not.toContain("Show hidden levels");
+      expect(html).toContain("flex-wrap");
+      expect(html).not.toContain("whitespace-nowrap");
+    });
   });
 });

@@ -14,6 +14,13 @@ import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 export type BreadcrumbsSeparator = "SLASH" | "CHEVRON"
 
 /**
+ * What happens when the trail is wider than its container. Not in SAIL.
+ * - COLLAPSE: the middle levels collapse into a "…" button so the trail stays on one line
+ * - WRAP: every level always shows and a long trail wraps onto several lines
+ */
+export type BreadcrumbsOverflow = "COLLAPSE" | "WRAP"
+
+/**
  * One level in the breadcrumb hierarchy.
  */
 export interface BreadcrumbItem {
@@ -60,8 +67,10 @@ export interface BreadcrumbItem {
  * the trail to all levels (wrapping onto multiple lines) and moves focus to the
  * first revealed level. It stays expanded until the levels change or the container
  * is wide enough for the whole trail. Collapse is automatic and width-based (not in
- * SAIL) and there is no prop to turn it off. When even the first level, "…", and
- * the current page do not fit, the current page text truncates with an ellipsis.
+ * SAIL). Set `overflow="WRAP"` (not in SAIL) to turn it off: every level always
+ * shows and a long trail wraps onto several lines, with no measuring and no "…" button.
+ * When even the first level, "…", and the current page do not fit, the current page
+ * text truncates with an ellipsis.
  * Trails of fewer than three levels never collapse. The button's accessible name
  * comes from the library string `breadcrumbs.showHidden` ("Show hidden levels").
  */
@@ -70,6 +79,16 @@ export interface BreadcrumbsFieldProps {
   items: BreadcrumbItem[]
   /** Character shown between items. Not in SAIL. Default: "SLASH" */
   separator?: BreadcrumbsSeparator
+  /**
+   * What happens when the trail is wider than its container. Not in SAIL.
+   * "COLLAPSE" collapses the middle levels into a "…" button so the trail stays on one line.
+   * "WRAP" never collapses: every level shows and a long trail wraps onto several lines.
+   * Default: "COLLAPSE"
+   *
+   * Switching from "COLLAPSE" to "WRAP" while the "…" button has focus drops focus to the
+   * page body because the button is removed. Focused levels keep focus.
+   */
+  overflow?: BreadcrumbsOverflow
   /** Accessible name for the breadcrumb navigation. Use it to tell multiple trails on one page apart. Default: "Breadcrumbs" */
   accessibilityText?: string
   /** Controls field visibility */
@@ -154,6 +173,7 @@ function computeTail(widths: number[], ellipsisWidth: number, available: number)
 export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
   items,
   separator = "SLASH",
+  overflow = "COLLAPSE",
   accessibilityText,
   showWhen = true,
   marginAbove = "NONE",
@@ -207,21 +227,31 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
 
   // measure: full trail until the current trail has been measured (also what SSR renders)
   // full: whole trail, wrapping; collapsed: root, "…", nearest levels, current page on one line
+  // WRAP never measures or collapses, so it always renders the full layout (on the server too)
+  const collapsible = overflow === 'COLLAPSE'
   const measured = layout.sig === sig
-  const expanded = expansion !== null && expansion.sig === sig
-  const tail = measured && !expanded && n >= 3 ? layout.tail : null
-  const mode: 'measure' | 'full' | 'collapsed' = !measured ? 'measure' : tail === null ? 'full' : 'collapsed'
+  const expanded = collapsible && expansion !== null && expansion.sig === sig
+  const tail = collapsible && measured && !expanded && n >= 3 ? layout.tail : null
+  const mode: 'measure' | 'full' | 'collapsed' = !collapsible
+    ? 'full'
+    : !measured
+      ? 'measure'
+      : tail === null
+        ? 'full'
+        : 'collapsed'
 
   // Read by evaluate(), which also runs from the ResizeObserver, so it must not close over render values
-  const latestRef = React.useRef({ sig, n, expanded, mode })
+  const latestRef = React.useRef({ sig, n, expanded, mode, collapsible })
   useIsomorphicLayoutEffect(() => {
-    latestRef.current = { sig, n, expanded, mode }
+    latestRef.current = { sig, n, expanded, mode, collapsible }
   })
 
   const evaluate = React.useCallback(() => {
     const ol = olRef.current
     if (!ol) return
-    const { sig: currentSig, n: count, expanded: isExpanded, mode: currentMode } = latestRef.current
+    const { sig: currentSig, n: count, expanded: isExpanded, mode: currentMode, collapsible: canCollapse } = latestRef.current
+    // WRAP does no measuring work
+    if (!canCollapse) return
     const available = ol.getBoundingClientRect().width
     // Hidden or not laid out (display:none, jsdom): keep the current layout and retry on the next resize
     if (!(available > 0)) return
@@ -274,6 +304,16 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
     setExpansion(prev => (prev && prev.sig !== sig ? null : prev))
   }, [sig])
 
+  // Leaving COLLAPSE: forget the measurements and any expansion, so switching back to
+  // COLLAPSE measures the current trail again instead of reusing a stale collapse
+  useIsomorphicLayoutEffect(() => {
+    if (collapsible) return
+    metricsRef.current = null
+    focusEllipsisRef.current = false
+    setLayout(prev => (prev.sig === '' && prev.tail === null ? prev : { sig: '', tail: null }))
+    setExpansion(prev => (prev === null ? prev : null))
+  }, [collapsible])
+
   // Move focus to the first revealed level when the "…" button is activated
   useIsomorphicLayoutEffect(() => {
     if (expanded) revealTargetRef.current?.focus()
@@ -288,15 +328,15 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
   })
 
   React.useEffect(() => {
-    if (!isRendered || typeof ResizeObserver === 'undefined' || !olRef.current) return
+    if (!collapsible || !isRendered || typeof ResizeObserver === 'undefined' || !olRef.current) return
     const observer = new ResizeObserver(() => evaluate())
     observer.observe(olRef.current)
     return () => observer.disconnect()
-  }, [isRendered, evaluate])
+  }, [collapsible, isRendered, evaluate])
 
   // Web fonts change text widths, so drop the cached widths and measure again once they load
   React.useEffect(() => {
-    if (typeof document === 'undefined' || !document.fonts?.ready) return
+    if (!collapsible || typeof document === 'undefined' || !document.fonts?.ready) return
     let live = true
     document.fonts.ready.then(() => {
       if (!live) return
@@ -306,7 +346,7 @@ export const BreadcrumbsField: React.FC<BreadcrumbsFieldProps> = ({
     return () => {
       live = false
     }
-  }, [])
+  }, [collapsible])
 
   if (!showWhen) return null
   if (n === 0) return null

@@ -23,6 +23,7 @@ const meta = {
   },
   argTypes: {
     separator: { control: 'select', options: ['SLASH', 'CHEVRON'] },
+    overflow: { control: 'select', options: ['COLLAPSE', 'WRAP'] },
     marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
   },
@@ -55,7 +56,8 @@ const longTrailItems: BreadcrumbItem[] = [
  * The first level and the current page always stay visible, along with as many of the nearest
  * levels as fit. Look for the trail staying on one line, with "…" between Home and the last levels.
  * Select "…" to show every level: the trail wraps as needed and focus moves to the first level
- * that was hidden.
+ * that was hidden. Set `overflow` to `WRAP` in Controls to show every level and let the trail wrap
+ * onto several lines instead.
  */
 export const LongTrail: Story = {
   args: {
