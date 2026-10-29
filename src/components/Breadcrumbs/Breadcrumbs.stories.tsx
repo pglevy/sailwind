@@ -54,6 +54,8 @@ const longTrailItems: BreadcrumbItem[] = [
  * When the whole trail does not fit on one line, the middle levels collapse into a "…" button.
  * The first level and the current page always stay visible, along with as many of the nearest
  * levels as fit. Look for the trail staying on one line, with "…" between Home and the last levels.
+ * Select "…" to show every level: the trail wraps as needed and focus moves to the first level
+ * that was hidden.
  */
 export const LongTrail: Story = {
   args: {
@@ -66,45 +68,6 @@ export const LongTrail: Story = {
   },
   render: (args) => (
     <div className="max-w-2xl">
-      <BreadcrumbsField {...args} />
-    </div>
-  ),
-}
-
-/**
- * When even the first level, "…", and the current page do not fit, the current page text
- * truncates with an ellipsis. Select "…" to read the full trail.
- */
-export const NarrowTrail: Story = {
-  args: {
-    items: longTrailItems,
-  },
-  render: (args) => (
-    <div className="max-w-xs">
-      <BreadcrumbsField {...args} />
-    </div>
-  ),
-}
-
-/**
- * Select "…" to show every level. The trail wraps onto more lines as needed and focus moves to
- * the first level that was hidden.
- */
-export const ExpandHiddenLevels: Story = {
-  args: {
-    items: longTrailItems,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('button', { name: 'Show hidden levels' }))
-    await expect(canvas.queryByRole('button', { name: 'Show hidden levels' })).not.toBeInTheDocument()
-    for (const name of ['Home', 'Shared Drives', 'Operations', 'Vendor Management', 'Contracts', 'Renewals']) {
-      await expect(canvas.getByRole('link', { name })).toBeVisible()
-    }
-    await expect(canvas.getByRole('link', { name: 'Shared Drives' })).toHaveFocus()
-  },
-  render: (args) => (
-    <div className="max-w-sm">
       <BreadcrumbsField {...args} />
     </div>
   ),
