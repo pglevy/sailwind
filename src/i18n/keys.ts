@@ -99,6 +99,8 @@ export const KEYS = {
   fileUploadFileTooLarge: 'fileUpload.fileTooLarge',
   /** FileUploadField: error when a selection would exceed maxSelections — `The maximum number of files is {0}.` */
   fileUploadTooManyFiles: 'fileUpload.tooManyFiles',
+  /** BreadcrumbsField: default accessible name of the breadcrumb navigation. */
+  breadcrumbsLabel: 'breadcrumbs.label',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */

@@ -70,6 +70,7 @@ const EXPECTED: Record<TranslationKey, string> = {
   "fileUpload.typeNotAllowed": "{0} cannot be uploaded. Only {1} files are supported.",
   "fileUpload.fileTooLarge": "{0} cannot be uploaded. Files must be {1} or smaller.",
   "fileUpload.tooManyFiles": "The maximum number of files is {0}.",
+  "breadcrumbs.label": "Breadcrumbs",
 };
 
 /** The full library key catalog, as the dotted `.properties` key strings. */
