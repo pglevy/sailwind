@@ -23,6 +23,7 @@ const meta = {
   },
   argTypes: {
     separator: { control: 'select', options: ['SLASH', 'CHEVRON'] },
+    overflow: { control: 'select', options: ['COLLAPSE', 'WRAP'] },
     marginAbove: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
     marginBelow: { control: 'select', options: ['NONE', 'EVEN_LESS', 'LESS', 'STANDARD', 'MORE', 'EVEN_MORE'] },
   },
@@ -40,28 +41,35 @@ export const ChevronSeparator: Story = {
   },
 }
 
-/** A single item shows only the current page, with no separator. */
-export const SingleLevel: Story = {
-  args: {
-    items: [{ text: 'Home' }],
-  },
-}
+const longTrailItems: BreadcrumbItem[] = [
+  { text: 'Home', link: '#home' },
+  { text: 'Shared Drives', link: '#shared' },
+  { text: 'Operations', link: '#operations' },
+  { text: 'Vendor Management', link: '#vendors' },
+  { text: 'Contracts', link: '#contracts' },
+  { text: 'Renewals', link: '#renewals' },
+  { text: 'Master Services Agreement Renewal' },
+]
 
-/** Long trails wrap onto the next line instead of overflowing. */
+/**
+ * When the whole trail does not fit on one line, the middle levels collapse into a "…" button.
+ * The first level and the current page always stay visible, along with as many of the nearest
+ * levels as fit. Look for the trail staying on one line, with "…" between Home and the last levels.
+ * Select "…" to show every level: the trail wraps as needed and focus moves to the first level
+ * that was hidden. Set `overflow` to `WRAP` in Controls to show every level and let the trail wrap
+ * onto several lines instead.
+ */
 export const LongTrail: Story = {
   args: {
-    items: [
-      { text: 'Home', link: '#home' },
-      { text: 'Shared Drives', link: '#shared' },
-      { text: 'Operations', link: '#operations' },
-      { text: 'Vendor Management', link: '#vendors' },
-      { text: 'Contracts', link: '#contracts' },
-      { text: 'Renewals', link: '#renewals' },
-      { text: 'Master Services Agreement Renewal' },
-    ],
+    items: longTrailItems,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('button', { name: 'Show hidden levels' })).toBeInTheDocument()
+    await expect(canvas.queryByRole('link', { name: 'Shared Drives' })).not.toBeInTheDocument()
   },
   render: (args) => (
-    <div className="max-w-sm">
+    <div className="max-w-2xl">
       <BreadcrumbsField {...args} />
     </div>
   ),
