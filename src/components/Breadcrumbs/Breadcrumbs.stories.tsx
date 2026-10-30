@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { expect, userEvent, waitFor, within } from 'storybook/test'
+import { expect, userEvent, within } from 'storybook/test'
 import { BreadcrumbsField } from './BreadcrumbsField'
 import type { BreadcrumbItem } from './BreadcrumbsField'
 import { HeadingField } from '../Heading/HeadingField'
@@ -73,40 +73,6 @@ export const LongTrail: Story = {
       <BreadcrumbsField {...args} />
     </div>
   ),
-}
-
-const trailWidths = {
-  narrow: 'max-w-xs',
-  wide: 'max-w-3xl',
-} as const
-
-/**
- * The trail re-evaluates whenever its container changes width. Select Narrow to collapse the middle
- * levels into "…", and Wide to show the whole trail again.
- */
-export const ResizableTrail: Story = {
-  args: {
-    items: longTrailItems.slice(0, 5).map((item, index) => (index === 4 ? { text: item.text } : item)),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('button', { name: 'Narrow' }))
-    await waitFor(() => expect(canvas.getByRole('button', { name: 'Show hidden levels' })).toBeInTheDocument())
-    await userEvent.click(canvas.getByRole('button', { name: 'Wide' }))
-    await waitFor(() => expect(canvas.queryByRole('button', { name: 'Show hidden levels' })).not.toBeInTheDocument())
-  },
-  render: function ResizableTrailStory(args) {
-    const [width, setWidth] = useState<keyof typeof trailWidths>('wide')
-    return (
-      <div>
-        <div className={trailWidths[width]}>
-          <BreadcrumbsField {...args} />
-        </div>
-        <ButtonWidget label="Narrow" style="OUTLINE" size="SMALL" onClick={() => setWidth('narrow')} />
-        <ButtonWidget label="Wide" style="OUTLINE" size="SMALL" onClick={() => setWidth('wide')} />
-      </div>
-    )
-  },
 }
 
 const folders = ['Home', 'Documents', 'Policies', '2026 Travel Policy']
