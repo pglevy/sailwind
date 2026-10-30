@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { X, File, FileImage, FileCode, FileText } from 'lucide-react'
 import { mergeClasses } from '../../utils/classNames'
+import { formatFileSize } from '../../utils/formatFileSize'
+import { useI18n, KEYS } from '../../i18n'
 
 export interface FileCardProps {
   /** The file name to display */
@@ -35,12 +37,6 @@ function getFileIcon(filename: string) {
   return <FileText size={20} className="shrink-0 text-gray-700" />
 }
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-
 export const FileCard: React.FC<FileCardProps> = ({
   fileName,
   fileSize,
@@ -50,6 +46,7 @@ export const FileCard: React.FC<FileCardProps> = ({
   maxWidth = '320px',
   className,
 }) => {
+  const { t } = useI18n()
   const extension = fileType || getFileExtension(fileName)
   const icon = getFileIcon(fileName)
   const formattedSize = formatFileSize(fileSize)
@@ -65,11 +62,12 @@ export const FileCard: React.FC<FileCardProps> = ({
       </div>
       {showRemove && (
         <button
+          type="button"
           onClick={onRemove}
-          aria-label={`Remove ${fileName}`}
+          aria-label={t(KEYS.fileCardRemove, fileName)}
           className="shrink-0 p-1 rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
         >
-          <X size={16} />
+          <X size={16} aria-hidden="true" />
         </button>
       )}
     </div>

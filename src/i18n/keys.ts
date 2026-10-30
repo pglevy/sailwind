@@ -83,6 +83,22 @@ export const KEYS = {
   recordViewMoreActions: 'recordView.moreActions',
   /** DropdownField / MultipleDropdownField: message shown when a search matches no options. */
   dropdownNoResults: 'dropdown.noResults',
+  /** FileCard: aria-label of the remove button — `Remove {0}` (file name). */
+  fileCardRemove: 'fileCard.remove',
+  /** FileUploadField: upload button label (or aria-label when the button shows only an icon). */
+  fileUploadButton: 'fileUpload.button',
+  /** FileUploadField: default placeholder for the `COMPACT` drop zone. */
+  fileUploadPlaceholderCompact: 'fileUpload.placeholderCompact',
+  /** FileUploadField: default placeholder for the `EXPANDED` drop zone, substituted as `{1}` into {@link KEYS.fileUploadExpandedPrompt}. */
+  fileUploadPlaceholderExpanded: 'fileUpload.placeholderExpanded',
+  /** FileUploadField: `EXPANDED` drop zone phrase — `{0} or {1}`, where `{0}` is the upload button node and `{1}` the placeholder. */
+  fileUploadExpandedPrompt: 'fileUpload.expandedPrompt',
+  /** FileUploadField: error for a disallowed file type — `{0} cannot be uploaded. Only {1} files are supported.` (file name, extension list). */
+  fileUploadTypeNotAllowed: 'fileUpload.typeNotAllowed',
+  /** FileUploadField: error for a file over the size limit — `{0} cannot be uploaded. Files must be {1} or smaller.` (file name, size). */
+  fileUploadFileTooLarge: 'fileUpload.fileTooLarge',
+  /** FileUploadField: error when a selection would exceed maxSelections — `The maximum number of files is {0}.` */
+  fileUploadTooManyFiles: 'fileUpload.tooManyFiles',
   /** BreadcrumbsField: default accessible name of the breadcrumb navigation. */
   breadcrumbsLabel: 'breadcrumbs.label',
   /** BreadcrumbsField: accessible name of the "…" button that expands the collapsed middle levels. */
