@@ -697,20 +697,20 @@ describe("BreadcrumbsField - truncation", () => {
     expect(html).not.toContain("Show hidden levels");
   });
 
-  describe("overflow", () => {
-    it("defaults to COLLAPSE, so a narrow container still collapses when overflow is omitted", () => {
+  describe("preventWrapping", () => {
+    it("defaults to true, so a narrow container still collapses when preventWrapping is omitted", () => {
       containerWidth = 335;
       render(<BreadcrumbsField items={longTrail} />);
       expect(showHidden()).toBeInTheDocument();
       cleanup();
-      render(<BreadcrumbsField items={longTrail} overflow="COLLAPSE" />);
+      render(<BreadcrumbsField items={longTrail} preventWrapping />);
       expect(showHidden()).toBeInTheDocument();
       expect(linkNames()).toEqual(["Home", "Contracts", "Renewals"]);
     });
 
-    it("WRAP renders every level in a wrapping list with no ellipsis, even in a narrow container", () => {
+    it("false renders every level in a wrapping list with no ellipsis, even in a narrow container", () => {
       containerWidth = 120;
-      const { container } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      const { container } = render(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       expect(showHidden()).not.toBeInTheDocument();
       expect(linkNames()).toEqual(names);
       expect(screen.getAllByRole("listitem")).toHaveLength(longTrail.length);
@@ -723,12 +723,12 @@ describe("BreadcrumbsField - truncation", () => {
       expect(container.querySelectorAll('li[class*="shrink-0"], li[class*="min-w-0"]')).toHaveLength(0);
     });
 
-    it("WRAP does no measuring work", () => {
+    it("false does no measuring work", () => {
       const fontsReady = vi.fn();
       Object.defineProperty(document, "fonts", { configurable: true, value: { ready: { then: fontsReady } } });
       try {
         containerWidth = 120;
-        render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+        render(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
         expect(constructed).not.toHaveBeenCalled();
         expect(observerCallbacks).toHaveLength(0);
         expect(Element.prototype.getBoundingClientRect).not.toHaveBeenCalled();
@@ -738,7 +738,7 @@ describe("BreadcrumbsField - truncation", () => {
       }
     });
 
-    it("COLLAPSE observes the container and waits for web fonts", () => {
+    it("true observes the container and waits for web fonts", () => {
       const fontsReady = vi.fn();
       Object.defineProperty(document, "fonts", { configurable: true, value: { ready: { then: fontsReady } } });
       try {
@@ -751,12 +751,12 @@ describe("BreadcrumbsField - truncation", () => {
       }
     });
 
-    it("expands to the full wrapping trail and disconnects the observer when switching COLLAPSE to WRAP", () => {
+    it("expands to the full wrapping trail and disconnects the observer when switching from true to false", () => {
       containerWidth = 335;
       const { rerender } = render(<BreadcrumbsField items={longTrail} />);
       expect(showHidden()).toBeInTheDocument();
       expect(disconnect).not.toHaveBeenCalled();
-      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       expect(showHidden()).not.toBeInTheDocument();
       expect(linkNames()).toEqual(names);
       expect(screen.getByRole("list")).toHaveClass("flex-wrap");
@@ -769,9 +769,9 @@ describe("BreadcrumbsField - truncation", () => {
       expect(observerCallbacks).toHaveLength(callbacks);
     });
 
-    it("measures again and collapses when switching WRAP to COLLAPSE", () => {
+    it("measures again and collapses when switching from false to true", () => {
       containerWidth = 335;
-      const { rerender } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      const { rerender } = render(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       expect(showHidden()).not.toBeInTheDocument();
       rerender(<BreadcrumbsField items={longTrail} />);
       expect(showHidden()).toBeInTheDocument();
@@ -787,39 +787,39 @@ describe("BreadcrumbsField - truncation", () => {
       const { rerender } = render(<BreadcrumbsField items={longTrail} />);
       await user.click(screen.getByRole("button", { name: "Show hidden levels" }));
       expect(showHidden()).not.toBeInTheDocument();
-      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       rerender(<BreadcrumbsField items={longTrail} />);
       expect(showHidden()).toBeInTheDocument();
     });
 
-    it("measures the current trail when the levels changed while WRAP was active", () => {
+    it("measures the current trail when the levels changed while preventWrapping was false", () => {
       containerWidth = 335;
       const { rerender } = render(<BreadcrumbsField items={longTrail} />);
-      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       const renamed = longTrail.map(item => (item.text === "Contracts" ? { ...item, text: "Terms" } : item));
-      rerender(<BreadcrumbsField items={renamed} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={renamed} preventWrapping={false} />);
       rerender(<BreadcrumbsField items={renamed} />);
       expect(showHidden()).toBeInTheDocument();
       expect(linkNames()).toEqual(["Home", "Ops", "Terms", "Renewals"]);
     });
 
-    it("keeps focus on a level when switching to WRAP", () => {
+    it("keeps focus on a level when switching to false", () => {
       containerWidth = 335;
       const { rerender } = render(<BreadcrumbsField items={longTrail} />);
       screen.getByRole("link", { name: "Contracts" }).focus();
-      rerender(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      rerender(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       expect(screen.getByRole("link", { name: "Contracts" })).toHaveFocus();
     });
 
-    it("moves focus to the ellipsis when switching to COLLAPSE removes the focused level", () => {
+    it("moves focus to the ellipsis when switching to true removes the focused level", () => {
       containerWidth = 335;
-      const { rerender } = render(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+      const { rerender } = render(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       screen.getByRole("link", { name: "Ops" }).focus();
       rerender(<BreadcrumbsField items={longTrail} />);
       expect(screen.getByRole("button", { name: "Show hidden levels" })).toHaveFocus();
     });
 
-    it("still hands focus to the new current page after a function link is activated in WRAP", async () => {
+    it("still hands focus to the new current page after a function link is activated with preventWrapping false", async () => {
       const user = userEvent.setup();
       containerWidth = 335;
       const Nav = () => {
@@ -828,7 +828,7 @@ describe("BreadcrumbsField - truncation", () => {
           text: item.text,
           link: () => setDepth(index + 1),
         }));
-        return <BreadcrumbsField items={items} overflow="WRAP" />;
+        return <BreadcrumbsField items={items} preventWrapping={false} />;
       };
       render(<Nav />);
       await user.click(screen.getByRole("link", { name: "Renewals" }));
@@ -837,8 +837,8 @@ describe("BreadcrumbsField - truncation", () => {
       expect(current).toHaveFocus();
     });
 
-    it("renders the full trail on the server with WRAP", () => {
-      const html = renderToString(<BreadcrumbsField items={longTrail} overflow="WRAP" />);
+    it("renders the full trail on the server with preventWrapping false", () => {
+      const html = renderToString(<BreadcrumbsField items={longTrail} preventWrapping={false} />);
       for (const { text } of longTrail) expect(html).toContain(text);
       expect(html).not.toContain("Show hidden levels");
       expect(html).toContain("flex-wrap");
