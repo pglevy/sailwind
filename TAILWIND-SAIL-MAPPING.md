@@ -63,11 +63,15 @@ The base spacing unit is `--spacing: 0.25rem`, so all Tailwind spacing utilities
 
 ## Color Palette
 
-All color families use a **full 10-step scale**: `50, 100, 200, 300, 400, 500, 600, 700, 800, 900`
+All color families use a **full 11-step scale**: `50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950`
 
 ### Available Color Families
 
-`red`, `burnt-orange`, `orange`, `amber`, `yellow`, `lime`, `green`, `teal`, `cyan`, `sky`, `blue`, `violet`, `purple`, `pink`, `gray`
+`slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`
+
+`burnt-orange` is **deprecated** — kept for backward compatibility and resolves to its original values, but new work should use `orange`. It will be removed in a future breaking release.
+
+The `blue` family keeps the original Appian blue values (`blue-500` = `#2322F0`) rather than stock Tailwind. Appian blue meets WCAG AA contrast with white text (8.21:1), while stock Tailwind `blue-500` (`#3B82F6`) does not (3.68:1). All other families use the stock Tailwind values from the Figma export.
 
 ### Recommended Steps by Use Case
 
@@ -100,10 +104,10 @@ In Sailwind components, semantic colors map to:
 | Semantic | Tailwind Class | Hex |
 |----------|---------------|-----|
 | ACCENT | `blue-500` | #2322F0 |
-| POSITIVE | `green-700` | #357A38 |
-| NEGATIVE | `red-700` | #9B0027 |
-| SECONDARY | `gray-700` | #616161 |
-| STANDARD | `gray-900` | #212121 |
+| POSITIVE | `green-700` | #15803D |
+| NEGATIVE | `red-700` | #B91C1C |
+| SECONDARY | `gray-700` | #374151 |
+| STANDARD | `gray-900` | #111827 |
 
 ## Component Size Mappings
 
@@ -175,8 +179,8 @@ Key overrides from Tailwind defaults:
   /* Custom border radius (overrides default 2px) */
   --radius-sm: 0.25rem;      /* 4px - SAIL SEMI_ROUNDED */
 
-  /* Full color palette - all 15 families × 10 steps */
-  --color-red-50: #FCE6EB;
+  /* Full color palette - 22 families × 11 steps (plus deprecated burnt-orange) */
+  --color-red-50: #FEF2F2;
   /* ... all color definitions ... */
 }
 ```
@@ -216,7 +220,7 @@ pnpm run generate:css
 ✅ **Token-driven theme** - Single source of truth in `tokens/tokens.json`
 ✅ **SAIL-exact at API level** - Components accept SAIL parameter names
 ✅ **LLM-friendly** - Clear, consistent patterns for code generation
-✅ **Full color palette** - 15 families × 10 steps for rich UI expression
+✅ **Full color palette** - 22 families × 11 steps for rich UI expression
 
 ## For LLM Steering Files
 
@@ -226,7 +230,7 @@ When documenting for AI assistants, use:
 
 **Spacing:** `p-0`, `p-1`, `p-2`, `p-4`, `p-6`, `p-8` (and `m-*` equivalents)
 
-**Colors:** 15 families (`red`, `burnt-orange`, `orange`, `amber`, `yellow`, `lime`, `green`, `teal`, `cyan`, `sky`, `blue`, `violet`, `purple`, `pink`, `gray`), steps `50`–`900`
+**Colors:** 22 families (`slate`, `gray`, `zinc`, `neutral`, `stone`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`), steps `50`–`950`. `burnt-orange` is deprecated (use `orange`).
 
 **Example:**
 ```
