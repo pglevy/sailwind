@@ -5,6 +5,7 @@ import { ToggleField } from '../Toggle/ToggleField'
 import { ButtonToggle } from '../ButtonToggle/ButtonToggle'
 import type { SAILColorInput } from '../../types/sail'
 import { paletteHexMap, type SAILPaletteColor } from '../../types/palette-colors.generated'
+import { getContrastColor } from '../../utils/colorResolver'
 import {
   ICON_APP,
   ICON_INTERFACE,
@@ -90,16 +91,6 @@ export const ApplicationHeader: React.FC<ApplicationHeaderProps> = ({
     ? paletteHexMap[backgroundColor as SAILPaletteColor]
     : backgroundColor
   const validBgColor = resolvedBgColor && isValidHex(resolvedBgColor) ? resolvedBgColor : undefined
-
-  // WCAG contrast helper — returns '#ffffff' or '#000000' for a hex bg
-  const getContrastColor = (hex: string): string => {
-    const r = parseInt(hex.slice(1, 3), 16)
-    const g = parseInt(hex.slice(3, 5), 16)
-    const b = parseInt(hex.slice(5, 7), 16)
-    const toLinear = (c: number) => { const s = c / 255; return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4) }
-    const L = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
-    return (1.05 / (L + 0.05)) >= ((L + 0.05) / 0.05) ? '#ffffff' : '#000000'
-  }
 
   const fgColor = validBgColor ? getContrastColor(validBgColor) : undefined
   const isLight = fgColor === '#000000'
