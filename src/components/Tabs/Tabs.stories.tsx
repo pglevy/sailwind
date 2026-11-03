@@ -333,9 +333,6 @@ export const FullWidthSeparator: Story = {
 
 export const LightBackground: Story = {
   name: 'Light Background (Non-White)',
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (inactive tabs use opacity-70): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: 'todo' } },
   args: {
     tabs: simpleTabs,
     defaultValue: 'tab1',

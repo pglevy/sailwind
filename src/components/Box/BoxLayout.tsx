@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { SAILShape, SAILPadding, SAILMarginSize } from '../../types/sail'
-import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
+import { isPaletteColor, resolveColorClass, resolveColorToHex, getContrastColor, flattenHexAlpha } from '../../utils/colorResolver'
 import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap, paddingMap, shapeMap } from '../../utils/sailMaps'
 import { useI18n, KEYS } from '../../i18n'
@@ -161,7 +161,8 @@ function resolveHeaderColors(style: BoxStyle): HeaderColorResolution {
   // passed to getContrastColor as-is.
   return {
     bgInlineStyle: { backgroundColor: style },
-    labelInlineStyle: { color: getContrastColor(style) },
+    // Composite alpha over white first: a translucent fill reads lighter than its hex digits suggest.
+    labelInlineStyle: { color: getContrastColor(flattenHexAlpha(style)) },
   }
 }
 

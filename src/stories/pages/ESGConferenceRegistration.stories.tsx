@@ -11,7 +11,4 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (Dropdown placeholder text): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: 'todo' } },
 }
