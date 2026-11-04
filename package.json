@@ -5,6 +5,9 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "sailwind": "./bin/sailwind.mjs"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -17,6 +20,7 @@
   },
   "files": [
     "dist",
+    "bin",
     "README.md",
     "LICENSE"
   ],
