@@ -16,6 +16,16 @@ Use the **[sailwind-starter](https://github.com/pglevy/sailwind-starter)** templ
 
 Browse the **[Storybook component reference](https://pglevy.github.io/sailwind/components/)** to see what's available.
 
+### Scaffold a project with the CLI (prototype)
+
+```bash
+pnpm dlx @pglevy/sailwind new my-app            # from sailwind-starter, installs deps, git init
+pnpm dlx @pglevy/sailwind new my-app --gitlab   # also creates an internal GitLab repo and pushes
+pnpm dlx @pglevy/sailwind doctor                # check node, pnpm, git, glab
+```
+
+Options: `--dest <dir>` (default `~/Documents`), `--ref <branch|tag>`, `--no-install`, `--json`. The new project's `@pglevy/sailwind` dependency is pinned to the CLI's own version, so the starter never lags the library.
+
 ### Installation
 
 ```bash
