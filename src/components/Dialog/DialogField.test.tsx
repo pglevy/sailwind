@@ -161,10 +161,12 @@ describe("DialogField - keyboard / outside click", () => {
 describe("DialogField - width/height classes", () => {
   // Radix Dialog renders into a portal (document.body), not container
   const widthCases: Array<[DialogWidth, string]> = [
-    ["NARROW", "max-w-sm"],
-    ["MEDIUM", "max-w-md"],
-    ["MEDIUM_PLUS", "max-w-lg"],
-    ["WIDE", "max-w-2xl"],
+    ["NARROW", "max-w-[480px]"],
+    ["MEDIUM", "max-w-[720px]"],
+    ["MEDIUM_PLUS", "max-w-[960px]"],
+    ["WIDE", "max-w-[1200px]"],
+    ["EXTRA_WIDE", "max-w-[1440px]"],
+    ["FIT", "w-[96%]"],
   ];
 
   widthCases.forEach(([width, expectedClass]) => {
