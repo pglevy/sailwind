@@ -29,6 +29,6 @@ describe("ToggleField - help icon", () => {
       </LocaleProvider>
     );
     expect(screen.getByRole("img", { name: "ayuda" })).toBeInTheDocument();
-    expect(screen.getByLabelText("obligatorio")).toHaveTextContent("*");
+    expect(screen.getByText("obligatorio")).toHaveClass("sr-only");
   });
 });
