@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   contrastRatio,
+  flattenHexAlpha,
   getAccessibleTextColor,
   getContrastColor,
 } from "./colorResolver";
@@ -93,5 +94,26 @@ describe("getAccessibleTextColor", () => {
 
   it("expands shorthand hex values", () => {
     expect(contrastRatio(getAccessibleTextColor("#ff0"), "#FFFFFF")).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+describe("flattenHexAlpha", () => {
+  it("returns colors without alpha unchanged", () => {
+    expect(flattenHexAlpha("#4B2E83")).toBe("#4B2E83");
+    expect(flattenHexAlpha("#fff")).toBe("#fff");
+  });
+
+  it("composites #RRGGBBAA over white", () => {
+    expect(flattenHexAlpha("#00000000")).toBe("#ffffff");
+    expect(flattenHexAlpha("#000000ff")).toBe("#000000");
+    expect(flattenHexAlpha("#4B2E8380")).toBe("#a596c1");
+  });
+
+  it("composites #RGBA over a custom backdrop", () => {
+    expect(flattenHexAlpha("#0000", "#102030")).toBe("#102030");
+  });
+
+  it("makes a translucent fill pick a dark label", () => {
+    expect(getContrastColor(flattenHexAlpha("#4B2E8380"))).toBe("#000000");
   });
 });

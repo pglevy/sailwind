@@ -227,7 +227,7 @@ export const RecordView: React.FC<RecordViewProps> = ({
         {/* Content slot */}
         <div className="flex-1 overflow-y-auto bg-gray-50">
           {children || (
-            <div className="p-6 text-gray-400 text-sm">
+            <div className="p-6 text-gray-600 text-sm">
               Record view content goes here. Replace this with your view components.
             </div>
           )}
