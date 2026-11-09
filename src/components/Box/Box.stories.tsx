@@ -264,9 +264,6 @@ export const LabelFontWeights: Story = {
 
 export const CustomColors: Story = {
   args: { children: null },
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (label color ignores the hex alpha): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: "todo" } },
   render: () => (
     <div className="grid grid-cols-2 gap-4 w-[32rem]">
       <BoxLayout
@@ -305,9 +302,6 @@ export const WithCardContent: Story = {
 };
 
 export const WithFormContent: Story = {
-  // Known a11y failure, exempted until fixed:
-  // - color-contrast (Dropdown placeholder): https://github.com/pglevy/sailwind/issues/185
-  parameters: { a11y: { test: "todo" } },
   args: {
     label: "Request Details",
     isCollapsible: true,

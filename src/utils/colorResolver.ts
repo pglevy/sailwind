@@ -88,6 +88,24 @@ export function getContrastColor(hex: string): string {
   return contrastWhite >= contrastBlack ? '#ffffff' : '#000000'
 }
 
+/**
+ * Composites a hex color with alpha (#RRGGBBAA or #RGBA) over a backdrop and returns the opaque
+ * #rrggbb result, so contrast can be computed against what the user actually sees. Colors without
+ * alpha are returned unchanged. The default backdrop is white, where Box and Card headers sit.
+ */
+export function flattenHexAlpha(hex: string, backdrop = '#ffffff'): string {
+  const digits = hex.slice(1)
+  if (!/^#/.test(hex) || !(digits.length === 4 || digits.length === 8) || !/^[0-9a-fA-F]+$/.test(digits)) {
+    return hex
+  }
+  const full = digits.length === 4 ? digits.split('').map(c => c + c).join('') : digits
+  const alpha = parseInt(full.slice(6, 8), 16) / 255
+  const [r, g, b] = hexChannels(`#${full.slice(0, 6)}`)
+  const [br, bg, bb] = hexChannels(backdrop)
+  const mix = (fg: number, bgc: number) => Math.round(fg * alpha + bgc * (1 - alpha))
+  return '#' + [mix(r, br), mix(g, bg), mix(b, bb)].map(c => c.toString(16).padStart(2, '0')).join('')
+}
+
 /** Expand #RGB shorthand and return the [r, g, b] channels of a hex color. */
 function hexChannels(hex: string): [number, number, number] {
   if (hex.length === 4 || hex.length === 5) {
