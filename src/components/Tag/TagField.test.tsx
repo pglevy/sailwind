@@ -237,3 +237,31 @@ describe("TagField - accessibility", () => {
     expect(screen.getByText("Active")).toBeInTheDocument();
   });
 });
+
+// Default text color follows background contrast (#189)
+describe("TagField - default text color on palette and hex backgrounds", () => {
+  const tagEl = (backgroundColor: string, textColor?: string) => {
+    render(<TagField tags={[{ text: "Status", backgroundColor: backgroundColor as never, textColor: textColor as never }]} />);
+    return screen.getByText("Status").closest('[role="listitem"]') as HTMLElement;
+  };
+
+  it("switches to white text on a dark palette background", () => {
+    expect(tagEl("VIOLET_800")).toHaveClass("text-white");
+  });
+
+  it("keeps dark text on a light palette background", () => {
+    expect(tagEl("ORANGE_100")).toHaveClass("text-gray-900");
+  });
+
+  it("switches to white text on a dark hex background", () => {
+    expect(tagEl("#1A237E")).toHaveClass("text-white");
+  });
+
+  it("respects an explicit textColor", () => {
+    expect(tagEl("VIOLET_800", "STANDARD")).not.toHaveClass("text-white");
+  });
+
+  it("keeps the curated text color for semantic tags", () => {
+    expect(tagEl("ACCENT")).toHaveClass("text-blue-700");
+  });
+});

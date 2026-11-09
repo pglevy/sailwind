@@ -85,3 +85,27 @@ describe("StampField - link", () => {
     expect(saveInto).not.toHaveBeenCalled();
   });
 });
+
+// Default content color follows background contrast (#189)
+describe("StampField - default content color", () => {
+  const stamp = (backgroundColor: string) => {
+    render(<StampField icon="star" accessibilityText="Favorite" backgroundColor={backgroundColor as never} />);
+    return screen.getByRole("img", { name: "Favorite" });
+  };
+
+  it("uses dark content on light palette and hex backgrounds", () => {
+    expect(stamp("ORANGE_300")).toHaveClass("text-gray-900");
+  });
+
+  it("uses dark content on a light hex background", () => {
+    expect(stamp("#FFB74D")).toHaveClass("text-gray-900");
+  });
+
+  it("keeps white content on dark palette backgrounds", () => {
+    expect(stamp("VIOLET_800")).toHaveClass("text-white");
+  });
+
+  it("keeps white content on semantic backgrounds", () => {
+    expect(stamp("ACCENT")).toHaveClass("text-white");
+  });
+});

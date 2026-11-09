@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import type { SAILMarginSize, SAILSize, SAILColorInput, SAILAlign } from '../../types/sail'
-import { isPaletteColor } from '../../utils/colorResolver'
+import { isPaletteColor, resolveColorToHex, getContrastColor } from '../../utils/colorResolver'
 import { paletteColorMap } from '../../types/palette-colors.generated'
 import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap, paddingMap } from '../../utils/sailMaps'
@@ -212,6 +212,10 @@ export const TabsField: React.FC<TabsFieldProps> = ({
     return '' // hex — handled via inline style
   }
   const isHexColor = typeof color === 'string' && color.startsWith('#')
+  // Text on the active pill's fill: white or black by contrast for palette and hex colors (#189).
+  // Semantic colors keep white.
+  const pillFillHex = isHexColor || isPaletteColor(color) ? resolveColorToHex(color) : undefined
+  const pillTextIsDark = pillFillHex !== undefined && getContrastColor(pillFillHex) === '#000000'
 
   // Container classes
   const sailClasses = [marginAboveMap[marginAbove], marginBelowMap[marginBelow]].filter(Boolean).join(' ')
@@ -308,7 +312,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                       triggerSizeClasses,
                       'rounded-sm transition-colors whitespace-nowrap cursor-pointer select-none outline-none border-0',
                       isActive
-                        ? (!isHexColor ? `${getPillBgColor()} text-white` : '')
+                        ? (!isHexColor ? `${getPillBgColor()} ${pillTextIsDark ? 'text-black' : 'text-white'}` : '')
                         : (!isHexColor ? getPillTextColor() : ''),
                       !isActive ? 'hover:bg-gray-100' : '',
                       'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -317,7 +321,7 @@ export const TabsField: React.FC<TabsFieldProps> = ({
                     style={
                       isHexColor
                         ? isActive
-                          ? { backgroundColor: color, color: '#ffffff' }
+                          ? { backgroundColor: color, color: pillTextIsDark ? '#000000' : '#ffffff' }
                           : { color: color }
                         : undefined
                     }

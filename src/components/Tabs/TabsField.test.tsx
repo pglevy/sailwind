@@ -63,3 +63,27 @@ describe("TabsField - navigation-only keyboard", () => {
     expect(onValueChange).toHaveBeenCalledWith("b");
   });
 });
+
+// Active pill text color follows fill contrast (#189)
+describe("TabsField - PILL active text color", () => {
+  const activeTab = (color: string) => {
+    render(<TabsField tabs={navTabs} variant="PILL" color={color as never} />);
+    return screen.getByRole("tab", { name: "Alpha" });
+  };
+
+  it("uses black text on a light palette fill", () => {
+    expect(activeTab("ORANGE_300")).toHaveClass("text-black");
+  });
+
+  it("uses white text on a dark palette fill", () => {
+    expect(activeTab("VIOLET_800")).toHaveClass("text-white");
+  });
+
+  it("uses black text on a light hex fill", () => {
+    expect(activeTab("#FFB74D")).toHaveStyle({ color: "#000000" });
+  });
+
+  it("keeps white text for semantic colors", () => {
+    expect(activeTab("ACCENT")).toHaveClass("text-white");
+  });
+});
