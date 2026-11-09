@@ -6,12 +6,31 @@ import { mergeClasses } from '../../utils/classNames'
 import { marginAboveMap, marginBelowMap } from '../../utils/sailMaps'
 
 /**
- * Width options for dialog sizing
+ * Width options for dialog sizing.
+ *
+ * Matches the record action dialog width options in SAIL. The fixed widths are the
+ * true SAIL values; `FIT` corresponds to the "Full" option in the record action editor.
+ *
+ * | Value          | SAIL label   | Width   |
+ * | -------------- | ------------ | ------- |
+ * | `NARROW`       | Narrow       | 480px   |
+ * | `MEDIUM`       | Medium       | 720px   |
+ * | `MEDIUM_PLUS`  | Medium plus  | 960px   |
+ * | `WIDE`         | Wide         | 1200px  |
+ * | `EXTRA_WIDE`   | Extra wide   | 1440px  |
+ * | `FIT`          | Full         | 96%     |
  */
-export type DialogWidth = "NARROW" | "MEDIUM" | "MEDIUM_PLUS" | "WIDE" | "FIT"
+export type DialogWidth = "NARROW" | "MEDIUM" | "MEDIUM_PLUS" | "WIDE" | "EXTRA_WIDE" | "FIT"
 
 /**
- * Height options for dialog sizing
+ * Height options for dialog sizing.
+ *
+ * The record action dialog in SAIL exposes a Height dropdown whose options are
+ * `AUTO`, `SHORT`, `MEDIUM`, and `TALL` (with `AUTO` as the default — the height
+ * grows to fit the content). Sailwind keeps those plus two convenience values,
+ * `FIT` (content height, capped so a tall form scrolls instead of overflowing)
+ * and `EXTRA_TALL` (near-viewport height), that aren't in the SAIL editor but are
+ * useful for prototypes.
  */
 export type DialogHeight = "AUTO" | "FIT" | "SHORT" | "MEDIUM" | "TALL" | "EXTRA_TALL"
 
@@ -91,13 +110,16 @@ export const DialogField: React.FC<DialogFieldProps> = ({
   // Visibility control
   if (!showWhen) return null
 
-  // Width mappings
+  // Width mappings — true SAIL record action dialog widths.
+  // Each fixed width is capped at 90vw so the dialog never exceeds the viewport on
+  // smaller screens (SAIL dialogs shrink to fit the same way).
   const widthMap: Record<DialogWidth, string> = {
-    NARROW: 'w-[90vw] max-w-sm',      // ~384px max
-    MEDIUM: 'w-[90vw] max-w-md',      // ~448px max
-    MEDIUM_PLUS: 'w-[90vw] max-w-lg', // ~512px max
-    WIDE: 'w-[90vw] max-w-2xl',       // ~672px max
-    FIT: 'w-[95vw]'                   // Full screen width (with small margin)
+    NARROW: 'w-[90vw] max-w-[480px]',       // 480px  (SAIL "Narrow")
+    MEDIUM: 'w-[90vw] max-w-[720px]',       // 720px  (SAIL "Medium")
+    MEDIUM_PLUS: 'w-[90vw] max-w-[960px]',  // 960px  (SAIL "Medium plus")
+    WIDE: 'w-[90vw] max-w-[1200px]',        // 1200px (SAIL "Wide")
+    EXTRA_WIDE: 'w-[90vw] max-w-[1440px]',  // 1440px (SAIL "Extra wide")
+    FIT: 'w-[96%]'                          // 96%    (SAIL "Full")
   }
 
   // Height mappings

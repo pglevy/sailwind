@@ -12,8 +12,8 @@ const meta = {
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    width: { control: 'select', options: ['NARROW', 'MEDIUM', 'MEDIUM_PLUS', 'WIDE', 'FIT'] },
-    height: { control: 'select', options: ['AUTO', 'FIT', 'SHORT', 'MEDIUM', 'TALL'] },
+    width: { control: 'select', options: ['NARROW', 'MEDIUM', 'MEDIUM_PLUS', 'WIDE', 'EXTRA_WIDE', 'FIT'] },
+    height: { control: 'select', options: ['AUTO', 'FIT', 'SHORT', 'MEDIUM', 'TALL', 'EXTRA_TALL'] },
     background: { control: 'inline-radio', options: ['STANDARD', 'GLASS'] },
   },
 } satisfies Meta<typeof DialogField>
@@ -193,6 +193,25 @@ export const WideDialog: Story = {
       <p className="text-gray-700">
         This is a wide dialog with medium height. Perfect for displaying detailed content
         or complex forms that need more horizontal space.
+      </p>
+    ),
+  },
+}
+
+export const ExtraWideDialog: Story = {
+  args: {
+    trigger: (
+      <button className={`${btnSmOutline} border-gray-700 text-gray-700 bg-white hover:bg-gray-100`}>
+        Extra Wide Dialog
+      </button>
+    ),
+    title: 'Extra Wide Dialog',
+    width: 'EXTRA_WIDE',
+    height: 'MEDIUM',
+    children: (
+      <p className="text-gray-700">
+        This is an extra wide dialog (1440px). Use it for the widest record action forms,
+        such as side-by-side layouts or large grids that need maximum horizontal space.
       </p>
     ),
   },
