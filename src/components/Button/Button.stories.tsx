@@ -90,7 +90,19 @@ export const ButtonSizes: Story = {
 }
 
 export const PaletteColorsSolid: Story = {
-  // Palette SOLID buttons always use white text (#185), so these shades are dark enough for 4.5:1.
+  // Text flips between black and white by contrast (#189), so light and dark shades both pass.
+  render: () => (
+    <ButtonArrayLayout
+      buttons={[
+        { label: 'Custom Violet', style: 'SOLID', color: 'VIOLET_300' },
+        { label: 'Custom Orange', style: 'SOLID', color: 'ORANGE_300' },
+        { label: 'Custom Pink', style: 'SOLID', color: 'PINK_300' },
+      ]}
+    />
+  ),
+}
+
+export const PaletteColorsSolidDark: Story = {
   render: () => (
     <ButtonArrayLayout
       buttons={[
