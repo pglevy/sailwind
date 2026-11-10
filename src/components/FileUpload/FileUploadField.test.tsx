@@ -332,7 +332,7 @@ describe("FileUploadField - states", () => {
 
   it("shows the required indicator and requiredMessage when empty", () => {
     render(<FileUploadField label="Documents" required requiredMessage="Attach at least one file" />);
-    expect(screen.getByLabelText("required", { selector: "span" })).toHaveTextContent("*");
+    expect(screen.getByText("*")).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByText("Attach at least one file")).toBeInTheDocument();
   });
 
