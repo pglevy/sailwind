@@ -4,7 +4,7 @@ import type { TagItemProps } from './TagItem'
 import type { SAILSize, SAILAlign, SAILLabelPosition, SAILMarginSize } from '../../types/sail'
 import { FieldLabel } from '../shared/FieldLabel'
 import { mergeClasses } from '../../utils/classNames'
-import { resolveColorClass, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
+import { resolveColorClass, resolveColorToHex, getContrastColor, flattenHexAlpha, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 import { marginAboveMap, marginBelowMap, alignMap, tagSizeMap, tagIconSizeMap, tagHorizontalPaddingMap } from '../../utils/sailMaps'
 
 /**
@@ -135,6 +135,15 @@ export const TagField: React.FC<TagFieldProps> = ({
       textClass = resolveColorClass(textKey, 'text')
     } else {
       textClass = textColorMap['STANDARD']
+    }
+
+    // Palette and hex backgrounds with no explicit textColor: switch to white text when the
+    // default dark text would be unreadable (#189). Semantic tints keep their curated colors.
+    if (!tag.textColor && !isSemanticColor(colorKey)) {
+      const bgHex = resolveColorToHex(colorKey)
+      if (bgHex && getContrastColor(flattenHexAlpha(bgHex)) === '#ffffff') {
+        textClass = 'text-white'
+      }
     }
 
     // Use anchor tag if link is provided, otherwise span
