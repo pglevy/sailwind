@@ -4,7 +4,7 @@ import type { SAILLabelPosition, SAILMarginSize, SAILAlign, SAILShape, SAILColor
 import { mergeClasses } from '../../utils/classNames'
 import { resolveColorClass, resolveColorToHex, getContrastColor, flattenHexAlpha, isSemanticColor, isPaletteColor } from '../../utils/colorResolver'
 import { marginAboveMap, marginBelowMap, alignMap } from '../../utils/sailMaps'
-import { useI18n, KEYS } from '../../i18n'
+import { HelpIcon } from '../shared/FieldIndicators'
 
 type StampSize = "TINY" | "SMALL" | "MEDIUM" | "LARGE"
 type StampBackgroundColor = SAILColorInput | "TRANSPARENT"
@@ -73,7 +73,6 @@ export const StampField: React.FC<StampFieldProps> = ({
   shape = "ROUNDED",
   className: classNameProp
 }) => {
-  const { t } = useI18n()
 
   // Visibility control
   if (!showWhen) return null
@@ -325,15 +324,7 @@ export const StampField: React.FC<StampFieldProps> = ({
     return (
       <label className="text-base font-medium text-gray-900 block mb-2">
         {label}
-        {helpTooltip && (
-          <span
-            className="ml-2 text-gray-700 cursor-help"
-            title={helpTooltip}
-            aria-label={t(KEYS.fieldHelp)}
-          >
-            ℹ️
-          </span>
-        )}
+        {helpTooltip && <HelpIcon tooltip={helpTooltip} />}
       </label>
     )
   }
