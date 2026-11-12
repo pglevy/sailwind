@@ -57,7 +57,9 @@ export default function InsuranceQuoteWizard() {
               ]}
               active={5}
               orientation="VERTICAL"
-              stepStyle="DOT"
+              stepStyle="NUMBERED"
+              showStepNumbers={false}
+              showStepStatus={false}
               color="#AF2B9B"
             />
           </div>
