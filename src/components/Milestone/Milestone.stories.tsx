@@ -2,7 +2,39 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, userEvent, within } from 'storybook/test'
 import { MilestoneField } from './MilestoneField'
+import type { MilestoneFieldProps } from './MilestoneField'
 import { ButtonWidget } from '../Button/ButtonWidget'
+
+/** A milestone with Next, Back and Start over buttons, to watch it animate as the step changes */
+const Stepper = (args: MilestoneFieldProps) => {
+  const [active, setActive] = useState(0)
+  const last = args.steps.length - 1
+  return (
+    <div className="flex flex-col gap-6">
+      <MilestoneField {...args} active={active} />
+      <div className="flex gap-2">
+        <ButtonWidget label="Back" style="OUTLINE" disabled={active === 0} onClick={() => setActive(Math.max(0, active - 1))} />
+        <ButtonWidget
+          label={active === -1 ? 'Done' : active >= last ? 'Finish' : 'Next'}
+          disabled={active === -1}
+          onClick={() => setActive(active >= last ? -1 : active + 1)}
+        />
+        <ButtonWidget label="Start over" style="LINK" onClick={() => setActive(0)} />
+      </div>
+    </div>
+  )
+}
+
+/** Plays the stepper: forward one step, then back */
+const playStepper = (first: string, second: string) => async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+  const canvas = within(canvasElement)
+  const current = () => canvasElement.querySelector('li[aria-current="step"]')?.textContent ?? ''
+  await expect(current()).toContain(first)
+  await userEvent.click(canvas.getByRole('button', { name: 'Next' }))
+  await expect(current()).toContain(second)
+  await userEvent.click(canvas.getByRole('button', { name: 'Back' }))
+  await expect(current()).toContain(first)
+}
 
 const meta = {
   title: 'Components/Milestone',
@@ -21,6 +53,11 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+/**
+ * The default style (`LINE`): the step's number in a rounded-square marker, joined by a bar.
+ * A finished step is a green check, the current step is blue with a soft halo, and a pending step
+ * is an outline. The bar fills green up to the current step and blue to the next.
+ */
 export const Default: Story = {
   args: {
     label: 'Home Repair Claim Process',
@@ -39,9 +76,10 @@ export const Default: Story = {
 }
 
 /**
- * NUMBERED — numbered/checked circles with progress connectors, a "STEP n"
- * caption and status text. Connectors are solid once passed and dashed while
- * pending, so progress reads without relying on color.
+ * NUMBERED — rounded-square markers with the step's number (a check once it is done), connectors
+ * that fill as steps are completed, a "STEP n" caption and status text. Progress reads without
+ * relying on color: a finished step is a check, and each step says "Completed", "In Progress" or
+ * "Pending" in text.
  */
 export const NumberedStyle: Story = {
   args: {
@@ -53,6 +91,7 @@ export const NumberedStyle: Story = {
   },
 }
 
+/** NUMBERED in a column: the connector fills downward and each title lines up with its marker. */
 export const NumberedVertical: Story = {
   args: {
     label: 'Onboarding',
@@ -64,7 +103,7 @@ export const NumberedVertical: Story = {
   },
 }
 
-/** NUMBERED without the caption/status text — just circles, connectors, labels. */
+/** NUMBERED without the caption/status text — just markers, connectors and labels. */
 export const NumberedCompact: Story = {
   args: {
     steps: ['Card Details', 'Form Review', 'Authenticate OTP', 'Create Code'],
@@ -73,6 +112,24 @@ export const NumberedCompact: Story = {
     showStepNumbers: false,
     showStepStatus: false,
   },
+}
+
+/** Press Next and Back to watch the default style animate as the step changes. */
+export const DefaultProgression: Story = {
+  args: { steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment', 'Close claim'] },
+  render: (args) => <Stepper {...args} />,
+  play: playStepper('Submit request', 'Review documents'),
+}
+
+/** Press Next and Back to watch the NUMBERED style animate as the step changes. */
+export const NumberedProgression: Story = {
+  args: {
+    steps: ['Basic Details', 'Company Details', 'Subscription Plan', 'Payment Details'],
+    stepStyle: 'NUMBERED',
+    orientation: 'VERTICAL',
+  },
+  render: (args) => <Stepper {...args} />,
+  play: playStepper('Basic Details', 'Company Details'),
 }
 
 /**
@@ -152,32 +209,8 @@ export const TimelineProgression: Story = {
     stepStyle: 'TIMELINE',
     orientation: 'VERTICAL',
   },
-  render: (args) => {
-    const [active, setActive] = useState(0)
-    const steps = args.steps
-    return (
-      <div className="flex flex-col gap-6">
-        <MilestoneField {...args} active={active} stepDescriptions={steps.map((step) => `About “${step}”.`)} />
-        <div className="flex gap-2">
-          <ButtonWidget label="Back" style="OUTLINE" disabled={active === 0} onClick={() => setActive(Math.max(0, active - 1))} />
-          <ButtonWidget
-            label={active >= steps.length - 1 ? 'Finish' : 'Next'}
-            onClick={() => setActive(active >= steps.length - 1 ? -1 : active + 1)}
-          />
-          <ButtonWidget label="Start over" style="LINK" onClick={() => setActive(0)} />
-        </div>
-      </div>
-    )
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const current = () => canvasElement.querySelector('li[aria-current="step"]')?.textContent ?? ''
-    await expect(current()).toContain('Submit request')
-    await userEvent.click(canvas.getByRole('button', { name: 'Next' }))
-    await expect(current()).toContain('Review documents')
-    await userEvent.click(canvas.getByRole('button', { name: 'Back' }))
-    await expect(current()).toContain('Submit request')
-  },
+  render: (args) => <Stepper {...args} stepDescriptions={args.steps.map((step) => `About “${step}”.`)} />,
+  play: playStepper('Submit request', 'Review documents'),
 }
 
 /** Horizontal: the connector grows left to right. */

@@ -12,16 +12,20 @@ type Orientation = "HORIZONTAL" | "VERTICAL"
 /**
  * Step indicator styles. `NUMBERED`, `MINIMAL` and `TIMELINE` are not in SAIL.
  *
- * - `LINE` (default) — original Sailwind style, kept as the default so existing projects don't change.
- * - `NUMBERED` — numbered/checked circles joined by progress connectors,
+ * `LINE`, `NUMBERED` and `TIMELINE` share one set of markers: rounded squares joined by a
+ * connector. A completed step is a check in the `completedColor` (green by default), the
+ * current step is filled in the `color` (blue by default) with a soft halo, and a pending step
+ * is an outline. As `active` changes the markers change color, the check pops in, the halo
+ * grows and the connector fills. The animation is off for people who prefer reduced motion.
+ *
+ * - `LINE` (default) — the step's number in each marker, joined by a bar, with the label under
+ *   each marker.
+ * - `NUMBERED` — the same markers, joined by connectors in a row or a column,
  *   with an optional "STEP n" caption and status text under each label.
  * - `MINIMAL` — compact chevron-separated row; only the current step is highlighted
  *   as a pill and completed steps get a check.
- * - `TIMELINE` — rounded-square markers joined by a connector. A completed step is a check in
- *   the `completedColor` (green by default), the current step is a dot in the `color` (blue by
- *   default) with a soft halo, and a pending step is an outline. As `active` changes the markers
- *   change color, the check pops in, the halo appears and the connector fills. The animation
- *   is off for people who prefer reduced motion. Works vertically and horizontally.
+ * - `TIMELINE` — the same markers with a dot in place of the number, and an optional line of
+ *   text under each title (`stepDescriptions`). Works vertically and horizontally.
  * - `DOT` / `CHEVRON` — the other original Sailwind styles.
  */
 type StepStyle = "LINE" | "CHEVRON" | "DOT" | "NUMBERED" | "MINIMAL" | "TIMELINE"
@@ -53,7 +57,7 @@ export interface MilestoneFieldProps {
   accessibilityText?: string
   /** Determines the fill color of the current step */
   color?: Color
-  /** Determines the fill color of completed steps (NUMBERED, MINIMAL and TIMELINE styles). Not in SAIL. */
+  /** Determines the fill color of completed steps (LINE, NUMBERED, MINIMAL and TIMELINE styles). Not in SAIL. */
   completedColor?: Color
   /** Determines how much space is added above the layout */
   marginAbove?: SAILMarginSize
@@ -102,8 +106,11 @@ const resolveFill = (colorValue: Color, fallback: string) => {
   }
 }
 
-/** The outline and inner square of a pending TIMELINE marker (gray-500, 4.8:1 on white) */
+/** The outline and inner square of a pending marker (gray-500, 4.8:1 on white) */
 const TIMELINE_PENDING = '#6B7280'
+
+/** The number in a pending marker (gray-700, 10:1 on white) */
+const TIMELINE_PENDING_TEXT = '#374151'
 
 /** A color with an alpha, for the TIMELINE halo. Reads #rgb and #rrggbb; anything else is returned as it is. */
 const withAlpha = (hex: string, alpha: number) => {
@@ -211,6 +218,16 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
 
   const statusFor = (state: StepState) => status[state]
 
+  // How far along the LINE bar each fill reaches, as a share of its length. The bar runs from
+  // the first marker's centre to the last one's: step i sits i / (n - 1) along it.
+  const lineProgress = (() => {
+    const last = Math.max(steps.length - 1, 1)
+    if (active === null) return { completed: 0, toCurrent: 0 }
+    if (active === -1) return { completed: 100, toCurrent: 100 }
+    const at = Math.min(Math.max(active, 0), steps.length - 1)
+    return { completed: (at / last) * 100, toCurrent: (Math.min(at + 1, steps.length - 1) / last) * 100 }
+  })()
+
   const isNewStyle = stepStyle === "NUMBERED" || stepStyle === "MINIMAL" || stepStyle === "TIMELINE"
 
   /** Circular indicator shared by NUMBERED (and reused at a smaller size by MINIMAL) */
@@ -252,22 +269,6 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
     )
   }
 
-  /** Connector between two NUMBERED steps. Solid once passed, dashed while pending. */
-  const renderConnector = (state: StepState, direction: Orientation) => {
-    const passed = state === 'completed'
-    const base = direction === "HORIZONTAL"
-      ? 'mx-2 h-0 flex-1 border-t-2'
-      : 'my-1 w-0 flex-1 border-l-2 self-center'
-
-    return (
-      <span
-        className={`${base} ${passed ? '' : 'border-dashed border-gray-200'}`}
-        style={passed ? { borderColor: completedFill.background } : undefined}
-        aria-hidden="true"
-      />
-    )
-  }
-
   /** Text block used by NUMBERED */
   const renderNumberedText = (step: string, index: number, state: StepState) => (
     <div className={orientation === "HORIZONTAL" ? 'mt-2 pr-4' : 'pb-6'}>
@@ -277,7 +278,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
         </p>
       )}
       <p
-        className={`text-base ${state === 'future' ? 'font-normal text-gray-700' : 'font-semibold text-gray-900'}`}
+        className={`text-base transition-colors duration-500 motion-reduce:transition-none ${orientation === "VERTICAL" ? 'leading-7' : ''} ${state === 'future' ? 'font-normal text-gray-700' : 'font-semibold text-gray-900'}`}
       >
         {step}
       </p>
@@ -306,8 +307,8 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
       return (
         <div className="flex gap-3">
           <div className="flex flex-col items-center self-stretch">
-            {renderIndicator(state, index + 1, 'md')}
-            {index < steps.length - 1 && renderConnector(state, "VERTICAL")}
+            {renderTimelineMarker(state, index + 1)}
+            {index < steps.length - 1 && renderTimelineConnector(state, "VERTICAL")}
           </div>
           {renderNumberedText(step, index, state)}
         </div>
@@ -317,8 +318,8 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
     return (
       <div>
         <div className="flex items-center">
-          {renderIndicator(state, index + 1, 'md')}
-          {index < steps.length - 1 && renderConnector(state, "HORIZONTAL")}
+          {renderTimelineMarker(state, index + 1)}
+          {index < steps.length - 1 && renderTimelineConnector(state, "HORIZONTAL")}
         </div>
         {renderNumberedText(step, index, state)}
       </div>
@@ -347,13 +348,13 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
   }
 
   /**
-   * TIMELINE marker: a rounded square. Three layers share it: the fill (and its halo), a check
-   * and an inner square. A change of state fades the fill and halo, pops the check in or out, and
+   * Marker for LINE, NUMBERED and TIMELINE: a rounded square. Three layers share it: the fill
+   * (and its halo), a check, and either the step's number or, with no number, an inner square. A change of state fades the fill and halo, pops the check in or out, and
    * shrinks or grows the inner square. The values that change are inline styles and the element
    * stays mounted, so the browser animates between them; nothing animates on the first render.
    * Every transition is off for reduced motion.
    */
-  const renderTimelineMarker = (state: StepState) => {
+  const renderTimelineMarker = (state: StepState, number?: number) => {
     const completed = state === 'completed'
     const current = state === 'current'
     const fill = completed ? completedFill : currentFill
@@ -362,7 +363,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
 
     return (
       <span
-        className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-[background-color,border-color,box-shadow] duration-500 motion-reduce:transition-none"
+        className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-[background-color,border-color,box-shadow] duration-500 motion-reduce:transition-none"
         data-timeline-marker={state}
         style={{
           backgroundColor: background,
@@ -385,15 +386,29 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
         >
           <Check size={16} strokeWidth={3} />
         </span>
-        {/* Inner square: white on the current step, gray on a pending one, gone once completed */}
-        <span
-          className="h-2 w-2 rounded-[3px] transition-[transform,opacity,background-color] duration-500 motion-reduce:transition-none"
-          style={{
-            backgroundColor: current ? currentFill.foreground : TIMELINE_PENDING,
-            transform: completed ? 'scale(0.5)' : 'scale(1)',
-            opacity: completed ? 0 : 1
-          }}
-        />
+        {/* The number, or an inner square: shows on the current step and on pending ones, and
+            shrinks away once the step is completed */}
+        {number !== undefined ? (
+          <span
+            className="text-xs font-semibold leading-none transition-[transform,opacity,color] duration-500 motion-reduce:transition-none"
+            style={{
+              color: current ? currentFill.foreground : TIMELINE_PENDING_TEXT,
+              transform: completed ? 'scale(0.5)' : 'scale(1)',
+              opacity: completed ? 0 : 1
+            }}
+          >
+            {number}
+          </span>
+        ) : (
+          <span
+            className="h-2 w-2 rounded-[3px] transition-[transform,opacity,background-color] duration-500 motion-reduce:transition-none"
+            style={{
+              backgroundColor: current ? currentFill.foreground : TIMELINE_PENDING,
+              transform: completed ? 'scale(0.5)' : 'scale(1)',
+              opacity: completed ? 0 : 1
+            }}
+          />
+        )}
       </span>
     )
   }
@@ -522,23 +537,7 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
             </>
           )}
 
-          {stepStyle === "LINE" && (
-            <div
-              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-semibold relative z-10 ${
-                state === 'completed' || state === 'current'
-                  ? `${colorClasses.bg} ${colorClasses.border} text-gray-900`
-                  : 'bg-gray-200 border-gray-300 text-gray-700'
-              }`}
-              style={colorClasses.style ? {
-                backgroundColor: state === 'completed' || state === 'current' ? colorClasses.style.backgroundColor : undefined,
-                borderColor: state === 'completed' || state === 'current' ? colorClasses.style.borderColor : undefined,
-                color: state === 'completed' || state === 'current' ? 'white' : undefined
-              } : undefined}
-              aria-hidden="true"
-            >
-              {stepNumber}
-            </div>
-          )}
+          {stepStyle === "LINE" && renderTimelineMarker(state, stepNumber)}
 
           {stepStyle === "CHEVRON" && (
             <div className="relative flex items-center">
@@ -597,11 +596,13 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
             } ${
               state === 'current' ? 'font-semibold' : 'font-normal'
             } ${
-              state === 'completed' || state === 'current'
+              stepStyle === "LINE"
+                ? `transition-colors duration-500 motion-reduce:transition-none ${state === 'future' ? 'text-gray-700' : 'text-gray-900'}`
+                : state === 'completed' || state === 'current'
                 ? colorClasses.text || 'text-gray-900'
                 : 'text-gray-700'
             }`}
-            style={colorClasses.style && (state === 'completed' || state === 'current') ? {
+            style={stepStyle !== "LINE" && colorClasses.style && (state === 'completed' || state === 'current') ? {
               color: colorClasses.style.color
             } : undefined}
           >
@@ -717,10 +718,11 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
       >
         <p className="sr-only">{progressSummary}</p>
 
-        {/* Continuous progress bar for horizontal LINE style */}
+        {/* Continuous bar for horizontal LINE style: a gray track, a fill in the current color
+            that reaches the next step, and a fill in the completed color up to the current step */}
         {orientation === "HORIZONTAL" && stepStyle === "LINE" && steps.length > 1 && (
           <div
-            className="absolute top-3 h-0.5 bg-gray-200 z-0"
+            className="absolute top-[13px] z-0 h-0.5 rounded-full bg-gray-200"
             style={{
               left: `calc(100% / ${steps.length} / 2)`,
               right: `calc(100% / ${steps.length} / 2)`
@@ -728,11 +730,14 @@ export const MilestoneField: React.FC<MilestoneFieldProps> = ({
             aria-hidden="true"
           >
             <div
-              className={`h-full transition-all duration-300 ${colorClasses.bg || 'bg-gray-400'}`}
-              style={{
-                width: active === null ? '0%' : active === -1 ? '100%' : `${(active / (steps.length - 1)) * 100}%`,
-                ...(colorClasses.style ? { backgroundColor: colorClasses.style.backgroundColor } : {})
-              }}
+              className="absolute inset-y-0 left-0 rounded-full transition-[width,background-color] duration-500 ease-out motion-reduce:transition-none"
+              data-line-fill="current"
+              style={{ width: `${lineProgress.toCurrent}%`, backgroundColor: currentFill.background }}
+            />
+            <div
+              className="absolute inset-y-0 left-0 rounded-full transition-[width,background-color] duration-500 ease-out motion-reduce:transition-none"
+              data-line-fill="completed"
+              style={{ width: `${lineProgress.completed}%`, backgroundColor: completedFill.background }}
             />
           </div>
         )}
