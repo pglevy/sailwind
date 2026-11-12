@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
+import { expect, userEvent, within } from 'storybook/test'
 import { MilestoneField } from './MilestoneField'
+import { ButtonWidget } from '../Button/ButtonWidget'
 
 const meta = {
   title: 'Components/Milestone',
@@ -7,7 +10,7 @@ const meta = {
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
   argTypes: {
-    stepStyle: { control: 'select', options: ['NUMBERED', 'MINIMAL', 'LINE', 'DOT', 'CHEVRON'] },
+    stepStyle: { control: 'select', options: ['NUMBERED', 'MINIMAL', 'TIMELINE', 'LINE', 'DOT', 'CHEVRON'] },
     orientation: { control: 'select', options: ['HORIZONTAL', 'VERTICAL'] },
     color: { control: 'text' },
     completedColor: { control: 'text' },
@@ -105,6 +108,110 @@ export const MinimalProgression: Story = {
       ))}
     </div>
   ),
+}
+
+/**
+ * TIMELINE — rounded-square markers joined by a connector. A completed step is a check on green,
+ * the current step is a dot on blue with a soft halo, and a pending step is an outline. The
+ * colors are `completedColor` (green by default) and `color` (blue by default).
+ */
+export const TimelineStyle: Story = {
+  args: {
+    steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment', 'Close claim'],
+    active: 2,
+    stepStyle: 'TIMELINE',
+    orientation: 'VERTICAL',
+  },
+}
+
+/** A line of text under each title, with `stepDescriptions`. */
+export const TimelineWithDescriptions: Story = {
+  args: {
+    steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment', 'Close claim'],
+    stepDescriptions: [
+      'Tell us what happened and when.',
+      'We check what you sent.',
+      'A manager signs off.',
+      'The money is sent to your account.',
+      'We file the claim away.',
+    ],
+    active: 2,
+    stepStyle: 'TIMELINE',
+    orientation: 'VERTICAL',
+  },
+}
+
+/**
+ * Press Next and Back to watch the markers move on. As the step changes the old marker turns
+ * green and its check pops in, the connector fills, and the new current marker gets its halo.
+ * Nothing moves for people who prefer reduced motion.
+ */
+export const TimelineProgression: Story = {
+  args: {
+    steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment', 'Close claim'],
+    stepStyle: 'TIMELINE',
+    orientation: 'VERTICAL',
+  },
+  render: (args) => {
+    const [active, setActive] = useState(0)
+    const steps = args.steps
+    return (
+      <div className="flex flex-col gap-6">
+        <MilestoneField {...args} active={active} stepDescriptions={steps.map((step) => `About “${step}”.`)} />
+        <div className="flex gap-2">
+          <ButtonWidget label="Back" style="OUTLINE" disabled={active === 0} onClick={() => setActive(Math.max(0, active - 1))} />
+          <ButtonWidget
+            label={active >= steps.length - 1 ? 'Finish' : 'Next'}
+            onClick={() => setActive(active >= steps.length - 1 ? -1 : active + 1)}
+          />
+          <ButtonWidget label="Start over" style="LINK" onClick={() => setActive(0)} />
+        </div>
+      </div>
+    )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const current = () => canvasElement.querySelector('li[aria-current="step"]')?.textContent ?? ''
+    await expect(current()).toContain('Submit request')
+    await userEvent.click(canvas.getByRole('button', { name: 'Next' }))
+    await expect(current()).toContain('Review documents')
+    await userEvent.click(canvas.getByRole('button', { name: 'Back' }))
+    await expect(current()).toContain('Submit request')
+  },
+}
+
+/** Horizontal: the connector grows left to right. */
+export const TimelineHorizontal: Story = {
+  args: {
+    label: 'Claim progress',
+    steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment'],
+    stepDescriptions: ['Tell us what happened.', 'We check what you sent.', 'A manager signs off.', 'Money is sent.'],
+    active: 1,
+    stepStyle: 'TIMELINE',
+    orientation: 'HORIZONTAL',
+  },
+}
+
+/** Every step finished (`active` of -1), and none started (`active` of null). */
+export const TimelineAllCompleted: Story = {
+  args: {
+    steps: ['Submit request', 'Review documents', 'Approve'],
+    active: -1,
+    stepStyle: 'TIMELINE',
+    orientation: 'VERTICAL',
+  },
+}
+
+/** Other colors, with `color` for the current step and `completedColor` for the finished ones. */
+export const TimelineColors: Story = {
+  args: {
+    steps: ['Submit request', 'Review documents', 'Approve', 'Issue payment'],
+    active: 2,
+    stepStyle: 'TIMELINE',
+    orientation: 'VERTICAL',
+    color: 'VIOLET_500',
+    completedColor: 'TEAL_700',
+  },
 }
 
 /** Clickable steps: each becomes a button with an accessible name and focus ring. */

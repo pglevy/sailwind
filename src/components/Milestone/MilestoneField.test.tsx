@@ -287,3 +287,162 @@ describe("MilestoneField - localization", () => {
     expect(screen.getByText("Completado")).toBeInTheDocument();
   });
 });
+
+describe("MilestoneField - TIMELINE style", () => {
+  const GREEN = "rgb(21, 128, 61)"; // POSITIVE, green-700
+  const BLUE = "rgb(35, 34, 240)"; // ACCENT, blue-500
+
+  const markers = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<HTMLElement>("[data-timeline-marker]"));
+  const fills = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll<HTMLElement>("[data-timeline-fill]"));
+
+  it("marks each step as completed, current or future", () => {
+    const { container } = render(<MilestoneField steps={steps} active={2} stepStyle="TIMELINE" />);
+    expect(markers(container).map((m) => m.dataset.timelineMarker)).toEqual([
+      "completed",
+      "completed",
+      "current",
+      "future",
+    ]);
+  });
+
+  it("makes completed steps green and the current step blue by default", () => {
+    const { container } = render(<MilestoneField steps={steps} active={2} stepStyle="TIMELINE" />);
+    const [first, , current, pending] = markers(container);
+    expect(first.style.backgroundColor).toBe(GREEN);
+    expect(current.style.backgroundColor).toBe(BLUE);
+    // A pending step is an outline: white inside, gray edge
+    expect(pending.style.backgroundColor).toBe("rgb(255, 255, 255)");
+    expect(pending.style.borderColor).toBe("rgb(107, 114, 128)");
+  });
+
+  it("takes other colors from color and completedColor", () => {
+    const { container } = render(
+      <MilestoneField steps={steps} active={1} stepStyle="TIMELINE" color="#8B5CF6" completedColor="#0F766E" />
+    );
+    const [done, current] = markers(container);
+    expect(done.style.backgroundColor).toBe("rgb(15, 118, 110)");
+    expect(current.style.backgroundColor).toBe("rgb(139, 92, 246)");
+  });
+
+  it("shows a check only on a completed step", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" />);
+    const [done, current, pending] = markers(container);
+    const checkOf = (marker: HTMLElement) => marker.children[0] as HTMLElement;
+    expect(checkOf(done).style.opacity).toBe("1");
+    expect(checkOf(current).style.opacity).toBe("0");
+    expect(checkOf(pending).style.opacity).toBe("0");
+  });
+
+  it("gives the current step a halo and no other step", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" />);
+    const [done, current, pending] = markers(container);
+    expect(current.style.boxShadow).toContain("5px");
+    expect(done.style.boxShadow).toContain("0px");
+    expect(pending.style.boxShadow).toContain("0px");
+  });
+
+  it("fills the connector from every step that is done or current, and not from a pending step", () => {
+    const { container } = render(<MilestoneField steps={steps} active={2} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    // Four steps have three connectors: after steps 1, 2 and 3
+    expect(fills(container).map((f) => f.dataset.timelineFill)).toEqual(["filled", "filled", "filled"]);
+    const { container: other } = render(<MilestoneField steps={steps} active={0} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    expect(fills(other).map((f) => f.dataset.timelineFill)).toEqual(["filled", "empty", "empty"]);
+  });
+
+  it("colors a finished connector green and the current one blue", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    const [afterDone, afterCurrent] = fills(container);
+    expect(afterDone.style.backgroundColor).toBe(GREEN);
+    expect(afterCurrent.style.backgroundColor).toBe(BLUE);
+  });
+
+  it("grows a vertical connector downward and a horizontal one to the right", () => {
+    const { container: vertical } = render(<MilestoneField steps={steps} active={0} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    expect(fills(vertical)[1].style.transform).toBe("scaleY(0)");
+    const { container: horizontal } = render(<MilestoneField steps={steps} active={0} stepStyle="TIMELINE" orientation="HORIZONTAL" />);
+    expect(fills(horizontal)[1].style.transform).toBe("scaleX(0)");
+  });
+
+  it("keeps the same elements when the step changes, so the browser can animate between states", () => {
+    const { container, rerender } = render(<MilestoneField steps={steps} active={0} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    const before = markers(container);
+    const fillBefore = fills(container)[0];
+    expect(before[0].dataset.timelineMarker).toBe("current");
+
+    rerender(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    const after = markers(container);
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).toBe(before[1]);
+    expect(fills(container)[0]).toBe(fillBefore);
+    expect(after[0].dataset.timelineMarker).toBe("completed");
+    expect(after[0].style.backgroundColor).toBe(GREEN);
+    expect(after[1].dataset.timelineMarker).toBe("current");
+  });
+
+  it("turns the transitions off for people who prefer reduced motion", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" orientation="VERTICAL" />);
+    const animated = [markers(container)[0], markers(container)[0].children[0], markers(container)[0].children[1], fills(container)[0]];
+    for (const element of animated) {
+      expect(element.className).toContain("motion-reduce:transition-none");
+    }
+  });
+
+  it("shows a description under each title when stepDescriptions is given", () => {
+    render(
+      <MilestoneField
+        steps={steps}
+        active={1}
+        stepStyle="TIMELINE"
+        stepDescriptions={["Enter your card", undefined as unknown as string, "Check the code"]}
+      />
+    );
+    expect(screen.getByText("Enter your card")).toBeInTheDocument();
+    expect(screen.getByText("Check the code")).toBeInTheDocument();
+  });
+
+  it("shows every step as completed when active is -1, and as pending when it is null", () => {
+    const { container, rerender } = render(<MilestoneField steps={steps} active={-1} stepStyle="TIMELINE" />);
+    expect(markers(container).every((m) => m.dataset.timelineMarker === "completed")).toBe(true);
+    rerender(<MilestoneField steps={steps} active={null} stepStyle="TIMELINE" />);
+    expect(markers(container).every((m) => m.dataset.timelineMarker === "future")).toBe(true);
+  });
+
+  it("never conveys state by color alone: each step has state text and a check or a mark", () => {
+    render(<MilestoneField steps={steps} active={1} stepStyle="TIMELINE" />);
+    expect(screen.getAllByText("Completed")).toHaveLength(1);
+    expect(screen.getAllByText("In Progress")).toHaveLength(1);
+    expect(screen.getAllByText("Pending")).toHaveLength(2);
+  });
+
+  it("hides the markers from assistive technology and marks only the current step", () => {
+    const { container } = render(<MilestoneField steps={steps} active={2} stepStyle="TIMELINE" />);
+    for (const marker of markers(container)) expect(marker).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(screen.getAllByRole("listitem")).toHaveLength(steps.length);
+  });
+
+  it("makes finished steps buttons when linked", async () => {
+    const onClick = vi.fn();
+    render(
+      <MilestoneField
+        steps={steps}
+        active={2}
+        stepStyle="TIMELINE"
+        orientation="VERTICAL"
+        links={[{ onClick }, { showWhen: false }, { showWhen: false }, { showWhen: false }]}
+      />
+    );
+    const buttons = screen.getAllByRole("button");
+    expect(buttons).toHaveLength(1);
+    await userEvent.click(buttons[0]);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves the other styles alone", () => {
+    const { container } = render(<MilestoneField steps={steps} active={1} />);
+    expect(container.querySelectorAll("[data-timeline-marker]")).toHaveLength(0);
+    expect(container.querySelectorAll("[data-timeline-fill]")).toHaveLength(0);
+  });
+});
