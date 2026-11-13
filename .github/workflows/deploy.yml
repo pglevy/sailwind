@@ -17,7 +17,9 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, where apt mirrors fail to resolve during
+    # `playwright install --with-deps`.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -26,7 +28,14 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install chromium --with-deps
+      # No --with-deps: its apt-get step fails when the runner can't resolve the Ubuntu
+      # mirrors. The runner image already ships the system libraries Chromium needs.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm exec playwright install chromium
       - run: pnpm run generate:css
       - run: pnpm run typecheck
       - run: pnpm run lint
