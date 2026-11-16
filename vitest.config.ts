@@ -30,6 +30,15 @@ export default defineConfig({
           include: ['src/**/*.test.{ts,tsx}'],
         },
       },
+      // CLI tests (bin/): plain Node, no DOM.
+      {
+        extends: true,
+        test: {
+          name: 'cli',
+          environment: 'node',
+          include: ['tests/cli/**/*.test.mjs'],
+        },
+      },
       // Storybook component + a11y tests.
       // addon-vitest applies the project annotations (addons, then
       // .storybook/preview.tsx) itself, the same way the Storybook UI does.

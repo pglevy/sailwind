@@ -5,6 +5,9 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "sailwind": "./bin/sailwind.mjs"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -17,6 +20,7 @@
   },
   "files": [
     "dist",
+    "bin",
     "README.md",
     "LICENSE"
   ],
@@ -61,6 +65,7 @@
     "test": "vitest --run",
     "test-storybook": "vitest --run --project=storybook",
     "test:unit": "vitest --run --project=unit",
+    "test:cli": "vitest --run --project=cli",
     "validate:designer-bundles": "node scripts/validate-designer-bundles.mjs",
     "check": "pnpm run typecheck && pnpm run lint && pnpm test && pnpm run validate:designer-bundles && pnpm run build:lib"
   },

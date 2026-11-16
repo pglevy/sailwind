@@ -181,6 +181,7 @@ pnpm exec playwright install chromium   # needed for Storybook tests
 pnpm run storybook         # Develop in Storybook at http://localhost:6006
 pnpm run check             # Everything CI runs: typecheck, lint, tests, designer bundles, library build
 pnpm run test:unit         # Unit tests only (faster)
+pnpm run test:cli          # CLI tests (bin/sailwind.mjs, bin/lib.mjs)
 pnpm run test-storybook    # Storybook interaction and accessibility tests only
 pnpm run typecheck         # TypeScript
 pnpm run lint              # ESLint
