@@ -83,6 +83,8 @@ export * from './Paging'
 export * from './SiteNav'
 // Breadcrumbs components
 export * from './Breadcrumbs'
+// Search components
+export * from './Search'
 
 // RecordView template
 export * from './RecordView'

@@ -103,6 +103,14 @@ export const KEYS = {
   breadcrumbsLabel: 'breadcrumbs.label',
   /** BreadcrumbsField: accessible name of the "…" button that expands the collapsed middle levels. */
   breadcrumbsShowHidden: 'breadcrumbs.showHidden',
+  /** SearchField: default accessible name of the search input when there is no label or accessibilityText. */
+  searchLabel: 'search.label',
+  /** SearchField: accessible name of the results panel. */
+  searchResults: 'search.results',
+  /** SearchField: fallback accessible name of the end icon button when `endIconAltText` is not set. */
+  searchEndAction: 'search.endAction',
+  /** SearchField: accessible name of the close (X) button in the full-screen results view. */
+  searchClose: 'search.close',
 } as const
 
 /** The ergonomic camelCase identifiers of {@link KEYS} (e.g., `'pagingFirstPage'`). */
