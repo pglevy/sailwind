@@ -47,6 +47,30 @@ It's fine to go beyond SAIL. This library can move faster than SAIL does, and ne
 5. **Get an AI review in a fresh session** before opening your PR. See [AI-assisted contributions](#ai-assisted-contributions).
 6. **Open a pull request** against `main`. The template asks for a summary, any breaking changes, and your review results. Add a screenshot to your PR! (You can paste into GitHub directly from the clipboard.) It makes it easier to quickly grasp the intent and implications of the changes.
 
+### Day-to-day git flow
+
+Contributions go through a fork. In these commands, `origin` is the main repo (`appian/sailwind`) and `fork` is your own fork. Check yours with `git remote -v` and swap in your remote names.
+
+Treat your fork's `main` as a copy of `origin/main`. Never commit to it or merge into it, and the two can't drift apart.
+
+```bash
+# 1. Sync main, then branch
+git fetch origin
+git checkout main
+git merge --ff-only origin/main   # fails if main has diverged, which means something was committed to it
+git push fork main                # or: gh repo sync <you>/sailwind
+git checkout -b feat/my-change
+
+# 2. Work, then run the checks
+pnpm run check
+
+# 3. Push the branch to your fork and open the PR against the main repo
+git push fork feat/my-change
+gh pr create --repo appian/sailwind --head <you>:feat/my-change
+```
+
+After your PR merges, delete the branch and repeat step 1 before starting the next change. If your PR was squash-merged, your local branch won't match `main`, so don't reuse it.
+
 ### Keep pull requests focused
 
 One concern per PR. A PR that adds a new component, reworks CSS, and changes a shared utility is hard to review and hard to merge, because one open question holds up everything else. If your work grew into several things, split it. Smaller PRs get merged faster.
@@ -283,7 +307,7 @@ See `scripts/README.md` for the full pipeline.
 
 ### Publishing
 
-Releases are handled by the maintainer. See [PUBLISHING.md](PUBLISHING.md).
+Releases are handled by the maintainer. They are published from the maintainer's fork. See [PUBLISHING.md](PUBLISHING.md).
 
 ## Resources
 

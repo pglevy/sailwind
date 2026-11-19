@@ -7,6 +7,8 @@ on:
 
 jobs:
   publish:
+    # npm trusts only the maintainer's fork; skip on appian/sailwind.
+    if: github.repository == 'pglevy/sailwind'
     runs-on: ubuntu-latest
     permissions:
       contents: write
