@@ -1,51 +1,57 @@
 # Publishing Guide
 
+## How publishing works
+
+Sailwind lives in `appian/sailwind` (`origin`), but npm publishing runs from the maintainer's fork, `pglevy/sailwind`. The npm package trusts that repo and `publish.yml` through trusted publishing (OIDC), so no npm token is stored anywhere.
+
+- **Pushing a `v*` tag to the fork** runs `publish.yml`: it builds the library, publishes to npm with provenance, and creates the fork's GitHub release.
+- **Pushing a `v*` tag to `appian/sailwind`** does not publish. The publish job is skipped there. That tag and its release are for history and visibility.
+- **The fork's `main` is a copy of `origin/main`.** Never commit to it. See [Day-to-day git flow](CONTRIBUTING.md#day-to-day-git-flow).
+- **Releases and tags don't sync between repos.** Create them in both.
+
 ## Setup (One-Time)
 
-### 1. Configure npm Trusted Publishing (OIDC)
-This allows GitHub Actions to publish with provenance, linking the package to this repo.
+### Configure npm Trusted Publishing (OIDC)
 
 1. Go to https://www.npmjs.com/package/@pglevy/sailwind → Settings → Trusted Publisher
 2. Add a connection: repo `pglevy/sailwind`, workflow `publish.yml`
-3. Under "Publishing access", select "Require two-factor authentication or a granular access token with bypass 2fa enabled"
+3. Under "Publishing access", select "Require two-factor authentication or disallow tokens"
+4. The config shows "Pending validation" until the first publish through it succeeds.
 
-### 2. Create npm Granular Access Token
-A granular token with 2FA bypass is needed so CI can publish without an OTP.
-
-1. Go to https://www.npmjs.com/settings/YOUR_USERNAME/tokens
-2. Click "Generate New Token" → "Granular Access Token"
-3. Give it read/write permissions scoped to `@pglevy/sailwind`
-4. Check "bypass 2fa" (the warning about using trusted publishing instead is fine — we're using both)
-5. Copy the token
-
-### 3. Add Token to GitHub
-1. Go to your repo → Settings → Secrets and variables → Actions
-2. Create (or update) a repository secret:
-   - Name: `NPM_TOKEN`
-   - Value: Paste your granular token
-3. Click "Add secret"
+`publish.yml` upgrades npm before publishing, because trusted publishing needs npm 11.5.1 or later and Node 22 ships npm 10.
 
 ## Publishing Workflow
 
 ### Standard Release (Recommended)
 
+`pnpm version` normally commits and tags on your local branch. That doesn't work when the bump has to go through a PR, because a merge can change the commit. Bump without tagging, merge, and tag after syncing.
+
 ```bash
-# 1. Make sure you're on main and up to date
+# 1. Bump the version on a branch (choose one), without a tag
+git fetch origin && git checkout main && git merge --ff-only origin/main
+git checkout -b chore/release-x.y.z
+pnpm version patch --no-git-tag-version  # 0.1.0 → 0.1.1 (bug fixes)
+pnpm version minor --no-git-tag-version  # 0.1.0 → 0.2.0 (new features)
+pnpm version major --no-git-tag-version  # 0.1.0 → 1.0.0 (breaking changes)
+git commit -am "x.y.z"
+git push fork chore/release-x.y.z
+gh pr create --repo appian/sailwind --head <you>:chore/release-x.y.z
+
+# 2. After the PR merges, sync main in both repos
 git checkout main
-git pull
+git fetch origin
+git merge --ff-only origin/main
+git push fork main
 
-# 2. Bump version (choose one)
-pnpm run version:patch  # 0.1.0 → 0.1.1 (bug fixes)
-pnpm run version:minor  # 0.1.0 → 0.2.0 (new features)
-pnpm run version:major  # 0.1.0 → 1.0.0 (breaking changes)
+# 3. Tag the merged commit and push the tag to the fork first (this publishes)
+git tag vX.Y.Z
+git push fork vX.Y.Z
+# GitHub Actions on the fork will build, publish to npm with provenance,
+# and create the fork's release. Watch it in the fork's Actions tab.
 
-# 3. Push the tag (this triggers the publish workflow)
-git push --follow-tags
-
-# 4. Wait ~2 minutes - GitHub Actions will:
-#    - Build the library
-#    - Publish to npm with provenance
-#    - Create a GitHub release
+# 4. Mirror the tag and release to appian/sailwind
+git push origin vX.Y.Z
+gh release create vX.Y.Z --repo appian/sailwind --title "vX.Y.Z" --notes-file <notes-file>
 ```
 
 ### 5. Write the release notes
@@ -104,8 +110,8 @@ For testing before official release:
 
 ```bash
 # Create a beta version
-pnpm version prerelease --preid=beta  # 0.1.0 → 0.1.1-beta.0
-git push --follow-tags
+pnpm version prerelease --preid=beta --no-git-tag-version  # 0.1.0 → 0.1.1-beta.0
+# then follow the same PR, sync, and tag steps as a standard release
 
 # Install beta in other projects
 pnpm add @pglevy/sailwind@beta
@@ -113,31 +119,27 @@ pnpm add @pglevy/sailwind@beta
 
 ## Troubleshooting
 
-### Publish fails with "EOTP" (one-time password required)
-This means the `NPM_TOKEN` secret is a classic/automation token instead of a granular token with 2FA bypass. Generate a new granular access token on npmjs.com with "bypass 2fa" checked, and update the `NPM_TOKEN` GitHub secret.
+### Publish fails with an authentication error
+
+- The trusted publisher on npm must match the repo and workflow exactly: `pglevy/sailwind` and `publish.yml`.
+- The tag must be pushed to the fork, not `appian/sailwind`.
+- Confirm the npm upgrade step in `publish.yml` ran. Trusted publishing needs npm 11.5.1 or later.
+- `package.json` `repository.url` must match the fork, or provenance fails.
 
 ### Publish fails with "Git working directory is not clean"
 pnpm is stricter than npm about git state. If publishing from CI on a tag checkout, use `pnpm publish --no-git-checks`. The GitHub Actions workflow already includes this flag.
 
-### Publish fails with "404 Not Found"
-This usually means `NODE_AUTH_TOKEN` is missing from the publish step in the workflow. Make sure the workflow has:
-```yaml
-env:
-  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-```
+### Publish fails with "404 Not Found" or "403 Forbidden"
 
-### Publish fails with "403 Forbidden"
-- Check that `NPM_TOKEN` is set correctly in GitHub secrets
-- Verify the granular token has read/write permissions for `@pglevy/sailwind`
-- Ensure you're logged into npm: `pnpm whoami`
+Check the trusted publisher configuration on npm (see above). Also confirm `package.json` still has the `@pglevy/sailwind` name and that the version you're publishing doesn't already exist on npm.
 
 ### Tag already exists
 ```bash
 # Delete remote and local tag, then re-create
-git push --delete origin v0.1.1
+git push --delete fork v0.1.1
 git tag -d v0.1.1
 git tag v0.1.1
-git push origin v0.1.1
+git push fork v0.1.1
 ```
 
 ### Need to unpublish a version
